@@ -3,14 +3,15 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import { indicators, sources, values } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Sources & limitations | FirstLine" };
 
-const indicators = [
-  { id: 6411, title: "Getting to a GP", measure: "Non-urgent primary-care physician visits waiting more than 7 days, % of appointments kept", year: "2025 in the FirstLine brief; county snapshot pending", scope: "All qualifying non-urgent visits, not cancer-specific visits. Only visits with waiting-time data are included." },
-  { id: 13, title: "Referral processed quickly", measure: "Specialist-care referrals processed within 3 days, % of referrals received", year: "County year and values pending snapshot", scope: "Receipt to processing of a referral, not time to a specialist appointment or treatment." },
-  { id: 5033, title: "Referral processing delay", measure: "Specialist-care referrals processed after more than 21 days, % of referrals received", year: "County year and values pending snapshot", scope: "Provider-based referrals, not a cancer-specific patient pathway. Emergency referrals are excluded." },
-] as const;
+const sourceRows = indicators.map((indicator) => ({
+  indicator,
+  source: sources.find((source) => source.source_id === indicator.source_id),
+  years: [...new Set(values.filter((value) => value.indicator_id === indicator.indicator_id).map((value) => value.year))].sort(),
+}));
 
 export default function SourcesPage() {
   return (
@@ -26,19 +27,20 @@ export default function SourcesPage() {
       </header>
       <section aria-labelledby="essential-caveat" className="mt-10 rounded-xl border border-amber-300 bg-amber-50 p-5 text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
         <h2 id="essential-caveat" className="text-lg font-semibold">The essential distinction</h2>
-        <p className="mt-2 leading-relaxed">THL Sotkanet 6411 (2025 in our brief) covers <strong>all non-urgent physician visits with waiting-time data</strong>, not people with suspected cancer. GP waiting time is a proxy for access, not a cancer diagnosis or referral delay. The referral indicators describe processing of specialist referrals generally, not the whole GP-to-specialist journey.</p>
+        <p className="mt-2 leading-relaxed">THL Sotkanet 6411 (latest snapshot year: 2025) covers <strong>non-urgent GP appointments with waiting-time data</strong>, not people with suspected cancer. GP waiting time is a proxy for access, not a cancer diagnosis or referral delay. The referral indicators describe processing of specialist referrals generally, not the whole GP-to-specialist journey.</p>
       </section>
       <section aria-labelledby="indicator-sources" className="mt-12">
         <h2 id="indicator-sources" className="text-2xl font-semibold">The public indicators</h2>
         <p className="mt-2 text-muted-foreground">Publisher: Finnish Institute for Health and Welfare (THL), Sotkanet. Links open the official definitions.</p>
         <div className="mt-5 grid gap-4">
-          {indicators.map((indicator) => (
-            <article key={indicator.id} className="rounded-xl border bg-card p-5">
-              <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-lg font-semibold">{indicator.title}</h3><Badge variant="outline">THL Sotkanet · {indicator.id}</Badge></div>
-              <p className="mt-3">{indicator.measure}</p>
-              <p className="mt-2 text-sm text-muted-foreground"><strong className="text-foreground">Year:</strong> {indicator.year}</p>
-              <p className="mt-2 text-sm text-muted-foreground"><strong className="text-foreground">Scope:</strong> {indicator.scope}</p>
-              <a className="mt-4 inline-block text-sm font-medium underline underline-offset-4 hover:text-muted-foreground" href={"https://sotkanet.fi/rest/1.1/indicators/" + indicator.id} target="_blank" rel="noopener noreferrer">Official THL definition ↗</a>
+          {sourceRows.map(({ indicator, source, years }) => (
+            <article key={indicator.indicator_id} className="rounded-xl border bg-card p-5">
+              <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-lg font-semibold">{indicator.short_name}</h3><Badge variant="outline">THL Sotkanet · {indicator.indicator_id}</Badge></div>
+              <p className="mt-3">{indicator.name}</p>
+              <p className="mt-2 text-sm text-muted-foreground"><strong className="text-foreground">Data years:</strong> {years.length ? years.join(", ") : "No county values in snapshot"}</p>
+              <p className="mt-2 text-sm text-muted-foreground"><strong className="text-foreground">Source:</strong> {indicator.source_id} · retrieved {source?.retrieved ?? "unknown"} · publisher updated {source?.data_updated ?? "unknown"}</p>
+              <p className="mt-2 text-sm text-muted-foreground"><strong className="text-foreground">Scope:</strong> {indicator.limitation}</p>
+              {source && <a className="mt-4 inline-block text-sm font-medium underline underline-offset-4 hover:text-muted-foreground" href={source.url} target="_blank" rel="noopener noreferrer">Official THL definition ↗</a>}
             </article>
           ))}
         </div>
@@ -49,6 +51,7 @@ export default function SourcesPage() {
           <li>No indicator here follows a person from first symptoms through GP assessment, cancer diagnosis and specialist treatment.</li>
           <li>Referral processing does not establish when a patient saw a specialist, whether cancer was suspected, or why a delay occurred.</li>
           <li>GP recognition of warning signs and choice of tests are not quantified here. Missing evidence stays “no public data,” not a low-risk score.</li>
+          <li>The snapshot has no county-level referral-processing value (indicator 13) for East, Central or West Uusimaa, or Vantaa and Kerava. Their referral stage stays unknown.</li>
           <li>County comparisons are descriptive, not causal. They cannot predict an individual prognosis or prove the effect of an intervention.</li>
         </ul>
       </section>
