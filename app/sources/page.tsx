@@ -57,7 +57,7 @@ export default function SourcesPage() {
       </section>
       <section aria-labelledby="evidence" className="mt-12 space-y-3">
         <h2 id="evidence" className="text-2xl font-semibold">Actions and live evidence</h2>
-        <p className="leading-relaxed text-muted-foreground">Recommended actions need a checked precedent and linked source. A checked evidence table exists, but its app snapshot integration is pending. Exa results are found live and unverified; a search result is not proof an intervention works in a Finnish county. The red-flag helper is decision support, not a diagnosis or substitute for local clinical guidance.</p>
+        <p className="leading-relaxed text-muted-foreground">Recommended actions need a checked precedent and linked source. Checked precedents in the snapshot are distinct from Exa results, which are found live and unverified; a search result is not proof an intervention works in a Finnish county. The red-flag helper is decision support, not a diagnosis or substitute for local clinical guidance.</p>
       </section>
       <div className="mt-10"><Link href="/" className={buttonVariants({ variant: "outline" })}>Back to county ranking</Link></div>
     </main>
