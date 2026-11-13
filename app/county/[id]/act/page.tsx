@@ -20,6 +20,10 @@ import { counties, getCounty, type Evidence } from "@/lib/data";
 
 // Counties are a fixed, known set, so a blocking route is fine here.
 export const instant = false;
+// An explicit per-segment prefetch mode makes unlisted ids (unknown or "finland") resolve
+// notFound() before the response starts, so they get a real 404 on the very first request.
+// (dynamicParams = false is rejected when cacheComponents is on.)
+export const prefetch = "partial";
 
 export function generateStaticParams() {
   return counties.map((county) => ({ id: county.id }));
@@ -35,6 +39,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   const others = otherActions(county.id, recommended);
   const unmeasured = others.filter((group) => group.unmeasured && group.stage !== "gp_recognition");
   const remaining = others.filter((group) => !unmeasured.includes(group));
+  const otherCount = others.reduce((total, group) => total + group.actions.length, 0);
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
@@ -71,6 +76,12 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
         ))}
       </section>
 
+      {unmeasured.length > 0 || remaining.length > 0 ? (
+        <details className="rounded-xl border p-4">
+          <summary className="cursor-pointer text-lg font-semibold">
+            Show {otherCount} other evidence-backed {otherCount === 1 ? "option" : "options"}
+          </summary>
+          <div className="mt-4 flex flex-col gap-8">
       {unmeasured.map((group) => (
         <section key={group.stage} className="flex flex-col gap-3" aria-labelledby={`unmeasured-${group.stage}`}>
           <div>
@@ -107,6 +118,9 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
             </div>
           ))}
         </section>
+      ) : null}
+          </div>
+        </details>
       ) : null}
 
       <section className="flex flex-col gap-4 rounded-xl border p-5" aria-labelledby="red-flags">

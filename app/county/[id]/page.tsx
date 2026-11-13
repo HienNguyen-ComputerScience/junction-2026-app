@@ -26,6 +26,8 @@ import {
 
 // Counties are a fixed, known set, so a blocking route is fine here.
 export const instant = false;
+// Explicit prefetch mode: unlisted ids get a real 404 on the first request (see act/page.tsx).
+export const prefetch = "partial";
 
 export function generateStaticParams() {
   return counties.map((county) => ({ id: county.id }));
