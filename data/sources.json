@@ -1,5 +1,122 @@
 [
   {
+    "source_id": "ev-files-kansallinen-syopastrategia-toimeenpanon-tiekartta-2",
+    "kind": "evidence",
+    "name": "Kansallinen syöpästrategia 2026-2035: Toimeenpanon tiekartta vuosille 2026-2031 (STM)",
+    "url": "https://files.hackjunction.app/resources/Kansallinen_syopastrategia_toimeenpanon_tiekartta_2026_2031.pdf",
+    "publisher": "files.hackjunction.app",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  },
+  {
+    "source_id": "ev-nice-recommendations-on-patient-support-safety-netting-th",
+    "kind": "evidence",
+    "name": "NICE NG12, Recommendations on patient support, safety netting and the diagnostic process",
+    "url": "https://www.nice.org.uk/guidance/ng12/chapter/Recommendations-on-patient-support-safety-netting-and-the-diagnostic-process",
+    "publisher": "nice.org.uk",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  },
+  {
+    "source_id": "ev-nice-update-information",
+    "kind": "evidence",
+    "name": "NICE NG12 Suspected cancer: recognition and referral, Update information",
+    "url": "https://www.nice.org.uk/guidance/ng12/chapter/Update-information",
+    "publisher": "nice.org.uk",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  },
+  {
+    "source_id": "ev-pmc-pmc11467609",
+    "kind": "evidence",
+    "name": "Liu, Kaila & Koskela. Triage Accuracy and the Safety of User-Initiated Symptom Assessment With an Electronic Symptom Checker in a Real-Life Setting. JMIR Hum Factors 2024",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11467609/",
+    "publisher": "pmc.ncbi.nlm.nih.gov",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  },
+  {
+    "source_id": "ev-pmc-pmc4385978",
+    "kind": "evidence",
+    "name": "Vedsted & Olesen. A differentiated approach to referrals from general practice to support early cancer diagnosis - the Danish three-legged strategy. Br J Cancer 2015",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4385978/",
+    "publisher": "pmc.ncbi.nlm.nih.gov",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  },
+  {
+    "source_id": "ev-pmc-pmc4412104",
+    "kind": "evidence",
+    "name": "Jensen et al. Diagnostic intervals before and after implementation of cancer patient pathways. BMC Cancer 2015;15:308",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4412104/",
+    "publisher": "pmc.ncbi.nlm.nih.gov",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  },
+  {
+    "source_id": "ev-pmc-pmc4553012",
+    "kind": "evidence",
+    "name": "Wåhlberg et al. Impact of referral templates on the quality of referrals from primary to secondary care: a cluster randomised trial. BMC Health Serv Res 2015",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4553012/",
+    "publisher": "pmc.ncbi.nlm.nih.gov",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  },
+  {
+    "source_id": "ev-pmc-pmc4660800",
+    "kind": "evidence",
+    "name": "Guldbrandt et al. The effect of direct access to CT scan in early lung cancer detection: an unblinded, cluster-randomised trial. BMC Cancer 2015",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4660800/",
+    "publisher": "pmc.ncbi.nlm.nih.gov",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  },
+  {
+    "source_id": "ev-pmc-pmc6367893",
+    "kind": "evidence",
+    "name": "Laurant et al. Nurses as substitutes for doctors in primary care. Cochrane Database Syst Rev 2018",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6367893/",
+    "publisher": "pmc.ncbi.nlm.nih.gov",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  },
+  {
+    "source_id": "ev-pmc-pmc7462853",
+    "kind": "evidence",
+    "name": "First results from five multidisciplinary diagnostic centre (MDC) projects for non-specific but concerning symptoms, possibly indicative of cancer. Br J Cancer 2020",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7462853/",
+    "publisher": "pmc.ncbi.nlm.nih.gov",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  },
+  {
+    "source_id": "ev-pmc-pmc8510690",
+    "kind": "evidence",
+    "name": "Sandvik et al. Continuity in general practice as predictor of mortality, acute hospitalisation, and use of out-of-hours care: a registry-based observational study in Norway. Br J Gen Pract 2022",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8510690/",
+    "publisher": "pmc.ncbi.nlm.nih.gov",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  },
+  {
+    "source_id": "ev-pmc-pmc9771088",
+    "kind": "evidence",
+    "name": "Fung & Liddy. eConsult improves access to specialist advice for primary care providers. Innovation in Aging 2022 (conference abstract)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9771088/",
+    "publisher": "pmc.ncbi.nlm.nih.gov",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  },
+  {
+    "source_id": "ev-riksdagen-html",
+    "kind": "evidence",
+    "name": "Regeringens skrivelse 2023/24:48, Riksrevisionens rapport om statens arbete med väntetider i vården (RiR 2023:12)",
+    "url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/regeringens-skrivelse/riksrevisionens-rapport-om-statens-arbete-med_hb0348/html/",
+    "publisher": "riksdagen.se",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  },
+  {
     "source_id": "sotkanet-13",
     "kind": "statistic",
     "name": "Sotkanet 13: Referrals for specialised health care received processed within 3 days, % of referrals received",
