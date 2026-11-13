@@ -8,7 +8,7 @@ process.stdin.on("end", () => {
   } catch {
     process.exit(0);
   }
-  const name = filePath.split(/[\/]/).pop() || "";
+  const name = filePath.split(/[\\/]/).pop() || "";
   if (name.startsWith(".env") && name !== ".env.example") {
     console.error("Blocked: do not edit .env files. Tell your human which variable to add.");
     process.exit(2);
