@@ -79,7 +79,7 @@ From `README.md` (checked against the repo on 13 Nov):
 
 ## Demo link
 
-`TODO (human): live Vercel URL` (not deployed as far as the repo shows).
+https://firstline-nu.vercel.app
 
 ## Source code link
 
