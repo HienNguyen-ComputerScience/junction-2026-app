@@ -50,7 +50,7 @@ Numbers: none.
 | "3 days" on the stage card | Definition of indicator 13 (`data/indicators.json`) |
 
 - The grey "GP spots possible cancer" stage reflects `data/README.md`: `gp_recognition` has no public indicator.
-- The demo script line "Most cancers are first noticed by a GP" has **no source in the repo**. It is not on the slide and not in the speaker line.
+- The demo script GP-first line is now sourced (PR #38): "In health systems where the GP is the first stop, 75 to 85 percent of cancer patients start at the GP" (Vedsted & Olesen, Br J Cancer 2015, PMC4385978; Danish and UK data, not Finnish). The older wording "Most cancers are first noticed by a GP" had no source and is not used.
 
 ## 4. Product
 
