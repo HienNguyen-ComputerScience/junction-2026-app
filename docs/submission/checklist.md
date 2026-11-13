@@ -32,7 +32,7 @@ Run 3 tested commit c4f067d. PRs #45 (22:36 UTC) and #10 (22:38 UTC) merged afte
 | E2E docs and browser run | Merged (PR #25, #27, #35, #36) | `docs/pitch/`, `docs/evidence/` |
 | Submission pack (this folder) | Merged (PR #30, #40). Run 3 refresh: PR #46, issue #43 closed; Run 3b: PR #50, issue #47 closed. nabeo11's drafts: PR #42 merged on 14 Nov (commit 113f6ad) | `docs/submission/` |
 | MIT `LICENSE` | Added at the repo root (issue #51); README links to it. Whether the repo is public is still a human step | `LICENSE`, `README.md` |
-| Live URL (Vercel) | Not deployed as far as the repo shows (README: "URL: TBD") | TODO (human) |
+| Live URL (Vercel) | Deployed: https://firstline-nu.vercel.app (14 Nov, commit fb67f1f, via Vercel CLI; GitHub not connected, so later merges need a manual redeploy). Smoke-tested: pages 200, unknown county 404, county news and question box live | `README.md` "Live demo" |
 | Pitch video | Not in repo | TODO (human) |
 
 Re-check this table after the freeze (Sat 18:00) with `gh pr list --state all`, `gh issue list --state all` and a post-freeze test run in [test-runs.md](test-runs.md).
@@ -60,7 +60,7 @@ Platform: hackjunction.app. Needs a draft project and the chosen challenge. Both
 | [ ] | Merge screen 3 and red-flag helper (issue #21) | HienNguyen-ComputerScience | `app/` | Merged (PR #26); box left for the owner |
 | [ ] | Merge Exa UI panels (PR #22) and mount them, the question box and the AI brief on the pages (issue #32) | HienNguyen-ComputerScience | `app/`, `components/exa/`, `components/brief/` | Mounted (PR #39, issue #32 closed; Run 3). National news strip still not on a page. Box left for the owner |
 | [ ] | Merge sources and limitations page (PR #10) | bestawperna | `app/sources/` | Merged (PR #10, 13 Nov 22:38 UTC), after Run 3; loads in Run 3b but lists only the 3 Sotkanet indicators. Box left for the owner |
-| [ ] | Deploy to Vercel and write the live URL into README.md | HienNguyen-ComputerScience (deploy) | `README.md` "Live demo" | TODO (human) |
+| [x] | Deploy to Vercel and write the live URL into README.md | HienNguyen-ComputerScience (deploy) | `README.md` "Live demo" | Done 14 Nov (not auto-deploying; redeploy after the freeze) |
 | [ ] | Decide demo credentials: the app has no accounts, so write "none needed" if still true | HienNguyen-ComputerScience | `README.md` | TODO (human) |
 | [ ] | Run the manual test pass on the deployed URL and fill in `test-runs.md` | nabeo11 (test runs) and bestawperna (manual demo testing, Exa live queries) | `docs/submission/test-runs.md` | Run 3 logged (pre-freeze; local dev server, commit c4f067d); Run 3b logged: browser click-test of the main flows (commit 0e40cdf, `playwright-core` because the Playwright MCP could not start); post-freeze and deployed-URL run still to do |
 | [ ] | Update the sentences in [submission-text.md](submission-text.md) listed under "Update on Saturday" | nabeo11 | [submission-text.md](submission-text.md) | Draft |
@@ -82,7 +82,7 @@ Mirrors the "Final submission checklist" in [docs/junction-2026-guide.md](../jun
 | [ ] | Record the video only after re-running Exa on Sunday morning so the "this week" item is real | fraidfax | [../pitch/exa-angle.md](../pitch/exa-angle.md) | TODO (human) |
 | [ ] | Demo link (live URL opens for someone not logged in anywhere) | HienNguyen-ComputerScience | `README.md` "Live demo" | TODO (human) |
 | [ ] | Source code link: https://github.com/HienNguyen-ComputerScience/junction-2026-app | nabeo11 | `git remote get-url origin` | Ready in repo |
-| [ ] | Repo is public, or shared so organisers can open it; all submissions are MIT-licensed | HienNguyen-ComputerScience | Repo settings. MIT `LICENSE` exists at the repo root (PR #52) | TODO (human): make repo public |
+| [x] | Repo is public, or shared so organisers can open it; all submissions are MIT-licensed | HienNguyen-ComputerScience | Repo settings. MIT `LICENSE` exists at the repo root (PR #52) | Done: repo is public (14 Nov); MIT `LICENSE` at the repo root (PR #52) |
 | [ ] | Source code publicity setting on the form | nabeo11 | [submission-text.md](submission-text.md) | TODO (human) |
 | [ ] | Credit preference on the form | nabeo11 | [submission-text.md](submission-text.md) | TODO (human) |
 | [ ] | Pitch deck as PDF | nabeo11 (deck) | `docs/submission/firstline-deck.pdf` (source `deck.html`, notes `deck-notes.md`) | Draft v3 in repo (screenshots from commit c4f067d, incl. the live news panel); retake screenshots and re-check numbers after the freeze, then remove the "Draft" footer. A second 16-slide draft is in `deck-nabeo11/`. Which PDF is uploaded on Sunday: TODO (lead decides) |
