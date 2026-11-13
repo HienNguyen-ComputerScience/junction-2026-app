@@ -42,7 +42,8 @@ export type Item = {
 
 export type Freshness = "live" | "cache" | "stale-cache" | "unavailable";
 
-export type ItemsResult = { items: Item[]; freshness: Freshness; error?: string };
+/** `retrievedAt` (YYYY-MM-DD) is set when the items come from a cache rather than a live call. */
+export type ItemsResult = { items: Item[]; freshness: Freshness; error?: string; retrievedAt?: string };
 
 type RawResult = {
   title: string;
@@ -110,24 +111,41 @@ async function post(path: "/search" | "/contents", body: SearchRequest | Content
 // ---------- cache ----------
 // In-memory, per server instance. Kept on globalThis so dev hot reloads don't wipe it.
 // Fresh entries are served without calling Exa; stale entries are served only when Exa fails.
+// Two stores: `pinned` holds the closed set of demo keys (22 county ids, the evidence rows and
+// presets, the example questions), so it is bounded by construction and never evicted. Free-text
+// keys (typed questions, free-text evidence) go to `open`, which evicts oldest-first, so a loop of
+// unique questions can never push the pre-warmed demo entries out.
 
 type Entry = { at: number; value: unknown };
-const globalCache = globalThis as typeof globalThis & { __exaCache?: Map<string, Entry> };
-const cache = (globalCache.__exaCache ??= new Map<string, Entry>());
-const MAX_ENTRIES = 500;
+const globalCache = globalThis as typeof globalThis & {
+  __exaCache?: Map<string, Entry>;
+  __exaPinned?: Map<string, Entry>;
+};
+const open = (globalCache.__exaCache ??= new Map<string, Entry>());
+const pinned = (globalCache.__exaPinned ??= new Map<string, Entry>());
+const MAX_OPEN_ENTRIES = 500;
 
-export function cacheGet<T>(key: string, ttlMs: number): { value: T; fresh: boolean } | null {
-  const e = cache.get(key);
+export function cacheGet<T>(key: string, ttlMs: number): { value: T; fresh: boolean; retrievedAt: string } | null {
+  const e = pinned.get(key) ?? open.get(key);
   if (!e) return null;
-  return { value: e.value as T, fresh: Date.now() - e.at < ttlMs };
+  return {
+    value: e.value as T,
+    fresh: Date.now() - e.at < ttlMs,
+    retrievedAt: new Date(e.at).toISOString().slice(0, 10),
+  };
 }
 
-export function cacheSet(key: string, value: unknown) {
-  if (cache.size >= MAX_ENTRIES) {
-    const oldest = cache.keys().next().value;
-    if (oldest !== undefined) cache.delete(oldest);
+export function cacheSet(key: string, value: unknown, pin = false) {
+  if (pin) {
+    pinned.set(key, { at: Date.now(), value });
+    return;
   }
-  cache.set(key, { at: Date.now(), value });
+  open.delete(key); // re-insert at the end, so eviction is by last write
+  if (open.size >= MAX_OPEN_ENTRIES) {
+    const oldest = open.keys().next().value;
+    if (oldest !== undefined) open.delete(oldest);
+  }
+  open.set(key, { at: Date.now(), value });
 }
 
 // ---------- public API ----------
@@ -142,6 +160,9 @@ const domainOf = (url: string) => {
 
 const clean = (s: string) => s.replace(/\s+/g, " ").replace(/^#+\s*/, "").trim();
 
+export const isPaywalled = (domain: string) =>
+  MAYBE_PAYWALLED.some((d) => domain === d || domain.endsWith(`.${d}`));
+
 export function toItem(r: RawResult, snippetChars = 400): Item {
   const domain = domainOf(r.url);
   const snippetSource = r.highlights.length ? r.highlights.join(" … ") : (r.text ?? "");
@@ -151,12 +172,19 @@ export function toItem(r: RawResult, snippetChars = 400): Item {
     domain,
     publishedDate: r.publishedDate ? r.publishedDate.slice(0, 10) : null,
     snippet: clean(snippetSource).slice(0, snippetChars),
-    maybePaywalled: MAYBE_PAYWALLED.some((d) => domain === d || domain.endsWith(`.${d}`)),
+    maybePaywalled: isPaywalled(domain),
   };
 }
 
 export type SearchOptions = {
   ttlMs: number;
+  /**
+   * Logical cache key, e.g. `news:vantaa-kerava`. Use one without dates, so an entry survives the
+   * daily roll of `startPublishedDate`. Default: the full request JSON.
+   */
+  cacheKey?: string;
+  /** Keep this entry in the never-evicted store (closed set of demo keys only). */
+  pin?: boolean;
   timeoutMs?: number;
   simulateOutage?: boolean;
   snippetChars?: number;
@@ -164,9 +192,9 @@ export type SearchOptions = {
 
 /** Search Exa and return normalised items. Never throws: on failure it serves stale cache or an empty list. */
 export async function search(body: SearchRequest, opts: SearchOptions): Promise<ItemsResult> {
-  const key = `search:${JSON.stringify(body)}:${opts.snippetChars ?? 400}`;
+  const key = `search:${opts.cacheKey ?? JSON.stringify(body)}:${opts.snippetChars ?? 400}`;
   const hit = cacheGet<Item[]>(key, opts.ttlMs);
-  if (hit?.fresh) return { items: hit.value, freshness: "cache" };
+  if (hit?.fresh) return { items: hit.value, freshness: "cache", retrievedAt: hit.retrievedAt };
 
   try {
     const raw = await post("/search", body, {
@@ -174,12 +202,12 @@ export async function search(body: SearchRequest, opts: SearchOptions): Promise<
       simulateOutage: opts.simulateOutage ?? false,
     });
     const items = raw.map((r) => toItem(r, opts.snippetChars));
-    cacheSet(key, items);
+    cacheSet(key, items, opts.pin ?? false);
     return { items, freshness: "live" };
   } catch (err) {
     const error = err instanceof Error ? err.message : String(err);
     console.warn(`[exa] ${error}`);
-    if (hit) return { items: hit.value, freshness: "stale-cache", error };
+    if (hit) return { items: hit.value, freshness: "stale-cache", error, retrievedAt: hit.retrievedAt };
     return { items: [], freshness: "unavailable", error };
   }
 }
