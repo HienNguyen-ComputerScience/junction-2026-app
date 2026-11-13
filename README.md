@@ -41,6 +41,9 @@ Other scripts:
 
 Before saying "done": `npm run brief:check && npm run typecheck && npm run lint && npm run build`.
 
+## License
+MIT, see [LICENSE](LICENSE).
+
 ## Team
 Phương (@HienNguyen-ComputerScience)
 
