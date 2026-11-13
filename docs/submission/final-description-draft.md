@@ -1,6 +1,8 @@
 # Final submission description — DRAFT (due Sun 15 Nov 10:00, aim 08:00)
 
-Status: draft by nabeo11's Claude, Sat 14 Nov. Replaces the Friday-night text in preliminary.md.
+Supersedes the text in `submission-text.md` once checked (that file stays as the earlier ready-to-paste version, with the form-field list and TODOs). Feature status checked against `test-runs.md`, Run 3b.
+
+Status: draft by nabeo11's Claude, Sat 14 Nov. Replaces the Friday-night text (the preliminary form text, not kept in this repo).
 Check before pasting: Luan (wording matches the demo script), Phương (every feature named here is live).
 Remember: switch the project from DRAFT to FINAL on hackjunction.app.
 
@@ -19,7 +21,7 @@ FirstLine shows each wellbeing services county where its own first step breaks: 
 
 Every number carries its source and year. Where no public data exists, the app says so and shows a grey card instead of a guess; the limitations are always on screen. Only public aggregate data is used.
 
-A live-search layer built on Exa adds what no dataset or model has: this month's county news on GP access and cancer care, an evidence finder under each recommended action, and a question box that answers only from linked search results. Live results are labelled "found live, unverified" and kept apart from our checked evidence table.
+A live-search layer built on Exa adds what no dataset or model has. Each county page shows recent local news on GP access and cancer care (last 12 months, dated, with links). Each recommended action has a "Find more evidence live" button, and a question box on the home page answers only from linked search results, or says "Nothing found". Live results are labelled "Found live — unverified" and kept apart from our checked evidence table. [Checked in test run 3b, commit 0e40cdf. The national news feed exists only as an API and is not shown on any page, so it is not described here. No live URL yet: re-check these panels on the deployed site before pasting.]
 
 ## Still to fill in on the form (Sunday)
 - Live demo URL: [TODO: Vercel URL from Phương]

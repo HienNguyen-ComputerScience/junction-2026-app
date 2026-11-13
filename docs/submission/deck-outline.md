@@ -1,7 +1,9 @@
 # FirstLine: pitch deck outline
 
+See also `deck-notes.md` (speaker notes and sources for the 9-slide `firstline-deck.pdf`). This outline is the older, longer plan; the 16-slide draft built from it is in `deck-nabeo11/`. Updated 14 Nov to match test run 3 and 3b (commit 0e40cdf) in `test-runs.md`.
+
 For: nabeo11 (builds the deck). Working outline, not final copy.
-Built on: `app/SPEC.md`, `app/docs/pitch/demo-script.md` (Luan's script: the deck follows its order and reuses its words), `app/docs/pitch/exa-angle.md`, `app/docs/evidence/*`, `app/data/*`, and the team board.
+Built on: `SPEC.md`, `docs/pitch/demo-script.md` (Luan's script: the deck follows its order and reuses its words), `docs/pitch/exa-angle.md`, `docs/evidence/*`, `data/*`, and the team board.
 
 ## Rules from the guide and sponsors that shape the deck
 
@@ -13,7 +15,7 @@ Built on: `app/SPEC.md`, `app/docs/pitch/demo-script.md` (Luan's script: the dec
 - **AstraZeneca judges** (Hanna Rusila and Laura Aaltonen from Marketing, Joanna Tuormaa from Business Excellence) are not clinicians. Use plain words, put one big number on each slide, and spell out what a county gets. Medical detail goes in the backup slides.
 - **Wording rule (always):** "85% of non-urgent GP visits in Vantaa-Kerava come more than a week after people ask." Never write "85% of people", and never "cancer patients wait".
 - **Goal 3** of the cancer strategy is context only. It was crossed out on the printed brief, so never present it as a requirement we meet.
-- **Missing numbers** are written as `[TODO: ...]`. Never type a number that is not in `app/data/` or `evidence.md`.
+- **Missing numbers** are written as `[TODO: ...]`. Never type a number that is not in `data/` or `evidence.md`.
 
 ---
 
@@ -35,24 +37,24 @@ The "time" column follows the 3-minute live script in `demo-script.md`. The spok
 - **On the slide:** two big numbers side by side: **85.4%** for Vantaa-Kerava and **32.7%** for Päijät-Häme. A small grey line under them: "Finland 54.7%". Source chip: "THL Sotkanet 6411, 2025". Product name "FirstLine" in small type at the top.
 - **Say:** "In Vantaa-Kerava, 85% of non-urgent GP visits come more than a week after people ask for one. In Päijät-Häme it's a third. Cancer doesn't wait."
 - **Criteria:** Insight (25), Clarity (10).
-- **Needs:** nothing. The numbers are confirmed in `app/data/values.json`. You can build this slide now.
+- **Needs:** nothing. The numbers are confirmed in `data/values.json`. You can build this slide now.
 
-### Slide 2 (0:20-0:45) · "Most cancers are first noticed by a GP, yet no one shows a county where its own first step breaks"
+### Slide 2 (0:20-0:45) · "Where the GP is the first stop, 75 to 85 percent of cancer patients start there, yet no one shows a county where its own first step breaks"
 - **On the slide:**
   1. A simple line: Patient → GP → Specialist. Highlight the two steps we measure: (a) getting in to a GP and (b) getting from the GP to a specialist.
   2. One small line: "National cancer strategy 2026-2035: equal care everywhere." This is context only.
-- **Say:** "Most cancers are first noticed by a GP. So where you live decides how fast your first step happens. Finland's new cancer strategy says this must be equal everywhere. But no one shows a county director *where* their own pathway breaks."
+- **Say:** "In health systems where the GP is the first stop, 75 to 85 percent of cancer patients start at the GP (Vedsted & Olesen, Br J Cancer 2015, Danish and UK data). So where you live decides how fast your first step happens. Finland's new cancer strategy says this must be equal everywhere. But no one shows a county director *where* their own pathway breaks."
 - **Criteria:** Insight (25), Clarity (10).
 - **Needs:** nothing, so build it now. Optional: a mentor answer to P1 in `docs/submission/sponsor-questions.md` ("do early-symptom patients go through the normal GP queue?"). If the mentor agreed to be quoted, put the answer here as one line.
 
 ### Slide 3 (0:45-1:15) · "Counties break at different steps, so one national fix won't work"
 - **On the slide:**
   1. **Chart:** a horizontal bar chart of the 22 areas ranked by indicator 6411 for 2025, with a vertical line at Finland's 54.7%. Label only Vantaa-Kerava 85.4, Helsinki 75.9, Kainuu 38.4 and Päijät-Häme 32.7. Source chip: "THL Sotkanet 6411, 2025".
-  2. **Contrast box:** "Kainuu: quick to see a GP, slower from the GP to a specialist. Vantaa-Kerava: slow to see a GP." Value for referrals processed within 3 days: `[TODO: indicator 13, Kainuu 2025, and Finland 2025, from data/ (Phương confirms)]`.
-  3. Small print: "Referral speed = Sotkanet 13, referrals processed within 3 days, 2025. Worst `[TODO: 13 worst county + value]`, best `[TODO: 13 best county + value]`."
+  2. **Contrast box:** "Kainuu: quick to see a GP, slower from the GP to a specialist. Vantaa-Kerava: slow to see a GP." Referrals processed within 3 days (Sotkanet 13, 2025): Kainuu 75.2%, Finland 76.8% (matches `data/values.json`).
+  3. Small print: "Referral speed = Sotkanet 13, referrals processed within 3 days, 2025. Worst South Ostrobothnia 68.9%, best Kanta-Häme 88.7%."
 - **Say:** "This is FirstLine. Every county, ranked by how long it takes to see a GP and how fast referrals move to a specialist. And they don't break in the same place. Kainuu gets you to a GP fast but is slower from the GP to a specialist. Vantaa-Kerava is the opposite."
 - **Criteria:** **Insight (25)**, Data transparency (20).
-- **Needs:** Phương confirms the indicator 13 numbers (see "Contradictions" below: they are already in `data/values.json`). The chart can come from Phương's export or the ranking screen. Option: a screenshot of the ranking screen (`/`) instead of a chart. The script says to show Screen 1 here.
+- **Needs:** The indicator 13 numbers are in `data/values.json` and already on the slide in `deck-nabeo11/`; Phương only needs to confirm them. The chart can come from Phương's export or the ranking screen. Option: a screenshot of the ranking screen (`/`) instead of a chart. The script says to show Screen 1 here.
 
 ### Slide 4 (1:15-1:45) · "For each county, FirstLine shows where the delay is, and says openly where public data is missing"
 - **On the slide:**
@@ -60,7 +62,7 @@ The "time" column follows the 3-minute live script in `demo-script.md`. The spok
   2. Three-word legend: red = worse than Finland · amber = Finland's level or better, still a wait · grey = no public data.
 - **Say:** "Pick a county. FirstLine shows where the delay is: getting in to a GP, or getting from the GP to a specialist. Grey means there's no public data, and we say so."
 - **Criteria:** **Data transparency (20)**, Execution (15).
-- **Needs:** a screenshot of `/county/vantaa-kerava` after the feature freeze (this screen was still a placeholder on 14 Nov early Saturday, per the run log in `e2e-checklist.md`).
+- **Needs:** a screenshot of `/county/vantaa-kerava`. Done in the 16-slide draft (`deck-nabeo11/`, from main 84d76f2); retake from the live URL after the freeze. The screen is built on main (test run 3b, commit 0e40cdf).
 
 ### Slide 5 (1:45-2:30) · "Every county gets 2-3 fixes that already worked elsewhere, each with an owner and a first step for Monday"
 - **On the slide:**
@@ -71,7 +73,7 @@ The "time" column follows the 3-minute live script in `demo-script.md`. The spok
   3. Footer: "2 of these fixes are already in Finland's 2026-2031 cancer roadmap (measures 2.5.1, 2.5.2)."
 - **Say:** "Then: what to do on Monday. Each action has an owner, a first step, a country that already did it, and the source. Denmark's fast-track pathways cut the median time to diagnosis by 17 days. Norway shows that keeping the same GP goes with fewer hospital admissions and lower mortality."
 - **Criteria:** **Actionability (30)**, Data transparency (20).
-- **Needs:** a screenshot of the act page after the freeze. Note: Denmark is a referral fix, so its card does not appear on Vantaa-Kerava (referral is grey there). Take the Denmark card from a county with a red referral stage, for example `/county/kainuu/act`, or show it as a small second card. See conflict C6.
+- **Needs:** a screenshot of the act page after the freeze. Note: Denmark is a referral fix, so its card does not appear on Vantaa-Kerava (referral is grey there). The Denmark card shows on `/county/south-ostrobothnia/act` and `/county/kainuu/act` (both have a red referral stage, `data/gaps.json`); the 16-slide draft uses South Ostrobothnia as a second card (test run 3b, check d). Conflict C6 is resolved.
 
 ### Slide 6 (2:30-2:45) · "For the GP: symptoms in, guideline warning signs and the fastest referral route out (decision support, not diagnosis)"
 - **On the slide:**
@@ -88,7 +90,7 @@ The "time" column follows the 3-minute live script in `demo-script.md`. The spok
   3. Small line: "Judges can ask their own question; answers come only from linked results, or 'nothing found'."
 - **Say (from `exa-angle.md`):** "The numbers are from THL. But what happened in Vantaa this week isn't in any dataset or any AI's memory. Exa finds it live, and every line links to its source."
 - **Criteria:** all 5 Exa criteria. For AstraZeneca, it supports data transparency (keeping checked and unverified material apart).
-- **Needs:** a dated screenshot of the county news strip (Sat evening, redone Sun morning). Never edit a date.
+- **Needs:** a dated screenshot of the county news strip (Sat evening, redone Sun morning). The strip is mounted on the county page (test run 3b, check b5; label "Found live — unverified"). Never edit a date.
 - If the stage pitch runs long, skip this slide on stage. It stays in the PDF.
 
 ### Slide 8 (2:45-3:00) · "A county director can see their bottleneck and start the first step in two minutes, using public data only"
@@ -131,7 +133,7 @@ The "time" column follows the 3-minute live script in `demo-script.md`. The spok
   - Helsinki has referral data for 2025 only.
   - Åland is excluded.
   - Treatment access is out of scope because the data is flat (5093: 1.8-2.2%).
-  - Source: `app/data/README.md`.
+  - Source: `data/README.md`.
 - **B3 · "Method and sources"**
   - Sotkanet REST API → a static JSON snapshot. Every row has a `source_id`, so the demo works offline.
   - Status rule: each county's 2025 value is compared with Finland's 2025 value.
@@ -189,12 +191,12 @@ The "time" column follows the 3-minute live script in `demo-script.md`. The spok
 
 ## 7. Contradictions and conflicts found in the repo
 
-- **C1 · The indicator 13 and 5033 numbers ARE pulled.** `app/data/values.json` already has 13 and 5033 for 2023-2025 (19 areas in 2025), and `gaps.json` already marks the referral stages red, amber or grey. This outline still uses `[TODO]` placeholders until Phương confirms (N1). Snapshot values to confirm, Sotkanet 13 for 2025 (referrals processed within 3 days, higher is better):
+- **C1 · The indicator 13 and 5033 numbers ARE pulled.** `data/values.json` already has 13 and 5033 for 2023-2025 (19 areas in 2025), and `gaps.json` already marks the referral stages red, amber or grey. The 13 values are now in the deck (N1 only needs Phương's confirmation). Snapshot values, Sotkanet 13 for 2025 (referrals processed within 3 days, higher is better):
   - Lowest: South Ostrobothnia 68.9%.
   - Highest: Kanta-Häme 88.7%.
   - Kainuu 75.2%, Finland 76.8%.
   - 5033 is 0-3% everywhere. That is why the data README makes it "context only", which conflicts with SPEC's "ranked by 13 / 5033" and with the brief's "5033 worst and best county".
-- **C2 · The "85% of people" wording.** The board post (fraidfax, 13 Nov 20:53) has the pitch line "85% of people wait more than a week", and `app/docs/pitch/exa-angle.md:7` has "85% wait over a week for a GP". Both break the wording rule. Luan should fix `exa-angle.md`.
+- **C2 · The "85% of people" wording.** The board post (fraidfax, 13 Nov 20:53) has the pitch line "85% of people wait more than a week", and `docs/pitch/exa-angle.md:7` has "85% wait over a week for a GP". Both break the wording rule. Luan should fix `exa-angle.md`.
 - **C3 · The preliminary submission text** (the preliminary submission text (local file, not in this repo), from the 21:01 board draft) says:
   - "Supports Goal 3 of the national cancer strategy" (crossed out).
   - "physician supply and cancer outcomes" (not built).
@@ -205,8 +207,8 @@ The "time" column follows the 3-minute live script in `demo-script.md`. The spok
   - It says "Demo script (3 minutes) TBD", but `demo-script.md` exists.
   - It says counties are "ranked by 13 / 5033", but the data README says 5033 is context only.
 - **C5 · Exa is not in the demo script.** `demo-script.md` has no Exa beat in either the 3-minute live pitch or the 2:00 video outline. `exa-angle.md` asks for about 15 seconds in the video. Luan decides; the deck keeps Exa on slide 7 either way.
-- **C6 · The Denmark card is not on Vantaa-Kerava.** Screen 3 in the script quotes Denmark's −17 days, a referral fix. Vantaa-Kerava's referral stage is grey (no data), so its act page shows GP-access fixes. `e2e-checklist.md` item 8 already says to take the Denmark card from a county with a red referral stage.
+- **C6 · The Denmark card is not on Vantaa-Kerava.** Screen 3 in the script quotes Denmark's 17 days, a referral fix. Vantaa-Kerava's referral stage is grey (no data), so its act page shows GP-access fixes. Resolved: the Denmark card is shown on `/county/south-ostrobothnia/act` (and Kainuu).
 - **C7 · Exa labels differ.** The APIs return "Found live with Exa" (county news) and "Found live — unverified" (evidence). The checklist and the deck use "found live - unverified" everywhere. The county news API also knows only 4 counties (`e2e-checklist.md` run log).
 - **C8 · `exa-queries.md:171`** says the best demo items are "all from the last 2 weeks", but two of them date from Apr 2026 and Jun 2026.
 - **C9 · Stale files in the repo root.** `PITCH.md` and `BUILD-PLAN.md` (in the team's local working folder, not in this repo) belong to an earlier, different project ("Reitti", 9 slides, "5-10 allowed"). Ignore them. The guide gives no slide limit.
-- **C10 · The app was still placeholders** at the last smoke run (14 Nov, early Saturday): the ranking, county and act screens, with `/sources` returning 404. Slides 3-6 depend on these being finished by the freeze.
+- **C10 · Resolved.** The ranking, county, act and `/sources` screens are built on main and were click-tested in test run 3b (commit 0e40cdf, `test-runs.md`). Only the Exa live panels depend on the keys and the cache, so re-check them on Sunday morning.

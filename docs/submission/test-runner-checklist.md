@@ -1,5 +1,7 @@
 # FirstLine: manual test checklist (for nabeo11)
 
+Also see `docs/pitch/e2e-checklist.md` (the coders' shorter list) and `test-runs.md` (running log of test passes, including Run 3b).
+
 You do not need to code. You click through the app in a browser and report what breaks.
 
 Written from `SPEC.md`, `AGENTS.md` and `docs/pitch/demo-script.md`, and checked against what existed in the repo on 13 Nov.
@@ -117,7 +119,7 @@ One action, one result. Tick when it passes. If it fails, fill the bug template 
 - [ ] Open `/county/vantaa-kerava/act`. You see 2 or 3 actions.
 - [ ] Each action shows all four: **owner**, **first step**, **precedent**, **source**. Tick each card separately; list which field is missing if not.
 - [ ] Each source link opens a real page.
-- [ ] The Denmark fast-track card shows "17 days" (median time to diagnosis) and a quote with a link. This is the number said aloud in the pitch. **[confirm which county shows it]**
+- [ ] The Denmark fast-track card shows "17 days" (median time to diagnosis) and a quote with a link. This is the number said aloud in the pitch. It shows on `/county/south-ostrobothnia/act` (confirmed in test run 3b) and on `/county/kainuu/act`, the two counties with a red referral stage. It does not show on Vantaa-Kerava, which carries the named-GP card (Norway, 25% lower odds).
 - [ ] Repeat on a county with a different bottleneck, for example `/county/kainuu/act`. The actions change to fit (referral, not GP access).
 - [ ] Open a county that has grey (no data) referral stage. The actions page still works and does not claim a number it does not have.
 - [ ] Every number on the page has a source chip.

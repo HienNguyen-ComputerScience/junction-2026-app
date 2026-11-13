@@ -41,7 +41,7 @@ sl.append(slide('1',f'''<div class="brand">FirstLine</div>
 <div class="two"><div class="big"><b class="red">{VK}%</b><span>Vantaa-Kerava</span></div><div class="big"><b class="acc">{PH}%</b><span>Päijät-Häme</span></div></div>
 <div class="grey">Finland {fin}%</div>
 {src('THL Sotkanet 6411, 2025 (share of non-urgent GP visits kept more than 7 days after the need was assessed)')}'''))
-sl.append(slide('2','''<h1>Where the GP is the first stop, most cancer patients start there. Yet no one shows a county where its own first step breaks</h1>
+sl.append(slide('2','''<h1>Where the GP is the first stop, 75 to 85 percent of cancer patients start there. Yet no one shows a county where its own first step breaks</h1>
 <div class="flow"><div class="node">Patient</div><div class="arr hl">→<small>1 · getting in to a GP</small></div><div class="node">GP</div><div class="arr hl">→<small>2 · GP to specialist</small></div><div class="node">Specialist</div></div>
 <p class="note">Context: National cancer strategy 2026-2035, equal care everywhere.</p>
 <div class="src">Steps 1 and 2 are the two steps FirstLine measures. GP as first stop: Vedsted &amp; Olesen, Br J Cancer 2015 (PMC4385978); Danish and UK data, not Finnish. Strategy: Finnish national cancer strategy 2026-2035, implementation roadmap 2026-2031 (STM)</div>'''))
@@ -58,7 +58,7 @@ sl.append(slide('5',f'''<h1>Every county gets 2-3 fixes that already worked else
 <div class="row" style="gap:40px"><div class="col"><div class="cap2">Vantaa-Kerava: the delay is getting in to a GP</div><div class="wrap"><div class="crop" style="width:520px;height:262px"><img src="{S}act-vantaa-kerava.png" style="width:1040px;margin-left:-260px;margin-top:-336px"></div>{tag()}</div>
 <div class="proof"><b>25%</b><span>lower odds of dying in the year studied for patients who kept the same GP for 15+ years (Norway), and fewer hospital admissions.</span><small>Sandvik et al., Br J Gen Pract 2022 · ev-gp-continuity</small></div></div>
 <div class="col"><div class="cap2">South Ostrobothnia: the delay is after the GP</div><div class="wrap"><div class="crop" style="width:520px;height:262px"><img src="{S}act-south-ostrobothnia.png" style="width:1040px;margin-left:-260px;margin-top:-4px"></div>{tag()}</div>
-<div class="proof"><b>17 days</b><span>shorter median time to diagnosis after Denmark's fast-track cancer pathways.</span><small>Jensen et al., BMC Cancer 2015 · ev-ref-denmark-cpp</small></div></div></div>
+<div class="proof"><b>17 days</b><span>shorter median diagnostic interval (adjusted) after Denmark's fast-track cancer pathways.</span><small>Jensen et al., BMC Cancer 2015 · ev-ref-denmark-cpp</small></div></div></div>
 {src("Each card shows owner, first step, precedent and a source. 2 of these fixes are already in Finland's 2026-2031 cancer roadmap (measures 2.5.1, 2.5.2).")}'''))
 sl.append(slide('6',f'''<h1>For the GP: symptoms in, guideline warning signs and the fastest referral route out</h1>
 <div class="row"><div class="wrap"><div class="crop" style="width:470px;height:380px"><img src="{S}red-flag-helper.png" style="width:860px;margin-left:-205px;margin-top:-78px"></div>{tag()}</div>
@@ -84,8 +84,8 @@ sl.append(slide(n,'''<div class="kick">B2</div><h1>Grey means no public data, an
 <div class="src">Source: data/README.md</div>'''));n+=1
 sl.append(slide(n,f'''<div class="kick">B3</div><h1>Method and sources</h1>
 <div class="row"><ul class="bul sm" style="width:560px"><li>Sotkanet API to a static JSON snapshot; every row has a source_id.</li><li>Status: each county's 2025 value vs Finland's 2025 value.</li><li>The AI only writes text around fixed numbers; a validator drops any claim whose number or source is not in the data.</li><li>Sotkanet 6411, 13, 5033 retrieved 13 Nov 2026.</li></ul>
-<div class="ph" style="width:460px;height:300px;font-size:24px"><div>/sources page screenshot<br><small>page is not on main yet (PR #10 open)</small></div></div></div>
-<div class="src">data/sources.json. <span class="todo">TODO</span> <span class="todotxt">/sources screenshot once PR #10 is merged (Tuan, N3)</span></div>'''));n+=1
+<div class="ph" style="width:460px;height:300px;font-size:24px"><div>/sources page screenshot<br><small>page is on main now; screenshot still to add</small></div></div></div>
+<div class="src">data/sources.json. <span class="todo">TODO</span> <span class="todotxt">/sources screenshot (page merged in PR #10; see ../screenshots/09-sources.png) (Tuan, N3)</span></div>'''));n+=1
 EV1=[('Getting to a GP','Named GP (omalääkäri) they keep over time','Norway: 25% lower odds of dying in the year studied (observational)'),
 ('Getting to a GP','Add GP capacity, named-GP model county-wide','Finland roadmap 2.5.1; effect not quantified'),
 ('Getting to a GP','Nurses handle suitable first-contact visits','Cochrane, 18 trials: equal or better outcomes'),
@@ -94,7 +94,7 @@ EV1=[('Getting to a GP','Named GP (omalääkäri) they keep over time','Norway: 
 ('GP recognition','Safety-netting as standard','NICE NG12; effect not quantified'),
 ('GP recognition','Direct CT access plus training','Denmark: no significant overall effect (36 vs 44 days)')]
 EV2=[('GP to specialist','National referral criteria','Finland roadmap 2.5.2; effect not quantified'),
-('GP to specialist','Fast-track pathways with time limits','Denmark: median 17 days shorter'),
+('GP to specialist','Fast-track pathways with time limits','Denmark: median diagnostic interval 17 days shorter (adjusted)'),
 ('GP to specialist','Funded pathways, regions report waits','Sweden: waits cut, regional gaps stayed'),
 ('GP to specialist','Fast diagnostic route for vague symptoms','Denmark: 15-20% referred have cancer'),
 ('GP to specialist','Rapid diagnostic centre pilot','England: 241 cancers in 2,961 referred (8%)'),

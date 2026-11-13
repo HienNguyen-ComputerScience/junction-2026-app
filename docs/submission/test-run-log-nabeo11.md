@@ -1,5 +1,7 @@
 # FirstLine: test run log (run 1 and run 2, automated)
 
+Runs 1 and 2 by nabeo11's test runner. The running log of later passes (Run 3, Run 3b) is `test-runs.md`.
+
 Run 1: 2026-11-14 00:08 Helsinki time (EET). Tester: automated test runner (curl on rendered HTML and API routes, headless Chrome for screenshots). No human has clicked through yet.
 
 ## What was tested
