@@ -102,10 +102,15 @@ export function getVerdict(countyId: string): string {
   if (referral === "red") {
     return "The delay sits at the GP-to-specialist referral: it is slower than Finland, while GP access is at or better than Finland's level.";
   }
+  const gpValue = getStageGap(countyId, "gp_access")?.value;
+  const stillWaiting =
+    gpValue == null
+      ? ""
+      : ` Even so, ${formatPct(gpValue)} of non-urgent GP visits here still come more than a week after people ask.`;
   if (referral === "no_data") {
-    return "No measured step is worse than Finland: GP access is at or better than Finland's level, and there is no public data on referral speed here.";
+    return `No measured step is worse than Finland: GP access is at or better than Finland's level, and there is no public data on referral speed here.${stillWaiting}`;
   }
-  return "No measured step is worse than Finland, but Finland's level is itself a delay: both steps still leave room to speed up.";
+  return `No measured step is worse than Finland: GP access and referrals are both at or better than Finland's level.${stillWaiting}`;
 }
 
 function round1(value: number): number {

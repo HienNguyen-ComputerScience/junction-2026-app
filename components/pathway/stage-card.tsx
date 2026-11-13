@@ -60,21 +60,25 @@ export function StageCard({ step, title, status, measure, emptyText }: StageCard
 
       {measure ? (
         <>
-          <div className="flex flex-col gap-0.5">
-            {measure.value === null ? (
-              <span className="text-2xl font-semibold text-muted-foreground">No value</span>
-            ) : (
+          {measure.value !== null ? (
+            <div className="flex flex-col gap-0.5">
               <span className="text-3xl font-semibold tabular-nums">
                 {formatPct(measure.value)}
               </span>
-            )}
-            <span className="text-sm">{measure.caption}</span>
+              <span className="text-sm">{measure.caption}</span>
+              <span className="text-sm text-muted-foreground">
+                Finland: {formatPct(measure.nationalValue)}
+              </span>
+            </div>
+          ) : (
             <span className="text-sm text-muted-foreground">
-              Finland: {formatPct(measure.nationalValue)}
+              Finland: {formatPct(measure.nationalValue)} {measure.caption}
             </span>
-          </div>
+          )}
           <p className="text-sm">{measure.note}</p>
-          <TrendStrip trend={measure.trend} />
+          {measure.trend.some((point) => point.value !== null) && (
+            <TrendStrip trend={measure.trend} />
+          )}
           <div className="mt-auto">
             <SourceChip sourceId={measure.sourceId} year={measure.year} />
           </div>
