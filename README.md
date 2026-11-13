@@ -15,8 +15,11 @@ Three screens, all built from a committed data snapshot (`data/`, see `data/READ
 The question box is also on the ranking page (`/#ask`). Sources and limitations: `/sources`.
 
 ## Live demo
-URL: TBD
-Demo credentials: none needed (no accounts).
+URL: https://firstline-finland.vercel.app
+Demo credentials: none needed (public, no login).
+
+Hosted on Vercel (project `firstline-finland`), deployed from `main` with the Vercel CLI (`vercel deploy --prod`); it is not auto-deployed on push, so the live site can lag behind `main`.
+The AI-written brief and live Exa search need `ANTHROPIC_API_KEY` and `EXA_API_KEY` set in the Vercel project; without them the site shows the precomputed brief and dated cached Exa results.
 
 ## Stack
 Next.js 16 (App Router, Cache Components), TypeScript, Tailwind CSS 4, shadcn/ui, hosted on Vercel. Data: a static JSON snapshot of THL Sotkanet, rebuilt by a script. Claude API (brief and Exa answers) and Exa search are called server-side only. No database, no patient data.
