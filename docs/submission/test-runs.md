@@ -1,5 +1,7 @@
 # Test runs
 
+Related: `test-run-log-nabeo11.md` (runs 1 and 2, automated) and `test-runner-checklist.md` (manual click-through checklist).
+
 Running log of test passes for FirstLine (junction-2026-app), newest first. Each run records the commit, what was checked, what failed and what is not built yet. Failures are reported as failures. Add a new run above the previous one; do not rewrite old runs.
 
 ## How to run a pass

@@ -1,5 +1,7 @@
 # FirstLine: text for the hackjunction.app form
 
+Related: `final-description-draft.md` (a newer draft of the description that supersedes it once checked).
+
 Ready to paste. Written 13 Nov 2026 from repo state; status text updated 14 Nov from test run 3 (pre-freeze, commit c4f067d). Anything in `TODO (human)` can only be filled by a person. Re-check the sentences listed at the bottom after feature freeze (Sat 18:00) and before switching to FINAL (Sun 10:00, aim 08:00).
 
 ## Project name

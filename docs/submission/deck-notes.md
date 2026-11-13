@@ -1,5 +1,7 @@
 # FirstLine deck: speaker notes and sources (Draft v3)
 
+Related: `deck-outline.md` (older, longer outline) and the 16-slide draft in `deck-nabeo11/`. Which deck is uploaded on Sunday: TODO (lead decides).
+
 Files: `docs/submission/deck.html` (source) and `docs/submission/firstline-deck.pdf` (rendered: 9 slides, 1280×720, about 960 KB). Draft v3 (14 Nov) uses the screenshots retaken at commit c4f067d, adds a crop of the live local news panel to slide 7, and updates the built-vs-next status to `docs/submission/test-runs.md` Run 3 (pre-freeze).
 
 Re-render from PowerShell. Bare `--headless` from Git Bash produced no PDF. Without `--user-data-dir`, Edge can hand off to a running instance and exit without writing.
