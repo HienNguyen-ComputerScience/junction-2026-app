@@ -27,8 +27,8 @@ Run 3 tested commit c4f067d. PRs #45 (22:36 UTC) and #10 (22:38 UTC) merged afte
 | AI county brief with snapshot validator and fallback | Merged (PR #29); mounted on the county page (PR #39); `/api/brief` passes in Run 3 | `lib/brief/`, `app/api/brief/`, `components/brief/` |
 | Exa UI panels: county news, evidence finder, question box | Mounted (PR #39, issue #32 closed). County news on the county page; evidence finder and question box on the act page; question box also on the ranking page. Answers and evidence results tested via the API only, not clicked in the UI (Run 3, check 8) | `components/exa/` |
 | National news strip | API works (Run 3). **Not on any page** | `/api/national-news` |
-| Polish: 404 for unknown counties, collapse extra actions | Merged (PR #45) after Run 3; untested | `app/` |
-| Sources and limitations page | Merged (PR #10, issue #9 closed) at 22:38 UTC, after Run 3. Run 3 saw `/sources` 404 at c4f067d. **Untested on main** | `app/sources/` |
+| Polish: 404 for unknown counties, collapse extra actions | Merged (PR #45) after Run 3. Run 3b (browser, commit 0e40cdf): `/county/narnia` shows the 404 page; the extra actions were not exercised | `app/` |
+| Sources and limitations page | Merged (PR #10, issue #9 closed) at 22:38 UTC, after Run 3. Run 3b (browser, commit 0e40cdf): loads, header link works, lists the 3 Sotkanet indicators and limitations; **does not list the evidence-table sources** | `app/sources/` |
 | E2E docs and browser run | Merged (PR #25, #27, #35, #36) | `docs/pitch/`, `docs/evidence/` |
 | Submission pack (this folder) | Merged (PR #30, #40). Run 3 refresh: issue #43 open; nabeo11's drafts: PR #42 open | `docs/submission/` |
 | Live URL (Vercel) | Not deployed as far as the repo shows (README: "URL: TBD") | TODO (human) |
@@ -61,7 +61,7 @@ Platform: hackjunction.app. Needs a draft project and the chosen challenge. Both
 | [ ] | Merge sources and limitations page (PR #10) | bestawperna | `app/sources/` | Merged (PR #10, 13 Nov 22:38 UTC), after Run 3; not yet tested. Box left for the owner |
 | [ ] | Deploy to Vercel and write the live URL into README.md | HienNguyen-ComputerScience (deploy) | `README.md` "Live demo" | TODO (human) |
 | [ ] | Decide demo credentials: the app has no accounts, so write "none needed" if still true | HienNguyen-ComputerScience | `README.md` | TODO (human) |
-| [ ] | Run the manual test pass on the deployed URL and fill in `test-runs.md` | nabeo11 (test runs) and bestawperna (manual demo testing, Exa live queries) | `docs/submission/test-runs.md` | Run 3 logged (pre-freeze; local dev server, commit c4f067d); post-freeze and deployed-URL run still to do |
+| [ ] | Run the manual test pass on the deployed URL and fill in `test-runs.md` | nabeo11 (test runs) and bestawperna (manual demo testing, Exa live queries) | `docs/submission/test-runs.md` | Run 3 logged (pre-freeze; local dev server, commit c4f067d); Run 3b logged: browser click-test of the main flows (commit 0e40cdf, `playwright-core` because the Playwright MCP could not start); post-freeze and deployed-URL run still to do |
 | [ ] | Update the sentences in [submission-text.md](submission-text.md) listed under "Update on Saturday" | nabeo11 | [submission-text.md](submission-text.md) | Draft |
 | [ ] | Pick the freshest real news item for the demo county and screenshot it with the date visible | fraidfax (pitch) | `docs/pitch/exa-angle.md` prep checklist | TODO (human) |
 | [ ] | Feature freeze at 18:00: after this, only fixes | all | `AGENTS.md` | n/a |
