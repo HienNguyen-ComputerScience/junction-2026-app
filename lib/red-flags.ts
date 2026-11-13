@@ -213,16 +213,22 @@ const ABSENCE_IS_SYMPTOM = new Set(["appetite", "ruokahalu", "healing"]);
  */
 export function matchCategories(text: string): string[] {
   const normalised = text.toLowerCase().replace(/[‘’]/g, "'").replace(STOP_PHRASES, " ");
-  const words = normalised.split(/[^\p{L}']+/u).filter(Boolean);
-  if (words.length === 0) return [];
+  // Words per clause, so a negation never reaches across punctuation ("Pain? No. Blood").
+  const clauses = normalised
+    .split(/[.,;:!?\n]+/)
+    .map((clause) => clause.split(/[^\p{L}']+/u).filter(Boolean))
+    .filter((words) => words.length > 0);
+  if (clauses.length === 0) return [];
   const hit = (keyword: string) =>
     /[\s']/.test(keyword)
       ? normalised.includes(keyword)
-      : words.some(
-          (word, i) =>
-            word.startsWith(keyword) &&
-            !STOP_PREFIXES.some((stop) => word.startsWith(stop)) &&
-            (ABSENCE_IS_SYMPTOM.has(keyword) || !NEGATIONS.has(words[i - 1] ?? "")),
+      : clauses.some((words) =>
+          words.some(
+            (word, i) =>
+              word.startsWith(keyword) &&
+              !STOP_PREFIXES.some((stop) => word.startsWith(stop)) &&
+              (ABSENCE_IS_SYMPTOM.has(keyword) || !NEGATIONS.has(words[i - 1] ?? "")),
+          ),
         );
   return RED_FLAG_CATEGORIES.filter((category) => category.keywords.some(hit)).map(
     (category) => category.id,

@@ -12,8 +12,8 @@ import { isAskResponse, STATUS_LABEL, type AskResponse } from "./types";
 const MAX_QUESTION = 300;
 
 const EXAMPLES = [
-  "How long do people wait to see a GP in Vantaa?",
   "Did Denmark's cancer fast-track pathways shorten diagnosis times?",
+  "How long do people wait to see a GP in Vantaa?",
   "Onko Kainuussa lääkäripula?",
 ];
 
@@ -159,7 +159,9 @@ export function AskBox() {
 
               {!answered && data.nothingFound && (
                 <p className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
-                  Nothing found. {data.message && data.message !== "Nothing found." ? data.message : "The live results did not answer this question."}
+                  {data.message?.startsWith("Nothing found")
+                    ? data.message
+                    : `Nothing found. ${data.message || "The live results did not answer this question."}`}
                 </p>
               )}
 
