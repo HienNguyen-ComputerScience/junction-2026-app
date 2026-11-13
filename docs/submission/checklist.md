@@ -30,7 +30,7 @@ Run 3 tested commit c4f067d. PRs #45 (22:36 UTC) and #10 (22:38 UTC) merged afte
 | Polish: 404 for unknown counties, collapse extra actions | Merged (PR #45) after Run 3. PR #49 made the first request a real 404. Run 3b (browser, commit 0e40cdf): `/county/narnia` shows the 404 page; the extra actions were not exercised | `app/` |
 | Sources and limitations page | Merged (PR #10, issue #9 closed) at 22:38 UTC, after Run 3. Run 3b (browser, commit 0e40cdf): loads, header link works, lists the 3 Sotkanet indicators and limitations; **does not list the evidence-table sources** | `app/sources/` |
 | E2E docs and browser run | Merged (PR #25, #27, #35, #36) | `docs/pitch/`, `docs/evidence/` |
-| Submission pack (this folder) | Merged (PR #30, #40). Run 3 refresh: PR #46, issue #43 closed; Run 3b: PR #50, issue #47 closed. nabeo11's drafts: PR #42 still open (a review-fix commit from the lead's agents was added on 14 Nov; nabeo11 reviews and merges) | `docs/submission/` |
+| Submission pack (this folder) | Merged (PR #30, #40). Run 3 refresh: PR #46, issue #43 closed; Run 3b: PR #50, issue #47 closed. nabeo11's drafts: PR #42 merged on 14 Nov (commit 113f6ad) | `docs/submission/` |
 | MIT `LICENSE` | Added at the repo root (issue #51); README links to it. Whether the repo is public is still a human step | `LICENSE`, `README.md` |
 | Live URL (Vercel) | Not deployed as far as the repo shows (README: "URL: TBD") | TODO (human) |
 | Pitch video | Not in repo | TODO (human) |
@@ -82,7 +82,7 @@ Mirrors the "Final submission checklist" in [docs/junction-2026-guide.md](../jun
 | [ ] | Record the video only after re-running Exa on Sunday morning so the "this week" item is real | fraidfax | [../pitch/exa-angle.md](../pitch/exa-angle.md) | TODO (human) |
 | [ ] | Demo link (live URL opens for someone not logged in anywhere) | HienNguyen-ComputerScience | `README.md` "Live demo" | TODO (human) |
 | [ ] | Source code link: https://github.com/HienNguyen-ComputerScience/junction-2026-app | nabeo11 | `git remote get-url origin` | Ready in repo |
-| [ ] | Repo is public, or shared so organisers can open it; all submissions are MIT-licensed | HienNguyen-ComputerScience | Repo settings. No `LICENSE` file found in the repo (checked 13 Nov) | TODO (human): make repo public and add an MIT `LICENSE` if the lead agrees |
+| [ ] | Repo is public, or shared so organisers can open it; all submissions are MIT-licensed | HienNguyen-ComputerScience | Repo settings. MIT `LICENSE` exists at the repo root (PR #52) | TODO (human): make repo public |
 | [ ] | Source code publicity setting on the form | nabeo11 | [submission-text.md](submission-text.md) | TODO (human) |
 | [ ] | Credit preference on the form | nabeo11 | [submission-text.md](submission-text.md) | TODO (human) |
 | [ ] | Pitch deck as PDF | nabeo11 (deck) | `docs/submission/firstline-deck.pdf` (source `deck.html`, notes `deck-notes.md`) | Draft v3 in repo (screenshots from commit c4f067d, incl. the live news panel); retake screenshots and re-check numbers after the freeze, then remove the "Draft" footer. A second 16-slide draft is in `deck-nabeo11/`. Which PDF is uploaded on Sunday: TODO (lead decides) |
