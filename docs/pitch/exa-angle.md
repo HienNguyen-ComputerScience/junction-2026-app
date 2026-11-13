@@ -9,6 +9,11 @@ Owner: Luan (@fraidfax). Goal: in about 15 seconds, prove that FirstLine knows t
 3. Voice-over: *"The numbers are from THL. But what happened in Vantaa this week isn't in any dataset or any AI's memory. Exa finds it live, and every line links to its source."*
 4. Point at the **"found live — unverified"** label next to the checked evidence table. Message: we keep checked facts separate from live finds. That covers trust (AstraZeneca) and source clarity (Exa) together.
 
+## Real candidates (found 13 Nov, see exa-queries.md "Best demo items")
+
+- Worst county: Lääkärilehti 2 Nov 2026, Vantaa–Kerava hiring 26 more doctors. Best county: ESS 10 Nov 2026, Päijät-Häme expanding named-doctor care. The contrast tells the story in one glance.
+- AstraZeneca hook: Lääkärilehti, 23 Apr 2026, differences between wellbeing counties in detecting lung cancer.
+
 ## For the live judge session (Sun 10:30–14:00)
 
 - Invite the judge to type their own question into the box. Have 2 safe backups ready: test-set #1 and #12 in [exa-judge-tests.md](../evidence/exa-judge-tests.md).

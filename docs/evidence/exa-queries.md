@@ -1,7 +1,7 @@
 # Exa queries for FirstLine (proposal)
 
 Owner: Luan (@fraidfax). Code owner for the Exa layer: Phương (`lib/exa/`, `app/api/`).
-Status: **designed on paper, not yet run.** No `EXA_API_KEY` was available on 13 Nov. The results table at the bottom is empty until someone with the key runs these.
+Status: **run on 13 Nov 2026, ~23:45 Helsinki** (15 calls, total cost $0.12). Results at the bottom.
 
 Based on current Exa docs (`POST https://api.exa.ai/search`, checked 13 Nov 2026 via Context7).
 
@@ -137,23 +137,44 @@ Rules for either option:
 
 ---
 
-## Results (to fill in when the key arrives)
+## Results (run 13 Nov 2026)
 
-Run each call for the 4 demo counties. Record:
+Queries exactly as above (1a with and without `category: "news"`). All 15 calls returned HTTP 200. Cost and latency are the values the API reported.
 
-| County | Call | # results | Newest date | Finnish? | Relevant (0–3) | Latency ms | Cost $ | Notes |
+| County | Call | # | Newest | Finnish? | Relevant (0–3) | Latency ms | Cost $ | Notes |
 |---|---|---|---|---|---|---|---|---|
-| Vantaa–Kerava | 1a | | | | | | | |
-| Vantaa–Kerava | 1b | | | | | | | |
-| Helsinki | 1a | | | | | | | |
-| Helsinki | 1b | | | | | | | |
-| Päijät-Häme | 1a | | | | | | | |
-| Päijät-Häme | 1b | | | | | | | |
-| Kainuu | 1a | | | | | | | |
-| Kainuu | 1b | | | | | | | |
-| — | 2 (each action) | | | | | | | |
+| Vantaa–Kerava | 1a | 8 | 2026-11-02 | yes | 3 | 637 | 0.007 | Vantaan Sanomat, Yle, vakehyva.fi, Lääkärilehti. All on GP queues / staffing |
+| Vantaa–Kerava | 1a no cat | 8 | 2026-11-02 | yes | 3 | 374 | 0.007 | Same plus more vakehyva.fi pages |
+| Vantaa–Kerava | 1b | 5 | 2026-11-05 | yes | 2 | 499 | 0.007 | National cancer-delay news (HS, Yle, THL), not Vantaa-specific |
+| Helsinki | 1a | 8 | 2026-10-07 | yes | 3 | 455 | 0.007 | hel.fi, HS. 1 Vantaa result leaked in |
+| Helsinki | 1a no cat | 8 | 2026-11-05 | yes | 3 | 385 | 0.007 | HS 5 Nov "every Helsinki resident gets their own doctor next year" |
+| Helsinki | 1b | 5 | 2026-11-05 | yes | 2 | 476 | 0.007 | National, plus HS patient story |
+| Päijät-Häme | 1a | 8 | 2026-11-10 | yes | 3 | 414 | 0.007 | ess.fi, Yle, Lääkärilehti. Named-doctor model, queues cleared |
+| Päijät-Häme | 1a no cat | 8 | 2026-11-10 | yes | 3 | 373 | 0.007 | Identical to 1a |
+| Päijät-Häme | 1b | 5 | 2026-11-05 | yes | 2 | 502 | 0.007 | 1 county item (Lääkärilehti, cancer support network) |
+| Kainuu | 1a | 8 | 2026-10-30 | yes | 3 | 397 | 0.007 | Kainuun Sanomat: "Kajaani patients still queue for months" (13 Mar) |
+| Kainuu | 1a no cat | 8 | 2026-10-30 | yes | 3 | 413 | 0.007 | Identical to 1a |
+| Kainuu | 1b | 5 | 2026-11-05 | yes | 1 | 394 | 0.007 | National only |
+| — | 2 fast-track | 5 | 2020 | no | 3 | 7209 | 0.012 | Danish GP survey before/after cancer patient pathways (2015) etc. |
+| — | 2 RDC | 5 | 2025-07-23 | no | 3 | 4938 | 0.012 | Guy's RDC evaluations, South East London rollout 2025 |
+| — | 2 nurse triage | 4 | 2026-04-08 | no | 2 | 9341 | 0.012 | GP→nurse task shifting (2026), Danish telephone triage |
 
-Relevance: 0 = off-topic, 1 = right topic, wrong county, 2 = right county, general, 3 = right county, GP access or cancer pathway.
+### What we learned
+
+1. **County news works very well.** 8/8 results on topic for every county, all in Finnish, most from 2026, and newest items only 3–11 days old. Local papers (Vantaan Sanomat, ESS, Kainuun Sanomat) carry it.
+2. **`category: "news"` makes almost no difference.** Without it we get a few more county press pages. Recommendation: **drop the category** for 1a.
+3. **1b (cancer) is national, not county-level.** The same 4 national articles come back for every county. Recommendation: show 1b once as a "Finland, cancer pathway, this month" strip, not per county. Fewer calls, honest labelling.
+4. **Evidence finder (deep + publication) finds the right papers**, but takes 5–9 s. It must be cached or pre-warmed; never call it live during the pitch.
+5. **Speed:** fast search ~0.4–0.6 s, so live judge questions are fine.
+6. **Cost:** $0.007 per fast call and $0.012 per deep call, so the $50 credit is no constraint.
+
+### Best demo items (all from the last 2 weeks; re-check on Sun morning)
+
+- **Lääkärilehti, 23 Apr 2026: "Keuhkosyövän toteamisessa eroja hyvinvointialueiden välillä"** (differences between wellbeing counties in detecting lung cancer). This is exactly our thesis, and AstraZeneca is a lung-cancer company.
+- HS, 5 Nov 2026: "Syövän hoitoviiveitä on tarkasteltava koko hoitopolun näkökulmasta" (cancer delays must be looked at across the whole pathway). Paywalled.
+- ESS, 10 Nov 2026: more Päijät-Häme residents get a named nurse and doctor (the county ranked best on GP wait).
+- Lääkärilehti, 2 Nov 2026: Vantaa–Kerava hires 450–500 staff, 26 of them doctors (the county ranked worst).
+- THL, 3 Jun 2026: waits for primary care are getting longer.
 
 ## Open questions for Phương
 1. Does `category: "news"` cover Finnish regional papers well? Test 1a with and without it.
