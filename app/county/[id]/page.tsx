@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Fragment } from "react";
 
+import { CountyBrief } from "@/components/brief/county-brief";
+import { CountyNews } from "@/components/exa/county-news";
 import { LimitationsBox, type LimitationItem } from "@/components/pathway/limitations-box";
 import { StageCard, type StageCardProps } from "@/components/pathway/stage-card";
 import { SourceChip } from "@/components/source-chip";
@@ -40,64 +42,87 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const lateReferralsFinland = getNationalValue(REFERRAL_LATE_ID);
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8">
-      <Link
-        href="/"
-        className={buttonVariants({ variant: "ghost", size: "sm", className: "w-fit" })}
-      >
-        <ArrowLeft aria-hidden />
-        Back to ranking
-      </Link>
-
-      <header className="flex flex-col gap-3">
-        <p className="text-sm font-medium text-muted-foreground">
-          Path to early cancer care · {county.name_fi}
-        </p>
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{county.name}</h1>
-        <p className="max-w-3xl text-lg">{getVerdict(county.id)}</p>
+    // Two columns on desktop: the limitations box sits in a sticky side column so it is
+    // visible without scrolling; on phones it comes straight after the verdict.
+    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-x-8">
+      <div className="flex flex-col gap-4 lg:col-start-1 lg:row-start-1">
         <Link
-          href={`/county/${county.id}/act`}
-          className={buttonVariants({ size: "lg", className: "w-fit px-4 text-base" })}
+          href="/"
+          className={buttonVariants({ variant: "ghost", size: "sm", className: "w-fit" })}
         >
-          What to do about it
-          <ArrowRight aria-hidden data-icon="inline-end" />
+          <ArrowLeft aria-hidden />
+          Back to ranking
         </Link>
-      </header>
 
-      <section aria-labelledby="pathway-heading" className="flex flex-col gap-3">
-        <h2 id="pathway-heading" className="text-xl font-semibold">
-          The first steps, compared with Finland ({LATEST_YEAR})
-        </h2>
-        <ol className="grid grid-cols-1 gap-2 md:grid-cols-[1fr_auto_1fr_auto_1fr] md:items-stretch">
-          {stages.map((stage, index) => (
-            <Fragment key={stage.title}>
-              {index > 0 && (
-                <li aria-hidden className="flex items-center justify-center text-muted-foreground">
-                  <ArrowDown className="size-5 md:hidden" />
-                  <ArrowRight className="hidden size-5 md:block" />
+        <header className="flex flex-col gap-3">
+          <p className="text-sm font-medium text-muted-foreground">
+            Path to early cancer care · {county.name_fi}
+          </p>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{county.name}</h1>
+          <p className="max-w-3xl text-base sm:text-lg">{getVerdict(county.id)}</p>
+          <Link
+            href={`/county/${county.id}/act`}
+            className={buttonVariants({ size: "lg", className: "w-fit px-4 text-base" })}
+          >
+            What to do about it
+            <ArrowRight aria-hidden data-icon="inline-end" />
+          </Link>
+        </header>
+      </div>
+
+      <LimitationsBox
+        items={limitations}
+        className="lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto"
+      />
+
+      <div className="flex flex-col gap-8 lg:col-start-1 lg:row-start-2">
+        <section aria-labelledby="pathway-heading" className="flex flex-col gap-3">
+          <h2 id="pathway-heading" className="text-xl font-semibold">
+            The first steps, compared with Finland ({LATEST_YEAR})
+          </h2>
+          <ol className="grid grid-cols-1 gap-2 md:grid-cols-[1fr_auto_1fr_auto_1fr] md:items-stretch">
+            {stages.map((stage, index) => (
+              <Fragment key={stage.title}>
+                {index > 0 && (
+                  <li aria-hidden className="flex items-center justify-center text-muted-foreground">
+                    <ArrowDown className="size-5 md:hidden" />
+                    <ArrowRight className="hidden size-5 md:block" />
+                  </li>
+                )}
+                <li>
+                  <StageCard {...stage} />
                 </li>
-              )}
-              <li>
-                <StageCard {...stage} />
-              </li>
-            </Fragment>
-          ))}
-        </ol>
-        <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-          <span>
-            Context: referrals left unprocessed for more than 21 days in {LATEST_YEAR}:{" "}
-            {lateReferrals ? `${lateReferrals.value}%` : "no public data"}
-            {lateReferralsFinland ? ` (Finland ${lateReferralsFinland.value}%)` : ""}. Too
-            small everywhere to tell counties apart, so it does not set any colour.
-          </span>
-          <SourceChip
-            sourceId={lateReferrals?.source_id ?? lateReferralsFinland?.source_id ?? "sotkanet-5033"}
-            year={LATEST_YEAR}
-          />
-        </p>
-      </section>
+              </Fragment>
+            ))}
+          </ol>
+          <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+            <span>
+              Context: referrals left unprocessed for more than 21 days in {LATEST_YEAR}:{" "}
+              {lateReferrals ? `${lateReferrals.value}%` : "no public data"}
+              {lateReferralsFinland ? ` (Finland ${lateReferralsFinland.value}%)` : ""}. Too
+              small everywhere to tell counties apart, so it does not set any colour.
+            </span>
+            <SourceChip
+              sourceId={lateReferrals?.source_id ?? lateReferralsFinland?.source_id ?? "sotkanet-5033"}
+              year={LATEST_YEAR}
+            />
+          </p>
+        </section>
 
-      <LimitationsBox items={limitations} />
+        <section aria-labelledby="brief-heading" className="flex flex-col gap-3">
+          <h2 id="brief-heading" className="text-xl font-semibold">
+            Brief for the county director
+          </h2>
+          <CountyBrief countyId={county.id} />
+        </section>
+
+        <section aria-labelledby="news-heading" className="flex flex-col gap-3">
+          <h2 id="news-heading" className="text-xl font-semibold">
+            Local news
+          </h2>
+          <CountyNews key={county.id} countyId={county.id} />
+        </section>
+      </div>
     </main>
   );
 }

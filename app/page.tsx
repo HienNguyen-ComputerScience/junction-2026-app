@@ -1,3 +1,4 @@
+import { AskBox } from "@/components/exa/ask-box";
 import { RankingList } from "@/components/ranking/ranking-list";
 import { SourceChip } from "@/components/source-chip";
 import { LATEST_YEAR } from "@/lib/data";
@@ -71,6 +72,13 @@ export default function CountyRankingPage() {
           gpWaitSourceId={nationalGpWait.source_id}
           referralSourceId={nationalReferral.source_id}
         />
+      </section>
+
+      <section id="ask" aria-labelledby="ask-heading" className="flex scroll-mt-4 flex-col gap-3">
+        <h2 id="ask-heading" className="text-xl font-semibold">
+          Ask the evidence, answered live from Exa search results
+        </h2>
+        <AskBox />
       </section>
     </main>
   );

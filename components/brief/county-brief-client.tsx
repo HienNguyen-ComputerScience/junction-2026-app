@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import type { BriefResponse } from "@/lib/brief/types";
 
 type Status = "idle" | "loading" | "error";
@@ -52,7 +52,7 @@ export function CountyBriefClient({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Brief for the county director</CardTitle>
+        {/* The page section supplies the "Brief for the county director" heading. */}
         <CardDescription>
           Where the pathway breaks in {countyName}, in plain language. Every number comes from the data snapshot.
         </CardDescription>

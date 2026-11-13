@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { ActionCard } from "@/components/act/action-card";
 import { RedFlagHelper } from "@/components/act/red-flag-helper";
+import { AskBox } from "@/components/exa/ask-box";
+import { EvidenceFinder } from "@/components/exa/evidence-finder";
 import { SourceChip } from "@/components/source-chip";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -63,7 +65,9 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           <p className="text-sm text-muted-foreground">{SELECTION_RULE}</p>
         </div>
         {recommended.map((action) => (
-          <ActionCard key={action.id} action={action} />
+          <ActionCard key={action.id} action={action}>
+            <EvidenceFinder actionId={action.id} actionTitle={action.action} />
+          </ActionCard>
         ))}
       </section>
 
@@ -116,6 +120,13 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           </p>
         </div>
         <RedFlagHelper />
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="ask-heading">
+        <h2 id="ask-heading" className="text-xl font-semibold">
+          Ask the evidence, answered live from Exa search results
+        </h2>
+        <AskBox />
       </section>
 
       <nav className="flex flex-wrap gap-2 border-t pt-4 text-sm">
