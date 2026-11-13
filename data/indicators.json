@@ -1,0 +1,32 @@
+[
+  {
+    "indicator_id": "6411",
+    "name": "Waiting time for elective outpatient medical visit (physician) in primary health care exceeds 7 days from assessment of the need for treatment, % appointments kept",
+    "short_name": "GP wait over 7 days",
+    "unit": "%",
+    "direction": "higher_is_worse",
+    "stage": "gp_access",
+    "limitation": "Covers all non-urgent GP (physician) appointments in primary care, not only possible cancer. Counts appointments that were kept.",
+    "source_id": "sotkanet-6411"
+  },
+  {
+    "indicator_id": "13",
+    "name": "Referrals for specialised health care received processed within 3 days, % of referrals received",
+    "short_name": "Referrals processed within 3 days",
+    "unit": "%",
+    "direction": "lower_is_worse",
+    "stage": "referral",
+    "limitation": "Measures how fast the hospital starts assessing a referral, not when the patient sees a specialist. Not cancer-specific. No county-level value for East, Central and West Uusimaa or Vantaa and Kerava.",
+    "source_id": "sotkanet-13"
+  },
+  {
+    "indicator_id": "5033",
+    "name": "Referrals for specialised health care received after processing for more than 21 days, % of the referrals received",
+    "short_name": "Referrals waiting over 21 days",
+    "unit": "%",
+    "direction": "higher_is_worse",
+    "stage": null,
+    "limitation": "Published as whole percentages and 0-3% everywhere, so it barely separates counties. Shown as context only, not used for ranking or stage status.",
+    "source_id": "sotkanet-5033"
+  }
+]

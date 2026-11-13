@@ -1,0 +1,186 @@
+[
+  {
+    "id": "central-finland",
+    "kind": "county",
+    "name": "Central Finland",
+    "name_fi": "Keski-Suomen hyvinvointialue",
+    "sotkanet_region_id": 965,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "central-ostrobothnia",
+    "kind": "county",
+    "name": "Central Ostrobothnia",
+    "name_fi": "Keski-Pohjanmaan hyvinvointialue",
+    "sotkanet_region_id": 964,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "central-uusimaa",
+    "kind": "county",
+    "name": "Central Uusimaa",
+    "name_fi": "Keski-Uudenmaan hyvinvointialue",
+    "sotkanet_region_id": 966,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "east-uusimaa",
+    "kind": "county",
+    "name": "East Uusimaa",
+    "name_fi": "Itä-Uudenmaan hyvinvointialue",
+    "sotkanet_region_id": 961,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "finland",
+    "kind": "country",
+    "name": "Finland",
+    "name_fi": "Koko maa",
+    "sotkanet_region_id": 658,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "helsinki",
+    "kind": "city",
+    "name": "Helsinki",
+    "name_fi": "Helsingin kaupunki",
+    "sotkanet_region_id": 960,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "kainuu",
+    "kind": "county",
+    "name": "Kainuu",
+    "name_fi": "Kainuun hyvinvointialue",
+    "sotkanet_region_id": 962,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "kanta-hame",
+    "kind": "county",
+    "name": "Kanta-Häme",
+    "name_fi": "Kanta-Hämeen hyvinvointialue",
+    "sotkanet_region_id": 963,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "kymenlaakso",
+    "kind": "county",
+    "name": "Kymenlaakso",
+    "name_fi": "Kymenlaakson hyvinvointialue",
+    "sotkanet_region_id": 967,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "lapland",
+    "kind": "county",
+    "name": "Lapland",
+    "name_fi": "Lapin hyvinvointialue",
+    "sotkanet_region_id": 968,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "north-karelia",
+    "kind": "county",
+    "name": "North Karelia",
+    "name_fi": "Pohjois-Karjalan hyvinvointialue",
+    "sotkanet_region_id": 972,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "north-ostrobothnia",
+    "kind": "county",
+    "name": "North Ostrobothnia",
+    "name_fi": "Pohjois-Pohjanmaan hyvinvointialue",
+    "sotkanet_region_id": 973,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "north-savo",
+    "kind": "county",
+    "name": "North Savo",
+    "name_fi": "Pohjois-Savon hyvinvointialue",
+    "sotkanet_region_id": 974,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "ostrobothnia",
+    "kind": "county",
+    "name": "Ostrobothnia",
+    "name_fi": "Pohjanmaan hyvinvointialue",
+    "sotkanet_region_id": 971,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "paijat-hame",
+    "kind": "county",
+    "name": "Päijät-Häme",
+    "name_fi": "Päijät-Hämeen hyvinvointialue",
+    "sotkanet_region_id": 975,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "pirkanmaa",
+    "kind": "county",
+    "name": "Pirkanmaa",
+    "name_fi": "Pirkanmaan hyvinvointialue",
+    "sotkanet_region_id": 970,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "satakunta",
+    "kind": "county",
+    "name": "Satakunta",
+    "name_fi": "Satakunnan hyvinvointialue",
+    "sotkanet_region_id": 976,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "south-karelia",
+    "kind": "county",
+    "name": "South Karelia",
+    "name_fi": "Etelä-Karjalan hyvinvointialue",
+    "sotkanet_region_id": 957,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "south-ostrobothnia",
+    "kind": "county",
+    "name": "South Ostrobothnia",
+    "name_fi": "Etelä-Pohjanmaan hyvinvointialue",
+    "sotkanet_region_id": 958,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "south-savo",
+    "kind": "county",
+    "name": "South Savo",
+    "name_fi": "Etelä-Savon hyvinvointialue",
+    "sotkanet_region_id": 959,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "southwest-finland",
+    "kind": "county",
+    "name": "Southwest Finland",
+    "name_fi": "Varsinais-Suomen hyvinvointialue",
+    "sotkanet_region_id": 978,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "vantaa-kerava",
+    "kind": "county",
+    "name": "Vantaa and Kerava",
+    "name_fi": "Vantaan ja Keravan hyvinvointialue",
+    "sotkanet_region_id": 977,
+    "source_id": "sotkanet-regions"
+  },
+  {
+    "id": "west-uusimaa",
+    "kind": "county",
+    "name": "West Uusimaa",
+    "name_fi": "Länsi-Uudenmaan hyvinvointialue",
+    "sotkanet_region_id": 969,
+    "source_id": "sotkanet-regions"
+  }
+]
