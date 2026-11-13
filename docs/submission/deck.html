@@ -99,6 +99,8 @@
   .step-no { display: inline-block; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: #fff; text-align: center; line-height: 34px; font-weight: 700; font-size: 18px; margin-right: 8px; }
   .shotwrap { width: 100%; aspect-ratio: 1140 / 900; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.08); margin-bottom: 16px; background: #fff; }
   .shot { display: block; width: 126.316%; max-width: none; height: auto; margin-left: -13.158%; }
+  .livecrop { position: relative; width: 710px; height: 297px; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: #fff; margin-top: 14px; }
+  .livecrop img { position: absolute; width: 1294.2px; max-width: none; height: auto; left: -134.8px; top: -1583.5px; }
   .shotnote { position: absolute; left: 80px; right: 80px; bottom: 52px; font-size: 14px; color: var(--muted); }
   .where { font-size: 15px; color: var(--muted); margin-top: 10px; }
   .where b { color: var(--ink); font-weight: 600; }
@@ -126,8 +128,8 @@
   /* slide 7 */
   .twocol { display: flex; gap: 28px; }
   .col { flex: 1; border-radius: 14px; padding: 24px 26px; }
-  .col.checked { background: var(--accent-soft); border: 2px solid var(--accent); flex: .8; }
-  .col.live { background: var(--card); border: 2px dashed var(--muted); flex: 1.2; }
+  .col.checked { background: var(--accent-soft); border: 2px solid var(--accent); flex: 0 0 330px; }
+  .col.live { background: var(--card); border: 2px dashed var(--muted); flex: 1; padding: 20px 22px; }
   .col h3 { font-size: 24px; margin: 0 0 12px; }
   .news { border-top: 1px solid var(--line); padding: 11px 0; font-size: 19px; line-height: 1.3; }
   .news .meta { font-size: 15px; color: var(--muted); }
@@ -163,7 +165,7 @@
     <p class="brand">First<span>Line</span></p>
     <p class="promise">Shows a wellbeing services county director where the first step of early cancer care breaks in their county, and what to do about it on Monday.</p>
   </div>
-  <p class="draft">Draft v2 — screenshots from commit 18daaeb, re-check after feature freeze (Sat 18:00)</p>
+  <p class="draft">Draft v3 — screenshots from commit c4f067d, re-check after feature freeze (Sat 18:00)</p>
 </section>
 
 <!-- 2 PROBLEM -->
@@ -226,7 +228,7 @@
       <p>Actions with owner, first step, precedent and source, plus a red-flag helper.</p>
     </div>
   </div>
-  <p class="shotnote">Screenshots of the running app at commit 18daaeb (local dev server, 1440×900 viewport; blank side margins trimmed).</p>
+  <p class="shotnote">Screenshots of the running app at commit c4f067d (local dev server, 1440×900 viewport; blank side margins trimmed).</p>
   <div class="foot"><span>FirstLine</span><span>4</span></div>
 </section>
 
@@ -276,7 +278,7 @@
     <div class="card">
       <h3>AI can't invent numbers</h3>
       <p class="what" style="font-size:20px;">Validators drop any claim whose number isn't in its source.</p>
-      <div class="chiprow"><span class="chip"><b>API:</b> question box</span> <span class="chip"><b>API:</b> county brief</span></div>
+      <div class="chiprow"><span class="chip"><b>On page:</b> county brief</span> <span class="chip"><b>On page:</b> question box</span></div>
     </div>
   </div>
   <p class="bottomline" style="bottom:150px;">Public data only. No patient data. Decision support, not diagnosis.</p>
@@ -292,14 +294,12 @@
       <h3>✓ Checked evidence</h3>
       <p class="body" style="font-size:21px;">14 actions, each quoted from its source.</p>
       <p style="margin-top:14px;"><span class="chip"><b>FirstLine evidence table</b> · 2026</span></p>
-      <p class="body" style="font-size:19px;margin-top:22px;color:var(--muted);">Ask anything: linked answers, or “nothing found”.</p>
+      <p class="body" style="font-size:19px;margin-top:22px;color:var(--muted);">Question box: answers only from linked results, or “nothing found”.</p>
     </div>
     <div class="col live">
-      <h3>Found live — unverified <span class="chip live" style="margin-left:8px;">found 13 Nov 2026</span></h3>
-      <div class="news"><span class="meta">Lääkärilehti · 2 Nov 2026</span><br>Vantaa–Kerava is hiring more doctors</div>
-      <div class="news"><span class="meta">Etelä-Suomen Sanomat · 10 Nov 2026</span><br>Päijät-Häme expands named doctor and nurse care</div>
-      <div class="news"><span class="meta">Lääkärilehti · 23 Apr 2026</span><br>Counties differ in how lung cancer is detected</div>
-      <p class="muted" style="font-size:15px;margin-top:8px;">Dated link on every item.</p>
+      <h3 style="margin-bottom:0;">Found live — unverified <span class="chip live" style="margin-left:8px;">dated link on every item</span></h3>
+      <div class="livecrop"><img src="screenshots/05-exa-live.png" alt="Local news panel on the Vantaa and Kerava county page: Last 12 months, Found live — unverified, via Exa, Cached, with dated Finnish news items"></div>
+      <p class="muted" style="font-size:14px;margin-top:8px;">Local news panel, Vantaa–Kerava county page, commit c4f067d.</p>
     </div>
   </div>
   <div class="foot"><span>FirstLine</span><span>7</span></div>
@@ -324,19 +324,18 @@
     <div class="list">
       <h3>Real today</h3>
       <ul>
-        <li>Ranking, pathway and act screens</li>
-        <li>Red-flag helper</li>
-        <li>22 areas, 3 indicators; 14 checked actions</li>
-        <li>Exa API: news, evidence, ask + validator</li>
-        <li>AI county brief API + fallback</li>
+        <li>Three screens, source chips, limitations box</li>
+        <li>County page: AI brief + local news, all 22 areas</li>
+        <li>Act page: evidence finder, question box</li>
+        <li>Question box on the ranking page; red-flag helper</li>
+        <li>Rate limit; saved demo results if search is down</li>
       </ul>
     </div>
     <div class="list next">
-      <h3>Next: wire into the screens</h3>
+      <h3>Next</h3>
       <ul>
-        <li>Exa panels, question box, AI brief on pages</li>
-        <li>Sources &amp; limitations page (PR #10)</li>
-        <li>County news beyond 4 demo counties</li>
+        <li>National news strip on a page (API only)</li>
+        <li>Sources page: merged after run 3, untested</li>
         <li>Live deploy</li>
       </ul>
     </div>
