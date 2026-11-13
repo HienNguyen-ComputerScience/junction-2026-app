@@ -22,7 +22,12 @@ A wellbeing services county director (or a GP in that county). Judges are market
 - Judging: Actionability 30 · Insight 25 · Data transparency 20 · Execution 15 · Clarity in 2 min 10.
 - Printed brief: the Goal 3 requirement was crossed out, so Goal 3 is context, not a must.
 - Mentor: solve one gap well (two is better). Gaps named: GP access by region, GP recognition of symptoms, GP → specialist time.
-- Possible 2nd challenge: **Exa** (decide Sat after the 11:00 check): live county news, evidence search, a question box for judges.
+- 2nd challenge: **Exa**. Judging, 20% each: use of Exa (info a model couldn't know from training) · usefulness to a specific group · clarity in showing sources · originality · working implementation on live queries the judges type themselves.
+  - **County news:** on the county page, an Exa search of the last 12 months (domains such as yle.fi, thl.fi, county sites) about GP access and cancer care, with source links.
+  - **Evidence finder:** under each action, an Exa search of research papers and Nordic reports, with Contents text so Claude can write a cited card. Shown as "found live — unverified", next to Luan's checked table.
+  - **Judge question box:** a free-text question answered only from Exa results, with links and a clean "nothing found".
+  - Server-side only (`EXA_API_KEY` in `.env.local`, never in client code). Cache results for the demo; must degrade gracefully if Exa is down.
+  - Credits: $50 per participant, code `EXA50JUNCTION` at dashboard.exa.ai/billing.
 
 ## Research notes (with source links)
 - THL Sotkanet: https://sotkanet.fi (6411 GP visits waiting > 7 days: 2025 range Päijät-Häme 32.7% → Vantaa–Kerava 85.4%, Finland 54.7%).

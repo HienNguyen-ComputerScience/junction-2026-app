@@ -37,15 +37,16 @@ Humans over agents. Only the team lead reassigns work between teammates. If anyo
 
 Fill this in at kickoff so every agent knows whose files are whose.
 
-Challenge: AstraZeneca "Equal Care Across Finland" (FirstLine). Exa may be added as a 2nd challenge after the Sat 11:00 check.
+Challenges: AstraZeneca "Equal Care Across Finland" (main) + Exa (2nd, via the live-search layer). If the Sat 11:00 check slips, the Exa layer is cut first.
 
 | Area | Owner (GitHub login) | Folders |
 |---|---|---|
 | Lead, integration, merges, deploy | HienNguyen-ComputerScience | repo root config, `AGENTS.md`, `SPEC.md` |
 | Data snapshot (Sotkanet etc.) | HienNguyen-ComputerScience | `data/`, `scripts/data/` |
 | App (3 screens), AI helper + validator | HienNguyen-ComputerScience | `app/`, `components/`, `lib/` (except `app/sources/`) |
+| Exa live-search layer (county news, evidence finder, judge question box) | HienNguyen-ComputerScience | `lib/exa/`, `app/api/`, `scripts/exa/` |
 | Evidence table, mentor log, pitch, video, code review + e2e | fraidfax | `docs/evidence/`, `docs/pitch/` |
-| Sources & limitations page, manual demo testing | bestawperna | `app/sources/` |
+| Sources & limitations page, manual demo testing, live-query testing (Exa) | bestawperna | `app/sources/` |
 | Submission, deck, sponsor questions, test runs | nabeo11 | `docs/submission/` |
 
 ## 5. Project rules
