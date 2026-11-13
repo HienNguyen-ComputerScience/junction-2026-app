@@ -6,12 +6,14 @@ import {
   formatPct,
   getNationalValue,
   getRanking,
+  getUnrankedCounties,
   GP_WAIT_ID,
   REFERRAL_ID,
 } from "@/lib/ranking";
 
 export default function CountyRankingPage() {
   const rows = getRanking();
+  const unranked = getUnrankedCounties();
   const nationalGpWait = getNationalValue(GP_WAIT_ID);
   const nationalReferral = getNationalValue(REFERRAL_ID);
   const worst = rows[0];
@@ -57,7 +59,7 @@ export default function CountyRankingPage() {
       <section aria-labelledby="ranking-heading" className="flex flex-col gap-3">
         <div className="flex flex-col gap-1">
           <h2 id="ranking-heading" className="text-xl font-semibold">
-            All {rows.length} areas, longest GP waits first
+            All {rows.length + unranked.length} areas, longest GP waits first
           </h2>
           <p className="text-sm text-muted-foreground">
             21 wellbeing services counties and the City of Helsinki. Pick an
@@ -67,6 +69,7 @@ export default function CountyRankingPage() {
         </div>
         <RankingList
           rows={rows}
+          unranked={unranked}
           nationalGpWait={nationalGpWait.value}
           nationalReferral={nationalReferral.value}
           gpWaitSourceId={nationalGpWait.source_id}

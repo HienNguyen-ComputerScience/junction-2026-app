@@ -14,6 +14,8 @@ const MODE_LABEL: Record<BriefResponse["mode"], string> = {
   fallback: "Precomputed from the snapshot",
 };
 
+const AI_PRECOMPUTED_HEADLINE_LABEL = "AI-written; headline precomputed";
+
 function isBriefResponse(v: unknown): v is BriefResponse {
   if (typeof v !== "object" || v === null) return false;
   const r = v as Record<string, unknown>;
@@ -59,8 +61,15 @@ export function CountyBriefClient({
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant={brief.mode === "ai" ? "default" : "secondary"}>{MODE_LABEL[brief.mode]}</Badge>
+          <Badge variant={brief.mode === "ai" ? "default" : "secondary"}>
+            {brief.mode === "ai" && brief.headline_precomputed ? AI_PRECOMPUTED_HEADLINE_LABEL : MODE_LABEL[brief.mode]}
+          </Badge>
           {brief.mode === "ai" && brief.model && <span className="text-xs text-muted-foreground">{brief.model}</span>}
+          {brief.mode === "ai" && brief.headline_precomputed && (
+            <span className="text-xs text-muted-foreground">
+              The AI headline failed the snapshot check, so the precomputed headline is shown.
+            </span>
+          )}
           {triedAi && (
             <span className="text-xs text-muted-foreground">
               {brief.dropped_count === 0

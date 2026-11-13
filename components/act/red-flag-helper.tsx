@@ -112,6 +112,7 @@ export function RedFlagHelper() {
           type="text"
           value={text}
           onChange={(event) => setText(event.target.value)}
+          maxLength={300}
           placeholder="e.g. weight loss, tiredness"
           autoComplete="off"
           className="h-9 rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -127,6 +128,11 @@ export function RedFlagHelper() {
                   ? `Warning-sign category: ${matched.map((c) => c.label.toLowerCase()).join("; ")}`
                   : "No category matched. That does not rule anything out."}
               </p>
+              {matched.length === 0 ? (
+                <p className="mt-1 font-medium">
+                  If you are worried or it gets worse, contact a health professional now.
+                </p>
+              ) : null}
               <p className="mt-1 text-base font-semibold">{tier.title}</p>
             </div>
             <p>

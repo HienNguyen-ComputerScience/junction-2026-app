@@ -172,6 +172,7 @@ async function callClaude(context: BriefContext, key: string): Promise<Outcome> 
       response: {
         mode: "ai",
         headline,
+        ...(checked.headline === null && { headline_precomputed: true }),
         claims: checked.kept.slice(0, MAX_CLAIMS).map(({ text, source_ids }) => ({ text, source_ids })),
         dropped_count: checked.dropped.length,
         model,

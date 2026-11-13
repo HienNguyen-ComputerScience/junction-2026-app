@@ -67,4 +67,6 @@ export type BriefResponse = {
   claims: BriefClaim[];
   dropped_count: number;
   model?: string;
+  /** mode "ai" only: true when the AI headline failed the check and the precomputed one was used. */
+  headline_precomputed?: boolean;
 };

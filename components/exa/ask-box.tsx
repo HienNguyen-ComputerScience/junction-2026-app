@@ -65,7 +65,8 @@ export function AskBox() {
       <CardHeader>
         <div className="flex flex-wrap items-center gap-2">
           <CardTitle id="ask-box-title">Ask a question</CardTitle>
-          <Badge variant="secondary">Found live with Exa</Badge>
+          <Badge variant="secondary">Found live — unverified</Badge>
+          <span className="text-xs text-muted-foreground">via Exa</span>
         </div>
         <CardDescription>
           Answered only from live Exa search results, with a numbered source for every sentence. Decision support, not medical advice.
@@ -127,24 +128,33 @@ export function AskBox() {
               </div>
 
               {answered && data.answer && (
-                <p className="text-sm leading-relaxed">
-                  {data.answer.sentences.map((s, i) => (
-                    <span key={i}>
-                      {s.text}{" "}
-                      {s.sources.map((n) => (
-                        <sup key={n} className="mr-0.5">
-                          <a
-                            href={`#ask-src-${n}`}
-                            aria-label={`Source ${n}`}
-                            className="text-primary underline-offset-2 hover:underline"
-                          >
-                            [{n}]
-                          </a>
-                        </sup>
-                      ))}{" "}
-                    </span>
-                  ))}
-                </p>
+                <div className="space-y-2 rounded-lg border border-dashed bg-muted/30 p-3">
+                  <p className="text-xs text-muted-foreground">
+                    Not checked by the team. Written by AI from the live results below; read the sources before relying on it.
+                  </p>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {data.answer.sentences.map((s, i) => (
+                      <span key={i}>
+                        {s.text}{" "}
+                        {s.sources.map((n, j) => (
+                          <sup key={`${n}-${j}`} className="mr-0.5">
+                            {Number.isInteger(n) && n >= 1 && n <= data.items.length ? (
+                              <a
+                                href={`#ask-src-${n}`}
+                                aria-label={`Source ${n}`}
+                                className="text-primary underline-offset-2 hover:underline"
+                              >
+                                [{n}]
+                              </a>
+                            ) : (
+                              <span>[{n}]</span>
+                            )}
+                          </sup>
+                        ))}{" "}
+                      </span>
+                    ))}
+                  </p>
+                </div>
               )}
 
               {!answered && data.nothingFound && (
