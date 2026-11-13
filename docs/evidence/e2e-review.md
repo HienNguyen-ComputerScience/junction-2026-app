@@ -57,3 +57,50 @@ The 3 screens are not built yet, so source chips, red/amber/grey cards and mobil
 - Screens (source chips, numbers vs `data/*.json`, grey referral card for Vantaa–Kerava, limitations box, 390 px mobile) once built.
 - Full judge set with `ANTHROPIC_API_KEY` set: check every answer sentence cites a link, F1/F6/F7 refusals, Finnish answers for #9–11.
 - Outage test via `EXA_SIMULATE_OUTAGE`.
+
+## Run 2 (PRs #22/#23/#26), Fri 14 Nov, Luan's Claude
+
+Local octopus merge of `origin/main` (dd4b66d) + #23 (`7184ef2`) + #26 (`bec1cd5`) + #22 (`39435b7`); clean merge, `npm run typecheck && npm run lint && npm run build` pass. `npm run start -p 3007` with `EXA_API_KEY` set, `ANTHROPIC_API_KEY` not set. Playwright at 1280 px and 390 px.
+
+### Screens (PR #23, #26)
+
+| Route | Result |
+|---|---|
+| `/` | 22 areas, Finland excluded. Vantaa–Kerava 85.4% (rank 1), Päijät-Häme 32.7% (rank 22), Finland 54.7%: all match `data/values.json`. Source chips "Sotkanet 6411 · 2025" and "Sotkanet 13 · 2025" on both columns. Wording "non-urgent GP visits … after people ask". Pass |
+| `/county/vantaa-kerava` | Step 1 red 85.4% vs 54.7%, trend 58.0 / 70.4 / 85.4. Step 2 grey. Step 3 grey "No public data" with the Finland value and a Sotkanet 13 chip. Limitations box visible with the 6411 "not only cancer" caveat and the Vantaa–Kerava referral gap. Pass |
+| `/county/paijat-hame` | Both amber (32.7, referral 85.3 vs 76.8). Verdict says "Even so, 32.7% … still come more than a week after people ask". Pass |
+| `/county/lapland` | 48.6% amber, referral 80.2 amber. Pass |
+| `/county/vantaa-kerava/act` | Bottleneck sentence from gaps.json; 3 GP-access actions (named GP, Omaolo, GP capacity), referral actions listed under "can't be measured here yet", 4th GP action under "Other options". Red-flag helper banner "Decision support, not diagnosis. If in doubt, refer." Typing "weight loss, tiredness" → "Vague symptoms that keep going", vague-symptoms route, Danish + UK RDC + NICE links. Pass |
+| `/county/south-ostrobothnia/act` | Both stages red; recommended = named GP, Denmark fast-track pathways, Omaolo (one per red stage, then fill). Denmark card shows on a red-referral county as the pitch needs. Pass |
+| `/county/nope` | 404 page rendered (HTTP status 200 because of the PPR shell; fine for users). |
+| 390 px | No horizontal scroll on `/`, pathway, act. Pass |
+| Console | Only error on every page: prefetch of `/sources` 404 (PR #10 not merged). |
+
+### Exa (PR #22 + API)
+
+PR #22 ships `CountyNews`, `AskBox`, `EvidenceFinder` but no page imports them, so nothing could be clicked. Reviewed by code; routes tested with curl.
+
+| Check | Result |
+|---|---|
+| `components/exa/result-list.tsx` | Date shown as `YYYY-MM-DD` or "date unknown"; paywall flag; nothing from `lib/exa` reaches the client (type-only imports). Pass |
+| Labels | `EvidenceFinder` says "Found live — unverified". `CountyNews` / `AskBox` say "Found live with Exa" + "Not checked by the team". Close, not identical to the spec wording |
+| Q1 Vantaa GP wait | Live, 6 items: is.fi 2024-12-30, helsinkitimes 2026-06-03, yle 2019, 3 undated. Sources only (no `ANTHROPIC_API_KEY`) |
+| Q12 cancer news this week | Live: Satakunnan Kansa 11 Nov, Seura 10 Nov, MTV 9 Nov. Good |
+| F1 Narnia | Sources only: 6 generic THL / Terveysatlas links, `nothingFound: false`. Still no "nothing found" without the answer writer (Run 1 #3) |
+| `/api/county-news?county=lapland` | 404 "Unknown county"; only vantaa-kerava, helsinki, paijat-hame, kainuu. `CountyNews` would render this as "Live search is unavailable right now", which is wrong: it is unsupported, not down |
+| `/api/county-news?county=vantaa-kerava` | Live, 8 items, newest Lääkärilehti 2026-11-02 |
+| `/api/evidence?action=Give patients a named GP` | Live, 5 PMC items, dated |
+
+### Findings
+
+| # | Severity | Route / file | What | Expected | Owner |
+|---|---|---|---|---|---|
+| 1 | High | PR #22 `components/exa/*` | Panels are not mounted on any page; the Exa layer is invisible to judges | `CountyNews` + `AskBox` on `/county/[id]`, `EvidenceFinder` as `ActionCard` children on `/act` (follow-up PR after #23/#26 merge) | Phương |
+| 2 | High | `.env.local`, Vercel env | `ANTHROPIC_API_KEY` unset: every judge question is "Sources only", F1 Narnia and Q1 show generic links instead of "nothing found" | Key set; off-topic / unknown-place questions return `nothingFound: true` (Run 1 #3, #4 still open) | Phương + Luan |
+| 3 | Medium | `components/exa/county-news.tsx`, `app/api/county-news` | 18 of 22 areas get 404 "Unknown county", shown as "Live search is unavailable" | Either queries for all 22 from `counties.json`, or a distinct "No live news query for this area yet" state (Run 1 #5) | Phương |
+| 4 | Low | `components/exa/county-news.tsx`, `ask-box.tsx` | Badge "Found live with Exa" instead of the agreed "found live — unverified" | Same label as `EvidenceFinder` on all three panels | Phương |
+| 5 | Low | `components/act/action-card.tsx`, `SourceChip` for `ev-*` | Evidence source chips show only the domain (e.g. "pmc.ncbi.nlm.nih.gov"), no title or year | Chip text = source name + year where `sources.json` has one | Phương |
+| 6 | Low | `app/county/[id]/page.tsx` | 5033 context line prints "Finland 1%" while every other number is `x.x%` | `formatPct` for consistency | Phương |
+| 7 | Low | nav, every page | `/sources` 404 + console error until #10 merges | Merge #10 | bestawperna / Phương |
+
+Verdict: #23 and #26 approve. #22 approve as a component drop, but it is not done until finding 1 lands.
