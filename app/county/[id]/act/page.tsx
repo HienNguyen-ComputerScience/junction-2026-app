@@ -20,10 +20,6 @@ import { counties, getCounty, type Evidence } from "@/lib/data";
 
 // Counties are a fixed, known set, so a blocking route is fine here.
 export const instant = false;
-// An explicit per-segment prefetch mode makes unlisted ids (unknown or "finland") resolve
-// notFound() before the response starts, so they get a real 404 on the very first request.
-// (dynamicParams = false is rejected when cacheComponents is on.)
-export const prefetch = "partial";
 
 export function generateStaticParams() {
   return counties.map((county) => ({ id: county.id }));
