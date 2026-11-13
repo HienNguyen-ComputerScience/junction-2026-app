@@ -46,12 +46,14 @@ Fill this in at kickoff so every agent knows whose files are whose.
 Project: junction-2026-app — Junction 2026 (TBD)
 
 ### Deadlines (Helsinki time)
-- Preliminary submission: Fri 13 Nov, before 23:55
+- Preliminary submission: Fri 13 Nov, 23:59 (draft project + chosen challenge on hackjunction.app; aim for 23:30)
 - Feature freeze: Sat 18:00
-- Final submission: Sun 15 Nov, 10:00 (aim for 08:00)
+- Final submission: Sun 15 Nov, 10:00 (aim for 08:00). Switch the project DRAFT → FINAL or it isn't reviewed.
+- Live peer review: Sun 10:30–14:00, whole team present (required for the main prize)
 
 ### Stack (don't change without asking the team lead on the board)
 - Next.js (latest patched release, App Router) + TypeScript + Tailwind + shadcn/ui
+- UI SDK (`@ui-sdk/react` + `@ui-sdk/core`, beta, https://ui-sdk.dev): only for complex interactive components shadcn/ui doesn't cover (drag and drop, command palette, custom popups/selection). Use the `ui-sdk` skill. Default to shadcn/ui for everything else.
 - Backend: Supabase
 - Hosting: Vercel
 - Package manager: npm. Never mix lockfiles.
@@ -86,4 +88,7 @@ If you can't verify, say so. Never claim something works without checking.
 - Never run destructive DB commands (DROP, TRUNCATE, reset) without asking your human.
 
 ### Junction submission
+- Event rules, submission checklist, judging criteria and schedule: `docs/junction-2026-guide.md`.
+- No code written before the event (open-source libraries are fine). Submissions are MIT-licensed and the source must be accessible to organizers.
+- Pitch video max 2:00, strictly enforced. Pitch deck as PDF.
 - Keep README.md current: problem, solution, stack, how to run, live URL, demo credentials, AI tools used, and pre-existing code or templates (Junction requires declaring these).
