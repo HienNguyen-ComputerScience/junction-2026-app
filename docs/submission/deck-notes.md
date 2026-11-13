@@ -1,6 +1,6 @@
-# FirstLine deck: speaker notes and sources (Draft v1)
+# FirstLine deck: speaker notes and sources (Draft v2)
 
-Files: `docs/submission/deck.html` (source) and `docs/submission/firstline-deck.pdf` (rendered: 9 slides, 1280×720, about 300 KB).
+Files: `docs/submission/deck.html` (source) and `docs/submission/firstline-deck.pdf` (rendered: 9 slides, 1280×720, about 530 KB). Draft v2 (14 Nov) adds real screenshots from commit 18daaeb and updates the built-vs-next status to `docs/submission/test-runs.md` Run 2.
 
 Re-render from PowerShell. Bare `--headless` from Git Bash produced no PDF. Without `--user-data-dir`, Edge can hand off to a running instance and exit without writing.
 
@@ -54,14 +54,16 @@ Numbers: none.
 
 ## 4. Product
 
-**Say:** "Rank every county, open one to see where the delay sits (grey means no public data, and we say so), then act."
+**Say:** "Rank all 22 areas, open one to see where the delay sits (in Vantaa–Kerava it's getting to a GP, and grey means no public data), then act on it."
 
-- "2–3 actions" is the product spec (SPEC.md, screen 3), not a statistic.
-- The three frames are labelled placeholders. No product screenshots exist yet.
+- **Screenshots:** `docs/submission/screenshots/01-ranking.png` (`/`), `02-county-pathway.png` (`/county/vantaa-kerava`) and `03-act.png` (`/county/vantaa-kerava/act`). They come from Run 2: headless Edge at 1440×900 against the local dev server at commit 18daaeb.
+- **How they're placed:** `deck.html` references them by relative path, and the PDF embeds them at full 1440×900. The slide trims only the blank side margins (x < 150 and x > 1290 px). That removes the Next.js dev-mode badge and no page content.
+- **"22 areas":** `data/counties.json`, and the ranking screen itself ("All 22 areas"). "Vantaa–Kerava: the delay is getting to a GP" is the pathway page's verdict (Run 2), from `data/gaps.json`: `vantaa-kerava`, `gp_access`, `red`.
+- **Not in these screenshots:** the limitations box (below the fold on the pathway page) and the red-flag helper (below the fold on the act page). Run 2 confirmed both on the page.
 
 ## 5. Act (checked evidence)
 
-**Say:** "Denmark's fast-track pathways cut median time to diagnosis by 17 days, and in Norway keeping the same GP goes with lower mortality. We show what didn't work too: Sweden's pathways shortened waits, but regional gaps stayed."
+**Say:** "For Vantaa–Kerava, where the delay is getting to a GP, FirstLine shows a named GP: in Norway, keeping the same GP goes with lower mortality. For South Ostrobothnia, red at both steps, it shows Denmark's fast-track pathways, 17 days off the median time to diagnosis, and we also show that Sweden's pathways left regional gaps."
 
 | Number | Source |
 |---|---|
@@ -69,6 +71,11 @@ Numbers: none.
 | 25% lower odds of dying, same GP >15 years vs 1 year (OR 0.75; Norway, observational) | `evidence.json` `ev-gp-continuity`, `effect_size.value: 0.75`, `effect_text`. Sandvik et al., *Br J Gen Pract* 2022, https://pmc.ncbi.nlm.nih.gov/articles/PMC8510690/ |
 | "Equal or better" outcomes, "probably"; 18 trials | `evidence.json` `ev-gp-nurse-first-contact`: `effect_text`, `quote_or_page` and `precedent` ("18 randomised trials"). Laurant et al., *Cochrane Database Syst Rev* 2018, https://pmc.ncbi.nlm.nih.gov/articles/PMC6367893/ |
 | Sweden: shorter waits, regional gaps remain (no number) | `evidence.json` `ev-ref-sweden-svf`. Regeringens skrivelse 2023/24:48 on Riksrevisionen's report RiR 2023:12, published by Riksdagen, https://www.riksdagen.se/sv/dokument-och-lagar/dokument/regeringens-skrivelse/riksrevisionens-rapport-om-statens-arbete-med_hb0348/html/. Chip: "Riksrevisionen RiR 2023:12, via Riksdagen · 2023". |
+
+Where each card appears in the app (Run 2, `docs/pitch/demo-script.md`):
+- **Named GP** (`ev-gp-continuity`): first card on `/county/vantaa-kerava/act`.
+- **Denmark fast-track** (`ev-ref-denmark-cpp`): second card on `/county/south-ostrobothnia/act`. South Ostrobothnia is red at both steps (`data/gaps.json`: 6411 = 67.8 and 13 = 68.9, both worse than Finland). Don't show the Denmark card as a Vantaa–Kerava example: its referral step is grey there.
+- **Nurse-led card:** not tied to a county on the slide.
 
 Deliberately left off this slide:
 - **Danish survival (45% → 54%):** it comes from a different paper (Jensen 2017) and carries lead-time bias.
@@ -78,16 +85,17 @@ How to phrase Norway: say "goes with", never "cuts deaths". If asked what else d
 
 ## 6. Trust
 
-**Say:** "Every number carries its source, the gaps are shown in grey instead of hidden, and a validator drops any AI sentence whose number isn't in its source. Public data only, decision support, not diagnosis."
+**Say:** "Every number carries its source, the gaps are shown in grey instead of hidden, and validators drop any AI claim whose number isn't in its source. Public data only, decision support, not diagnosis."
 
 | Number | Source |
 |---|---|
 | 4 areas without referral data (Vantaa and Kerava, East, Central and West Uusimaa) | `data/gaps.json`: 4 rows with `stage: referral` and `status: no_data`. Also `data/README.md`, "Known gaps". Sotkanet 13, 2025 |
 | 6411 | Indicator ID, `data/indicators.json` |
 
-Built vs next:
-- **Built:** the validator for live answers, `validate()` in `lib/exa/answer.ts`. It drops a sentence that cites no valid item, or that contains a number not found in the cited item's title, snippet or date.
-- **Not built yet:** the county-brief validator (SPEC: Claude writes text around fixed numbers). The two chips on the slide say this.
+Built vs next (Run 2, commit 18daaeb). Both validators exist behind APIs, which is why the chips say "API":
+- **Question box validator:** `validate()` in `lib/exa/answer.ts` (`POST /api/ask`). It drops a sentence that cites no valid item, or that contains a number not found in the cited item's title, snippet or date. In Run 2 the injection test returned "Nothing found in the sources."
+- **County brief validator:** `lib/brief/validate.ts` (`GET /api/brief`, PR #29). It drops a claim whose number or `source_id` is not in the snapshot context, or that turns visits into people. It falls back to a precomputed brief (`mode=fallback`).
+- **Not visible yet:** neither the brief nor the question box is mounted on a page in Run 2. Don't say "on screen" until they are.
 
 ## 7. Live layer (Exa)
 
@@ -103,9 +111,11 @@ Built vs next:
 
 These three items are **found live and unverified**. They are not checked evidence.
 
+Status in Run 2: the Exa endpoints work (county news for the 4 demo counties, national news, evidence, ask). The Exa panels (`components/exa/`) are **not mounted on any page**, so there is no app screenshot of this layer yet (`05-exa-live.png` was not taken). The slide shows items from the 13 Nov probe, not a screen.
+
 ## 8. How it's built
 
-**Say:** "Public THL data is snapshotted with a source on every row, so the demo works even if Sotkanet, Exa or the AI is down. On the left is what runs today; on the right is what lands before the freeze."
+**Say:** "Public THL data is snapshotted with a source on every row, so the demo works even if Sotkanet, Exa or the AI is down. The three screens and the APIs run today; next we wire the live layer and the AI brief into the screens."
 
 | Number | Source |
 |---|---|
@@ -114,13 +124,23 @@ These three items are **found live and unverified**. They are not checked eviden
 | 2023–2025 | `data/README.md` (`values.json` years) |
 | 14 checked actions | `docs/evidence/evidence.json` |
 
-"Real today" was checked against the repo on 13 Nov:
-- data snapshot (`data/`) and the evidence table
-- Exa routes `app/api/{county-news,national-news,evidence,ask}`
-- answer validator `lib/exa/answer.ts`
-- `components/source-chip.tsx`
+"Real today" comes from `docs/submission/test-runs.md` Run 2 (commit 18daaeb, 14 Nov 00:00–00:15 Helsinki):
 
-The three screens in `app/` are still placeholder pages.
+| Item | Evidence |
+|---|---|
+| Ranking, pathway and act screens with source chips and limitations box | `/`, `/county/[id]`, `/county/[id]/act`; PRs #23, #26 |
+| Red-flag helper | `components/act/red-flag-helper.tsx`, on the act page |
+| Snapshot and 14 checked actions | `data/` |
+| Exa API: county news, national news, evidence, ask with validator | `app/api/`; PR #16 |
+| AI county brief API with snapshot validator and fallback | `/api/brief`; PR #29 |
+
+"Next: wire into the screens" lists only what Run 2 found missing:
+- Exa panels, question box and AI brief: the components exist (PR #22, `components/brief/`) but no page imports them. Re-checked by grepping `app/` on 14 Nov.
+- `/sources` returns 404 (PR #10 open).
+- County news accepts only the 4 demo counties (`vantaa-kerava`, `helsinki`, `paijat-hame`, `kainuu`).
+- No live URL yet.
+
+The wording stays true if these get mounted on Saturday: move each line to "Real today" only after it shows on a page.
 
 ## 9. Close
 
@@ -143,26 +163,29 @@ The demo script's claim "in two minutes" is left out because it has no source.
 - [ ] Re-count the `evidence.json` rows (slides 7 and 8, "14").
 - [ ] Re-count areas and indicators (slide 8).
 - [ ] If the evidence table changed, re-check slide 5 against `ev-ref-denmark-cpp`, `ev-gp-continuity`, `ev-gp-nurse-first-contact` and `ev-ref-sweden-svf`.
-- [ ] Find a source for "most cancers are first noticed by a GP", or keep it out of the pitch.
+- [x] Source found for the GP-first line (PR #38): "In health systems where the GP is the first stop, 75 to 85 percent of cancer patients start at the GP" (Vedsted & Olesen, Br J Cancer 2015, PMC4385978). Danish and UK data, not Finnish.
 
 ### Screenshots and live items
-- [ ] Slide 4: replace the three placeholder frames with real screenshots: County ranking (`/`), County pathway (`/county/vantaa-kerava`) and Act (`/county/vantaa-kerava/act`).
+- [x] Slide 4: real screenshots added (01 ranking, 02 Vantaa–Kerava pathway, 03 Vantaa–Kerava act), taken at commit 18daaeb in Run 2.
+- [ ] Slide 4: retake 01–03 after the freeze on the deployed URL, if the screens change or the Exa panels and brief get mounted. Same file names, then re-render. Consider a production build so no dev badge appears.
+- [ ] If the Exa panels get mounted, add a real screenshot of the county news strip to slide 7 (Run 2 had none: `05-exa-live.png` missing).
 - [ ] Slide 7: re-run county news on Sunday morning. Swap in the freshest real items with their dates and links, and keep the "found live — unverified" label. Never edit a date.
 
 ### Built vs next (slides 6 and 8)
-- [ ] Move an item from "Next" to "Real today" only once it is merged and working: the three screens, red-flag helper, county brief + validator, deploy.
+- [x] Updated to Run 2 (commit 18daaeb): screens, red-flag helper and brief API moved to "Real today".
+- [ ] After the freeze: move "Exa panels, question box, AI brief on pages", "Sources & limitations page", "County news beyond 4 demo counties" and "Live deploy" to "Real today" only if Run 3 sees them on a page. Then change slide 6's chips from "API:" to "on screen".
 
 ### Team and links (slide 9)
 - [ ] Live demo URL (README says TBD).
 - [ ] Real names next to the GitHub logins. The repo has only the logins, from `AGENTS.md`.
-- [ ] Remove the "Draft v1" footer from slide 1 for the final PDF.
+- [ ] Remove the "Draft v2" footer from slide 1 for the final PDF.
 
-## Body word counts (Draft v1)
+## Body word counts (Draft v2)
 
 Counts exclude the headline, kicker, chips, pills, footer, chart SVG and placeholder frames. They include card titles, stage labels and list items.
 
 | Slide | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
 |---|---|---|---|---|---|---|---|---|---|
-| Words | 28 | 45 | 52 | 41 | 47 | 45 | 57 | 54 | 43 |
+| Words | 28 | 45 | 52 | 61 | 62 | 46 | 57 | 76 | 43 |
 
-Prose alone is ≤ 35 words on every slide. The rest is diagram and card labels (stage names, list items, news headlines). Cut further if the team wants a strict 35.
+Excluding labels, prose stays at or under 35 words on most slides. The rest is diagram and card labels: stage names, list items, news headlines, the "In the app" lines on slide 5 and the screenshot note on slide 4. Slide 8 is the densest because of the built-vs-next lists. Cut further if the team wants a strict 35.
