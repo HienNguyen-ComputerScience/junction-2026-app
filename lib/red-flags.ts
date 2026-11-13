@@ -6,7 +6,7 @@
 // deliberately general and every one links to the guideline pages for detail.
 // This file is imported by a client component, so it must not import lib/data.
 
-export type Urgency = "urgent" | "vague" | "safety_net";
+export type Urgency = "urgent" | "vague" | "prompt" | "safety_net";
 
 export type GuidelineLink = {
   label: string;
@@ -86,9 +86,17 @@ export const TIERS: Record<Urgency, Tier> = {
     gpAction:
       "The GP runs basic tests and, if nothing explains the symptoms, refers to a unit that investigates vague but serious symptoms (the Danish diagnostic-centre and UK Rapid Diagnostic Centre model).",
   },
+  prompt: {
+    urgency: "prompt",
+    rank: 2,
+    title: "See a GP soon and check it against the guideline",
+    speed: "See a GP within the next couple of weeks, sooner if it gets worse or something new appears.",
+    gpAction:
+      "The GP checks the guideline criteria for this symptom. If they fit, refer or test now. If not, book a review date and tell the person exactly when to come back.",
+  },
   safety_net: {
     urgency: "safety_net",
-    rank: 2,
+    rank: 3,
     title: "Safety-net and recheck",
     speed: "See a GP within the next few weeks, sooner if it gets worse or something new appears.",
     gpAction:
@@ -110,7 +118,7 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
     label: "A new lump or swelling that doesn't go away",
     examples: "a lump in the breast, neck, armpit or elsewhere",
     urgency: "urgent",
-    keywords: ["lump", "swelling", "swollen", "mass", "kyhmy", "patti", "turvotus", "turpoa"],
+    keywords: ["lump", "swelling", "swollen", "kyhmy", "patti", "turvotus", "turpoa"],
     links: [NICE_BY_SYMPTOM, NICE_BY_SITE, KAYPA_HOITO],
   },
   {
@@ -151,7 +159,7 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
     id: "persistent-change",
     label: "A change that lasts or doesn't heal",
     examples: "a cough or hoarse voice that won't clear, a change in bowel habit, a sore or mole that changes",
-    urgency: "safety_net",
+    urgency: "prompt",
     keywords: [
       "cough",
       "hoarse",
@@ -165,7 +173,6 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
       "healing",
       "n't heal",
       "not heal",
-      "skin",
       "yskä",
       "käheä",
       "ääni",
@@ -181,11 +188,20 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
 /** Fallback when nothing matches: never reassure, always safety-net. */
 export const NO_MATCH_LINKS: GuidelineLink[] = [NICE_SAFETY_NETTING, NICE_NG12, KAYPA_HOITO];
 
-/** Local, in-browser keyword match. Nothing is sent or stored. */
+/**
+ * Local, in-browser keyword match. Nothing is sent or stored.
+ * Single-word keywords match the start of a word ("tired" matches "tiredness",
+ * not "retired"); keywords with a space or apostrophe match as phrases.
+ */
 export function matchCategories(text: string): string[] {
-  const normalised = text.toLowerCase();
-  if (normalised.trim() === "") return [];
-  return RED_FLAG_CATEGORIES.filter((category) =>
-    category.keywords.some((keyword) => normalised.includes(keyword)),
-  ).map((category) => category.id);
+  const normalised = text.toLowerCase().replace(/[‘’]/g, "'");
+  const words = normalised.split(/[^\p{L}']+/u).filter(Boolean);
+  if (words.length === 0) return [];
+  const hit = (keyword: string) =>
+    /[\s']/.test(keyword)
+      ? normalised.includes(keyword)
+      : words.some((word) => word.startsWith(keyword));
+  return RED_FLAG_CATEGORIES.filter((category) => category.keywords.some(hit)).map(
+    (category) => category.id,
+  );
 }

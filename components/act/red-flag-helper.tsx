@@ -36,6 +36,7 @@ function LinkList({ links }: { links: GuidelineLink[] }) {
 const TIER_STYLES = {
   urgent: "border-red-600/40 bg-red-50 dark:bg-red-950/30",
   vague: "border-amber-600/40 bg-amber-50 dark:bg-amber-950/30",
+  prompt: "border-yellow-600/40 bg-yellow-50 dark:bg-yellow-950/30",
   safety_net: "border-sky-600/40 bg-sky-50 dark:bg-sky-950/30",
 } as const;
 
