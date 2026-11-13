@@ -1,1 +1,14 @@
 .board/
+CLAUDE.local.md
+.claude/settings.local.json
+node_modules/
+.next/
+out/
+dist/
+.vercel/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+coverage/
