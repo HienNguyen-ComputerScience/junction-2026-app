@@ -97,6 +97,11 @@
     display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; font-size: 17px; color: var(--muted); margin-bottom: 18px;
   }
   .step-no { display: inline-block; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: #fff; text-align: center; line-height: 34px; font-weight: 700; font-size: 18px; margin-right: 8px; }
+  .shotwrap { width: 100%; aspect-ratio: 1140 / 900; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.08); margin-bottom: 16px; background: #fff; }
+  .shot { display: block; width: 126.316%; max-width: none; height: auto; margin-left: -13.158%; }
+  .shotnote { position: absolute; left: 80px; right: 80px; bottom: 52px; font-size: 14px; color: var(--muted); }
+  .where { font-size: 15px; color: var(--muted); margin-top: 10px; }
+  .where b { color: var(--ink); font-weight: 600; }
   .screen h3 { font-size: 26px; margin: 0 0 8px; display: flex; align-items: center; }
   .screen p { font-size: 19px; line-height: 1.38; color: var(--muted); }
 
@@ -158,7 +163,7 @@
     <p class="brand">First<span>Line</span></p>
     <p class="promise">Shows a wellbeing services county director where the first step of early cancer care breaks in their county, and what to do about it on Monday.</p>
   </div>
-  <p class="draft">Draft v1 — numbers re-checked after feature freeze (Sat 18:00)</p>
+  <p class="draft">Draft v2 — screenshots from commit 18daaeb, re-check after feature freeze (Sat 18:00)</p>
 </section>
 
 <!-- 2 PROBLEM -->
@@ -203,24 +208,25 @@
 <!-- 4 PRODUCT -->
 <section>
   <p class="kicker">The product</p>
-  <h1>Three screens: rank, find the break, act.</h1>
+  <h1 style="margin-bottom:22px;">Three screens: rank, find the break, act.</h1>
   <div class="screens">
     <div class="screen">
-      <div class="frame">Screenshot: County ranking — add after Sat 18:00 freeze</div>
+      <div class="shotwrap"><img class="shot" src="screenshots/01-ranking.png" alt="FirstLine county ranking screen: headline stat with source chip and all 22 areas ranked by GP wait"></div>
       <h3><span class="step-no">1</span>Rank</h3>
-      <p>Every county by GP wait and referral speed. A source chip on every number.</p>
+      <p>All 22 areas by GP wait, with referral speed and a source chip on every number.</p>
     </div>
     <div class="screen">
-      <div class="frame">Screenshot: County pathway — add after Sat 18:00 freeze</div>
+      <div class="shotwrap"><img class="shot" src="screenshots/02-county-pathway.png" alt="FirstLine county pathway screen for Vantaa and Kerava: red GP-access card and two grey no-public-data cards"></div>
       <h3><span class="step-no">2</span>Find the break</h3>
-      <p><span class="pill red">red</span><span class="pill amber">amber</span><span class="pill grey">no data</span><br>Stage cards, with limitations always visible.</p>
+      <p><span class="pill red">red</span><span class="pill amber">amber</span><span class="pill grey">no data</span><br>Vantaa–Kerava: the delay is getting to a GP.</p>
     </div>
     <div class="screen">
-      <div class="frame">Screenshot: Act — add after Sat 18:00 freeze</div>
+      <div class="shotwrap"><img class="shot" src="screenshots/03-act.png" alt="FirstLine act screen for Vantaa and Kerava: named-GP action card with owner, first step, precedent, evidence and limitations"></div>
       <h3><span class="step-no">3</span>Act</h3>
-      <p>2–3 actions: owner, first step, precedent, source. Red-flag helper: decision support, not diagnosis.</p>
+      <p>Actions with owner, first step, precedent and source, plus a red-flag helper.</p>
     </div>
   </div>
+  <p class="shotnote">Screenshots of the running app at commit 18daaeb (local dev server, 1440×900 viewport; blank side margins trimmed).</p>
   <div class="foot"><span>FirstLine</span><span>4</span></div>
 </section>
 
@@ -233,13 +239,13 @@
       <h3>Fast-track pathways</h3>
       <div class="big">−17 days</div>
       <p class="what">median time to diagnosis, Denmark</p>
-      <div class="chiprow"><span class="chip"><b>Jensen et al., BMC Cancer</b> · 2015</span></div>
+      <div class="chiprow"><span class="chip"><b>Jensen et al., BMC Cancer</b> · 2015</span><p class="where">In the app: <b>South Ostrobothnia</b>, red at both steps</p></div>
     </div>
     <div class="card">
       <h3>A named GP</h3>
       <div class="big">25% lower</div>
       <p class="what">odds of dying, same GP &gt;15 years vs 1 year (Norway, observational)</p>
-      <div class="chiprow"><span class="chip"><b>Sandvik et al., Br J Gen Pract</b> · 2022</span></div>
+      <div class="chiprow"><span class="chip"><b>Sandvik et al., Br J Gen Pract</b> · 2022</span><p class="where">In the app: <b>Vantaa–Kerava</b>, GP access</p></div>
     </div>
     <div class="card">
       <h3>Nurse-led visits</h3>
@@ -269,8 +275,8 @@
     </div>
     <div class="card">
       <h3>AI can't invent numbers</h3>
-      <p class="what" style="font-size:20px;">Validator drops sentences whose numbers aren't in their source.</p>
-      <div class="chiprow"><span class="chip"><b>Built:</b> live answers</span> <span class="chip"><b>Next:</b> county brief</span></div>
+      <p class="what" style="font-size:20px;">Validators drop any claim whose number isn't in its source.</p>
+      <div class="chiprow"><span class="chip"><b>API:</b> question box</span> <span class="chip"><b>API:</b> county brief</span></div>
     </div>
   </div>
   <p class="bottomline" style="bottom:150px;">Public data only. No patient data. Decision support, not diagnosis.</p>
@@ -318,18 +324,19 @@
     <div class="list">
       <h3>Real today</h3>
       <ul>
-        <li>22 areas, 3 indicators, 2023–2025</li>
-        <li>14 checked actions</li>
-        <li>Exa news, evidence, questions</li>
-        <li>Answer validator</li>
+        <li>Ranking, pathway and act screens</li>
+        <li>Red-flag helper</li>
+        <li>22 areas, 3 indicators; 14 checked actions</li>
+        <li>Exa API: news, evidence, ask + validator</li>
+        <li>AI county brief API + fallback</li>
       </ul>
     </div>
     <div class="list next">
-      <h3>Next, by Sat 18:00 freeze</h3>
+      <h3>Next: wire into the screens</h3>
       <ul>
-        <li>The three screens</li>
-        <li>Red-flag helper</li>
-        <li>AI county brief</li>
+        <li>Exa panels, question box, AI brief on pages</li>
+        <li>Sources &amp; limitations page (PR #10)</li>
+        <li>County news beyond 4 demo counties</li>
         <li>Live deploy</li>
       </ul>
     </div>

@@ -1,6 +1,6 @@
 # FirstLine: text for the hackjunction.app form
 
-Ready to paste. Written 13 Nov 2026 from repo state. Anything in `TODO (human)` can only be filled by a person. Re-check the sentences listed at the bottom after feature freeze (Sat 18:00) and before switching to FINAL (Sun 10:00, aim 08:00).
+Ready to paste. Written 13 Nov 2026 from repo state; status text updated 14 Nov from test run 2 (commit 18daaeb). Anything in `TODO (human)` can only be filled by a person. Re-check the sentences listed at the bottom after feature freeze (Sat 18:00) and before switching to FINAL (Sun 10:00, aim 08:00).
 
 ## Project name
 
@@ -20,7 +20,7 @@ Whether you get early cancer care in Finland depends on where you live. FirstLin
 
 ## Full description (about 300 words)
 
-**The problem.** Most cancers are first noticed by a GP, so the first step of care decides how early cancer is found. That step varies a lot across Finland. In THL's Sotkanet data for 2025, 85.4% of non-urgent GP visits in Vantaa–Kerava took place more than 7 days after the need was assessed. In Päijät-Häme it was 32.7%, and in Finland overall 54.7%. These count visits, not people, and cover all non-urgent GP visits, not only cancer. Yet no one shows a county director where their own pathway breaks.
+**The problem.** In health systems where the GP is the first stop, 75 to 85 percent of cancer patients start at the GP (Vedsted & Olesen, Br J Cancer 2015; Danish and UK data), so the first step of care decides how early cancer is found. That step varies a lot across Finland. In THL's Sotkanet data for 2025, 85.4% of non-urgent GP visits in Vantaa–Kerava took place more than 7 days after the need was assessed. In Päijät-Häme it was 32.7%, and in Finland overall 54.7%. These count visits, not people, and cover all non-urgent GP visits, not only cancer. Yet no one shows a county director where their own pathway breaks.
 
 **Who it is for.** A wellbeing services county director, or a GP in that county. No patient data is used.
 
@@ -33,7 +33,15 @@ Whether you get early cancer care in Finland depends on where you live. FirstLin
 
 **The Exa live layer.** Checked data shows where care breaks. Exa shows what is happening about it right now: recent county news (last 12 months, Finnish sources), a finder for research papers and Nordic reports under each action, and a question box that answers only from Exa results and says "nothing found" when there is none. Live finds are labelled "found live, unverified" and kept apart from our checked evidence table.
 
-**What is real and what is planned (13 Nov).** Built and merged: the data snapshot (3 indicators, 22 counties), the evidence table (14 verified rows), and the Exa server endpoints with caching. In progress: the three screens, the Exa panels in the UI, the AI county brief and the sources page. Not planned: treatment access, diagnosis, accounts, patient data. `TODO (human): update this paragraph on Saturday after feature freeze to say what actually shipped.`
+**What is real and what is planned (14 Nov, commit 18daaeb).** Built, merged and checked in test run 2:
+- the three screens: a county ranking of all 22 areas, a county pathway with red, amber and grey stage cards and a limitations box, and recommended actions with owner, first step, precedent and source;
+- the red-flag helper;
+- the data snapshot (3 indicators, 22 areas);
+- the evidence table (14 verified rows);
+- the Exa server endpoints with caching (county news, national news, evidence finder, and a question box with a validator);
+- the AI county brief API, with a snapshot validator and a precomputed fallback.
+
+Next: wire the Exa panels, the question box and the AI brief into the screens. They are built as components but not yet shown on a page. The sources and limitations page is in review (PR #10), and county news so far covers the 4 demo counties. Not planned: treatment access, diagnosis, accounts, patient data. `TODO (human): update this paragraph on Saturday after feature freeze to say what actually shipped.`
 
 ## Challenges
 
@@ -45,12 +53,14 @@ Exa finds things a model could not know from training: this week's county news o
 
 ## Technologies used
 
-Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, shadcn/ui (Base UI), Vercel (hosting), Exa search API, Anthropic Claude API (Claude Haiku via the Messages API, used server-side), THL Sotkanet REST API (data snapshot built with a Node script), GitHub. Supabase is in the agreed stack but is not used so far (no database in the app); remove it from this list unless that changes.
+Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, shadcn/ui (Base UI), Vercel (hosting), Exa search API, Anthropic Claude API (Claude Haiku for the question box and Claude Sonnet for the county brief, via the Messages API, server-side), THL Sotkanet REST API (data snapshot built with a Node script), GitHub. Supabase is in the agreed stack but is not used so far (no database in the app); remove it from this list unless that changes.
 
 ## AI tools used
 
 - Claude Code and other coding agents, run through T3 Code, wrote and reviewed most of the code and docs under direction of the team. They coordinated on a pinned GitHub issue (the "board", `tools/board`).
-- Claude (Haiku) inside the app: writes text around fixed numbers and answers the question box from Exa results, with a validator. (AI county brief: in progress, see issue #20.)
+- Claude inside the app, server-side, each with a validator:
+  - Claude Haiku answers the question box from Exa results (`lib/exa/answer.ts`).
+  - Claude Sonnet writes the AI county brief around fixed snapshot numbers (`lib/brief/generate.ts`, PR #29), with a precomputed fallback.
 - Agent Reach (https://github.com/Panniantong/agent-reach), a read-only tool for reading Reddit, YouTube, GitHub and similar sources, was used for research (from README.md).
 - Exa API for live search.
 - `TODO (human): list any other AI tools each teammate used (name each tool), or confirm none.`
@@ -101,12 +111,15 @@ https://github.com/HienNguyen-ComputerScience/junction-2026-app
 
 Re-check each of these against the deployed app before 08:00 Sunday:
 
-1. The "What is real and what is planned" paragraph: the three screens, Exa panels, AI brief, sources page (issues #17, #18, #20, #21, PRs #10, #22).
+1. The "What is real and what is planned" paragraph. It was updated 14 Nov from test run 2 (commit 18daaeb), when the three screens, the red-flag helper and the brief API were merged. On Saturday, move an item from "Next" to "Built" only if it shows on a page in Run 3:
+   - Exa panels, question box and AI brief (not mounted at 18daaeb; issue #32);
+   - sources page (PR #10);
+   - county news beyond the 4 demo counties (issue #33).
 2. The numbers 85.4%, 32.7%, 54.7% (Sotkanet 6411, 2025): compare with `data/values.json` and the app screen.
 3. "14 verified rows", "22 counties", "3 indicators": compare with `data/evidence.json` and `data/counties.json` (22 counties plus a Finland row).
 4. "Last 12 months" for county news and "found live, unverified" label: match the final UI wording.
-5. "Validator drops any claim..." and "works if Sotkanet or the model is down": say it only if the AI brief and fallback shipped (issue #20). Otherwise limit it to the Exa question box, which does have a validator and a no-answer fallback.
+5. "Validator drops any claim..." and "works if Sotkanet or the model is down". Both validators and the brief fallback exist behind APIs (`/api/ask`, `/api/brief`, PR #29). Once the brief and question box are on a page, the sentence can say "on screen"; until then keep it as "by design".
 6. Technologies list: remove or keep Supabase; add anything new in `package.json`.
-7. Red-flag helper sentence: keep only if screen 3 shipped. The helper must link to guidelines, never copy NICE or Käypä hoito text.
+7. Red-flag helper sentence: screen 3 shipped with the helper (PR #26, Run 2). Keep the sentence. The helper must link to guidelines, never copy NICE or Käypä hoito text.
 8. Punchline option 3 only if the 85% wording is kept as "non-urgent GP visits".
 9. Demo link, video link, team contacts and publicity setting (all TODO above).

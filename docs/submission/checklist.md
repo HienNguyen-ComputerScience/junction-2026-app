@@ -4,26 +4,35 @@ Owner of this file: nabeo11 (submission). Written from repo state on Fri 13 Nov 
 
 Legend for status: **Ready in repo** (content exists, still needs pasting or uploading by a human) · **Draft** (exists, will change) · **TODO (human)** (only a person can do it).
 
-## What is built vs not yet (from git, PRs and issues, 13 Nov)
+## What is built vs not yet (from git, PRs, issues and test run 2, 14 Nov)
+
+Sources:
+- `gh pr list --state all` and `gh issue list --state all` (14 Nov, about 00:20 Helsinki);
+- `git log` at commit 18daaeb (main later gained e6661c4, PR #35, docs only);
+- [test-runs.md](test-runs.md) Run 2;
+- a grep of `app/` for imports of `components/exa` and `components/brief`, which found none (14 Nov).
 
 | Part | State | Where |
 |---|---|---|
 | Next.js scaffold, shadcn/ui | Merged (PR #4) | `app/`, `components/ui/` |
-| Data snapshot: 3 Sotkanet indicators, 22 counties plus Finland, evidence rows | Merged (PR #11, #13) | `data/`, `data/README.md` |
-| Evidence table (14 verified rows), red-flag sources, mentor log, demo script | Merged (PR #7) | `docs/evidence/`, `docs/pitch/demo-script.md` |
+| Data snapshot: 3 Sotkanet indicators, 22 areas plus Finland, evidence rows | Merged (PR #11, #13) | `data/`, `data/README.md` |
+| Evidence table (14 verified rows), red-flag sources, mentor log, demo script | Merged (PR #7); demo script wording fixed (PR #28) | `docs/evidence/`, `docs/pitch/demo-script.md` |
 | Exa query plan, judge test set, pitch angle | Merged (PR #5) | `docs/evidence/exa-queries.md`, `docs/evidence/exa-judge-tests.md`, `docs/pitch/exa-angle.md` |
 | Source chip and site header | Merged (PR #15) | `components/source-chip.tsx`, `components/site-header.tsx` |
-| Exa server layer: `/api/county-news`, `/api/national-news`, `/api/evidence`, `/api/ask` (in-memory cache, stale fallback) | Merged (PR #16) | `lib/exa/`, `app/api/`, `docs/exa-probe.md` |
-| Exa UI panels (county news, evidence finder, question box) | In progress: issue #18, PR #22 open | not on main yet |
-| Screens 1 and 2 (county ranking, county pathway) | In progress: issue #17 open (branch `17-ranking-pathway-v2` exists) | not on main yet; README says placeholder pages |
-| Screen 3 (actions plus red-flag helper) | Not started on main: issue #21 open | |
-| AI county brief with validator and fallback | Not started on main: issue #20 open | |
-| Sources and limitations page | In review: issue #9, PR #10 open (bestawperna) | `app/sources/` once merged |
-| Submission pack (this folder) | In progress: issue #19 | `docs/submission/` |
-| Live URL (Vercel) | Unknown | TODO (human) |
+| Exa server layer: `/api/county-news`, `/api/national-news`, `/api/evidence`, `/api/ask` (cache, stale fallback, answer validator) | Merged (PR #16); passes in Run 2 | `lib/exa/`, `app/api/`, `docs/exa-probe.md` |
+| Screens 1 and 2 (county ranking, county pathway with stage cards and limitations box) | Merged (PR #23, issue #17 closed); pass in Run 2 | `app/page.tsx`, `app/county/[id]/`, `components/ranking/`, `components/pathway/` |
+| Screen 3 (actions plus red-flag helper) | Merged (PR #26, issue #21 closed); passes in Run 2 | `app/county/[id]/act/`, `components/act/` |
+| AI county brief API with snapshot validator and fallback | Merged (PR #29, issue #20 closed); `/api/brief` passes in Run 2 | `lib/brief/`, `app/api/brief/` |
+| Exa UI panels (county news, evidence finder, question box) | Components merged (PR #22, issue #18 closed). **Not mounted on any page** (Run 2; no import in `app/`) | `components/exa/`; wiring: issue #32 (open) |
+| AI brief on the county page | Component exists. **Not mounted on any page** (Run 2; no import in `app/`) | `components/brief/`; wiring: issue #32 (open) |
+| County news for all counties | Only the 4 demo counties are accepted (Run 2, oddity 4) | issue #33 (open) |
+| Sources and limitations page | In review: issue #9 open, PR #10 open (bestawperna). `/sources` is 404 in Run 2 | `app/sources/` once merged |
+| E2E docs and browser run | Merged (PR #25, #27, #35) | `docs/pitch/` |
+| Submission pack (this folder) | Merged (PR #30); refresh in progress (issue #31) | `docs/submission/` |
+| Live URL (Vercel) | Not deployed as far as the repo shows (README: "URL: TBD") | TODO (human) |
 | Pitch video | Not in repo | TODO (human) |
 
-Re-check this table on Saturday before 18:00 (`gh pr list --state all`, `gh issue list --state all`).
+Re-check this table on Saturday before 18:00 (`gh pr list --state all`, `gh issue list --state all`, and Run 3 in [test-runs.md](test-runs.md)).
 
 ## 1. Preliminary submission: Fri 13 Nov, 23:59 (aim for 23:30)
 
@@ -44,13 +53,13 @@ Platform: hackjunction.app. Needs a draft project and the chosen challenge. Both
 | [ ] | Submissions open on the platform (Sat 12:00): open the form and check each field exists | nabeo11 | [submission-text.md](submission-text.md) | TODO (human) |
 | [ ] | Ask the sponsor questions at the AstraZeneca and Exa booths; log answers | nabeo11 | [sponsor-questions.md](sponsor-questions.md); answers go to `docs/evidence/mentor-log.md` | Draft |
 | [ ] | Attend the Exa workshop (Sat 16:30) | whole team | `docs/junction-2026-guide.md` | TODO (human) |
-| [ ] | Merge screens 1 and 2 (issue #17) | HienNguyen-ComputerScience (app) | `app/` | Draft: in progress |
-| [ ] | Merge screen 3 and red-flag helper (issue #21) | HienNguyen-ComputerScience | `app/` | Draft: not started |
-| [ ] | Merge Exa UI panels (PR #22) | HienNguyen-ComputerScience | `app/`, `lib/exa/` | Draft: PR open |
+| [ ] | Merge screens 1 and 2 (issue #17) | HienNguyen-ComputerScience (app) | `app/` | Merged (PR #23); box left for the owner |
+| [ ] | Merge screen 3 and red-flag helper (issue #21) | HienNguyen-ComputerScience | `app/` | Merged (PR #26); box left for the owner |
+| [ ] | Merge Exa UI panels (PR #22) and mount them, the question box and the AI brief on the pages (issue #32) | HienNguyen-ComputerScience | `app/`, `components/exa/`, `components/brief/` | Draft: components merged (PR #22, #29), not on any page yet (Run 2) |
 | [ ] | Merge sources and limitations page (PR #10) | bestawperna | `app/sources/` | Draft: PR open |
 | [ ] | Deploy to Vercel and write the live URL into README.md | HienNguyen-ComputerScience (deploy) | `README.md` "Live demo" | TODO (human) |
 | [ ] | Decide demo credentials: the app has no accounts, so write "none needed" if still true | HienNguyen-ComputerScience | `README.md` | TODO (human) |
-| [ ] | Run the manual test pass on the deployed URL and fill in `test-runs.md` | nabeo11 (test runs) and bestawperna (manual demo testing, Exa live queries) | `docs/submission/test-runs.md` | Draft |
+| [ ] | Run the manual test pass on the deployed URL and fill in `test-runs.md` | nabeo11 (test runs) and bestawperna (manual demo testing, Exa live queries) | `docs/submission/test-runs.md` | Draft: Run 2 logged (local dev server, commit 18daaeb); deployed-URL run still to do |
 | [ ] | Update the sentences in [submission-text.md](submission-text.md) listed under "Update on Saturday" | nabeo11 | [submission-text.md](submission-text.md) | Draft |
 | [ ] | Pick the freshest real news item for the demo county and screenshot it with the date visible | fraidfax (pitch) | `docs/pitch/exa-angle.md` prep checklist | TODO (human) |
 | [ ] | Feature freeze at 18:00: after this, only fixes | all | `AGENTS.md` | n/a |
@@ -73,7 +82,7 @@ Mirrors the "Final submission checklist" in [docs/junction-2026-guide.md](../jun
 | [ ] | Repo is public, or shared so organisers can open it; all submissions are MIT-licensed | HienNguyen-ComputerScience | Repo settings. No `LICENSE` file found in the repo (checked 13 Nov) | TODO (human): make repo public and add an MIT `LICENSE` if the lead agrees |
 | [ ] | Source code publicity setting on the form | nabeo11 | [submission-text.md](submission-text.md) | TODO (human) |
 | [ ] | Credit preference on the form | nabeo11 | [submission-text.md](submission-text.md) | TODO (human) |
-| [ ] | Pitch deck as PDF | nabeo11 (deck) | `docs/submission/firstline-deck.pdf` | Draft: check the file exists and opens |
+| [ ] | Pitch deck as PDF | nabeo11 (deck) | `docs/submission/firstline-deck.pdf` (source `deck.html`, notes `deck-notes.md`) | Draft v2 in repo (real screenshots from commit 18daaeb); retake screenshots and re-check numbers after the freeze, then remove the "Draft" footer |
 | [ ] | Team phone numbers and Discord usernames | nabeo11 | Collect from each member; never commit them to the repo | TODO (human) |
 | [ ] | Set status to FINAL | nabeo11 | none | TODO (human) |
 | [ ] | Re-open the submitted project and check every field saved | nabeo11 | none | TODO (human) |
