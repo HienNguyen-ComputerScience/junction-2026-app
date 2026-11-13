@@ -55,14 +55,19 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
         >
           {state.kind === "idle" ? "Find more evidence live" : state.kind === "loading" ? "Searching…" : "Search again"}
         </Button>
-        {state.kind !== "idle" && <Badge variant="secondary">Found live — unverified</Badge>}
+        {state.kind !== "idle" && (
+          <>
+            <Badge variant="secondary">Found live — unverified</Badge>
+            <span className="text-xs text-muted-foreground">via Exa</span>
+          </>
+        )}
         {data && !unavailable && <Badge variant="outline">{STATUS_LABEL[data.freshness]}</Badge>}
       </div>
       <div id={panelId}>
         {state.kind === "loading" && <LoadingRows label="Searching for more evidence with Exa" rows={2} />}
         {unavailable && <Unavailable />}
         {data && !unavailable && (
-          <div className="space-y-3 rounded-lg border bg-muted/30 p-3">
+          <div className="space-y-3 rounded-lg border border-dashed bg-muted/30 p-3">
             <p className="text-xs text-muted-foreground">
               Not checked by the team, unlike this action&apos;s own source. Read before relying on it.
             </p>

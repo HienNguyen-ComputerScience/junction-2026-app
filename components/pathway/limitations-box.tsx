@@ -6,11 +6,17 @@ export type LimitationItem = {
 };
 
 /** Always visible, never collapsible: the caveats travel with the numbers. */
-export function LimitationsBox({ items }: { items: LimitationItem[] }) {
+export function LimitationsBox({
+  items,
+  className = "",
+}: {
+  items: LimitationItem[];
+  className?: string;
+}) {
   return (
     <section
       aria-labelledby="limitations-heading"
-      className="flex flex-col gap-3 rounded-xl border bg-muted/40 p-4"
+      className={`flex flex-col gap-3 rounded-xl border bg-muted/40 p-4 ${className}`}
     >
       <h2 id="limitations-heading" className="text-base font-semibold">
         Limitations: read before acting on these numbers

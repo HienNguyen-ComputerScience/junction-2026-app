@@ -12,9 +12,12 @@ export function SiteHeader() {
             Where early cancer care breaks down, county by county
           </p>
         </div>
-        <nav className="flex gap-4 text-sm">
+        <nav aria-label="Main" className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
           <Link href="/" className="hover:underline">
             County ranking
+          </Link>
+          <Link href="/#ask" className="hover:underline">
+            Ask the evidence
           </Link>
           <Link href="/sources" className="hover:underline">
             Sources &amp; limitations

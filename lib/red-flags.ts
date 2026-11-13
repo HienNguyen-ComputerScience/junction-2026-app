@@ -189,18 +189,47 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
 export const NO_MATCH_LINKS: GuidelineLink[] = [NICE_SAFETY_NETTING, NICE_NG12, KAYPA_HOITO];
 
 /**
+ * Words that start like a keyword but mean something else ("iho" vs "ihminen",
+ * "veri" vs "verenpaine", "pain" vs "painting"). A word starting with one of
+ * these never matches.
+ */
+const STOP_PREFIXES = ["ihmi", "verenpain", "paint", "voicemail"];
+
+/** Everyday phrases that contain a keyword but are not a symptom. Removed before matching. */
+const STOP_PHRASES = /\bsick (leave|note|day|days|pay)\b/g;
+
+/** A keyword directly after one of these words is not counted ("no blood", "ei verta"). */
+const NEGATIONS = new Set(["no", "not", "without", "never", "ei", "eikä", "ilman"]);
+
+/** Keywords where the absence is the symptom ("no appetite", "ei ruokahalua"). */
+const ABSENCE_IS_SYMPTOM = new Set(["appetite", "ruokahalu", "healing"]);
+
+/**
  * Local, in-browser keyword match. Nothing is sent or stored.
  * Single-word keywords match the start of a word ("tired" matches "tiredness",
- * not "retired"); keywords with a space or apostrophe match as phrases.
+ * not "retired"), except words on the stop-list, and not when the word directly
+ * before is a negation ("no blood"). Keywords with a space or apostrophe match
+ * as phrases.
  */
 export function matchCategories(text: string): string[] {
-  const normalised = text.toLowerCase().replace(/[‘’]/g, "'");
-  const words = normalised.split(/[^\p{L}']+/u).filter(Boolean);
-  if (words.length === 0) return [];
+  const normalised = text.toLowerCase().replace(/[‘’]/g, "'").replace(STOP_PHRASES, " ");
+  // Words per clause, so a negation never reaches across punctuation ("Pain? No. Blood").
+  const clauses = normalised
+    .split(/[.,;:!?\n]+/)
+    .map((clause) => clause.split(/[^\p{L}']+/u).filter(Boolean))
+    .filter((words) => words.length > 0);
+  if (clauses.length === 0) return [];
   const hit = (keyword: string) =>
     /[\s']/.test(keyword)
       ? normalised.includes(keyword)
-      : words.some((word) => word.startsWith(keyword));
+      : clauses.some((words) =>
+          words.some(
+            (word, i) =>
+              word.startsWith(keyword) &&
+              !STOP_PREFIXES.some((stop) => word.startsWith(stop)) &&
+              (ABSENCE_IS_SYMPTOM.has(keyword) || !NEGATIONS.has(words[i - 1] ?? "")),
+          ),
+        );
   return RED_FLAG_CATEGORIES.filter((category) => category.keywords.some(hit)).map(
     (category) => category.id,
   );
