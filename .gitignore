@@ -12,3 +12,9 @@ dist/
 *.log
 .DS_Store
 coverage/
+
+# next.js / typescript (from create-next-app)
+/build
+*.pem
+*.tsbuildinfo
+next-env.d.ts
