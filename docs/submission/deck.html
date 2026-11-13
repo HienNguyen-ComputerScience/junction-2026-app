@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FirstLine pitch deck</title>
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  :root {
+    --bg: #f8f6f1;
+    --card: #ffffff;
+    --ink: #1d2a30;
+    --muted: #5d6a70;
+    --line: #d9d5cc;
+    --accent: #0e6b6b;
+    --accent-soft: #e2efed;
+    --red: #c2412d;
+    --red-soft: #f8e4df;
+    --amber: #d18f12;
+    --amber-soft: #fbefd6;
+    --grey: #9aa3a7;
+    --grey-soft: #eceeee;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  section {
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    padding: 56px 80px 64px;
+    background: var(--bg);
+    page-break-after: always;
+    break-after: page;
+  }
+  section:last-child { page-break-after: auto; break-after: auto; }
+  @media screen { section { margin: 0 auto 24px; box-shadow: 0 2px 12px rgba(0,0,0,.08); } }
+
+  .kicker { font-size: 18px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-size: 46px; line-height: 1.12; font-weight: 700; margin: 0 0 28px; letter-spacing: -.01em; max-width: 1100px; }
+  p { margin: 0; }
+  .body { font-size: 25px; line-height: 1.4; color: var(--ink); }
+  .muted { color: var(--muted); }
+  .small { font-size: 18px; line-height: 1.4; }
+
+  .chip {
+    display: inline-block; font-size: 15px; line-height: 1; padding: 6px 10px; border: 1px solid var(--line);
+    border-radius: 999px; background: var(--card); color: var(--muted); white-space: nowrap; vertical-align: middle;
+  }
+  .chip b { color: var(--ink); font-weight: 600; }
+  .chip.live { border-style: dashed; border-color: var(--muted); color: var(--ink); background: var(--card); }
+
+  .foot { position: absolute; left: 80px; right: 80px; bottom: 24px; display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); }
+
+  /* slide 1 */
+  .title-wrap { position: absolute; left: 80px; right: 80px; top: 170px; }
+  .brand { font-size: 112px; font-weight: 800; letter-spacing: -.03em; line-height: 1; margin: 0 0 30px; }
+  .brand span { color: var(--accent); }
+  .promise { font-size: 36px; line-height: 1.3; max-width: 980px; }
+  .accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: var(--accent); }
+  .draft { position: absolute; left: 80px; bottom: 28px; font-size: 16px; color: var(--muted); background: var(--card); border: 1px dashed var(--muted); padding: 7px 12px; border-radius: 6px; }
+
+  /* slide 2 */
+  .split { display: flex; gap: 40px; }
+  .stat { margin-bottom: 18px; }
+  .stat .num { font-size: 88px; font-weight: 800; line-height: 1; letter-spacing: -.02em; }
+  .stat .lbl { font-size: 22px; color: var(--muted); margin-top: 4px; }
+  .num.red { color: var(--red); }
+  .num.amber { color: var(--amber); }
+  .chart text { font-family: inherit; }
+  .chart .cl { font-size: 13.5px; fill: var(--muted); }
+  .chart .cv { font-size: 13px; fill: var(--muted); }
+  .chart .hi { fill: var(--ink); font-weight: 700; }
+  .chart .ct { font-size: 12px; fill: var(--muted); }
+  .legend { display: flex; gap: 16px; font-size: 14px; color: var(--muted); margin: 4px 0 6px; flex-wrap: wrap; }
+  .sw { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+
+  /* pathway (slide 3) */
+  .path { display: flex; align-items: stretch; gap: 0; margin: 8px 0 34px; }
+  .stage { flex: 1; border-radius: 12px; padding: 18px 20px; background: var(--card); border: 1px solid var(--line); }
+  .stage h3 { margin: 0 0 6px; font-size: 22px; }
+  .stage p { font-size: 17px; color: var(--muted); line-height: 1.35; margin-bottom: 10px; }
+  .arrow { width: 44px; display: flex; align-items: center; justify-content: center; font-size: 30px; color: var(--muted); }
+  .stage.grey { background: var(--grey-soft); border-style: dashed; border-color: var(--grey); }
+  .stage.start { flex: .7; background: var(--accent-soft); border-color: var(--accent); }
+
+  /* screens (slide 4) */
+  .screens { display: flex; gap: 26px; }
+  .screen { flex: 1; }
+  .frame {
+    height: 270px; border: 2px dashed var(--grey); border-radius: 12px; background: repeating-linear-gradient(45deg, #f1efea, #f1efea 12px, #ebe8e1 12px, #ebe8e1 24px);
+    display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; font-size: 17px; color: var(--muted); margin-bottom: 18px;
+  }
+  .step-no { display: inline-block; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: #fff; text-align: center; line-height: 34px; font-weight: 700; font-size: 18px; margin-right: 8px; }
+  .screen h3 { font-size: 26px; margin: 0 0 8px; display: flex; align-items: center; }
+  .screen p { font-size: 19px; line-height: 1.38; color: var(--muted); }
+
+  /* cards (slide 5, 6) */
+  .cards { display: flex; gap: 24px; }
+  .card { flex: 1; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px 24px 20px; display: flex; flex-direction: column; }
+  .card .tag { font-size: 14px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  .card h3 { font-size: 24px; line-height: 1.25; margin: 0 0 14px; }
+  .card .big { font-size: 52px; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 8px; letter-spacing: -.01em; }
+  .card .big.words { font-size: 38px; }
+  .card .what { font-size: 18px; line-height: 1.35; color: var(--muted); margin-bottom: 16px; }
+  .card .chiprow { margin-top: auto; }
+  .honest { margin-top: 24px; display: flex; align-items: center; gap: 16px; font-size: 21px; background: var(--card); border-left: 6px solid var(--ink); padding: 14px 20px; border-radius: 6px; }
+  .verified { font-size: 15px; color: var(--accent); font-weight: 600; }
+
+  .pill { display: inline-block; font-size: 15px; font-weight: 600; padding: 5px 10px; border-radius: 6px; margin-right: 6px; }
+  .pill.red { background: var(--red-soft); color: var(--red); border: 1px solid var(--red); }
+  .pill.amber { background: var(--amber-soft); color: #8a5c05; border: 1px solid var(--amber); }
+  .pill.grey { background: var(--grey-soft); color: var(--muted); border: 1px dashed var(--grey); }
+  .bottomline { position: absolute; left: 80px; right: 80px; bottom: 64px; font-size: 22px; text-align: center; color: var(--ink); border-top: 1px solid var(--line); padding-top: 18px; }
+
+  /* slide 7 */
+  .twocol { display: flex; gap: 28px; }
+  .col { flex: 1; border-radius: 14px; padding: 24px 26px; }
+  .col.checked { background: var(--accent-soft); border: 2px solid var(--accent); flex: .8; }
+  .col.live { background: var(--card); border: 2px dashed var(--muted); flex: 1.2; }
+  .col h3 { font-size: 24px; margin: 0 0 12px; }
+  .news { border-top: 1px solid var(--line); padding: 11px 0; font-size: 19px; line-height: 1.3; }
+  .news .meta { font-size: 15px; color: var(--muted); }
+
+  /* slide 8 */
+  .flow { display: flex; align-items: center; gap: 0; margin-bottom: 30px; }
+  .node { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 18px; line-height: 1.3; text-align: center; flex: 1; }
+  .node b { display: block; font-size: 19px; }
+  .node.ai { border-color: var(--accent); background: var(--accent-soft); }
+  .node.exa { border-style: dashed; border-color: var(--muted); }
+  .flow .arrow { width: 34px; font-size: 24px; }
+  .lists { display: flex; gap: 28px; }
+  .list { flex: 1; border-radius: 14px; padding: 20px 26px; background: var(--card); border: 1px solid var(--line); }
+  .list h3 { margin: 0 0 10px; font-size: 22px; }
+  .list ul { margin: 0; padding-left: 22px; font-size: 19px; line-height: 1.5; }
+  .list.next { border-style: dashed; }
+
+  /* slide 9 */
+  .ask { background: var(--card); border-left: 8px solid var(--accent); border-radius: 8px; padding: 22px 28px; font-size: 27px; line-height: 1.4; margin-bottom: 30px; max-width: 1060px; }
+  .meta-grid { display: grid; grid-template-columns: 170px 1fr; gap: 10px 20px; font-size: 21px; }
+  .meta-grid dt { color: var(--muted); }
+  .meta-grid dd { margin: 0; }
+  .todo { color: var(--ink); border: 1px dashed var(--muted); padding: 1px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- 1 TITLE -->
+<section>
+  <div class="accent-bar"></div>
+  <p class="kicker" style="position:absolute;left:80px;top:64px;">Junction 2026 · AstraZeneca: Equal Care Across Finland · Exa</p>
+  <div class="title-wrap">
+    <p class="brand">First<span>Line</span></p>
+    <p class="promise">Shows a wellbeing services county director where the first step of early cancer care breaks in their county, and what to do about it on Monday.</p>
+  </div>
+  <p class="draft">Draft v1 — numbers re-checked after feature freeze (Sat 18:00)</p>
+</section>
+
+<!-- 2 PROBLEM -->
+<section>
+  <p class="kicker">The problem</p>
+  <h1 style="margin-bottom:16px;">Where you live decides how fast you see a GP.</h1>
+  <div class="split">
+    <div style="flex:1; padding-top:6px;">
+      <div class="stat"><div class="num red">85.4%</div><div class="lbl">Vantaa–Kerava</div></div>
+      <div class="stat"><div class="num amber">32.7%</div><div class="lbl">Päijät-Häme</div></div>
+      <p class="body" style="font-size:23px;margin:14px 0 14px;">In Vantaa–Kerava, 85% of non-urgent GP visits come more than a week after people ask. In Päijät-Häme it's a third.</p>
+      <p><span class="chip"><b>THL Sotkanet 6411</b> · 2025</span></p>
+      <p class="small muted" style="margin-top:12px;font-size:16px;">Counts all non-urgent GP visits, not only possible cancer.</p>
+    </div>
+    <div style="width:560px;">
+      <p class="small" style="font-size:16px;font-weight:600;margin-bottom:2px;">Non-urgent GP visits more than 7 days after need was assessed, 2025</p>
+      <div class="legend"><span><i class="sw" style="background:var(--red)"></i>worse than Finland</span><span><i class="sw" style="background:var(--amber)"></i>Finland's level or better</span><span><i class="sw" style="background:var(--ink)"></i>Finland</span></div>
+      <svg class="chart" width="532" height="483" viewBox="0 0 560 508" role="img" aria-label="Share of non-urgent GP visits more than 7 days after assessment, 2025, by area"><line x1="340.1" y1="4" x2="340.1" y2="334" stroke="var(--ink)" stroke-dasharray="3 3" stroke-width="1" opacity="0.35"/><text x="168" y="19" text-anchor="end" class="cl hi">Vantaa and Kerava</text><rect x="176" y="8" width="256.2" height="14" rx="2" fill="var(--red)"/><text x="438.2" y="19" class="cv hi">85.4</text><text x="168" y="41" text-anchor="end" class="cl">Helsinki</text><rect x="176" y="30" width="227.7" height="14" rx="2" fill="var(--red)" opacity="0.8"/><text x="409.7" y="41" class="cv">75.9</text><text x="168" y="63" text-anchor="end" class="cl">Central Finland</text><rect x="176" y="52" width="220.5" height="14" rx="2" fill="var(--red)" opacity="0.8"/><text x="402.5" y="63" class="cv">73.5</text><text x="168" y="85" text-anchor="end" class="cl">South Savo</text><rect x="176" y="74" width="209.1" height="14" rx="2" fill="var(--red)" opacity="0.8"/><text x="391.1" y="85" class="cv">69.7</text><text x="168" y="107" text-anchor="end" class="cl">South Ostrobothnia</text><rect x="176" y="96" width="203.4" height="14" rx="2" fill="var(--red)" opacity="0.8"/><text x="385.4" y="107" class="cv">67.8</text><text x="168" y="129" text-anchor="end" class="cl">Kanta-Häme</text><rect x="176" y="118" width="196.8" height="14" rx="2" fill="var(--red)" opacity="0.8"/><text x="378.8" y="129" class="cv">65.6</text><text x="168" y="151" text-anchor="end" class="cl">North Ostrobothnia</text><rect x="176" y="140" width="189.9" height="14" rx="2" fill="var(--red)" opacity="0.8"/><text x="371.9" y="151" class="cv">63.3</text><text x="168" y="173" text-anchor="end" class="cl">Kymenlaakso</text><rect x="176" y="162" width="185.4" height="14" rx="2" fill="var(--red)" opacity="0.8"/><text x="367.4" y="173" class="cv">61.8</text><text x="168" y="195" text-anchor="end" class="cl">North Savo</text><rect x="176" y="184" width="181.5" height="14" rx="2" fill="var(--red)" opacity="0.8"/><text x="363.5" y="195" class="cv">60.5</text><text x="168" y="217" text-anchor="end" class="cl">South Karelia</text><rect x="176" y="206" width="180.9" height="14" rx="2" fill="var(--red)" opacity="0.8"/><text x="362.9" y="217" class="cv">60.3</text><text x="168" y="239" text-anchor="end" class="cl">North Karelia</text><rect x="176" y="228" width="177.9" height="14" rx="2" fill="var(--red)" opacity="0.8"/><text x="359.9" y="239" class="cv">59.3</text><text x="168" y="261" text-anchor="end" class="cl">Southwest Finland</text><rect x="176" y="250" width="173.7" height="14" rx="2" fill="var(--red)" opacity="0.8"/><text x="355.7" y="261" class="cv">57.9</text><text x="168" y="283" text-anchor="end" class="cl">Ostrobothnia</text><rect x="176" y="272" width="170.1" height="14" rx="2" fill="var(--red)" opacity="0.8"/><text x="352.1" y="283" class="cv">56.7</text><text x="168" y="305" text-anchor="end" class="cl">Satakunta</text><rect x="176" y="294" width="169.8" height="14" rx="2" fill="var(--red)" opacity="0.8"/><text x="351.8" y="305" class="cv">56.6</text><text x="168" y="327" text-anchor="end" class="cl hi">Finland</text><rect x="176" y="316" width="164.1" height="14" rx="2" fill="var(--ink)"/><text x="346.1" y="327" class="cv hi">54.7</text><text x="168" y="349" text-anchor="end" class="cl">Central Ostrobothnia</text><rect x="176" y="338" width="158.7" height="14" rx="2" fill="var(--amber)" opacity="0.8"/><text x="340.7" y="349" class="cv">52.9</text><text x="168" y="371" text-anchor="end" class="cl">East Uusimaa</text><rect x="176" y="360" width="155.4" height="14" rx="2" fill="var(--amber)" opacity="0.8"/><text x="337.4" y="371" class="cv">51.8</text><text x="168" y="393" text-anchor="end" class="cl">Lapland</text><rect x="176" y="382" width="145.8" height="14" rx="2" fill="var(--amber)" opacity="0.8"/><text x="327.8" y="393" class="cv">48.6</text><text x="168" y="415" text-anchor="end" class="cl">Central Uusimaa</text><rect x="176" y="404" width="140.1" height="14" rx="2" fill="var(--amber)" opacity="0.8"/><text x="322.1" y="415" class="cv">46.7</text><text x="168" y="437" text-anchor="end" class="cl">Pirkanmaa</text><rect x="176" y="426" width="137.4" height="14" rx="2" fill="var(--amber)" opacity="0.8"/><text x="319.4" y="437" class="cv">45.8</text><text x="168" y="459" text-anchor="end" class="cl">West Uusimaa</text><rect x="176" y="448" width="120.0" height="14" rx="2" fill="var(--amber)" opacity="0.8"/><text x="302.0" y="459" class="cv">40.0</text><text x="168" y="481" text-anchor="end" class="cl">Kainuu</text><rect x="176" y="470" width="115.2" height="14" rx="2" fill="var(--amber)" opacity="0.8"/><text x="297.2" y="481" class="cv">38.4</text><text x="168" y="503" text-anchor="end" class="cl hi">Päijät-Häme</text><rect x="176" y="492" width="98.1" height="14" rx="2" fill="var(--amber)"/><text x="280.1" y="503" class="cv hi">32.7</text></svg>
+    </div>
+  </div>
+  <div class="foot"><span>FirstLine</span><span>2</span></div>
+</section>
+
+<!-- 3 WHO -->
+<section>
+  <p class="kicker">Who it's for</p>
+  <h1>County directors own the fix. Nobody shows them where their pathway breaks.</h1>
+  <div class="path">
+    <div class="stage start"><h3>Patient</h3><p>notices a symptom</p></div>
+    <div class="arrow">→</div>
+    <div class="stage"><h3>Getting to a GP</h3><p>wait for a non-urgent visit</p><span class="chip"><b>Sotkanet 6411</b> · 2025</span></div>
+    <div class="arrow">→</div>
+    <div class="stage grey"><h3>GP spots possible cancer</h3><span class="pill grey">no public data</span></div>
+    <div class="arrow">→</div>
+    <div class="stage"><h3>GP → specialist</h3><p>referrals processed in 3 days</p><span class="chip"><b>Sotkanet 13</b> · 2025</span></div>
+  </div>
+  <p class="body" style="max-width:1080px;">The numbers sit in national tables. Nothing shows a county director which step breaks, or what worked elsewhere.</p>
+  <p class="body" style="margin-top:18px;font-size:21px;">Finland's cancer roadmap asks for stronger GP access (measure 2.5.1). <span class="chip"><b>STM cancer strategy roadmap</b> · 2026–2031</span></p>
+  <div class="foot"><span>FirstLine</span><span>3</span></div>
+</section>
+
+<!-- 4 PRODUCT -->
+<section>
+  <p class="kicker">The product</p>
+  <h1>Three screens: rank, find the break, act.</h1>
+  <div class="screens">
+    <div class="screen">
+      <div class="frame">Screenshot: County ranking — add after Sat 18:00 freeze</div>
+      <h3><span class="step-no">1</span>Rank</h3>
+      <p>Every county by GP wait and referral speed. A source chip on every number.</p>
+    </div>
+    <div class="screen">
+      <div class="frame">Screenshot: County pathway — add after Sat 18:00 freeze</div>
+      <h3><span class="step-no">2</span>Find the break</h3>
+      <p><span class="pill red">red</span><span class="pill amber">amber</span><span class="pill grey">no data</span><br>Stage cards, with limitations always visible.</p>
+    </div>
+    <div class="screen">
+      <div class="frame">Screenshot: Act — add after Sat 18:00 freeze</div>
+      <h3><span class="step-no">3</span>Act</h3>
+      <p>2–3 actions: owner, first step, precedent, source. Red-flag helper: decision support, not diagnosis.</p>
+    </div>
+  </div>
+  <div class="foot"><span>FirstLine</span><span>4</span></div>
+</section>
+
+<!-- 5 ACT -->
+<section>
+  <p class="kicker">Act <span class="verified" style="margin-left:10px;text-transform:none;letter-spacing:0;">✓ checked evidence</span></p>
+  <h1>What worked elsewhere, and what didn't.</h1>
+  <div class="cards">
+    <div class="card">
+      <h3>Fast-track pathways</h3>
+      <div class="big">−17 days</div>
+      <p class="what">median time to diagnosis, Denmark</p>
+      <div class="chiprow"><span class="chip"><b>Jensen et al., BMC Cancer</b> · 2015</span></div>
+    </div>
+    <div class="card">
+      <h3>A named GP</h3>
+      <div class="big">25% lower</div>
+      <p class="what">odds of dying, same GP &gt;15 years vs 1 year (Norway, observational)</p>
+      <div class="chiprow"><span class="chip"><b>Sandvik et al., Br J Gen Pract</b> · 2022</span></div>
+    </div>
+    <div class="card">
+      <h3>Nurse-led visits</h3>
+      <div class="big words">Equal or better</div>
+      <p class="what">outcomes vs doctors, probably (18 trials)</p>
+      <div class="chiprow"><span class="chip"><b>Laurant et al., Cochrane</b> · 2018</span></div>
+    </div>
+  </div>
+  <div class="honest"><span><b>Honest result:</b> Sweden's pathways shortened waits, but regional gaps stayed.</span><span class="chip"><b>Riksrevisionen RiR 2023:12, via Riksdagen</b> · 2023</span></div>
+  <div class="foot"><span>FirstLine</span><span>5</span></div>
+</section>
+
+<!-- 6 TRUST -->
+<section>
+  <p class="kicker">Trust</p>
+  <h1>Every number has a source. Every gap is said out loud.</h1>
+  <div class="cards">
+    <div class="card">
+      <h3>Source on every number</h3>
+      <p class="what" style="font-size:20px;">No source, no row.</p>
+      <div class="chiprow"><span class="chip"><b>THL Sotkanet 6411</b> · 2025</span></div>
+    </div>
+    <div class="card">
+      <h3>Limitations always visible</h3>
+      <p class="what" style="font-size:20px;">6411 isn't cancer-specific. 4 areas, incl. Vantaa–Kerava, lack referral data: grey.</p>
+      <div class="chiprow"><span class="pill grey">no public data</span> <span class="chip"><b>Sotkanet 13</b> · 2025</span></div>
+    </div>
+    <div class="card">
+      <h3>AI can't invent numbers</h3>
+      <p class="what" style="font-size:20px;">Validator drops sentences whose numbers aren't in their source.</p>
+      <div class="chiprow"><span class="chip"><b>Built:</b> live answers</span> <span class="chip"><b>Next:</b> county brief</span></div>
+    </div>
+  </div>
+  <p class="bottomline" style="bottom:150px;">Public data only. No patient data. Decision support, not diagnosis.</p>
+  <div class="foot"><span>FirstLine</span><span>6</span></div>
+</section>
+
+<!-- 7 LIVE LAYER -->
+<section>
+  <p class="kicker">Live layer · Exa</p>
+  <h1>Checked data shows where care breaks. Exa shows what's happening about it now.</h1>
+  <div class="twocol">
+    <div class="col checked">
+      <h3>✓ Checked evidence</h3>
+      <p class="body" style="font-size:21px;">14 actions, each quoted from its source.</p>
+      <p style="margin-top:14px;"><span class="chip"><b>FirstLine evidence table</b> · 2026</span></p>
+      <p class="body" style="font-size:19px;margin-top:22px;color:var(--muted);">Ask anything: linked answers, or “nothing found”.</p>
+    </div>
+    <div class="col live">
+      <h3>Found live — unverified <span class="chip live" style="margin-left:8px;">found 13 Nov 2026</span></h3>
+      <div class="news"><span class="meta">Lääkärilehti · 2 Nov 2026</span><br>Vantaa–Kerava is hiring more doctors</div>
+      <div class="news"><span class="meta">Etelä-Suomen Sanomat · 10 Nov 2026</span><br>Päijät-Häme expands named doctor and nurse care</div>
+      <div class="news"><span class="meta">Lääkärilehti · 23 Apr 2026</span><br>Counties differ in how lung cancer is detected</div>
+      <p class="muted" style="font-size:15px;margin-top:8px;">Dated link on every item.</p>
+    </div>
+  </div>
+  <div class="foot"><span>FirstLine</span><span>7</span></div>
+</section>
+
+<!-- 8 BUILT -->
+<section>
+  <p class="kicker">How it's built</p>
+  <h1>Public data snapshot first, so the demo works even if a service is down.</h1>
+  <div class="flow">
+    <div class="node"><b>THL Sotkanet</b>public API</div>
+    <div class="arrow">→</div>
+    <div class="node"><b>Data snapshot</b>source on every row</div>
+    <div class="arrow">→</div>
+    <div class="node"><b>Next.js app</b>on Vercel</div>
+    <div class="arrow">←</div>
+    <div class="node exa"><b>Exa</b>server-side, cached</div>
+    <div class="arrow">→</div>
+    <div class="node ai"><b>Claude + validator</b>words only, numbers checked</div>
+  </div>
+  <div class="lists">
+    <div class="list">
+      <h3>Real today</h3>
+      <ul>
+        <li>22 areas, 3 indicators, 2023–2025</li>
+        <li>14 checked actions</li>
+        <li>Exa news, evidence, questions</li>
+        <li>Answer validator</li>
+      </ul>
+    </div>
+    <div class="list next">
+      <h3>Next, by Sat 18:00 freeze</h3>
+      <ul>
+        <li>The three screens</li>
+        <li>Red-flag helper</li>
+        <li>AI county brief</li>
+        <li>Live deploy</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>FirstLine</span><span>8</span></div>
+</section>
+
+<!-- 9 CLOSE -->
+<section>
+  <p class="kicker">The ask</p>
+  <h1 style="font-size:56px;">Equal first steps, across Finland.</h1>
+  <p class="ask">Pilot with one wellbeing services county: pick the 2–3 health stations with the worst 7-day GP access and start named-GP lists there for patients aged 50+. <span class="chip" style="font-size:14px;"><b>FirstLine evidence table</b> · 2026</span></p>
+  <dl class="meta-grid">
+    <dt>Live demo</dt><dd><span class="todo">TODO: live URL after deploy</span></dd>
+    <dt>Code</dt><dd>github.com/HienNguyen-ComputerScience/junction-2026-app</dd>
+    <dt>Team</dt><dd>@HienNguyen-ComputerScience · @fraidfax · @bestawperna · @nabeo11 <span class="todo">TODO: real names</span></dd>
+  </dl>
+  <div class="foot"><span>FirstLine · public data only · every number sourced</span><span>9</span></div>
+</section>
+
+</body>
+</html>
