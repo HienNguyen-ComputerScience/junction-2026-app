@@ -38,7 +38,8 @@ A wellbeing services county director (or a GP in that county). Judges are market
 - Patient data of any kind.
 - Treatment access (bottleneck 4): the data is flat.
 - Diagnosis. The red-flag helper is decision support only.
+- Copying guideline text. NICE NG12 and Käypä hoito may not be reproduced in the app without permission: link and cite only.
 - Accounts, auth, a database (unless the lead decides otherwise).
 
 ## Demo script (3 minutes)
-TBD (Luan). Opening line draft: "In Vantaa–Kerava, 85% of people wait more than a week just to see a GP. In Päijät-Häme it's a third. Cancer doesn't wait."
+TBD (Luan). Script: `docs/pitch/demo-script.md` (Luan, PR #7). Wording rule for all app and pitch copy: Sotkanet 6411 counts non-urgent GP *visits*, so say "85% of non-urgent GP visits in Vantaa–Kerava come more than a week after people ask", never "85% of people".
