@@ -1,40 +1,70 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { search, simulateOutage } from "@/lib/exa/client";
-import { ACTION_DOMAINS, ACTION_QUERIES, GOV_FI, NORDIC_INTL, TTL } from "@/lib/exa/config";
+import { EVIDENCE_ROW_IDS, PRESET_KEYS, TTL, resolveEvidence } from "@/lib/exa/config";
+import { demoCacheGet } from "@/lib/exa/demo-cache";
+import { rateLimit } from "@/lib/exa/rate-limit";
 
-// GET /api/evidence?action=fast-track
-// `action` is a preset key (see ACTION_QUERIES) or free text (max 200 chars), e.g. an
-// action title from docs/evidence/evidence.json. Results are "found live — unverified".
+// GET /api/evidence?action=ev-ref-denmark-cpp
+// `action` is one of (checked in this order):
+//   - an evidence row id from data/evidence.json (e.g. ev-ref-denmark-cpp): research query built
+//     from the row's action + precedent;
+//   - an evidence row's action title, exactly (what the UI sends today): same query as its id;
+//   - a preset key (fast-track, rapid-diagnostic-centres, ...);
+//   - free text (max 200 chars).
+// Results are "found live — unverified".
 
 export async function GET(request: NextRequest) {
+  const limited = rateLimit(request, "evidence");
+  if (limited) return limited;
+
   const action = (request.nextUrl.searchParams.get("action") ?? "").trim().slice(0, 200);
   if (!/\p{L}{2,}/u.test(action)) {
     return NextResponse.json(
-      { error: "Missing ?action=. Use a preset or free text.", presets: Object.keys(ACTION_QUERIES) },
+      { error: "Missing ?action=. Use an evidence id, a preset or free text.", presets: PRESET_KEYS, actionIds: EVIDENCE_ROW_IDS },
       { status: 400 },
     );
   }
 
-  const query = ACTION_QUERIES[action] ?? action;
+  const resolved = resolveEvidence(action);
+  const closedSet = !resolved.key.startsWith("text:");
   // Probe finding: `fast` + domain filter finds the same key papers as `deep` in ~0.5 s instead of 10–30 s.
-  const result = await search(
+  let result = await search(
     {
-      query,
+      query: resolved.query,
       type: "fast",
       numResults: 5,
-      includeDomains: ACTION_DOMAINS[action] ?? [...NORDIC_INTL, ...GOV_FI],
+      includeDomains: resolved.includeDomains,
       contents: { highlights: { maxCharacters: 500 } },
     },
-    { ttlMs: TTL.evidence, simulateOutage: simulateOutage(request), snippetChars: 500 },
+    {
+      ttlMs: TTL.evidence,
+      simulateOutage: simulateOutage(request),
+      snippetChars: 500,
+      cacheKey: `evidence:${resolved.key}:${resolved.query}`,
+      pin: closedSet,
+    },
   );
+
+  let message: string | undefined;
+  if (result.freshness === "unavailable") {
+    const saved = closedSet ? demoCacheGet("evidence", resolved.key) : null;
+    if (saved) {
+      result = { items: saved.items, freshness: "stale-cache", retrievedAt: saved.retrievedAt };
+      message = `Live search unavailable. Showing saved results from ${saved.retrievedAt}.`;
+    } else {
+      message = "Live search unavailable.";
+    }
+  }
 
   return NextResponse.json({
     action,
-    query,
+    ...(resolved.actionId && { actionId: resolved.actionId }),
+    query: resolved.query,
     label: "Found live — unverified",
     freshness: result.freshness,
-    ...(result.freshness === "unavailable" && { message: "Live search unavailable." }),
+    ...(result.retrievedAt && { retrievedAt: result.retrievedAt }),
+    ...(message && { message }),
     items: result.items,
   });
 }
