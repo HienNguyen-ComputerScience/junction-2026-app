@@ -32,7 +32,7 @@ Run 3 tested commit c4f067d. PRs #45 (22:36 UTC) and #10 (22:38 UTC) merged afte
 | E2E docs and browser run | Merged (PR #25, #27, #35, #36) | `docs/pitch/`, `docs/evidence/` |
 | Submission pack (this folder) | Merged (PR #30, #40). Run 3 refresh: PR #46, issue #43 closed; Run 3b: PR #50, issue #47 closed. nabeo11's drafts: PR #42 merged on 14 Nov (commit 113f6ad) | `docs/submission/` |
 | MIT `LICENSE` | Added at the repo root (issue #51); README links to it. Whether the repo is public is still a human step | `LICENSE`, `README.md` |
-| Live URL (Vercel) | Deployed: https://firstline-nu.vercel.app (14 Nov, commit fb67f1f, via Vercel CLI; GitHub not connected, so later merges need a manual redeploy). Smoke-tested: pages 200, unknown county 404, county news and question box live | `README.md` "Live demo" |
+| Live URL (Vercel) | Deployed: https://firstline-finland.vercel.app (Vercel project `firstline-finland`, keys set; deploys are manual, the repo is not linked to Vercel). Checked on the deployed site 14 Nov (board): pages 200, unknown county 404, AI brief, county news, evidence finder and question box live | `README.md` "Live demo" |
 | Pitch video | Not in repo | TODO (human) |
 
 Re-check this table after the freeze (Sat 18:00) with `gh pr list --state all`, `gh issue list --state all` and a post-freeze test run in [test-runs.md](test-runs.md).

@@ -79,7 +79,7 @@ From `README.md` (checked against the repo on 13 Nov):
 
 ## Demo link
 
-https://firstline-nu.vercel.app
+https://firstline-finland.vercel.app
 
 ## Source code link
 

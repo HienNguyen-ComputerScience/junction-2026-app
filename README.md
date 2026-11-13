@@ -15,7 +15,7 @@ Three screens, all built from a committed data snapshot (`data/`, see `data/READ
 The question box is also on the ranking page (`/#ask`). Sources and limitations: `/sources`.
 
 ## Live demo
-URL: https://firstline-nu.vercel.app
+URL: https://firstline-finland.vercel.app
 Demo credentials: none needed (public, no login).
 
 Hosted on Vercel (project `firstline-finland`), deployed from `main` with the Vercel CLI (`vercel deploy --prod`); it is not auto-deployed on push, so the live site can lag behind `main`.
