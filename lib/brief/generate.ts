@@ -33,10 +33,10 @@ You get a fact sheet in JSON. Rules:
 - Use ONLY the facts, stages and actions in the fact sheet. No outside knowledge, no other numbers.
 - Write every number as digits, exactly as the fact sheet gives it (you may round a percentage to a whole number). Never spell numbers out ("nine in ten", "half", "doubled") and never compute new numbers: differences, changes and ranks are already in the fact sheet.
 - Do not write indicator codes such as 6411 or 13 in the text.
-- For each claim, list in "numbers" every number that appears in its text (years and ranks included), and in "source_ids" the source_id of every fact or action the claim uses. A claim with no source_id is discarded. Do not cite a statistic source unless the claim uses one of its numbers.
+- For each claim, list in "numbers" every number that appears in its text (years and ranks included), and in "source_ids" the exact "source_id" value of every fact or action the claim uses (fact_id values are not sources). A claim with no source_id is discarded. Do not cite a statistic source unless the claim uses one of its numbers.
 - Indicator 6411 counts non-urgent GP visits (appointments), not people. Say "non-urgent GP visits", never "people" or "patients", for those shares.
 - Amber means "at Finland's level or better", which is still a delay, not good. Never call an amber stage good, fine or solved.
-- Where a stage has status no_data, say there is no public data. Do not guess.
+- Where a stage has status no_data, say there is no public data. Do not guess. A stage with source_id null has no source to cite, so mention it inside a claim that also states a sourced fact (for example together with the other stages' status), never alone.
 - No diagnosis, no medical advice, no statements about individual patients.
 - Headline: one sentence, where the pathway breaks. Then 3 to 5 claims, one or two sentences each: the worst stage with its numbers, the trend, the stages with no public data, and what to do first (name the action, who does it and the first step from the fact sheet).
 - Plain English, short sentences.`;
@@ -120,7 +120,14 @@ async function callClaude(context: BriefContext, key: string): Promise<Outcome> 
     })),
     stages: context.stages,
     worst_stages: context.worst_stages,
-    actions: context.actions,
+    // No action ids here: the model cited them as source_ids, which the validator drops.
+    actions: context.actions.map(({ stage, action, who_implements, first_step, source_id }) => ({
+      stage,
+      action,
+      who_implements,
+      first_step,
+      source_id,
+    })),
     sources: context.sources,
   };
 
@@ -153,6 +160,8 @@ async function callClaude(context: BriefContext, key: string): Promise<Outcome> 
     if (!output) return { ok: false, reason: REASON.malformed };
 
     const checked = validateBrief(output, context);
+    // Server log only (no secrets): why claims were dropped, for tuning the prompt.
+    for (const d of checked.dropped) console.info(`[brief] ${context.county.id} dropped: ${d.reason} | ${d.claim.text}`);
     if (checked.kept.length < MIN_KEPT) return { ok: false, reason: REASON.tooFew, dropped: checked.dropped.length };
 
     const model = isObject(json) && typeof json.model === "string" ? json.model : BRIEF_MODEL;

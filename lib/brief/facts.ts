@@ -154,6 +154,16 @@ export function buildContextFromSnapshot(snapshot: Snapshot, countyId: string): 
         source_id: src,
       });
       facts.push({
+        fact_id: `${indicatorId}-${LATEST}-rank-scale`,
+        text: `Rank 1 is the ${worstWord} among areas with data on ${indicator.short_name}.`,
+        value: 1,
+        unit: "rank",
+        decimals: 0,
+        year: LATEST,
+        indicator_id: indicatorId,
+        source_id: src,
+      });
+      facts.push({
         fact_id: `${indicatorId}-${LATEST}-areas`,
         text: `${peers.length} areas (wellbeing services counties plus the City of Helsinki) have a ${LATEST} value for ${indicator.short_name}.`,
         value: peers.length,
