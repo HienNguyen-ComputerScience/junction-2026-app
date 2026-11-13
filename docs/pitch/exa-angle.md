@@ -4,7 +4,7 @@ Owner: Luan (@fraidfax). Goal: in about 15 seconds, prove that FirstLine knows t
 
 ## The beat (inside the 2-minute video)
 
-1. On the Vantaa–Kerava county page, the static data shows "85% wait over a week for a GP (THL, 2025)".
+1. On the Vantaa–Kerava county page, the static data shows "85% of non-urgent GP visits come more than a week after people ask (THL, 2025)".
 2. Cut to the **county news** strip below it: the newest card has a **date from this week or this month** (e.g. "12 Nov 2026 · yle.fi") and a link.
 3. Voice-over: *"The numbers are from THL. But what happened in Vantaa this week isn't in any dataset or any AI's memory. Exa finds it live, and every line links to its source."*
 4. Point at the **"found live — unverified"** label next to the checked evidence table. Message: we keep checked facts separate from live finds. That covers trust (AstraZeneca) and source clarity (Exa) together.
