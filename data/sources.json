@@ -1,0 +1,38 @@
+[
+  {
+    "source_id": "sotkanet-13",
+    "kind": "statistic",
+    "name": "Sotkanet 13: Referrals for specialised health care received processed within 3 days, % of referrals received",
+    "url": "https://sotkanet.fi/sotkanet/en/metadata/indicators/13",
+    "publisher": "Finnish institute for Health and Welfare (THL), Sotkanet",
+    "retrieved": "2026-11-13",
+    "data_updated": "2026-06-05"
+  },
+  {
+    "source_id": "sotkanet-5033",
+    "kind": "statistic",
+    "name": "Sotkanet 5033: Referrals for specialised health care received after processing for more than 21 days, % of the referrals received",
+    "url": "https://sotkanet.fi/sotkanet/en/metadata/indicators/5033",
+    "publisher": "Finnish institute for Health and Welfare (THL), Sotkanet",
+    "retrieved": "2026-11-13",
+    "data_updated": "2026-06-05"
+  },
+  {
+    "source_id": "sotkanet-6411",
+    "kind": "statistic",
+    "name": "Sotkanet 6411: Waiting time for elective outpatient medical visit (physician) in primary health care exceeds 7 days from assessment of the need for treatment, % appointments kept",
+    "url": "https://sotkanet.fi/sotkanet/en/metadata/indicators/6411",
+    "publisher": "Finnish institute for Health and Welfare (THL), Sotkanet",
+    "retrieved": "2026-11-13",
+    "data_updated": "2026-05-13"
+  },
+  {
+    "source_id": "sotkanet-regions",
+    "kind": "statistic",
+    "name": "Sotkanet region classification (wellbeing services counties)",
+    "url": "https://sotkanet.fi/rest/1.1/regions",
+    "publisher": "THL (Finnish Institute for Health and Welfare), Sotkanet",
+    "retrieved": "2026-11-13",
+    "data_updated": null
+  }
+]

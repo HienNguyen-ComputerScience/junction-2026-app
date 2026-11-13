@@ -2,10 +2,10 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { counties } from "@/lib/data";
+import { counties, getCounty } from "@/lib/data";
 
 export default function CountyRankingPage() {
-  const sample = counties[0];
+  const sample = getCounty("vantaa-kerava") ?? counties[0];
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-6">
