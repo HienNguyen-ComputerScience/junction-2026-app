@@ -2,7 +2,7 @@
 
 For: nabeo11 (submission). Written 13 Nov 2026. Each question is one sentence you can say out loud. Fill in the "Answer / who / when" line right after the conversation, then copy it into `docs/evidence/mentor-log.md` (use its answer block, and ask "may we cite you by name?" every time).
 
-Order is priority: ask 1 to 4 first at each booth, the rest only if there is time.
+Order is priority. At the AstraZeneca stand use the "Ask these first" block; at the other booths ask 1 to 4 first, the rest only if there is time. The AstraZeneca section is the nabeo11 list of 21 questions (the team lead decided it replaces the earlier A1-A8 draft); the Exa and organiser sections are unchanged.
 
 ## Already answered (do not ask again)
 
@@ -22,51 +22,155 @@ Not answered yet: the whole "Top 5" list for Kaisa Kaitila (AstraZeneca, Medical
 
 ## AstraZeneca
 
-Contact on file: Kaisa Kaitila, Medical Affairs (planned for Saturday); the Friday stand mentor's name was not recorded.
+### How to record answers
 
-### A1. Is there a Finnish list of cancer warning signs for GPs that we may link to or reuse?
-- Why we ask: decides what the red-flag helper points to. If not, we link to UK NICE NG12 with a "Finnish criteria pending" label.
-- What we know: NICE text cannot be copied outside the UK; Käypä hoito has no cancer-wide alarm list we found; Finnish national symptom and referral criteria are promised in roadmap measure 2.5.2 but not published (`docs/evidence/red-flags.md`).
-- Answer / who / when:
+For every answer, write:
+- **Who** said it (name) and **the time**.
+- **Quote OK?** Tick one: yes, by name / yes, as "an AstraZeneca mentor" / no. If you did not ask, tick "not asked". We may only quote people who said yes.
+- Write what they said in their words if you can. Short is fine. "Didn't know" is a useful answer too.
+- If they say "ask someone else", write the name.
 
-### A2. Who actually owns the time from GP to specialist in a county: the primary care director, the hospital district or the chief physician?
-- Why we ask: every action card names an owner, and screen 1 is written for the person who opens it first.
-- What we know: our user is "a county director or a GP" (`SPEC.md`); the owners named in `docs/evidence/evidence.md` are not confirmed by anyone at AstraZeneca (mentor log has no answer).
-- Answer / who / when:
+Who to ask:
+- **Taija af Hällström** (Medical Affairs): medical and Finnish-healthcare questions.
+- **Kaisa Kaitila** (Saturday morning, booked): medical questions too. She already has a separate list in `docs/evidence/mentor-log.md`, so use this page for the questions that list does not cover, or give her the 5 below.
+- **Hanna Rusila, Laura Aaltonen** (Marketing) and **Joanna Tuormaa** (Business Excellence): story and "what wins" questions. They are also the Sunday judges, so keep it light and do not ask them to pre-judge.
+- Other mentors: Hanna Toivola.
 
-### A3. For a county with slow GP access, which is most realistic within 12 months: a named GP, nurse first contact, or digital triage? And for slow referrals: national criteria, a diagnostic centre for vague symptoms, or e-referral templates?
-- Why we ask: decides which action we show first on screen 3 and which precedent we lead with in the pitch.
-- What we know: all six are in the evidence table with sources (`data/evidence.json`, `docs/evidence/evidence.md`); two are in Finland's 2026 to 2031 cancer roadmap.
-- Answer / who / when:
+Say "indicator 6411" only if asked. Plain version: "the share of normal, non-urgent GP appointments that happen more than a week after people ask for one".
 
-### A4. Is it fair to use "non-urgent GP visits that wait over 7 days" (Sotkanet 6411) as the measure of getting in to see a GP, if we say on screen that it is not cancer-specific?
-- Why we ask: it is our only county-level GP access number, and judges score data transparency at 20%. If the answer is no, we need another framing or measure.
-- What we know: 6411 counts visits, not people, across all non-urgent care; the limitations box says so (`data/README.md`, `SPEC.md`).
-- Answer / who / when:
+---
 
-### A5. Has any wellbeing services county already piloted a fast-track cancer referral or a vague-symptoms diagnostic route, and do you know why Päijät-Häme has the shortest GP waits (32.7% in 2025)?
-- Why we ask: a Finnish precedent beats a Danish or UK one for actionability, and it tells us whether to pitch Päijät-Häme as the model county.
-- What we know: Päijät-Häme news (named doctor and nurse model, 10 Nov 2026) is cited in `docs/pitch/exa-angle.md`; no Finnish cancer fast-track pilot is in the evidence table.
-- Answer / who / when:
+### ASK THESE FIRST (if you only get 5 minutes)
 
-### A6. What would make the AstraZeneca judges say "a county could start this on Monday"?
-- Why we ask: actionability is 30% of the score, the biggest weight; it shapes the wording of every action card and the close of the pitch.
-- What we know: each action has an owner, a first step, a precedent and a source (`SPEC.md`). We do not know what AstraZeneca counts as concrete enough.
-- Answer / who / when:
+**P1. When someone has early signs of cancer, such as tiredness, weight loss or a cough that won't go away, do they usually end up in the normal GP queue, so that the normal queue is a fair measure of their wait?**
+Why: decides whether our headline number (the wait for a normal GP appointment) is honest or needs a bigger warning on screen. Ask: Taija or Kaisa.
+Answer:
+&nbsp;
+&nbsp;
 
-### A7. Would a cancer-specific view (for example lung cancer) matter more to you than the all-patients GP wait?
-- Why we ask: we have no public cancer-specific GP access data. If lung matters, we could add one narrow example, but it costs time we have little of.
-- What we know: Lääkärilehti, 23 Apr 2026, covers differences between wellbeing counties in detecting lung cancer (`docs/pitch/exa-angle.md`); no cancer-specific indicator is in `data/`.
-- Answer / who / when:
+**P2. Is there a Finnish list of cancer warning signs for GPs that we are allowed to link to? If not, is it OK for us to link to the UK guideline (NICE NG12) and say clearly it is a UK guideline?**
+Why: decides what the red-flag helper is built on, and whether we can use it at all. Ask: Taija or Kaisa.
+Answer:
+&nbsp;
+&nbsp;
 
-### A8. Will judges open our live URL themselves, or only watch the 2-minute video and the pitch?
-- Why we ask: decides how much to polish the deployed app versus the video, and whether to prepare a guided path for judges.
-- What we know: only the Exa criteria mention judges typing their own queries (`SPEC.md`); nothing for AstraZeneca.
-- Answer / who / when:
+**P3. Does any Finnish county already run a fast lane for suspected cancer, or a diagnostic centre for vague symptoms, that we can name as a local example?**
+Why: a Finnish example is far stronger in the pitch than only Denmark and the UK. Ask: Taija or Kaisa.
+Answer:
+&nbsp;
+&nbsp;
 
-Also ask, at the end of every conversation: "May we cite you by name in the pitch?" (The Friday mentor was not asked; we call them "AstraZeneca mentor".)
+**P4. In a county, who would actually act on this: who owns the time from GP to specialist, and what would they need to see on one screen to start something on Monday?**
+Why: decides what the "Act" screen shows and who it names as owner. Ask: Kaisa (Saturday), or any mentor.
+Answer:
+&nbsp;
+&nbsp;
 
-If there is time (already drafted in `mentor-log.md`): roadmap measure 2.5.2 timing and which cancers; public Finnish data on referral-to-diagnosis time per cancer type beyond Sotkanet 13 and 5033; any wording that would worry a clinician about the red-flag helper.
+**P5. For you, what does "actionable" look like, and if we have two minutes with someone who is not a doctor, what should they remember when we finish?**
+Why: Actionability is 30% of the score, and the Sunday judges are not clinicians. It shapes the whole pitch. Ask: Hanna Rusila, Laura Aaltonen or Joanna Tuormaa.
+Answer:
+&nbsp;
+&nbsp;
+
+---
+
+### A. Is our data measuring the right thing?
+
+**A1. Is there any reason the share of normal GP visits that happen more than a week after people ask would mislead us when comparing counties (for example because some counties count or book visits differently)?**
+Why: if yes, we add a warning or change how we rank counties. Ask: Taija.
+Answer:
+&nbsp;
+
+**A2. The two numbers we use for GP-to-specialist are the share of specialist referrals processed within 3 days and the share taking over 21 days. Is that a fair picture of that step for cancer, or does it hide something important (for example it covers all referrals, not only cancer)?**
+Why: decides how strongly we word the "GP to specialist" stage card. Ask: Taija.
+Answer:
+&nbsp;
+
+**A3. Is there any public county-level number we have missed that shows time from first symptoms to diagnosis or to treatment, even for one cancer type?**
+Why: a better number could replace our indirect ones. Ask: Taija or Kaisa.
+Answer:
+&nbsp;
+
+**A4. Is there any public figure about counties and cancer that you have seen people read wrongly or that you would warn us not to use?**
+Why: stops us putting a misleading number on a judge's screen. Ask: Taija.
+Answer:
+&nbsp;
+
+### B. The red-flag helper
+
+**B1. Is it acceptable to you if the helper only shows our own plain-language warning-sign categories and links out to the guideline, without copying any guideline text?**
+Why: this is our legal and safe design. If they would rather see something else, we change it. Ask: Taija.
+Answer:
+&nbsp;
+
+**B2. Is there any wording or feature in a "symptoms in, referral route out" tool that would worry a doctor, even with "decision support, not diagnosis" on every screen?**
+Why: tells us what to remove or reword before Sunday. Ask: Taija or Kaisa.
+Answer:
+&nbsp;
+
+### C. Fixes and local examples
+
+**C1. For a county where GP waits are long, which of these could a county realistically start within a year: a named GP, nurse first-contact visits, or online symptom check (Omaolo)? And for a slow specialist step: national referral criteria, a diagnostic centre, or standard e-referral forms?**
+Why: decides which fix we put first for each type of county. Ask: Taija or Kaisa.
+Answer:
+&nbsp;
+
+**C2. Päijät-Häme has the shortest GP waits in 2025. Do you know why, and may we say so?**
+Why: gives the "what good looks like" story, or stops us guessing wrongly. Ask: Taija or Kaisa.
+Answer:
+&nbsp;
+
+### D. The pilot with a county
+
+**D1. If a county did pick this up after the weekend, what would a pilot look like in practice: who from the county, who from AstraZeneca, how long, and what would it need from us?**
+Why: lets us write a believable "next step" on the final slide instead of guessing. Ask: Hanna Rusila, Joanna Tuormaa or Kaisa.
+Answer:
+&nbsp;
+
+**D2. What would make a county director say yes to a pilot, and what would make them say no straight away?**
+Why: tells us what to leave out. Ask: Kaisa or Joanna Tuormaa.
+Answer:
+&nbsp;
+
+### E. Story and judging
+
+**E1. What have past winning teams in this challenge done in their 2 minutes that the others did not?**
+Why: shows us what judges reward. Ask: Hanna Rusila, Laura Aaltonen or Joanna Tuormaa.
+Answer:
+&nbsp;
+
+**E2. Which is better for your judges: one striking county comparison told as a story, or the full ranking of all counties?**
+Why: decides what we open the pitch with. Ask: Marketing judges.
+Answer:
+&nbsp;
+
+### F. Using what you tell us
+
+**F1. May we quote what mentors tell us in our pitch and evidence page, and if so, by name, or only as "an AstraZeneca mentor"?**
+Why: decides whether mentor words go on screen or only help us privately. Ask: any mentor, and ask again for each quote you want to use.
+Answer:
+&nbsp;
+
+### G. Live web search next to checked evidence
+
+**G1. We also show live web search results (county news, research papers) next to our checked evidence, labelled "found live, unverified". Does that help or hurt trust for you? Would you rather see it off, or kept visibly separate?**
+Why: it is a choice about the whole screen. We cut it if it harms the AstraZeneca story. Ask: Taija and Joanna Tuormaa.
+Answer:
+&nbsp;
+
+---
+
+### Optional (only if time is left)
+
+**O1. Finland's cancer roadmap (measure 2.5.2) promises national referral criteria. Do you know when the first ones are due, and for which cancers?**
+Why: lets us say "coming soon" accurately. Ask: Taija or Kaisa.
+Answer:
+&nbsp;
+
+**O2. Is there anything you would want us to say less loudly, because it is likely to be wrong?**
+Why: last catch-all before we finish. Ask: anyone.
+Answer:
+&nbsp;
 
 ## Exa
 
