@@ -1,3 +1,368 @@
 {
-  "entries": {}
+  "entries": {
+    "row:ev-gp-capacity-roadmap": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "National Cancer Strategy 2026–2035",
+          "url": "https://fican.fi/wp-content/uploads/2026/01/National_Cancer_Strategy_2026-2035_Finland.pdf",
+          "domain": "fican.fi",
+          "publishedDate": null,
+          "snippet": "In cancer care, it is crucial that cancer is detected as early as possible. Early detection increases the likelihood that treatment will be curative, reduces side effects, lowers costs and often prevents cancer related death. The measures d"
+        },
+        {
+          "title": "Change of primary health care service provider model in Vantaa: the impact on mortality and causes of death among older adults – a register-based follow-up study",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11951805/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2025-03-27",
+          "snippet": "in recent years. To address this, the city of Vantaa, ... , transitioned from a named general practitioner (GP) model to a restricted-list GP model in 2011 to increase access to named GPs for the most vulnerable population"
+        },
+        {
+          "title": "Gemensam väg mot människocentrerad och effektiv prevention och behandling av cancer – den nya nationella cancerstrategin har publicerats - Social- och hälsovårdsministeriet",
+          "url": "https://stm.fi/sv/-/gemensam-vag-mot-manniskocentrerad-och-effektiv-prevention-och-behandling-av-cancer-den-nya-nationella-cancerstrategin-har-publicerats",
+          "domain": "stm.fi",
+          "publishedDate": "2025-11-10",
+          "snippet": "Målet med den nationella cancerstrategin för 2026–2035 Tillsammans mot cancer – förebyggande och vård med människan i centrum är att utveckla ... tjänster och minska cancerbördan genom förebyggande och tidig upptäckt samt att säkerställa en"
+        }
+      ]
+    },
+    "row:ev-gp-continuity": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "Continuity of care, measurement and association with hospital admission and mortality: a registry-based longitudinal cohort study | BMJ Open",
+          "url": "https://bmjopen.bmj.com/content/11/12/e051958",
+          "domain": "bmjopen.bmj.com",
+          "publishedDate": null,
+          "snippet": ". For both indices, there is a negative relationship between COC and hospital admissions. A 0.2-point increase in the index ... would reduce admissions for ambulatory care sensitive conditions by 8.1% (CI"
+        },
+        {
+          "title": "Continuity in general practice as predictor of mortality, acute hospitalisation, and use of out-of-hours care: a registry-based observational study in Norway | British Journal of General Practice",
+          "url": "https://bjgp.org/content/72/715/e84",
+          "domain": "bjgp.org",
+          "publishedDate": "2022-02-01",
+          "snippet": "Aim To analyse the association between longitudinal continuity with a named regular general practitioner (RGP) and use of out-of-hours (OOH) services, acute hospital admission, and mortality. Design and setting Registry-based observational "
+        },
+        {
+          "title": "How does general practitioner discontinuity affect healthcare utilisation? An observational cohort study of 2.4 million Norwegians 2007–2017",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7888374/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2021-02-16",
+          "snippet": "out-of-hours consultations increased 2%–6% during the discontinuity for all adult age groups. A 7%–9% increase in odds of ACSC ... over the age of 65, but in general little or no change in acute hospital admissions was observed during or af"
+        }
+      ]
+    },
+    "row:ev-gp-digital-triage": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "Triage Accuracy and the Safety of User-Initiated Symptom Assessment With an Electronic Symptom Checker in a Real-Life Setting: Instrument Validation Study",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11467609/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2024-09-26",
+          "snippet": "This is a clinical validation study in a real-life setting performed at multiple primary health care (PHC) centers across Finland. The included units were of the walk-in model of primary care, where no previous phone call or contact was req"
+        },
+        {
+          "title": "Evaluating digital triage symptom checker with historical triage-related adverse events",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12918410/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2025-09-22",
+          "snippet": "A total of 69 unique vignettes yielded 483 individual trials. After excluding 93 trials due to significant deviations from the original vignette description (adding or omitting symptoms), ... 91% accuracy (95% CI 88–94%) and 94% safety (95%"
+        },
+        {
+          "title": "Testing Two Online Symptom Checkers With Vulnerable Groups: Usability Study to Improve Cognitive Accessibility of eHealth Services",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10960212/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2024-03-08",
+          "snippet": "We conducted a usability test of 2 Finnish online symptom checkers in 2 phases in Finland during the Spring and ... of 2021. The tested services were Omaolo (DigiFinland Oy) [40] and Klinik Access ("
+        }
+      ]
+    },
+    "row:ev-gp-nurse-first-contact": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "Substitution of physicians by nurses in primary care: a systematic review and meta-analysis",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4065389/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2014-05-12",
+          "snippet": "We systematically searched OVID Medline and Embase, The Cochrane Library and CINAHL, up to August 2012; selected and critically appraised published randomised controlled trials (RCTs) that compared nurse-led care with ... 24 RCTs (38,974 pa"
+        },
+        {
+          "title": "Systematic review of the effectiveness of primary care nursing",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/19187165/",
+          "domain": "pubmed.ncbi.nlm.nih.gov",
+          "publishedDate": null,
+          "snippet": "effective in care management and achieve good patient compliance. Nurses are also effective in a more diverse range of roles including chronic disease management, illness prevention and health promotion."
+        },
+        {
+          "title": "Effects of Physician-Nurse Substitution on Clinical Parameters: A Systematic Review and Meta-Analysis",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3933531/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2014-02-24",
+          "snippet": "nurses provided care for complex conditions including HIV, hypertension, heart failure, cerebrovascular diseases, diabetes, asthma, Parkinson’s disease and incontinence ... greater reductions in systolic blood pressure (SBP) in favour of nu"
+        }
+      ]
+    },
+    "row:ev-rec-direct-ct-training": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "The effect of direct access to CT scan in early lung cancer detection: an unblinded, cluster-randomised trial",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4660800/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2015-11-25",
+          "snippet": "We conducted a cluster-randomised, controlled trial including all incident lung cancer patients (in 19-month period) listed with general practice in the municipality of Aarhus (300,000 citizens), Denmark. Randomisation and intervention were"
+        },
+        {
+          "title": "Implementing Direct Access to Low-Dose Computed Tomography in General Practice—Method, Adaption and Outcome",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4226510/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2014-11-10",
+          "snippet": "We conducted a cohort study nested in a randomised study. A total of 119 general practices with 266 GPs were randomised into two groups. Intervention GPs were offered direct access to chest LDCT combined with a Continuing Medical Education "
+        },
+        {
+          "title": "The role of general practice in routes to diagnosis of lung cancer in Denmark: a population-based study of general practice involvement, diagnostic activity and diagnostic intervals",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4307896/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2015-01-22",
+          "snippet": "cancer patients’ diagnostic pathways, and 27.4% of lung cancer patients were referred from the GP to fast-track diagnostic work-up. A minimum ... of all cases before diagnosis. Patients referred through a fast-track route more often had"
+        }
+      ]
+    },
+    "row:ev-rec-nice-threshold": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "NG12 Suspected cancer: recognition and referral: Full guideline 2015",
+          "url": "https://www.nice.org.uk/guidance/ng12/evidence/full-guideline-pdf-2676000277",
+          "domain": "nice.org.uk",
+          "publishedDate": null,
+          "snippet": "Taking all of this into account, the GDG agreed to use a threshold value of 3% PPV to underpin their recommendations. This value represented a considerable liberalisation of the estimated PPVs of previous recommendations, but the GDG agreed"
+        },
+        {
+          "title": "recognition and referral",
+          "url": "https://www.nice.org.uk/guidance/ng12/documents/evidence-review-2",
+          "domain": "nice.org.uk",
+          "publishedDate": null,
+          "snippet": "guideline a positive 26 predictive value of 3% or above to make recommendations ... 27 consistently used within this guideline as a threshold at which the advantages ... and older, irrespective of their 28 sex. They agreed to add this age f"
+        },
+        {
+          "title": "Is now the time to rethink risk thresholds in cancer referral guidelines?",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12770854/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2025-12-01",
+          "snippet": "clinical consensus balancing diagnosing more cancers in a timely manner against overburdening the health service and potential implications for individuals ... across all pathways may not be optimal from either an outcome or health economic"
+        }
+      ]
+    },
+    "row:ev-rec-safety-netting": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "Safety netting for primary care: evidence from a literature review",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6301356/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2018-12-03",
+          "snippet": ",24- 26,30-33,36-38,40,42, ... should be done at each and every contact between a healthcare professional and patient. It was ... communicating uncertainty; advice on worrying symptoms and red flags; the likely time course of the illness; h"
+        },
+        {
+          "title": "Interventions to reduce primary care delay in cancer referral: a systematic review",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3223780/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2011-11-28",
+          "snippet": "Most studies reported a positive effect on their specified outcomes, although no study measured a direct effect on reducing delay. There was no evidence that any intervention directly reduced primary care delay in the diagnosis of cancer. L"
+        },
+        {
+          "title": "The Shared Safety Net Action Plan (SSNAP): a co-designed intervention to reduce delays in cancer diagnosis | British Journal of General Practice",
+          "url": "https://bjgp.org/content/72/721/e581",
+          "domain": "bjgp.org",
+          "publishedDate": "2022-08-01",
+          "snippet": "Diagnostic delay for cancer can occur at different stages during the diagnostic process. 1, 2 The period from when a patient ... % of patients experienced a delay of >60 days from first presenting ... % of 3298 UK patients whose cancer was "
+        }
+      ]
+    },
+    "row:ev-ref-denmark-cpp": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "Characteristics and outcome in patients with non-specific symptoms and signs of cancer referred to a fast track cancer patient pathway; a retrospective cohort study",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5712161/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2017-12-02",
+          "snippet": "duration of the diagnostic course at the NSSC-CPP was a median of 9 days (IQR 1–15), and patients had a median of 2 visits (IQR 1–2). During the investigational course 76.7% of the patients went through advanced imaging (CT, FDG-PET"
+        },
+        {
+          "title": "A differentiated approach to referrals from general practice to support early cancer diagnosis – the Danish three-legged strategy",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4385978/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2015-03-03",
+          "snippet": "This paper argues for and describes the organisation of the Danish three-legged strategy in diagnosing cancer, which includes urgent referral pathways for symptoms suspicious of a specific cancer, urgent referral to diagnostic centres when "
+        },
+        {
+          "title": "The Danish cancer pathway for patients with serious non-specific symptoms and signs of cancer–a cross-sectional study of patient characteristics and cancer probability",
+          "url": "https://ncbi.nlm.nih.gov/pmc/articles/PMC4445271/",
+          "domain": "ncbi.nlm.nih.gov",
+          "publishedDate": null,
+          "snippet": ", and the GP subsequently interpreted all test results in combination and decided on further diagnostic steps to be taken. Such steps could be either watchful waiting or referral to a diagnostic centre for further investigations. If"
+        }
+      ]
+    },
+    "row:ev-ref-dk-diagnostic-centre": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "A differentiated approach to referrals from general practice to support early cancer diagnosis – the Danish three-legged strategy",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4385978/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2015-03-03",
+          "snippet": "The urgent referral for unspecific, serious symptoms was implemented nationally by the National Board of Health and Danish Regions in 2012. When a GP has a patient that is clearly sick, and where cancer is one of several diagnostic possibil"
+        },
+        {
+          "title": "Diagnostic flow for all patients referred with non-specific symptoms of cancer to a diagnostic centre in Denmark: A descriptive study",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10773629/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2024-01-05",
+          "snippet": "CT scan or refer the patient directly to the DC Farsø. If the GP decides to order a CT scan, the GP is urged to await a description before eventually referring to the DC ... NSSC-CPP. Based on symptoms and findings as outlined in the referr"
+        },
+        {
+          "title": "The Danish cancer pathway for patients with serious non-specific symptoms and signs of cancer–a cross-sectional study of patient characteristics and cancer probability",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4445271/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2015-05-20",
+          "snippet": "were first assessed by a radiologist, and the GP ... taken. Such steps could be either watchful waiting or referral to a diagnostic centre for further investigations. If a specific disease or type of cancer was suspected, further steps coul"
+        }
+      ]
+    },
+    "row:ev-ref-econsult": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "Evaluating the Implementation of The Champlain BASE™ eConsult Service in a New Region of Ontario, Canada: A Cross-Sectional Study",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5749526/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": null,
+          "snippet": "PCPs received advice on a new or additional course of action in 51% of cases, and confirmed their original course of action in 44% (Figure 3). Only 3% of responses were deemed not to be useful. In 40% of cases, a referral was originally con"
+        },
+        {
+          "title": "Sustainability of a Primary Care–Driven eConsult Service - PMC",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5847349/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": null,
+          "snippet": "Across specialty groups, primary care clinicians reported receiving advice for a new or additional course of action in 57% cases and confirmatory advice in 40% of cases. A face-to-face specialist visit was originally planned but avoided as "
+        },
+        {
+          "title": "What are the cost savings associated with providing access to specialist care through the Champlain BASE eConsult service? A costing evaluation | BMJ Open",
+          "url": "https://bmjopen.bmj.com/content/6/6/e010920",
+          "domain": "bmjopen.bmj.com",
+          "publishedDate": null,
+          "snippet": "Results A total of 3487 eConsults were completed during the study period. In 40% of eConsults, a face-to-face specialist visit was originally contemplated but avoided as result of eConsult. In 3% of eConsults, a face-to-face specialist visi"
+        }
+      ]
+    },
+    "row:ev-ref-national-criteria": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "Use and diagnostic outcomes of cancer patient pathways in Denmark – is the place of initial diagnostic work-up an important factor?",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8802524/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2022-01-31",
+          "snippet": "are initiated based on specific alarm symptoms (such as rectal bleeding, dysphagia or a lump) relating to suspicion ... in secondary care facilities) to rule out the suspicion of cancer or other serious disease [18]. If"
+        },
+        {
+          "title": "Performance of standardized cancer patient pathways in Sweden visualized using observational data and a state-transition model",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10636179/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2023-11-09",
+          "snippet": "Each CPP defines symptoms and signs required for well-founded suspicion of cancer, principles for referral to specialized care and requested pre-diagnostic investigations. Some CPPs have a filter function, meaning that well-founded suspicio"
+        },
+        {
+          "title": "Equitable access to cancer patient pathways in Norway – a national registry-based study",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8613926/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2021-11-25",
+          "snippet": "a GP, a specialist in private practice or a specialist in a public hospital if the doctor has a “ ... suspicion of cancer” [11]. The suspected cancer diagnosis should be based on a set of ... for CPPs [6–9], and the referral should be label"
+        }
+      ]
+    },
+    "row:ev-ref-sweden-svf": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "Performance of standardized cancer patient pathways in Sweden visualized using observational data and a state-transition model",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10636179/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2023-11-09",
+          "snippet": "Only five CPPs met the lead time target, though another couple came close. The results vary substantially between CPPs. For many CPPs, the lead times vary by treatment modality, as indicated with ranges in the table. Since we lack data on a"
+        },
+        {
+          "title": "The national program on standardized cancer care pathways in Sweden: Observations and findings half way through - PubMed",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/30075866/",
+          "domain": "pubmed.ncbi.nlm.nih.gov",
+          "publishedDate": null,
+          "snippet": "waiting times among patients with suspected cancer, increased patient satisfaction and reduced regional variation. The implementation phase of ... and micro-level of the system are essential to achieving sustainable improvements. Waiting ti"
+        },
+        {
+          "title": "Reduction in the diagnostic interval after the introduction of cancer patient pathways for colorectal cancer in northern Sweden",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10478615/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2023-07-14",
+          "snippet": "and 445 patients in 2018. The median diagnostic interval was reduced from 47 days (IQI 18–99) to 29 days (IQI 9–74) (p < ... .001) after the introduction of cancer patient pathways in general. ... , the reduction of the diagnostic interval "
+        }
+      ]
+    },
+    "row:ev-ref-templates": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "The effect of referral templates on out-patient quality of care in a hospital setting: a cluster randomized controlled trial",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5341470/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2017-03-07",
+          "snippet": "distribution of referral templates—in electronic and paper form—to be used as reference sheets ... to medical outpatients at UNN Harstad. The GPs could choose whether to use the electronic template directly or use the paper template as a re"
+        },
+        {
+          "title": "Impact of referral templates on the quality of referrals from primary to secondary care: a cluster randomised trial",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4553012/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2015-08-29",
+          "snippet": "A cluster randomised trial was conducted using referral templates for patients in four diagnostic groups: dyspepsia, suspected colorectal cancer, chest pain and chronic obstructive pulmonary disease. The GP surgery was the unit of randomisa"
+        },
+        {
+          "title": "Impact of referral templates on patient experience of the referral and care process: a cluster randomised trial | BMJ Open",
+          "url": "https://bmjopen.bmj.com/content/6/10/e011651",
+          "domain": "bmjopen.bmj.com",
+          "publishedDate": null,
+          "snippet": "disease) coupled with intermittent surgery visits by study personnel. The control arm continued standard ... with an estimated intracluster correlations coefficient at 1.21e−11. ... of referral templates on the patient experience, in a sett"
+        }
+      ]
+    },
+    "row:ev-ref-uk-rdc": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "A real-world evaluation of the rapid diagnostic clinic roll out in South East London",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12330276/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2025-07-23",
+          "snippet": "Eight hundred and sixty-two patients were seen by the SEL RDCs. Most patients came from referrals from general practitioners (GPs) (93%). Only 24 patients (4.5%) were re-referred to the RDC or another specialty within 90 days of discharge a"
+        },
+        {
+          "title": "Rapid Diagnostic Centres and early cancer diagnosis | British Journal of General Practice",
+          "url": "https://bjgp.org/content/71/712/487",
+          "domain": "bjgp.org",
+          "publishedDate": "2021-11-01",
+          "snippet": "General practice is integral to the success of the RDC pathway through early identification and timely referral of appropriate patients. This pathway hopefully empowers practitioners to refer patients early with NSCS or where there is other"
+        },
+        {
+          "title": "The effectiveness of the Guy’s Rapid Diagnostic Clinic (RDC) in detecting cancer and serious conditions in vague symptom patients",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7783491/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2021-01-05",
+          "snippet": "There were 96 new cancer diagnoses (7.2%): lung (16%), haematological (13%) and colorectal (12%)—with stage IV being most frequent (40%). Median time to definitive cancer diagnosis was 28 days (IQR 15–47) and treatment 56 days (IQR 32–84)."
+        }
+      ]
+    }
+  }
 }

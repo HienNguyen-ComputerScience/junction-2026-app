@@ -1,3 +1,124 @@
 {
-  "entries": {}
+  "entries": {
+    "how long do people wait to see a gp in vantaa?": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "Vantaalla on yksi terveysasema, jonne ei ole jonoa lainkaan | Paikalliset | Vantaan Sanomat",
+          "url": "https://www.vantaansanomat.fi/paikalliset/9302587",
+          "domain": "vantaansanomat.fi",
+          "publishedDate": "2026-03-16",
+          "snippet": "Vantaalla on yksi terveysasema, jonne ei ole jonoa lainkaan Vaken alueella noin 1 500 ihmistä odottaa lääkärille pääsyä. ARKISTO/JOHANNA ERJONSALO Tikkurilan terveysasemalle kiireetöntä aikaa jonottaa noin tuhat potilasta. Marika Lumme 16.3"
+        },
+        {
+          "title": "Kivistössä lääkärille pääsee nopeimmin – näin terveysasema teki tempun | Paikalliset | Vantaan Sanomat",
+          "url": "https://www.vantaansanomat.fi/paikalliset/9312348",
+          "domain": "vantaansanomat.fi",
+          "publishedDate": "2026-03-19",
+          "snippet": "Kivistössä lääkärille pääsee nopeimmin – näin terveysasema teki tempun Kivistön terveysasemalla pääsee heti lääkärin pakeille kiireettömässä asiassa. Kuvituskuva. Johanna Erjonsalo Kiireettömien vastaanottojen jonojen lyhentämiseen ei ole y"
+        },
+        {
+          "title": "Vantaalaisella terveysasemalla riittää lääkäreitä eikä jonoja ole – taustalla uudet tilat ja ilmapiiri | Paikalliset | Vantaan Sanomat",
+          "url": "https://www.vantaansanomat.fi/paikalliset/9360275",
+          "domain": "vantaansanomat.fi",
+          "publishedDate": "2026-04-09",
+          "snippet": "Hyvä tekemisen meininki houkuttelee lääkäreitä ja hoitajia töihin. Marika Lumme 9.4.2026 5:00 | Päivitetty 10.4.2026 8:31 Kivistön terveysasema houkuttelee henkilökuntaa. Kivistössä on onnistuttu saamaan kaikki lääkärinvakanssit täyteen jo "
+        },
+        {
+          "title": "Asukaskysely: Sujuva asiointi on asukkaille tärkeintä | Vantaan ja Keravan hyvinvointialue",
+          "url": "https://www.vakehyva.fi/fi/ajankohtaista/ajankohtaista/asukaskysely-sujuva-asiointi-asukkaille-tarkeinta",
+          "domain": "vakehyva.fi",
+          "publishedDate": "2026-06-24",
+          "snippet": "Asukkaat haluavat ennen kaikkea päästä palveluihin, erityisesti lääkäriin ja hammashoitoon, nopeasti ja helposti. Vastaajista 76 % pitää palvelujen onnistumisen kannalta tärkeimpänä sujuvaa yhteydensaantia ja 72 % nopeaa hoitoon pääsyä."
+        },
+        {
+          "title": "Potilaat joutuvat odottamaan hoitoon pääsyä perusterveydenhuoltoon entistä pidempään – jonot erikoissairaanhoitoon ovat lyhentyneet - THL",
+          "url": "https://thl.fi/-/potilaat-joutuvat-odottamaan-hoitoon-paasya-perusterveydenhuoltoon-entista-pidempaan-jonot-erikoissairaanhoitoon-ovat-lyhentyneet",
+          "domain": "thl.fi",
+          "publishedDate": "2026-06-03",
+          "snippet": "Terveyden ja hyvinvoinnin laitoksen (THL) tuoreet tilastot hoitoon pääsystä kertovat kahdesta eri suuntaan kulkevasta kehityksestä. Perusterveydenhuollossa potilaat joutuivat odottamaan hoitoon pääsyä vuonna 2025 entistä kauemmin. Erikoissa"
+        }
+      ]
+    },
+    "did denmark's cancer fast-track pathways shorten diagnosis times?": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "Diagnostic intervals before and after implementation of cancer patient pathways – a GP survey and registry based comparison of three cohorts of cancer patients",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4412104/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2015-04-23",
+          "snippet": "The median diagnostic interval was 14 (95% CI: 11;16) days shorter during and 17 (95% CI: 15;19) days shorter after the implementation of CPPs than before. The diagnostic interval was 15 (95% CI: 12;17) days shorter for patients referred to"
+        },
+        {
+          "title": "Time intervals and routes to diagnosis for lung cancer in 10 jurisdictions: cross-sectional study findings from the International Cancer Benchmarking Partnership (ICBP) | BMJ Open",
+          "url": "https://bmjopen.bmj.com/content/9/11/e025895",
+          "domain": "bmjopen.bmj.com",
+          "publishedDate": null,
+          "snippet": "Results With the exception of Denmark (−49 days), in all other jurisdictions, the median adjusted total interval from symptom onset to treatment, for respondents diagnosed in 2012–2015, was similar to that of Wales ("
+        },
+        {
+          "title": "The role of general practice in routes to diagnosis of lung cancer in Denmark: a population-based study of general practice involvement, diagnostic activity and diagnostic intervals",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4307896/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2015-01-22",
+          "snippet": "GPs were involved in 68.3% of cancer patients’ diagnostic pathways, and 27.4% of lung cancer patients were referred from the GP to fast-track diagnostic work-up. A minimum of one X-ray was performed in 85.6% of all cases before diagnosis. P"
+        },
+        {
+          "title": "Secondary care intervals before and after the introduction of urgent referral guidelines for suspected cancer in Denmark: a comparative before-after study",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3847112/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "publishedDate": "2013-09-10",
+          "snippet": "The median secondary care interval decreased after the introduction of urgent referral. Patients discharged from Vejle Hospital tended to have shorter secondary care intervals than patients discharged from other hospitals. The strongest eff"
+        },
+        {
+          "title": "DaPeCa-2: Implementation of fast-track clinical pathways for penile cancer shortens waiting time and accelerates the diagnostic process--A comparative before-and-after study in a tertiary referral centre in Denmark",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/26271679/",
+          "domain": "pubmed.ncbi.nlm.nih.gov",
+          "publishedDate": null,
+          "snippet": "Materials and methods: This observational study from a tertiary referral centre included 263 patients diagnosed before and after the introduction of an intervention to reduce clinical time intervals, the Cancer Patient Pathway (CPP). The CP"
+        }
+      ]
+    },
+    "onko kainuussa lääkäripula?": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "Kajaanissa potilaat jonottavat perusterveydenhoitoon yhä kuukausia – muualla Kainuussa hoitotakuu toteutuu | Kainuun Sanomat",
+          "url": "https://www.kainuunsanomat.fi/artikkeli/kajaanissa-potilaat-jonottavat-perusterveydenhoitoon-yha-kuukausia-muualla-kainuussa-hoitotakuu-to",
+          "domain": "kainuunsanomat.fi",
+          "publishedDate": "2026-03-13",
+          "snippet": "Kajaanissa potilaat jonottavat perusterveydenhoitoon yhä kuukausia – muualla Kainuussa hoitotakuu toteutuu Jatkuva lääkäripula hidastaa hoitoon pääsyä Kajaanissa. Yleislääketieteen erikoislääkäri Atte Veteläisen mukaan erillisiä jononpurkut"
+        },
+        {
+          "title": "Erikoissairaanhoidon laittomat jonot purettu Kainuussa – ”Lääkäritilanne ei ole ollut koko 2000-luvulla niin hyvä kuin nyt” | Kainuun Sanomat",
+          "url": "https://www.kainuunsanomat.fi/artikkeli/erikoissairaanhoidon-laittomat-jonot-purettu-kainuussa-laakaritilanne-ei-ole-ollut-koko-2000-luvu",
+          "domain": "kainuunsanomat.fi",
+          "publishedDate": "2026-05-09",
+          "snippet": "Erikoissairaanhoidon laittomat jonot purettu Kainuussa – ”Lääkäritilanne ei ole ollut koko 2000-luvulla niin hyvä kuin nyt” Erikoissairaanhoidon hoitojonoja on viime kuukausina purettu Kainuussa rivakasti. Alustavan tiedon mukaan hyvinvoint"
+        },
+        {
+          "title": "Hoidon jatkuvuuden kehittäminen jatkuu Kainuussa | Kainuun hyvinvointialue",
+          "url": "https://hyvinvointialue.kainuu.fi/uutiset/hoidon-jatkuvuuden-kehittaminen-jatkuu-kainuussa",
+          "domain": "hyvinvointialue.kainuu.fi",
+          "publishedDate": "2026-10-30",
+          "snippet": "Omalääkäri ja omahoitajamalliin perustuva hoidon jatkuvuuden kehittäminen etenee Kainuussa. Sosiaali- ja terveysministeriön rahoituksella vahvistetaan henkilöstön osaamista sekä kehitetään toimintamalleja ja ratkaisuja erityisesti omalääkär"
+        },
+        {
+          "title": "Lääkäripula piinaa Kainuussa kirurgiassa: Erikoissairaanhoidon jonot täytyy Valviran vaatimuksesta purkaa huhtikuun loppuun mennessä – ”Jouduimme uudestaan takamatkalle” | Kainuun Sanomat",
+          "url": "https://www.kainuunsanomat.fi/artikkeli/laakaripula-piinaa-kainuussa-kirurgiassa-erikoissairaanhoidon-jonot-taytyy-valviran-vaatimuksesta-p",
+          "domain": "kainuunsanomat.fi",
+          "publishedDate": "2026-01-24",
+          "snippet": "Lääkäripula piinaa Kainuussa kirurgiassa: Erikoissairaanhoidon jonot täytyy Valviran vaatimuksesta purkaa huhtikuun loppuun mennessä – ”Jouduimme uudestaan takamatkalle” Miika Manninen : Kainuun Sanomat La 24.1.2026 klo 6:30 Heikoin tilanne"
+        },
+        {
+          "title": "Kainuussa kaikilla on nyt omalääkäri - Lääkärilehti",
+          "url": "https://www.laakarilehti.fi/terveydenhuolto/kainuussa-kaikilla-on-nyt-omalaakari/",
+          "domain": "laakarilehti.fi",
+          "publishedDate": "2025-11-25",
+          "snippet": "Suomussalmella, kuten muillakin Kainuun hyvinvointialueen terveysasemilla, on jokaiselle potilaalle nimetty omalääkäri. Viime huhtikuusta alkaen jokaisella Suomussalmen ja Hyrynsalmen kuntien asukkaalla on ollut omalääkäri. Marraskuusta alk"
+        }
+      ]
+    }
+  }
 }
