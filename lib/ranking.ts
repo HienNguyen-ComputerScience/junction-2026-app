@@ -37,9 +37,15 @@ export type RankingRow = {
   /** Percentage points change in 6411 since FIRST_YEAR, if both years exist. */
   gpWaitChange: number | null;
   referral: IndicatorValue | null;
+  /** Stage statuses from gaps.json (the same rule as the pathway screen). */
+  gpStatus: GapStatus;
+  referralStatus: GapStatus;
 };
 
-/** All 22 areas (no Finland row) ranked worst-first by 6411 in LATEST_YEAR. */
+/**
+ * Areas (no Finland row) ranked worst-first by 6411 in LATEST_YEAR. Areas with
+ * no 6411 value are not ranked; see getUnrankedCounties.
+ */
 export function getRanking(): RankingRow[] {
   const rows = counties.flatMap((county) => {
     const gpWait = getValue(county.id, GP_WAIT_ID);
@@ -51,12 +57,19 @@ export function getRanking(): RankingRow[] {
         gpWait,
         gpWaitChange: first ? round1(gpWait.value - first.value) : null,
         referral: getValue(county.id, REFERRAL_ID) ?? null,
+        gpStatus: stageStatus(county.id, "gp_access"),
+        referralStatus: stageStatus(county.id, "referral"),
       },
     ];
   });
   return rows
     .sort((a, b) => b.gpWait.value - a.gpWait.value)
     .map((row, index) => ({ ...row, rank: index + 1 }));
+}
+
+/** Areas with no 6411 value in LATEST_YEAR: listed after the ranking as "no data", never dropped. */
+export function getUnrankedCounties(): County[] {
+  return counties.filter((county) => !getValue(county.id, GP_WAIT_ID));
 }
 
 export function getNationalValue(indicatorId: string, year = LATEST_YEAR) {

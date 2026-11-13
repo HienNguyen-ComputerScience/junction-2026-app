@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import type { BriefResponse } from "@/lib/brief/types";
 
 type Status = "idle" | "loading" | "error";
@@ -13,6 +13,8 @@ const MODE_LABEL: Record<BriefResponse["mode"], string> = {
   ai: "AI-written, every number checked against the snapshot",
   fallback: "Precomputed from the snapshot",
 };
+
+const AI_PRECOMPUTED_HEADLINE_LABEL = "AI-written; headline precomputed";
 
 function isBriefResponse(v: unknown): v is BriefResponse {
   if (typeof v !== "object" || v === null) return false;
@@ -52,15 +54,22 @@ export function CountyBriefClient({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Brief for the county director</CardTitle>
+        {/* The page section supplies the "Brief for the county director" heading. */}
         <CardDescription>
           Where the pathway breaks in {countyName}, in plain language. Every number comes from the data snapshot.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant={brief.mode === "ai" ? "default" : "secondary"}>{MODE_LABEL[brief.mode]}</Badge>
+          <Badge variant={brief.mode === "ai" ? "default" : "secondary"}>
+            {brief.mode === "ai" && brief.headline_precomputed ? AI_PRECOMPUTED_HEADLINE_LABEL : MODE_LABEL[brief.mode]}
+          </Badge>
           {brief.mode === "ai" && brief.model && <span className="text-xs text-muted-foreground">{brief.model}</span>}
+          {brief.mode === "ai" && brief.headline_precomputed && (
+            <span className="text-xs text-muted-foreground">
+              The AI headline failed the snapshot check, so the precomputed headline is shown.
+            </span>
+          )}
           {triedAi && (
             <span className="text-xs text-muted-foreground">
               {brief.dropped_count === 0

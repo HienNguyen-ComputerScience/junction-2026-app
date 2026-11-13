@@ -1,6 +1,6 @@
 # FirstLine: text for the hackjunction.app form
 
-Ready to paste. Written 13 Nov 2026 from repo state; status text updated 14 Nov from test run 2 (commit 18daaeb). Anything in `TODO (human)` can only be filled by a person. Re-check the sentences listed at the bottom after feature freeze (Sat 18:00) and before switching to FINAL (Sun 10:00, aim 08:00).
+Ready to paste. Written 13 Nov 2026 from repo state; status text updated 14 Nov from test run 3 (pre-freeze, commit c4f067d). Anything in `TODO (human)` can only be filled by a person. Re-check the sentences listed at the bottom after feature freeze (Sat 18:00) and before switching to FINAL (Sun 10:00, aim 08:00).
 
 ## Project name
 
@@ -29,19 +29,19 @@ Whether you get early cancer care in Finland depends on where you live. FirstLin
 2. *County pathway:* for one county, whether the delay sits at getting to a GP or at GP-to-specialist. Stage cards are red, amber or grey (grey means no public data) and a limitations box is always visible.
 3. *Act:* two or three recommended actions for that bottleneck, each with an owner, a first step, a precedent (for example Denmark's fast-track pathways, UK Rapid Diagnostic Centres, nurse triage) and a source. A red-flag helper links symptoms to published guideline warning signs. It is decision support, not diagnosis.
 
-**Data transparency.** Everything shown comes from a committed snapshot of public data. Every row carries a source, and rows without one are not allowed. By design, an AI model only writes text around fixed numbers, a validator drops any claim whose number or source is not in the snapshot, and the app keeps working if Sotkanet or the model is down.
+**Data transparency.** Everything shown comes from a committed snapshot of public data. Every row carries a source, and rows without one are not allowed. An AI model only writes text around fixed numbers, a validator drops any claim whose number or source is not in the snapshot, and the app keeps working if Sotkanet or the model is down.
 
-**The Exa live layer.** Checked data shows where care breaks. Exa shows what is happening about it right now: recent county news (last 12 months, Finnish sources), a finder for research papers and Nordic reports under each action, and a question box that answers only from Exa results and says "nothing found" when there is none. Live finds are labelled "found live, unverified" and kept apart from our checked evidence table.
+**The Exa live layer.** Checked data shows where care breaks. Exa shows what is happening about it right now: recent county news (last 12 months, Finnish sources), a finder for research papers and Nordic reports under each action, and a question box that answers only from Exa results and says "nothing found" when there is none. Live finds are labelled "Found live — unverified" and kept apart from our checked evidence table. If live search is down, the app shows saved results with their date.
 
-**What is real and what is planned (14 Nov, commit 18daaeb).** Built, merged and checked in test run 2:
-- the three screens: a county ranking of all 22 areas, a county pathway with red, amber and grey stage cards and a limitations box, and recommended actions with owner, first step, precedent and source;
+**What is real and what is planned (14 Nov, commit c4f067d).** Built, merged and checked in test run 3 (before feature freeze):
+- the three screens: a county ranking of all 22 areas, a county pathway with red, amber and grey stage cards and a limitations box beside them, and recommended actions with owner, first step, precedent and source;
 - the red-flag helper;
-- the data snapshot (3 indicators, 22 areas);
-- the evidence table (14 verified rows);
-- the Exa server endpoints with caching (county news, national news, evidence finder, and a question box with a validator);
-- the AI county brief API, with a snapshot validator and a precomputed fallback.
+- the data snapshot (3 indicators, 22 areas) and the evidence table (14 verified rows);
+- on the county page: the county brief (precomputed from the snapshot, with a button to write an AI brief) and local news, for all 22 areas;
+- on the act page: a "Find more evidence live" button under each recommended action, and the question box, which is also on the ranking page;
+- a rate limit on live search, and saved demo results, shown with their date, when live search is down.
 
-Next: wire the Exa panels, the question box and the AI brief into the screens. They are built as components but not yet shown on a page. The sources and limitations page is in review (PR #10), and county news so far covers the 4 demo counties. Not planned: treatment access, diagnosis, accounts, patient data. `TODO (human): update this paragraph on Saturday after feature freeze to say what actually shipped.`
+The AI brief, question-box answers and evidence-finder results were checked through the API; clicking them in the UI is still to be tested. Next: the national news strip (the API works, no page shows it yet), the sources and limitations page (merged after test run 3, not yet tested), and the live deploy. Not planned: treatment access, diagnosis, accounts, patient data. `TODO (human): update this paragraph on Saturday after feature freeze to say what actually shipped.`
 
 ## Challenges
 
@@ -49,7 +49,7 @@ Next: wire the Exa panels, the question box and the AI brief into the screens. T
 FirstLine targets two of the gaps the AstraZeneca mentor named: how long it takes to see a GP depending on where you live, and how long GP-to-specialist takes. It has a red-flag helper for the third gap, GP recognition of symptoms. Against the judging criteria in SPEC.md: actionability (30) via actions with owner, first step and precedent; insight (25) via the county-by-county split of where the delay sits; data transparency (20) via a source and year on every number and a visible limitations box; execution (15) and clarity in 2 minutes (10) via three screens.
 
 **Exa (second).**
-Exa finds things a model could not know from training: this week's county news on GP queues, and recent papers behind each recommended action. Results are shown with links and dates, labelled "found live, unverified" and kept separate from the checked table, which maps to the criteria "use of Exa", "clarity in showing sources" and "usefulness to a specific group" (county directors). The question box runs live on queries judges type themselves, answers only from retrieved items and refuses cleanly when nothing is found.
+Exa finds things a model could not know from training: this week's county news on GP queues, and recent papers behind each recommended action. Results are shown with links and dates, labelled "Found live — unverified" and kept separate from the checked table, which maps to the criteria "use of Exa", "clarity in showing sources" and "usefulness to a specific group" (county directors). The question box runs live on queries judges type themselves, answers only from retrieved items and refuses cleanly when nothing is found.
 
 ## Technologies used
 
@@ -111,14 +111,15 @@ https://github.com/HienNguyen-ComputerScience/junction-2026-app
 
 Re-check each of these against the deployed app before 08:00 Sunday:
 
-1. The "What is real and what is planned" paragraph. It was updated 14 Nov from test run 2 (commit 18daaeb), when the three screens, the red-flag helper and the brief API were merged. On Saturday, move an item from "Next" to "Built" only if it shows on a page in Run 3:
-   - Exa panels, question box and AI brief (not mounted at 18daaeb; issue #32);
-   - sources page (PR #10);
-   - county news beyond the 4 demo counties (issue #33).
+1. The "What is real and what is planned" paragraph. It was updated 14 Nov from test run 3 (pre-freeze, commit c4f067d), when the brief, county news (all 22 areas), evidence finder and question box were on pages (PRs #39, #41). On Saturday, move an item from "Next" to "Built" only if a post-freeze run sees it on a page:
+   - national news strip (API only at c4f067d);
+   - sources and limitations page (PR #10 merged after Run 3; `/sources` was 404 at c4f067d);
+   - live deploy.
+   Also drop "clicking them in the UI is still to be tested" only after a run clicks the question box and "Find more evidence live".
 2. The numbers 85.4%, 32.7%, 54.7% (Sotkanet 6411, 2025): compare with `data/values.json` and the app screen.
 3. "14 verified rows", "22 counties", "3 indicators": compare with `data/evidence.json` and `data/counties.json` (22 counties plus a Finland row).
-4. "Last 12 months" for county news and "found live, unverified" label: match the final UI wording.
-5. "Validator drops any claim..." and "works if Sotkanet or the model is down". Both validators and the brief fallback exist behind APIs (`/api/ask`, `/api/brief`, PR #29). Once the brief and question box are on a page, the sentence can say "on screen"; until then keep it as "by design".
+4. "Last 12 months" for county news and the "Found live — unverified" label: both match the UI at c4f067d (Run 3, check 3c). Re-check against the final UI.
+5. "Validator drops any claim..." and "works if Sotkanet or the model is down". The brief and question box are on pages since PR #39 (Run 3), so "by design" was dropped. Both validators were tested through the API (`/api/ask`, `/api/brief`); the brief fallback and saved demo results were tested in Run 3. Re-check after freeze.
 6. Technologies list: remove or keep Supabase; add anything new in `package.json`.
 7. Red-flag helper sentence: screen 3 shipped with the helper (PR #26, Run 2). Keep the sentence. The helper must link to guidelines, never copy NICE or Käypä hoito text.
 8. Punchline option 3 only if the 85% wording is kept as "non-urgent GP visits".

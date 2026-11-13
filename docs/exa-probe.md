@@ -94,3 +94,18 @@ Timeout: 8 s for `fast`, 12 s for `auto`. On timeout or error, return the cached
 - English query + `category: news` + no domains ("Päijät-Häme cancer fast track pathway"): 8/8 off-topic (FDA/EMA drug approvals).
 - "current GP queue in Kainuu" without the suffix: gaming sites.
 - "How many GPs are missing in Finland?": no current shortage figure in either mode. Answer honestly or say nothing found.
+
+## Hardening (14 Nov 2026, issue #33)
+
+- **County news covers all 22 areas** in `data/counties.json` (kind county or city). The 4 demo counties keep their probed queries. The other 18 use `<name_fi> terveysasema lääkärille pääsy jonot hoitotakuu` with `NEWS_FI` plus the county's own site and regional daily where the domain is known (`lib/exa/config.ts`). Live check: Lapland returned 8 results, the newest from Lapin Kansa on 12 Nov 2026.
+- **Evidence by id.** `?action=ev-ref-denmark-cpp` (any `data/evidence.json` id) or that row's exact action title resolves to a research query written from the row's action and precedent. Both forms share one cache key.
+- **Ask box relevance** (`lib/exa/relevance.ts`):
+  - A question with no health-care term (fi/en) and no known area returns `nothingFound` without calling Exa ("tell me a joke", "asdfgh").
+  - A named area ("Vantaa", "Kainuussa", "Espoo" → West Uusimaa) uses that county's query terms and domains plus `GOV_FI`, last 12 months only.
+  - Other questions search health-care domains only.
+  - Results with no topic term and no question word are dropped.
+  - An unknown capitalised name ("Narnia") must appear in some result.
+- **Rate limit** (`lib/exa/rate-limit.ts`): per IP and global, per minute. The limits are news 60/600, evidence 40/200 and ask 20/60. Over the limit, the route returns HTTP 429 with `Retry-After` and `{ message, freshness: "unavailable", items: [] }`. The counters are in memory, so each Vercel instance keeps its own (best effort).
+- **Cache:** demo keys (county ids, evidence rows, presets, example questions) live in a pinned store that is never evicted. Free text goes to a bounded store. Keys have no dates, so a pre-warmed entry survives the daily roll of `startPublishedDate`.
+- **Demo cache:** the committed files `data/exa-cache/*.json` are the last resort when Exa is down and memory is cold. They are served as `freshness: "stale-cache"` with `retrievedAt`. Refresh with `npm run exa:prewarm -- <baseUrl> --write-cache`, then commit the files.
+- **Claude call:** forced `tool_choice` works on `claude-haiku-5-5` (checked live: HTTP 200, `tool_use`). It returns a 400 on Sonnet/Opus 5.5, so switch to `output_config.format` if the model changes. Snippets and the question are escaped (`<`/`>` neutralised), go into `<result>` blocks, and the system prompt marks them as untrusted data.

@@ -27,7 +27,7 @@ export function ResultList({ items, numbered = false, idPrefix = "exa-src" }: { 
   return (
     <ol className="space-y-4">
       {items.map((item, i) => (
-        <li key={item.url} id={numbered ? `${idPrefix}-${i + 1}` : undefined} className="space-y-1">
+        <li key={`${item.url}-${i}`} id={numbered ? `${idPrefix}-${i + 1}` : undefined} className="space-y-1">
           <a
             href={item.url}
             target="_blank"

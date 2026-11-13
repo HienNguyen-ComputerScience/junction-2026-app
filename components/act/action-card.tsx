@@ -52,12 +52,15 @@ export function ActionCard({
           <Field label="Precedent">{action.precedent}</Field>
           <Field label="Evidence">
             {action.effect_text}
-            <details className="mt-1">
-              <summary className="cursor-pointer text-xs underline underline-offset-2">
-                Quote and page in the source
-              </summary>
-              <p className="mt-1 border-l-2 pl-3 text-xs">{action.quote_or_page}</p>
-            </details>
+            {/* NICE content may not be reproduced outside the UK: link only, never the quote. */}
+            {action.source_id.startsWith("ev-nice") ? null : (
+              <details className="mt-1">
+                <summary className="cursor-pointer text-xs underline underline-offset-2">
+                  Quote and page in the source
+                </summary>
+                <p className="mt-1 border-l-2 pl-3 text-xs">{action.quote_or_page}</p>
+              </details>
+            )}
           </Field>
           <Field label="Limitations">{action.limitations}</Field>
         </dl>

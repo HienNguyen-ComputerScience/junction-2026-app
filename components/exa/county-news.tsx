@@ -36,8 +36,9 @@ export function CountyNews({ countyId }: { countyId: string }) {
     <Card aria-labelledby="county-news-title" className="min-h-48">
       <CardHeader>
         <div className="flex flex-wrap items-center gap-2">
-          <CardTitle id="county-news-title">Local news, last 12 months</CardTitle>
-          <Badge variant="secondary">Found live with Exa</Badge>
+          <CardTitle id="county-news-title">Last 12 months</CardTitle>
+          <Badge variant="secondary">Found live — unverified</Badge>
+          <span className="text-xs text-muted-foreground">via Exa</span>
           {data && !unavailable && <Badge variant="outline">{STATUS_LABEL[data.freshness]}</Badge>}
           {unavailable && <Badge variant="outline">{STATUS_LABEL.unavailable}</Badge>}
         </div>

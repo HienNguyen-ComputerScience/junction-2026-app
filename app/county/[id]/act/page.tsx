@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { ActionCard } from "@/components/act/action-card";
 import { RedFlagHelper } from "@/components/act/red-flag-helper";
+import { AskBox } from "@/components/exa/ask-box";
+import { EvidenceFinder } from "@/components/exa/evidence-finder";
 import { SourceChip } from "@/components/source-chip";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -33,6 +35,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   const others = otherActions(county.id, recommended);
   const unmeasured = others.filter((group) => group.unmeasured && group.stage !== "gp_recognition");
   const remaining = others.filter((group) => !unmeasured.includes(group));
+  const otherCount = others.reduce((total, group) => total + group.actions.length, 0);
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
@@ -63,10 +66,18 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           <p className="text-sm text-muted-foreground">{SELECTION_RULE}</p>
         </div>
         {recommended.map((action) => (
-          <ActionCard key={action.id} action={action} />
+          <ActionCard key={action.id} action={action}>
+            <EvidenceFinder actionId={action.id} actionTitle={action.action} />
+          </ActionCard>
         ))}
       </section>
 
+      {unmeasured.length > 0 || remaining.length > 0 ? (
+        <details className="rounded-xl border p-4">
+          <summary className="cursor-pointer text-lg font-semibold">
+            Show {otherCount} other evidence-backed {otherCount === 1 ? "option" : "options"}
+          </summary>
+          <div className="mt-4 flex flex-col gap-8">
       {unmeasured.map((group) => (
         <section key={group.stage} className="flex flex-col gap-3" aria-labelledby={`unmeasured-${group.stage}`}>
           <div>
@@ -104,6 +115,9 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           ))}
         </section>
       ) : null}
+          </div>
+        </details>
+      ) : null}
 
       <section className="flex flex-col gap-4 rounded-xl border p-5" aria-labelledby="red-flags">
         <div>
@@ -116,6 +130,13 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           </p>
         </div>
         <RedFlagHelper />
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="ask-heading">
+        <h2 id="ask-heading" className="text-xl font-semibold">
+          Ask the evidence, answered live from Exa search results
+        </h2>
+        <AskBox />
       </section>
 
       <nav className="flex flex-wrap gap-2 border-t pt-4 text-sm">
