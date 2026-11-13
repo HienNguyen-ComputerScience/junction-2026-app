@@ -138,7 +138,7 @@ export async function writeAnswer(question: string, items: Item[]): Promise<Answ
   const numbered = items
     .map(
       (it, i) =>
-        `<result index="${i + 1}">\ntitle: ${dataText(it.title)}\nsource: ${dataText(it.domain)} · date: ${it.publishedDate ?? "unknown"}\ntext: ${dataText(it.snippet)}\n</result>`,
+        `<result index="${i + 1}">\ntitle: ${dataText(it.title)}\nsource: ${dataText(it.domain)} · date: ${dataText(it.publishedDate ?? "unknown")}\ntext: ${dataText(it.snippet)}\n</result>`,
     )
     .join("\n");
 
@@ -150,7 +150,7 @@ export async function writeAnswer(question: string, items: Item[]): Promise<Answ
       headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 800,
+        max_tokens: 1500,
         system: SYSTEM,
         tools: [TOOL],
         tool_choice: { type: "tool", name: TOOL.name },
@@ -165,7 +165,12 @@ export async function writeAnswer(question: string, items: Item[]): Promise<Answ
       cache: "no-store",
     });
     if (!res.ok) return { status: "unavailable", reason: `Claude returned HTTP ${res.status}` };
-    const parsed = parseToolInput(await res.json());
+    const json: unknown = await res.json();
+    // A cut-off or declined answer is "unavailable", not "nothing found" (as in lib/brief/generate.ts).
+    if (isObject(json) && (json.stop_reason === "max_tokens" || json.stop_reason === "refusal")) {
+      return { status: "unavailable", reason: `Claude stopped: ${json.stop_reason}` };
+    }
+    const parsed = parseToolInput(json);
     if (!parsed) return { status: "unavailable", reason: "Claude returned no structured answer" };
     if (parsed.nothingFound) return { status: "nothing-found", dropped: 0 };
     const answer = validate(parsed.sentences, items);

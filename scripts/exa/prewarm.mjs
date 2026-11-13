@@ -51,6 +51,12 @@ const requests = [
     path: `/api/evidence?action=${encodeURIComponent(id)}`,
     cache: ["evidence", `row:${id}`],
   })),
+  // Demo hook preset (Lääkärilehti 23 Apr 2026, lung cancer detection differs between counties).
+  {
+    label: "GET /api/evidence?action=lung-cancer-regional",
+    path: "/api/evidence?action=lung-cancer-regional",
+    cache: ["evidence", "preset:lung-cancer-regional"],
+  },
   ...questions.map((q) => ({
     label: `POST /api/ask "${q.length > 40 ? q.slice(0, 37) + "..." : q}"`,
     path: "/api/ask",
@@ -86,6 +92,9 @@ for (const req of requests) {
         row.items = data.items;
         row.count = String(data.items.length);
       }
+      if (req.path === "/api/ask") {
+        row.answer = data.answer?.sentences?.length ? "answered" : data.nothingFound ? "nothing-found" : "sources-only";
+      }
     }
   } catch (err) {
     row.freshness = `error: ${err instanceof Error ? (err.name === "TimeoutError" ? "timeout" : err.message) : String(err)}`;
@@ -93,8 +102,9 @@ for (const req of requests) {
   row.ms = Date.now() - started;
   results.push(row);
   console.log(
-    `${row.label.padEnd(66)} ${String(row.status).padStart(3)}  ${row.freshness.padEnd(12)} items=${String(row.count).padStart(2)}  ${String(row.ms).padStart(6)} ms`,
+    `${row.label.padEnd(66)} ${String(row.status).padStart(3)}  ${row.freshness.padEnd(12)} items=${String(row.count).padStart(2)}  ${String(row.ms).padStart(6)} ms${row.answer ? `  ${row.answer}` : ""}`,
   );
+  if (row.answer && row.answer !== "answered") console.log(`  WARN example question has no written answer (${row.answer})`);
 }
 
 // Demo hook: Lääkärilehti, 23 Apr 2026, lung cancer detection differs between wellbeing counties.
@@ -108,7 +118,7 @@ for (const row of results) {
     break;
   }
 }
-console.log(hook ? `Demo hook OK: ${hook.item.title} ${hook.item.url} (found via ${hook.via})` : "Note: demo hook not in these results");
+console.log(hook ? `Demo hook OK: ${hook.item.title} ${hook.item.url} (found via ${hook.via})` : "WARN demo hook (Lääkärilehti 2026-04-23) not found");
 
 if (writeCache) {
   const today = new Date().toISOString().slice(0, 10);

@@ -103,9 +103,11 @@ export async function POST(request: NextRequest) {
         { ttlMs: TTL.ask, simulateOutage: outage, snippetChars: 800, cacheKey: `askq:${key}`, pin },
       );
 
-  const reply = (r: Omit<AskResponse, "question" | "freshness">) => {
+  // `cache: false` for Claude's own "nothing found": a wrong one shouldn't stick for 24 h, and a retry
+  // costs only the Claude call (the search items are cached separately).
+  const reply = (r: Omit<AskResponse, "question" | "freshness">, cache = true) => {
     const response: AskResponse = { question, freshness: result.freshness, ...scope, ...r };
-    if (result.freshness === "live" && (r.answer || r.nothingFound)) cacheSet(cacheKey, response, pin);
+    if (cache && result.freshness === "live" && (r.answer || r.nothingFound)) cacheSet(cacheKey, response, pin);
     return NextResponse.json(response);
   };
 
@@ -143,7 +145,7 @@ export async function POST(request: NextRequest) {
     case "answered":
       return reply({ items, answer: written.answer, nothingFound: false });
     case "nothing-found":
-      return reply({ items, answer: null, nothingFound: true, message: "Nothing found in the sources." });
+      return reply({ items, answer: null, nothingFound: true, message: "Nothing found in the sources." }, false);
     case "unavailable":
       console.warn(`[ask] answer unavailable: ${written.reason}`);
       return NextResponse.json({

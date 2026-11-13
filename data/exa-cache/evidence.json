@@ -363,6 +363,32 @@
           "snippet": "There were 96 new cancer diagnoses (7.2%): lung (16%), haematological (13%) and colorectal (12%)—with stage IV being most frequent (40%). Median time to definitive cancer diagnosis was 28 days (IQR 15–47) and treatment 56 days (IQR 32–84)."
         }
       ]
+    },
+    "preset:lung-cancer-regional": {
+      "retrievedAt": "2026-11-13",
+      "items": [
+        {
+          "title": "keuhkosyoparaportti",
+          "url": "https://syoparekisteri.fi/assets/themes/ssy3/factsheets/keuhkosyoparaportti.html",
+          "domain": "syoparekisteri.fi",
+          "publishedDate": null,
+          "snippet": "solutyyppi jää puuttumaan. Kuva 5 Yhteistyöalueiden ja hyvinvointialueiden välillä on selkeitä eroja syövän toteamistavoissa. Pohjois-Suomen alueella kliininen toteamistapa on selkeästi muuta maata yleisempi. Kuva 6 Kuva 7"
+        },
+        {
+          "title": "Keuhkosyövän toteamisessa on eroja hyvinvointialueiden välillä – tietojen kattavuudessa edelleen parannettavaa – FICAN",
+          "url": "https://fican.fi/keuhkosyovan-toteamisessa-on-eroja-hyvinvointialueiden-valilla-tietojen-kattavuudessa-edelleen-parannettavaa/",
+          "domain": "fican.fi",
+          "publishedDate": "2026-04-23",
+          "snippet": "Keuhkosyövän toteamisessa on havaittavissa alueellisia eroja Suomessa. Tiedot perustuvat keuhkosyövän hoidon toteutumista ja tuloksia tarkastelevaan raporttiin vuosilta 2019–2023. ... Selvityksessä käytetyissä tiedoissa ilmeni, että noin vi"
+        },
+        {
+          "title": "Keuhkosyövän toteamisessa eroja hyvinvointialueiden välillä - Lääkärilehti",
+          "url": "https://www.laakarilehti.fi/terveydenhuolto/keuhkosyovan-toteamisessa-eroja-hyvinvointialueiden-valilla/",
+          "domain": "laakarilehti.fi",
+          "publishedDate": "2026-04-23",
+          "snippet": "Keuhkosyövän toteamisessa on havaittu alueellisia eroja Suomessa. Tiedot perustuvat keuhkosyövän hoidon toteutumista ja tuloksia tarkastelevaan raporttiin vuosilta 2019–2023. ... Raportissa tarkasteltiin, mitä tietoja keuhkosyövän tutkimise"
+        }
+      ]
     }
   }
 }

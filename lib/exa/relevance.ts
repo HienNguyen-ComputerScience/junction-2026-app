@@ -83,6 +83,9 @@ export function contentStems(question: string): string[] {
 /** Capitalised words after the first word that are not known places/names, e.g. ["narnia"]. */
 export function unknownNames(question: string): string[] {
   const tokens = question.split(/\s+/).slice(1);
+  // Title Case or ALL CAPS questions: capitals say nothing about names, so skip the rule.
+  const words = tokens.filter((t) => /\p{L}{3,}/u.test(t));
+  if (words.filter((t) => /^\P{L}*\p{Lu}/u.test(t)).length * 2 > words.length) return [];
   const out: string[] = [];
   for (const t of tokens) {
     const word = t.replace(/['’]s$/i, "").replace(/[^\p{L}-]/gu, "");
