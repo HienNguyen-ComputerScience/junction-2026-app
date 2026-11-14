@@ -197,8 +197,11 @@ function KeyItem({ swatch, children }: { swatch: ReactNode; children: ReactNode 
   );
 }
 
-type KeyKind = "finland" | "red" | "short" | "amber" | "no_data";
+type KeyKind = "finland" | "red" | "short" | "amber" | "no_data" | "shared";
 const KEY_ITEMS: KeyKind[] = ["finland", "red", "short", "amber", "no_data"];
+
+/** A hospital group's one shared figure: an empty bar with a dashed outline (the hatch means no public data only). */
+export const SHARED_BAR = "border border-dashed border-foreground/50 bg-transparent";
 
 /**
  * The key for reading the bars and the map: one row of swatches, drawn like the marks they
@@ -252,6 +255,11 @@ export function BarKey({ className, items = KEY_ITEMS }: { className?: string; i
       {items.includes("amber") && (
         <KeyItem swatch={<span className="h-full w-full rounded-[2px] bg-status-amber-bar" />}>
           At or better than Finland&apos;s level
+        </KeyItem>
+      )}
+      {items.includes("shared") && (
+        <KeyItem swatch={<span className={cn("h-full w-full rounded-[2px]", SHARED_BAR)} />}>
+          HUS-wide value, not a county figure
         </KeyItem>
       )}
       {items.includes("no_data") && (

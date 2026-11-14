@@ -2,11 +2,12 @@ import { ArrowUpRight } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 
-import { statusText, type Freshness, type Item } from "./types";
+import type { Freshness, Item } from "./types";
 
 /**
  * Where live content comes from, in one pattern everywhere: the "Found live — unverified" tag,
- * then "Live web search via Exa" or "Web search via Exa · cached · saved 2026-11-14" once a response says which.
+ * then "Web results via Exa" and, once a response says when it was saved, ", saved 14 Nov 2026".
+ * It never says both live and cached.
  */
 export function LiveMark({
   result,
@@ -16,7 +17,7 @@ export function LiveMark({
   result?: { freshness: Freshness; retrievedAt?: string; offTopic?: boolean } | null;
   className?: string;
 }) {
-  const freshness = result ? statusText(result) : null;
+  const saved = result?.retrievedAt && /^\d{4}-\d{2}-\d{2}$/.test(result.retrievedAt) ? result.retrievedAt : null;
   return (
     <span className={`flex flex-wrap items-center gap-x-2 gap-y-1 ${className ?? ""}`}>
       <Badge variant="unverified">Found live — unverified</Badge>
@@ -24,7 +25,7 @@ export function LiveMark({
         ·
       </span>
       <span className="type-caption font-normal text-muted-foreground">
-        {freshness && freshness !== "Live" ? `Web search via Exa · ${freshness.toLowerCase()}` : "Live web search via Exa"}
+        {saved ? `Web results via Exa, saved ${formatDate(saved)}` : "Web results via Exa"}
       </span>
     </span>
   );
@@ -133,17 +134,16 @@ export function formatDate(iso: string): string {
 }
 
 /**
- * Live search results as rows of two columns: the title (a two-line link), the snippet (two
- * lines) and one caption "host · date" on the left; the external arrow, top-aligned, on the
- * right. A row without a snippet is just the title and the caption. Dates come from a cache,
- * so they are absolute, never "3 days ago".
+ * Live search results as rows of two columns: the title (a two-line link) and one caption
+ * "source · date" on the left; the external arrow, top-aligned, on the right. The snippet is
+ * not shown: a title, its source and its date are enough to judge a result. Dates come from a
+ * cache, so they are absolute, never "3 days ago".
  */
 export function ResultList({ items, numbered = false, idPrefix = "exa-src" }: { items: Item[]; numbered?: boolean; idPrefix?: string }) {
   return (
     <ol className="divide-y divide-border/80">
       {items.map((item, i) => {
         const title = displayTitle(item.title, item.domain);
-        const snippet = item.snippet && !isMenuSnippet(item.snippet) ? item.snippet : null;
         const host = item.domain.replace(/^www\./, "");
         return (
           <li
@@ -167,9 +167,6 @@ export function ResultList({ items, numbered = false, idPrefix = "exa-src" }: { 
               strokeWidth={1.75}
               className="col-start-2 row-start-1 mt-0.5 size-3.5 shrink-0 whitespace-nowrap text-muted-foreground"
             />
-            {snippet && (
-              <p className="col-start-1 line-clamp-2 type-caption break-words text-muted-foreground">{snippet}</p>
-            )}
             <p className="col-start-1 flex min-w-0 flex-wrap items-baseline gap-x-1.5 type-caption text-muted-foreground">
               <span className="min-w-0 break-words">{host}</span>
               <span aria-hidden>·</span>

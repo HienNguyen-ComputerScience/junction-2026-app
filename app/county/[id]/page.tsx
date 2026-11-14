@@ -7,10 +7,11 @@ import { CountyBrief } from "@/components/brief/county-brief";
 import { CountyNews } from "@/components/exa/county-news";
 import { LimitationsBox, type LimitationItem } from "@/components/pathway/limitations-box";
 import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
+import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { buildStepTabs } from "@/components/pathway/step-panels";
 import { StepTabs } from "@/components/pathway/step-tabs";
 import { HUS_FULL, shortReason } from "@/components/pathway/wording";
-import { BackLink } from "@/components/ui/back-link";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { buttonVariants } from "@/components/ui/button";
 import { getBottleneck } from "@/lib/act";
 import { getMainReason } from "@/lib/main-reason";
@@ -64,24 +65,26 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           one-line disclosure under the main action instead (never both at the same width). */}
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-start lg:gap-10">
         <header className="flex flex-col items-start gap-4">
-          <BackLink href="/">Back to all areas</BackLink>
+          <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
           <h1 className="type-page lg:text-[2.5rem] lg:leading-[1.1]">{county.name}</h1>
           <p className="max-w-[44rem] text-base leading-relaxed text-pretty text-foreground">{shortReason(reason)}</p>
+          <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
+            {anyRed ? "See all actions" : "Actions to keep this level"}
+            <ArrowRight aria-hidden data-icon="inline-end" />
+          </Link>
           <section aria-labelledby="steps-heading" className="w-full">
             <h2 id="steps-heading" className="sr-only">
               The first three steps, compared with Finland ({LATEST_YEAR})
             </h2>
             <StepTabs tabs={tabs} defaultId={reasonStage ?? "gp_access"} label={`The first three steps, ${LATEST_YEAR}`} />
           </section>
-          <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
-            {anyRed ? "See all actions" : "Actions to keep this level"}
-            <ArrowRight aria-hidden data-icon="inline-end" />
-          </Link>
           <LimitationsBox items={limitations} variant="disclosure" className="mt-2 w-full lg:hidden" />
         </header>
 
         <LimitationsBox items={limitations} className="max-lg:hidden" />
       </div>
+
+      <PathwayStrip countyId={county.id} />
 
       <CountyBrief countyId={county.id} />
       <CountyNews key={county.id} countyId={county.id} />

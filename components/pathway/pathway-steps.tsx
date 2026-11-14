@@ -210,20 +210,15 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
       <StepTitle step={step} compact={compact} />
 
       <div className={cn("flex flex-wrap items-end gap-x-2.5 gap-y-1", compact ? "pt-1.5" : "min-h-[3.75rem] pt-3")}>
-        {shown !== null ? (
+        {value !== null ? (
           <span
-            className={cn(
-              "numeral leading-none",
-              compact ? "text-[1.75rem]" : "text-[2.25rem]",
-              value !== null ? STATUS_FIGURE[status] : "text-foreground",
-            )}
+            className={cn("numeral leading-none", compact ? "text-[1.75rem]" : "text-[2.25rem]", STATUS_FIGURE[status])}
           >
-            {formatPct(shown)}
+            {formatPct(value)}
           </span>
         ) : (
-          <span aria-hidden className="numeral text-[1.5rem] leading-none text-muted-foreground">
-            –
-          </span>
+          // No figure of the area's own: never a big number, not even the hospital group's.
+          <span className="pb-px text-[0.9375rem] leading-none text-muted-foreground">No number</span>
         )}
         {value !== null && measure && (
           <span className="pb-px type-caption whitespace-nowrap text-muted-foreground">
@@ -234,11 +229,16 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
           </span>
         )}
         {shared && (
-          <span className="pb-px type-caption text-pretty text-muted-foreground">{sharedLabel(shared.name)}</span>
+          <span className="pb-px type-caption text-pretty text-muted-foreground">
+            {shared.name}-wide: <span className="figure">{formatPct(shared.value)}</span>
+          </span>
         )}
       </div>
 
-      <p className={cn("type-caption text-pretty text-muted-foreground", compact ? "pt-0.5" : "pt-2")}>{description}</p>
+      <p className={cn("type-caption text-pretty text-muted-foreground", compact ? "pt-0.5" : "pt-2")}>
+        {description}
+        {shared ? ` ${sharedLabel(shared.name)}.` : ""}
+      </p>
 
       <MeasureBar
         className={compact ? "pt-2.5" : "pt-3"}

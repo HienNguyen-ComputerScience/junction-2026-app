@@ -3,8 +3,10 @@ import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 
 import { SourceChip } from "@/components/source-chip";
-import { BarFill, FinlandTick, withFigures } from "@/components/ui/measure-bar";
+import { Disclosure } from "@/components/ui/disclosure";
+import { BarFill, FinlandTick, SHARED_BAR, withFigures } from "@/components/ui/measure-bar";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { HUS_FULL } from "@/components/pathway/wording";
 import { LATEST_YEAR, type County, type GapStatus } from "@/lib/data";
 import {
   CITY_UNITS_ONLY_REFERRAL,
@@ -109,6 +111,16 @@ export function RankingList({
               At or better than Finland&apos;s level
             </StatusBadge>
           </span>
+          {/* The two units-only labels, explained once, out of the way until asked for. */}
+          <Disclosure
+            summary="HUS-wide, City units only"
+            summaryClassName="min-h-7 text-[0.75rem] font-normal text-muted-foreground"
+          >
+            <p className="max-w-[17rem] pb-2 pl-[1.375rem] type-note text-pretty text-muted-foreground">
+              &ldquo;HUS-wide&rdquo; is one shared figure from {HUS_FULL} for four Uusimaa areas. &ldquo;City
+              units only&rdquo; means Helsinki&apos;s own units; most of its referrals go to HUS.
+            </p>
+          </Disclosure>
         </HeadCell>
       </div>
 
@@ -307,7 +319,7 @@ function ReferralMiniBar({
   index,
 }: {
   value: number | null;
-  /** A hospital group's one shared figure: a solid neutral bar, never the hatch of no data. */
+  /** A hospital group's one shared figure: an empty dashed-outline bar, never the hatch of no data. */
   shared: number | null;
   finland: number;
   status: GapStatus;
@@ -318,13 +330,16 @@ function ReferralMiniBar({
     <span
       aria-hidden
       className={`relative hidden h-2 w-24 shrink-0 rounded-[2px] sm:block ${
-        drawn === null ? "bg-hatch ring-1 ring-status-grey-border ring-inset" : "bg-track"
+        value === null && shared !== null
+          ? SHARED_BAR
+          : drawn === null
+            ? "bg-hatch ring-1 ring-status-grey-border ring-inset"
+            : "bg-track"
       }`}
     >
       {value !== null && (
         <BarFill value={value} finland={finland} status={status} index={index} higherIsBetter />
       )}
-      {value === null && shared !== null && <BarFill value={shared} status={null} index={index} />}
       {drawn !== null && <FinlandTick finland={finland} className="-inset-y-1" />}
     </span>
   );

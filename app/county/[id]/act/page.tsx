@@ -3,10 +3,9 @@ import { notFound } from "next/navigation";
 
 import { ActionCard, ActionSummary } from "@/components/act/action-card";
 import { RedFlagHelper } from "@/components/act/red-flag-helper";
-import { AskBox } from "@/components/exa/ask-box";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
 import { WhatIfForArea } from "@/components/home/what-if-panel";
-import { SourceChip } from "@/components/source-chip";
+import { buildPathwaySteps, PathwaySteps } from "@/components/pathway/pathway-steps";
 import { BackLink } from "@/components/ui/back-link";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -18,11 +17,12 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
-import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
+import { BarKey } from "@/components/ui/measure-bar";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { TextLink } from "@/components/ui/text-link";
-import { STAGE_LABELS, getBottleneck, otherActions, pickActions } from "@/lib/act";
-import { counties, getCounty, LATEST_YEAR, type Evidence, type Gap } from "@/lib/data";
-import { formatPct, STATUS_LABEL } from "@/lib/ranking";
+import { STAGE_LABELS, bottleneckLede, getBottleneck, otherActions, pickActions } from "@/lib/act";
+import { counties, getCounty, LATEST_YEAR, type Evidence } from "@/lib/data";
+import { STATUS_LABEL } from "@/lib/ranking";
 
 // Counties are a fixed, known set, so a blocking route is fine here.
 export const instant = false;
@@ -44,8 +44,6 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   if (!county) notFound();
 
   const bottleneck = getBottleneck(county.id);
-  // The step the strip names: the worst step with the area's own value.
-  const lead = bottleneck.focus.find((gap) => gap.value !== null) ?? null;
   const recommended = pickActions(bottleneck);
   const others = otherActions(county.id, recommended);
   const unmeasured = others.filter((group) => group.unmeasured && group.stage !== "gp_recognition");
@@ -68,10 +66,30 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
         </div>
       </header>
 
-      {/* One summary line, at most 56px tall: where the pathway breaks, its value against
-          Finland, status and source. Each step's detail is on the county page, so Action 1 is
-          on the first screen. */}
-      <WhereStrip countyId={county.id} gap={lead} anyRed={bottleneck.anyRed} />
+      {/* The compact step strip: where the delay sits, in one short row, so the first action
+          is on the first screen. The full detail of each step is on the county page. */}
+      <Frame aria-labelledby="where-heading">
+        <FrameHeader className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <FrameTitle id="where-heading" className="type-title">
+            {bottleneck.anyRed ? "Where the delay sits" : "Where the pathway stands"} ({LATEST_YEAR})
+          </FrameTitle>
+          <p className="text-sm text-pretty text-foreground">{bottleneckLede(bottleneck)}</p>
+          <BarKey items={["finland", "short"]} className="sm:ml-auto" />
+        </FrameHeader>
+        <FramePanel padding="none">
+          <PathwaySteps
+            steps={buildPathwaySteps(county.id)}
+            density="compact"
+            renderExtra={(step) =>
+              step.stage === "gp_recognition" ? (
+                <TextLink kind="jump" href="#red-flags" className="type-caption sm:min-h-6">
+                  Red-flag helper
+                </TextLink>
+              ) : null
+            }
+          />
+        </FramePanel>
+      </Frame>
 
       <WhatIfForArea countyId={county.id} areaName={county.name} />
 
@@ -82,9 +100,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           </FrameTitle>
           {/* The selection rule in one line (the full rule is SELECTION_RULE in lib/act). */}
           <FrameMeta className="max-sm:col-span-2 max-sm:col-start-1 max-sm:row-start-2 max-sm:justify-start">
-            {bottleneck.anyRed
-              ? "Worst step first: one action per step, then up to three in all"
-              : "Step closest to Finland's level first: up to three in all"}
+            {bottleneck.anyRed ? "Ordered by where the pathway breaks" : "Ordered by closeness to Finland's level"}
           </FrameMeta>
         </FrameHeader>
         <div className="flex flex-col gap-3">
@@ -159,7 +175,11 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
         </FramePanel>
       </Frame>
 
-      <AskBox />
+      <p>
+        <TextLink kind="nav" href="/ask">
+          Ask the evidence
+        </TextLink>
+      </p>
 
       <nav aria-label="Page" className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
         <BackLink href={`/county/${county.id}`}>Back to {county.name}</BackLink>
@@ -212,39 +232,5 @@ function SummaryGrid({ actions }: { actions: Evidence[] }) {
         </li>
       ))}
     </ul>
-  );
-}
-
-/** The act page's one-line summary of where the pathway breaks (at most 56px tall). */
-function WhereStrip({ countyId, gap, anyRed }: { countyId: string; gap: Gap | null; anyRed: boolean }) {
-  return (
-    <section
-      aria-labelledby="where-heading"
-      className="flex min-h-12 flex-wrap items-center gap-x-4 gap-y-1.5 rounded-panel border border-border bg-card px-5 py-2 sm:px-6"
-    >
-      <h2 id="where-heading" className="type-caption font-medium text-muted-foreground">
-        {anyRed ? "Where it breaks" : "Closest to Finland's level"} ({LATEST_YEAR})
-      </h2>
-      {gap && gap.value !== null ? (
-        <>
-          <span className="text-[0.9375rem] font-semibold text-foreground">{STAGE_LABELS[gap.stage]}</span>
-          <span className={`numeral text-[1.375rem] leading-none ${STATUS_FIGURE[gap.status]}`}>
-            {formatPct(gap.value)}
-          </span>
-          <span className="type-caption text-muted-foreground">
-            Finland <span className="figure text-foreground">{formatPct(gap.national_value)}</span>
-          </span>
-          <StatusBadge status={gap.status} size="xs">
-            {STATUS_LABEL[gap.status]}
-          </StatusBadge>
-          <SourceChip sourceId={gap.source_id} year={gap.year} />
-        </>
-      ) : (
-        <span className="text-sm text-muted-foreground">No pathway data is published for this area.</span>
-      )}
-      <TextLink kind="nav" href={`/county/${countyId}`} className="type-caption sm:ml-auto">
-        All three steps
-      </TextLink>
-    </section>
   );
 }

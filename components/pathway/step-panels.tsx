@@ -2,14 +2,23 @@ import { cn } from "cn";
 
 import { StepMark, type PathwayStep } from "@/components/pathway/pathway-steps";
 import type { StepTab } from "@/components/pathway/step-tabs";
-import { TREND_FILL, TREND_PAST_FILL, WorseColumn } from "@/components/pathway/trend-strip";
+import { TrendStrip, type TrendStage } from "@/components/pathway/trend-strip";
 import { gapWords, HUS_FULL } from "@/components/pathway/wording";
 import { SourceChip } from "@/components/source-chip";
 import { MeasureBar } from "@/components/ui/measure-bar";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import { TextLink } from "@/components/ui/text-link";
 import { getValue, type Stage } from "@/lib/data";
-import { formatPct, getNationalValue, getTrend, GP_WAIT_ID, REFERRAL_ID, REFERRAL_LATE_ID, STATUS_LABEL } from "@/lib/ranking";
+import {
+  formatPct,
+  getNationalValue,
+  getTrend,
+  GP_WAIT_ID,
+  REFERRAL_ID,
+  REFERRAL_LATE_ID,
+  STATUS_LABEL,
+  YEARS,
+} from "@/lib/ranking";
 
 /** The bar's axis label: what the share counts and which way is better. */
 const AXIS: Partial<Record<Stage, string>> = {
@@ -63,17 +72,21 @@ function TabFace({ step }: { step: PathwayStep }) {
           {step.title}
         </span>
       </span>
-      <span
-        className={cn(
-          "numeral text-[1.75rem] leading-none",
-          value !== null ? STATUS_FIGURE[status] : shared ? "text-foreground" : "text-muted-foreground",
-        )}
-      >
-        {value !== null ? formatPct(value) : shared ? formatPct(shared.value) : <span aria-hidden>–</span>}
-      </span>
+      {value !== null ? (
+        <span className={cn("numeral text-[1.75rem] leading-none", STATUS_FIGURE[status])}>{formatPct(value)}</span>
+      ) : (
+        // No figure of the area's own: never a big number. The hospital group's value, when
+        // there is one, is a small muted line under the badge, not the step's number.
+        <span className="text-sm leading-none text-muted-foreground">No number</span>
+      )}
       <StatusBadge status={status} size="xs">
         {shared ? "No county figure" : STATUS_LABEL[status]}
       </StatusBadge>
+      {shared ? (
+        <span className="type-caption text-muted-foreground">
+          {shared.name}-wide: <span className="figure">{formatPct(shared.value)}</span>
+        </span>
+      ) : null}
     </>
   );
 }
@@ -135,20 +148,30 @@ function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) 
   const trend = indicatorId
     ? getTrend(countyId, indicatorId).map(({ year, value: point }) => ({ year, value: point?.value ?? null }))
     : [];
-  const finlandLatest = indicatorId ? (getNationalValue(indicatorId)?.value ?? null) : null;
+  const trendStage: TrendStage | null =
+    indicatorId && trend.length > 1
+      ? {
+          step: step.step,
+          title: step.title,
+          status,
+          sourceId: measure.sourceId,
+          year: measure.year,
+          direction: measure.direction,
+          trend,
+          nationalTrend: YEARS.map((year) => ({ year, value: getNationalValue(indicatorId, year)?.value ?? null })),
+        }
+      : null;
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="grid gap-x-8 gap-y-3 md:grid-cols-[minmax(0,1fr)_12.5rem] md:items-end">
-        <div className="flex flex-col gap-2.5">
-          <p className="text-sm text-pretty text-foreground">{gapWords(value, measure.finland)}.</p>
-          <div className="flex flex-col gap-1.5">
-            <p className="type-note text-muted-foreground">{AXIS[step.stage]}</p>
-            <MeasureBar value={value} finland={measure.finland} finlandLabel={finlandLabel} status={status} />
-          </div>
+      <div className="flex flex-col gap-2.5">
+        <p className="text-sm text-pretty text-foreground">{gapWords(value, measure.finland)}.</p>
+        <div className="flex max-w-[34rem] flex-col gap-1.5">
+          <p className="type-note text-muted-foreground">{AXIS[step.stage]}</p>
+          <MeasureBar value={value} finland={measure.finland} finlandLabel={finlandLabel} status={status} />
         </div>
-        {trend.length > 1 && <CompactTrend trend={trend} finland={finlandLatest} status={status} />}
       </div>
+      {trendStage && <TrendStrip stages={[trendStage]} areaName={countyId} />}
       {step.stage === "referral" && <LateReferrals countyId={countyId} />}
     </div>
   );
@@ -181,90 +204,3 @@ function LateReferrals({ countyId }: { countyId: string }) {
     </p>
   );
 }
-
-type Point = { year: number; value: number | null };
-
-/** Height of the zero-based plot (0 to 100%), in px. */
-const PLOT = 44;
-
-/**
- * The years as three small zero-based columns. The earlier years are grey with their value
- * above; the latest is drawn by the bar rule and carries only its year (its value is the tab's
- * figure). Finland's latest value is the line across the latest column.
- */
-function CompactTrend({ trend, finland, status }: { trend: Point[]; finland: number | null; status: StepStatus }) {
-  const clamp = (n: number) => Math.min(100, Math.max(0, n));
-  const last = trend.length - 1;
-  return (
-    <figure className="flex flex-col gap-1">
-      <figcaption className="type-caption text-muted-foreground">
-        Trend, {trend[0].year}–{trend[last].year}
-      </figcaption>
-      <span aria-hidden className="flex h-[4.25rem] items-end gap-3 border-b border-foreground/30 pr-14 pl-1">
-        {trend.map((point, i) => {
-          const top = Math.max(point.value ?? 0, i === last && finland !== null ? finland : 0);
-          return (
-            <span key={point.year} className="relative h-full flex-1">
-              {point.value !== null && (
-                <>
-                  <span className="absolute inset-x-0 bottom-0 block" style={{ height: PLOT }}>
-                    {i === last && status === "red" && finland !== null ? (
-                      <WorseColumn value={clamp(point.value)} finland={clamp(finland)} />
-                    ) : (
-                      <span
-                        className={cn(
-                          "absolute inset-x-0 bottom-0 rounded-t-[2px]",
-                          i === last ? TREND_FILL[status] : TREND_PAST_FILL,
-                        )}
-                        style={{ height: `${clamp(point.value)}%` }}
-                      />
-                    )}
-                    {i === last && finland !== null && (
-                      <span
-                        className="absolute -inset-x-1 h-0.5 bg-foreground"
-                        style={{ bottom: `calc(${clamp(finland)}% - 1px)` }}
-                      />
-                    )}
-                  </span>
-                  <span
-                    className={cn(
-                      "absolute inset-x-0 text-center figure whitespace-nowrap",
-                      i < last ? "type-note text-muted-foreground" : cn("text-[0.8125rem] font-semibold", STATUS_FIGURE[status]),
-                    )}
-                    style={{ bottom: (clamp(top) / 100) * PLOT + 3 }}
-                  >
-                    {formatPct(point.value)}
-                  </span>
-                  {i === last && finland !== null && (
-                    <span
-                      className="absolute left-full ml-2 type-note whitespace-nowrap text-foreground"
-                      style={{ bottom: (clamp(finland) / 100) * PLOT - 8 }}
-                    >
-                      Finland
-                    </span>
-                  )}
-                </>
-              )}
-            </span>
-          );
-        })}
-      </span>
-      <span aria-hidden className="flex gap-3 pr-14 pl-1 type-note text-faint">
-        {trend.map((point) => (
-          <span key={point.year} className="flex flex-1 justify-center figure">
-            {point.year}
-          </span>
-        ))}
-      </span>
-      <span aria-hidden className="flex items-center gap-1.5 type-note text-muted-foreground">
-        <span className={cn("h-2.5 w-5 rounded-[2px]", TREND_PAST_FILL)} />
-        Earlier years
-      </span>
-      <span className="sr-only">
-        {trend.map((point) => `${point.year}: ${point.value === null ? "no data" : formatPct(point.value)}`).join(", ")}.
-      </span>
-    </figure>
-  );
-}
-
-type StepStatus = PathwayStep["status"];

@@ -60,6 +60,8 @@ export function StepTabs({
   const cols = { "--n": tabs.length } as CSSProperties;
 
   return (
+    <div className="flex flex-col gap-1.5">
+    <p className="text-[0.75rem] leading-4 text-muted-foreground">Pick a step</p>
     <div className="flex flex-col rounded-panel border border-border bg-card">
       <div
         role="tablist"
@@ -129,6 +131,7 @@ export function StepTabs({
         </div>
       ))}
       {footer ? <div className="border-t border-border px-4 py-3 sm:px-5">{footer}</div> : null}
+    </div>
     </div>
   );
 }

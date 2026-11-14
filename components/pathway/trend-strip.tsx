@@ -48,22 +48,14 @@ export function TrendStrip({
   const years = stages[0]?.trend ?? [];
   if (years.length === 0) return null;
   const span = `${years[0].year}–${years[years.length - 1].year}`;
-  // Said once for the panel: only the latest year is judged, so only its column has a status colour.
-  const judgedYear = withTrend.find((stage) => {
-    const points = valued(stage.trend);
-    return points[points.length - 1].year === stage.year;
-  })?.year;
   // The chips of the panel's numbers, once each, in the label strip.
   const sourceIds = [...new Set(withTrend.map((stage) => stage.sourceId))];
 
   return (
-    <FramePanel padding="none" role="group" aria-labelledby="trend-heading">
+    <FramePanel padding="none" role="group" aria-labelledby={`trend-heading-${stages[0]?.step ?? 0}`}>
       <FramePanelLabel>
-        <h3 id="trend-heading" className="font-sans type-caption font-medium tracking-normal">
+        <h3 id={`trend-heading-${stages[0]?.step ?? 0}`} className="font-sans type-caption font-medium tracking-normal">
           Trend, {span}
-          {judgedYear !== undefined && (
-            <span className="font-normal text-muted-foreground"> · Earlier years in grey for comparison</span>
-          )}
         </h3>
         <span className="flex flex-wrap items-center gap-1.5 font-normal">
           {sourceIds.map((id) => (

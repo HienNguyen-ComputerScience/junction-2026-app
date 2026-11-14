@@ -1,18 +1,12 @@
 import type { ReactNode } from "react";
 
 import { OwnerRow } from "@/components/act/owner-row";
-import { SourceChip, sourceLabel } from "@/components/source-chip";
+import { SourceChip } from "@/components/source-chip";
 import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import { FramePanel } from "@/components/ui/frame";
 import { STAGE_LABELS } from "@/lib/act";
-import { getSource, type Evidence } from "@/lib/data";
-
-/** The evidence source's name as plain text, for the one "Owner … · Evidence …" line. */
-function evidenceName(action: Evidence): string {
-  const source = getSource(action.source_id);
-  return source ? sourceLabel(source) : action.source_id;
-}
+import type { Evidence } from "@/lib/data";
 
 /** A plain text tag (step, checked): the chip shape in the UI sans, so it never reads as a source. */
 const TAG =
@@ -88,16 +82,31 @@ function statisticLine({ value, unit, metric }: Effect): string {
 }
 
 /**
+ * Who or what the figure compares, taken only from the data's own `effect_size.metric`: where
+ * it names a comparison ("... vs ..."), the metric is quoted as it stands. Nothing is inferred
+ * from the other fields; null when the metric names no comparison.
+ */
+export function figureQualifier({ metric }: Effect): string | null {
+  return /\svs\s/.test(metric) ? `Measured as: ${metric}` : null;
+}
+
+/**
  * The evidence headline of an action: the figure in plain words (24px) or, where the data has
  * none the words can state outright, the evidence sentence itself in two lines. `children`
  * (the source chip) follow it, so the number never stands without its source.
  */
 function EvidenceStat({ action, children }: { action: Evidence; children?: ReactNode }) {
   const stat = action.effect_size ? plainStat(action.effect_size) : null;
+  const qualifier = stat && action.effect_size ? figureQualifier(action.effect_size) : null;
   return (
     <div className="flex flex-col gap-1">
       {stat ? (
-        <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p>
+        <>
+          {/* A figure with no stated comparison in the data is labelled as a study result. */}
+          {qualifier ? null : <p className="text-[0.8125rem] leading-4 text-muted-foreground">Study finding:</p>}
+          <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p>
+          {qualifier ? <p className="text-[0.8125rem] leading-snug text-pretty text-muted-foreground">{qualifier}</p> : null}
+        </>
       ) : (
         <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-foreground tabular-nums">
           {action.effect_text}
@@ -110,7 +119,7 @@ function EvidenceStat({ action, children }: { action: Evidence; children?: React
 
 /**
  * One recommended action from data/evidence.json, as a panel inside a Frame. Collapsed it shows
- * the action, its First step, one muted "Owner … · Evidence …" line and the evidence headline
+ * the action, its First step, one muted "Owner" line and the evidence headline
  * with its source; the description, the evidence sentence, the precedent, the original
  * statistic and the limitations are behind "Evidence details". `children` sit on the
  * disclosure's row (e.g. a live-evidence search).
@@ -196,7 +205,7 @@ export function ActionCard({
           </div>
         </div>
 
-        <OwnerRow owner={action.who_implements} evidence={evidenceName(action)} className="@3xl:col-span-2" />
+        <OwnerRow owner={action.who_implements} className="@3xl:col-span-2" />
       </div>
     </FramePanel>
   );

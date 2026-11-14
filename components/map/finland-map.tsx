@@ -77,12 +77,12 @@ const AREA_FILL: Record<GapStatus, string> = {
     "[fill:var(--hatch)] group-hover:[fill:var(--hatch-lift)] group-focus-visible:[fill:var(--hatch-lift)]",
 };
 
-// The selected area is a step lighter than its status fill, so it reads as picked even before
-// its outline is seen.
+// The selected area keeps exactly its status fill (red, slate or the hatch): the 2px cyan
+// outline drawn over it is what marks it as picked, so its status stays readable.
 const SELECTED_FILL: Record<GapStatus, string> = {
-  red: "[fill:color-mix(in_oklch,var(--status-red),white_16%)]",
-  amber: "[fill:color-mix(in_oklch,var(--status-amber-bar),white_16%)]",
-  no_data: "[fill:var(--hatch-lift)]",
+  red: "fill-status-red",
+  amber: "fill-status-amber-bar",
+  no_data: "[fill:var(--hatch)]",
 };
 
 // An area of a few pixels (Helsinki, Vantaa and Kerava) would lose most of itself to a border.
