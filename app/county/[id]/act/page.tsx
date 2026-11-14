@@ -53,12 +53,12 @@ function statement(name: string, { focus, anyRed }: Bottleneck): string {
 }
 
 /** Why these actions and no others: the selection rule, the unmeasured steps, and what the figure covers. */
-function whyNotes(countyName: string, bottleneck: Bottleneck): string[] {
+function whyNotes(countyName: string, bottleneck: Bottleneck, otherCount: number): string[] {
   const notes = [SELECTION_RULE];
   for (const gap of bottleneck.noData) {
     notes.push(
       gap.shared
-        ? `${STAGE_LABELS[gap.stage]}: Sotkanet publishes only a ${gap.shared.name}-wide figure, not one for ${countyName}, so this step is not used to pick actions. Its options are under "Show the other actions".`
+        ? `${STAGE_LABELS[gap.stage]}: Sotkanet publishes only a ${gap.shared.name}-wide figure, not one for ${countyName}, so this step is not used to pick actions. Its options are under "Show the ${otherCount} other actions".`
         : `${STAGE_LABELS[gap.stage]}: there is no ${countyName} figure, so this step is not used to pick actions.`,
     );
   }
@@ -137,7 +137,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
             <Disclosure tone="quiet" show="Why only these actions?" hide="Hide why">
               <ul className="flex max-w-[62ch] flex-col gap-2.5 rounded-lg bg-cream-paper px-5 py-4 text-base leading-relaxed text-pretty print:px-0">
                 <li className="hidden font-semibold text-forest-ink print:block">Why only these actions</li>
-                {whyNotes(county.name, bottleneck).map((note) => (
+                {whyNotes(county.name, bottleneck, otherCount).map((note) => (
                   <li key={note}>{note}</li>
                 ))}
               </ul>
@@ -177,7 +177,6 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
                   <GroupHead
                     id={`unmeasured-${group.stage}`}
                     title={`${STAGE_LABELS[group.stage]}: can't be measured here yet`}
-                    note={`${group.unmeasured} These actions still apply if the county finds a delay at this step.`}
                     noData
                   />
                   <SummaryGrid actions={group.actions} />
@@ -188,7 +187,6 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
                   <GroupHead
                     id={`other-${group.stage}`}
                     title={STAGE_LABELS[group.stage]}
-                    note={group.unmeasured}
                     noData={group.unmeasured !== null}
                   />
                   <SummaryGrid actions={group.actions} />
@@ -200,10 +198,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
 
         <div id="referral-routes" className="scroll-mt-28 border-t border-border-mist py-4 first:border-t-0">
           <Disclosure show="Show the four referral routes a county needs" hide="Hide the referral routes">
-            <div className="flex flex-col gap-4 rounded-lg bg-cream-paper px-5 py-5 sm:px-7">
-              <p className="text-base font-semibold text-forest-ink">
-                The four referral routes a county needs. Decision support for the county, not diagnosis.
-              </p>
+            <div className="rounded-lg bg-cream-paper px-5 py-5 sm:px-7">
               <ReferralRoutes />
             </div>
           </Disclosure>
@@ -237,25 +232,22 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   );
 }
 
-function GroupHead({ id, title, note, noData = false }: { id: string; title: string; note: string | null; noData?: boolean }) {
+function GroupHead({ id, title, noData = false }: { id: string; title: string; noData?: boolean }) {
   return (
-    <div className="flex flex-col gap-1 px-1 pt-3 pb-3">
-      <h3 id={id} className="type-heading flex flex-wrap items-center gap-2">
-        {title}
-        {noData ? (
-          <StatusBadge status="no_data" size="xs">
-            {STATUS_LABEL.no_data}
-          </StatusBadge>
-        ) : null}
-      </h3>
-      {note ? <p className="max-w-[52rem] text-base text-pretty text-foreground">{note}</p> : null}
-    </div>
+    <h3 id={id} className="type-heading flex flex-wrap items-center gap-2 px-1 pt-3 pb-3">
+      {title}
+      {noData ? (
+        <StatusBadge status="no_data" size="xs">
+          {STATUS_LABEL.no_data}
+        </StatusBadge>
+      ) : null}
+    </h3>
   );
 }
 
 function SummaryGrid({ actions }: { actions: Evidence[] }) {
   return (
-    <ul className="grid gap-1.5 md:grid-cols-2">
+    <ul className="flex flex-col gap-1.5">
       {actions.map((action) => (
         <li key={action.id}>
           <ActionSummary action={action} />

@@ -62,31 +62,33 @@ function tierLinks(urgency: Urgency): GuidelineLink[] {
   ];
 }
 
-/** The link chip, with its source chip next to it only where the link is itself a source. */
-function LinkChips({ links }: { links: GuidelineLink[] }) {
+/**
+ * The guidelines and studies behind a route, as one quiet line of links. A study's link is the
+ * source's own address, so it needs no second source chip next to it.
+ */
+function BehindLinks({ links }: { links: GuidelineLink[] }) {
   return (
-    <ul role="list" className="contents">
+    <ul role="list" className="flex flex-wrap items-center gap-x-4 gap-y-1">
       {links.map((link) => (
-        <li key={link.url} className="flex min-w-0 flex-wrap items-center gap-1.5">
+        <li key={link.url} className="min-w-0">
           <a
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
             title={link.label}
             aria-label={`${chipName(link)}: ${link.label} (opens in a new tab)`}
-            className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-input bg-cream-paper px-3 py-1 text-left text-sm font-medium text-brand-ink outline-none hover:bg-mint-veil focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="inline-flex min-h-8 items-center gap-1 rounded-sm text-base text-brand-ink underline decoration-forest-ink/40 underline-offset-4 outline-none hover:decoration-forest-ink focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             {chipName(link)}
             <ArrowUpRight aria-hidden className="size-3.5 shrink-0" />
           </a>
-          {link.source_id ? <SourceChip sourceId={link.source_id} /> : null}
         </li>
       ))}
     </ul>
   );
 }
 
-const ROW_LABEL = "text-sm font-semibold shrink-0 whitespace-nowrap text-foreground";
+const ROW_LABEL = "text-base font-semibold shrink-0 whitespace-nowrap text-foreground";
 
 /**
  * Static panel for county administrators: the four referral routes a county needs, what each is
@@ -120,13 +122,13 @@ export function ReferralRoutes() {
                   concerns.map((category) => (
                     <span
                       key={category.id}
-                      className="inline-flex min-h-8 items-center rounded-full bg-cream-paper px-3 py-1 text-sm text-pretty"
+                      className="inline-flex min-h-8 items-center rounded-full bg-cream-paper px-3 py-1 text-base text-pretty"
                     >
                       {category.label}
                     </span>
                   ))
                 ) : (
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-base text-muted-foreground">
                     Concerns that fit no other route
                   </span>
                 )}
@@ -137,15 +139,15 @@ export function ReferralRoutes() {
                 </span>
                 {leadingSentences(tier.gpAction, urgency === "prompt" ? 2 : 1)}
               </p>
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className={ROW_LABEL}>Behind it</span>
-                <LinkChips links={links} />
+                <BehindLinks links={links} />
               </div>
             </li>
           );
         })}
       </ol>
-      <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+      <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-base text-muted-foreground">
         Finland has no national referral criteria yet: Finnish cancer strategy
         roadmap 2026–2031, measure 2.5.2
         {FINNISH_ROADMAP.source_id ? (

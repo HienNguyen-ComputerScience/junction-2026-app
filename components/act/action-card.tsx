@@ -218,16 +218,16 @@ export function ActionCard({
 }
 
 /**
- * The compact form of an action card, for the options not picked for this county: the checked
- * source, the action, its first step and its owner.
+ * The compact form of an action, for the options not picked for this county: one line with the
+ * plain title, its owner and the source chip. The first step and the evidence are on the
+ * recommended cards only.
  */
 export function ActionSummary({ action }: { action: Evidence }) {
   return (
-    <FramePanel padding="none" className="@container flex h-full flex-col gap-3 px-4 py-4 sm:px-5">
-      <SourceMarks action={action} />
-      <h4 className="type-heading text-pretty">{plainTitle(action.action)}</h4>
-      <FirstStep compact>{action.first_step}</FirstStep>
-      <OwnerRow owner={action.who_implements} />
+    <FramePanel padding="none" className="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-4 py-2.5 sm:px-5">
+      <h4 className="min-w-0 flex-[1_1_20rem] text-base leading-snug font-semibold text-pretty">{plainTitle(action.action)}</h4>
+      <OwnerRow owner={action.who_implements} className="min-w-0 flex-[1_1_16rem]" />
+      <SourceChip sourceId={action.source_id} />
     </FramePanel>
   );
 }
