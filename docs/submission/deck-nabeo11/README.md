@@ -2,7 +2,7 @@
 
 Two deck drafts exist: the 9-slide `../firstline-deck.pdf` (source `../deck.html`, notes `../deck-notes.md`) and this 16-slide draft. Which one is uploaded on Sunday: TODO (lead decides). See also `../deck-outline.md`.
 
-Files: `deck.html` (source, 16 slides at 1280x720), `FirstLine-deck-draft2.pdf` (export), `build.py` (generates `deck.html` from `data/values.json` and `counties.json` in the repo root, so the chart and big numbers always match the data).
+Files: `deck.html` (source, 16 slides at 1280x720), `FirstLine-deck-draft2.pdf` (export), `build.py` (generates `deck.html` from `data/values.json` and `counties.json` in the repo root, so the chart and big numbers always match the data; the slide 1 headline and the hand-typed B4 evidence tables are checked against the data, and the build stops with a message if they no longer match).
 
 ## Regenerate the PDF
 

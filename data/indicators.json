@@ -28,5 +28,35 @@
     "stage": null,
     "limitation": "Published as whole percentages and 0-3% everywhere, so it barely separates counties. Shown as context only, not used for ranking or stage status.",
     "source_id": "sotkanet-5033"
+  },
+  {
+    "indicator_id": "3621",
+    "name": "Proportion of women invited to breast cancer screening (mammography) who attended, %",
+    "short_name": "Breast cancer screening attendance",
+    "unit": "%",
+    "direction": "lower_is_worse",
+    "stage": null,
+    "limitation": "Share of women invited to mammography screening who attended, so it says nothing about people who were not invited. Latest year is 2024. Shown as context only, not used for ranking or stage status.",
+    "source_id": "sotkanet-3621"
+  },
+  {
+    "indicator_id": "6103",
+    "name": "Proportion of invited to colorectal cancer screening who attended, %",
+    "short_name": "Colorectal cancer screening attendance",
+    "unit": "%",
+    "direction": "lower_is_worse",
+    "stage": null,
+    "limitation": "Share of invited women and men who attended. The programme started in 2022 and is still widening its age band, so years and counties are not fully comparable. Latest year is 2024. Shown as context only, not used for ranking or stage status.",
+    "source_id": "sotkanet-6103"
+  },
+  {
+    "indicator_id": "3620",
+    "name": "Proportion of women invited to cervical cancer screening (smear test) who attended, %",
+    "short_name": "Cervical cancer screening attendance",
+    "unit": "%",
+    "direction": "lower_is_worse",
+    "stage": null,
+    "limitation": "Share of women invited to cervical screening who attended. Tests taken outside the programme (private or occupational care) are not counted. Latest year is 2024. Shown as context only, not used for ranking or stage status.",
+    "source_id": "sotkanet-3620"
   }
 ]

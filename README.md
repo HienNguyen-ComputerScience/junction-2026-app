@@ -8,11 +8,11 @@ Whether you get early cancer care in Finland depends on where you live, and no o
 ## Solution
 Three screens, all built from a committed data snapshot (`data/`, see `data/README.md`) in which every number has a source:
 
-1. **County ranking** (`/`): the 21 wellbeing services counties and the City of Helsinki ranked by the share of non-urgent GP visits that come more than 7 days after people ask (Sotkanet 6411), with referral speed (Sotkanet 13) alongside. Every number has a source chip.
+1. **County ranking** (`/`): the 21 wellbeing services counties and the City of Helsinki ranked by the share of non-urgent GP visits that come more than 7 days after people ask (Sotkanet 6411), with referral speed (Sotkanet 13) alongside. Every number has a source chip. Below the ranking, a strip of national cancer-care news found live with Exa.
 2. **County pathway** (`/county/[id]`): where the delay sits (getting to a GP, GP recognising warning signs, GP to specialist), as red / amber / grey stage cards; a limitations box that is always on screen; a plain-language brief for the county director (Claude writes it from the snapshot, a validator drops any claim whose number or source is not in the snapshot, and a precomputed brief is shown otherwise); and local news found live with Exa.
 3. **Act** (`/county/[id]/act`): up to three recommended actions for the county's red stages, each with an owner, a first step, a precedent and a checked source, plus a live Exa "find more evidence" panel per action (marked "Found live — unverified"); a red-flag helper for GPs (decision support, runs only in the browser, links to NICE NG12 and Käypä hoito instead of reproducing them); and a question box answered only from live Exa search results.
 
-The question box is also on the ranking page (`/#ask`). Sources and limitations: `/sources`.
+The question box is also on the ranking page (`/#ask`). Sources and limitations: `/sources` (data sources, the evidence behind each recommended action, and what is found live and unverified).
 
 ## Live demo
 URL: https://firstline-finland.vercel.app
@@ -48,12 +48,16 @@ Before saying "done": `npm run brief:check && npm run typecheck && npm run lint 
 MIT, see [LICENSE](LICENSE).
 
 ## Team
-Phương (@HienNguyen-ComputerScience)
+- @HienNguyen-ComputerScience (Phương): team lead, app, data snapshot, Exa live-search layer
+- @fraidfax: evidence table, pitch, video, code review and end-to-end checks
+- @bestawperna: sources and limitations page, manual and live-query testing
+- @nabeo11: submission, deck, sponsor questions, test runs
 
 ## Built with AI tools
 - Code: written by Claude Code agents directed by the team through T3 Code. The agents coordinate on a pinned GitHub issue (the "board", see `tools/board`).
 - In the app: the Claude API writes the county brief (numbers checked against the snapshot by a validator) and the answers in the question box (only from Exa results, with a numbered source per sentence).
 - Exa search powers the county news, the evidence finder and the question box.
+- Codex (OpenAI) was also used by a teammate (@bestawperna) for the sources and limitations page and the Exa live-query test plan.
 - Research used Agent Reach (https://github.com/Panniantong/agent-reach), a read-only tool for reading Reddit, YouTube, GitHub and similar sources.
 
 ## Pre-existing code and templates

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Frame, FrameDescription, FrameHeader, FramePanel, FrameTitle } from "@/components/ui/frame";
 
 import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isItemsResponse, STATUS_LABEL, type ItemsResponse } from "./types";
+import { isItemsResponse, STATUS_LABEL, statusText, type ItemsResponse } from "./types";
 
 type State = { kind: "loading" } | { kind: "done"; data: ItemsResponse } | { kind: "error" };
 
@@ -36,7 +36,7 @@ export function CountyNews({ countyId }: { countyId: string }) {
 
   const data = state.kind === "done" ? state.data : null;
   const unavailable = state.kind === "error" || data?.freshness === "unavailable";
-  const freshness = unavailable ? STATUS_LABEL.unavailable : data ? STATUS_LABEL[data.freshness] : null;
+  const freshness = unavailable ? STATUS_LABEL.unavailable : data ? statusText(data) : null;
 
   return (
     <Frame aria-labelledby="county-news-title">

@@ -1,5 +1,21 @@
 # Questions for the sponsor booths
 
+## Ask these first (Saturday, before the 18:00 freeze)
+
+Six questions whose answers could still change what we build or say before the freeze. Full wording, reasons and who to ask are in the questions below. Log every answer in `docs/evidence/mentor-log.md`.
+
+AstraZeneca:
+1. **P1** (is the normal GP queue a fair measure for early cancer signs?). Yes: keep the headline number and the current wording. No: add a bigger warning on screen and soften the ranking wording before the freeze.
+2. **P2** (may we link NICE NG12 as a UK guideline, or is there a Finnish list?). Yes: keep the red-flag helper as is. No: link only the Finnish list, or cut the helper before the freeze.
+3. **P3** (any Finnish county with a fast lane or diagnostic centre?). Yes: name it as the local precedent in the Act screen and the pitch. No: keep Denmark and the UK, and say so plainly.
+
+Exa:
+1. **E4** (rate and credit limits on our key). Higher than ours: leave the limits. Lower or unclear: tighten the server-side limit and pre-warm the cache before Sunday 10:30.
+2. **E2** (is a server-side cache acceptable for "live"?). Yes: keep it and its label. No: show cache results only as a clearly marked fallback, or turn the cache off for the demo.
+3. **E1** (will judges type in English or Finnish into our URL?). Finnish: pre-warm Finnish queries. English: add English phrasing to the query rewrite before the freeze.
+
+(Exa question numbers are the E1 to E8 under "Exa" below, not the section E in the AstraZeneca list.)
+
 For: nabeo11 (submission). Written 13 Nov 2026. Each question is one sentence you can say out loud. Fill in the "Answer / who / when" line right after the conversation, then copy it into `docs/evidence/mentor-log.md` (use its answer block, and ask "may we cite you by name?" every time).
 
 Order is priority. At the AstraZeneca stand use the "Ask these first" block; at the other booths ask 1 to 4 first, the rest only if there is time. The AstraZeneca section is the nabeo11 list of 21 questions (the team lead decided it replaces the earlier A1-A8 draft); the Exa and organiser sections are unchanged.

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isItemsResponse, STATUS_LABEL, TOO_MANY, type ItemsResponse } from "./types";
+import { isItemsResponse, statusText, TOO_MANY, type ItemsResponse } from "./types";
 
 type State =
   | { kind: "idle" }
@@ -68,8 +68,8 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="unverified">Found live — unverified</Badge>
                 <span className="type-note text-muted-foreground">via Exa</span>
-                {data && (
-                  <span className="type-note text-muted-foreground">· {STATUS_LABEL[data.freshness]}</span>
+                {data && statusText(data) !== null && (
+                  <span className="type-note text-muted-foreground">· {statusText(data)}</span>
                 )}
               </div>
               <p className="type-micro text-muted-foreground">

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { FramePanel } from "@/components/ui/frame";
 
 import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isAskResponse, STATUS_LABEL, TOO_MANY, type AskResponse } from "./types";
+import { isAskResponse, statusText, TOO_MANY, type AskResponse } from "./types";
 
 const MAX_QUESTION = 300;
 
@@ -151,7 +151,11 @@ export function AskBox() {
             <div className="space-y-5 border-t border-border pt-5">
               {/* Freshness is one quiet line of text, not another tag. */}
               <p className="type-note text-muted-foreground">
-                <span className="font-medium text-foreground">{STATUS_LABEL[data.freshness]}.</span>{" "}
+                {statusText(data) !== null && (
+                  <>
+                    <span className="font-medium text-foreground">{statusText(data)}.</span>{" "}
+                  </>
+                )}
                 Answered only from these Exa results.
               </p>
 
@@ -181,6 +185,10 @@ export function AskBox() {
                         ))}{" "}
                       </span>
                     ))}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Numbers here come from the web sources cited and can measure something different from the dashboard&apos;s
+                    indicators (share of GP visits waiting more than 7 days).
                   </p>
                 </div>
               )}

@@ -17,6 +17,27 @@
 // Exit code 1 if any request failed (non-2xx or network error), else 0.
 
 import { readFileSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
+const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+const isDate = (v) => typeof v === "string" && DATE_ONLY.test(v) && new Date(`${v}T00:00:00Z`).toISOString().startsWith(v);
+
+/**
+ * The date to save with a result: today for a live response, the response's own retrievedAt for a
+ * cached or stale-cache one (so an old saved result is never re-stamped as new). Returns null when a
+ * cached response carries no usable date, so the caller skips it instead of guessing.
+ */
+export function chooseRetrievedAt(data, today) {
+  if (data?.freshness === "live") return today;
+  return isDate(data?.retrievedAt) ? data.retrievedAt : null;
+}
+
+/** False if the saved entry is newer than the date we would write, or we have no date. ISO dates compare as strings. */
+export function shouldWriteEntry(existing, date) {
+  if (!isDate(date)) return false;
+  return !(isDate(existing?.retrievedAt) && existing.retrievedAt > date);
+}
+
 
 const args = process.argv.slice(2);
 const writeCache = args.includes("--write-cache");
@@ -77,10 +98,11 @@ async function call(req) {
   }
 }
 
+async function main() {
 const results = [];
 for (const req of requests) {
   const started = Date.now();
-  const row = { label: req.label, status: 0, freshness: "-", count: "-", ms: 0, ok: false, items: [], cache: req.cache };
+  const row = { label: req.label, status: 0, freshness: "-", retrievedAt: undefined, count: "-", ms: 0, ok: false, items: [], cache: req.cache };
   try {
     const res = await call(req);
     row.status = res.status;
@@ -88,6 +110,7 @@ for (const req of requests) {
     const data = await res.json().catch(() => null);
     if (data && typeof data === "object") {
       if (typeof data.freshness === "string") row.freshness = data.freshness;
+      if (typeof data.retrievedAt === "string") row.retrievedAt = data.retrievedAt;
       if (Array.isArray(data.items)) {
         row.items = data.items;
         row.count = String(data.items.length);
@@ -137,9 +160,14 @@ if (writeCache) {
   let written = 0;
   for (const row of results) {
     if (!row.ok || !["live", "cache"].includes(row.freshness) || row.items.length === 0) continue;
+    const date = chooseRetrievedAt(row, today);
     const [kind, key] = row.cache;
+    if (!shouldWriteEntry(load(kind).entries[key], date)) {
+      console.log(`  skip ${row.label}: no usable date or saved entry is newer`);
+      continue;
+    }
     load(kind).entries[key] = {
-      retrievedAt: today,
+      retrievedAt: date,
       // Evidence has 14 keys: keep 3 papers each so the file stays small.
       items: row.items.slice(0, kind === "evidence" ? 3 : MAX_ITEMS).map((i) => ({
         title: String(i.title ?? ""),
@@ -158,3 +186,7 @@ if (writeCache) {
 const failed = results.filter((r) => !r.ok).length;
 if (failed > 0) console.log(`${failed} of ${results.length} requests failed`);
 process.exit(failed > 0 ? 1 : 0);
+}
+
+// Only run when invoked as a script, so tests can import the helpers above.
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) await main();

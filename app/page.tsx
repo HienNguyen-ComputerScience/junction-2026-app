@@ -2,6 +2,7 @@ import { ArrowDown } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { AskBox } from "@/components/exa/ask-box";
+import { NationalNews } from "@/components/exa/national-news";
 import { gapToFinland, RankingList } from "@/components/ranking/ranking-list";
 import { SourceChip } from "@/components/source-chip";
 import {
@@ -186,6 +187,8 @@ export default function CountyRankingPage() {
         </FrameHeader>
         <AskBox />
       </Frame>
+
+      <NationalNews />
     </main>
   );
 }
