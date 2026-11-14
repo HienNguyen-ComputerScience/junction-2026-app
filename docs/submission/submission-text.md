@@ -2,7 +2,7 @@
 
 Related: `final-description-draft.md` (a newer draft of the description that supersedes it once checked).
 
-Ready to paste. Written 13 Nov 2026 from repo state; status text updated 14 Nov from test run 3 (pre-freeze, commit c4f067d). Anything in `TODO (human)` can only be filled by a person. Re-check the sentences listed at the bottom after feature freeze (Sat 18:00) and before switching to FINAL (Sun 10:00, aim 08:00).
+Ready to paste. Written 13 Nov 2026 from repo state; status text updated 14 Nov (morning) from main 17a9c20, after the new UI and audit fixes (PRs #85–#97), checked on a local production build; production was not yet redeployed. Anything in `TODO (human)` can only be filled by a person. Re-check the sentences listed at the bottom after feature freeze (Sat 18:00) and before switching to FINAL (Sun 10:00, aim 08:00).
 
 ## Project name
 
@@ -18,7 +18,7 @@ Recommended: option 1 (no number to keep in sync). Option 3 is the strongest hoo
 
 ## Short description (about 60 words)
 
-Whether you get early cancer care in Finland depends on where you live. FirstLine shows a wellbeing services county director where the first step breaks: getting in to see a GP, or getting from the GP to a specialist. Every number links to its public source (THL Sotkanet), and each bottleneck comes with actions, an owner and a precedent from another country.
+Whether you get early cancer care in Finland depends on where you live. FirstLine shows a wellbeing services county director where the first step breaks: getting to a GP, or getting from the GP to a specialist. Every number links to its public source (THL Sotkanet), and each bottleneck comes with actions, an owner and a precedent from another country.
 
 ## Full description (about 300 words)
 
@@ -27,23 +27,25 @@ Whether you get early cancer care in Finland depends on where you live. FirstLin
 **Who it is for.** A wellbeing services county director, or a GP in that county. No patient data is used.
 
 **What it does, on three screens.**
-1. *County ranking:* all counties ranked by GP wait and by how quickly referrals to specialist care are processed.
-2. *County pathway:* for one county, whether the delay sits at getting to a GP or at GP-to-specialist. Stage cards are red, amber or grey (grey means no public data) and a limitations box is always visible.
+1. *Home:* pick an area on the map of Finland. It shows where that area's pathway breaks, the top recommended action with its first step, and a what-if line (how many fewer of every 100 visits would wait over 7 days at Finland's level). Below: the 5 areas getting worse fastest since 2023, and all 22 areas ranked by GP wait and by how quickly referrals to specialist care are processed.
+2. *County pathway:* for one county, whether the delay sits at getting to a GP or at GP-to-specialist. Each step is marked "Worse than Finland's level" (red), "At or better than Finland's level" (slate) or "No public data" (grey), and a limitations box is always visible. Four Uusimaa areas have no referral figure of their own, so they show the HUS-wide value, labelled as not a county figure. The page also places the three steps on the 8-step delay pathway from the challenge talk.
 3. *Act:* two or three recommended actions for that bottleneck, each with an owner, a first step, a precedent (for example Denmark's fast-track pathways, UK Rapid Diagnostic Centres, nurse triage) and a source. A red-flag helper links symptoms to published guideline warning signs. It is decision support, not diagnosis.
 
 **Data transparency.** Everything shown comes from a committed snapshot of public data. Every row carries a source, and rows without one are not allowed. An AI model only writes text around fixed numbers, a validator drops any claim whose number or source is not in the snapshot, and the app keeps working if Sotkanet or the model is down.
 
-**The Exa live layer.** Checked data shows where care breaks. Exa shows what is happening about it right now: recent county news (last 12 months, Finnish sources), a finder for research papers and Nordic reports under each action, and a question box that answers only from Exa results and says "nothing found" when there is none. Live finds are labelled "Found live — unverified" and kept apart from our checked evidence table. If live search is down, the app shows saved results with their date.
+**The Exa live layer.** Checked data shows where care breaks. Exa shows what is happening about it right now: recent county news (last 12 months, Finnish sources), a finder for research papers and Nordic reports under each action, a national news strip on the home page, and a question box that answers only from Exa results and says so when nothing is found. Live finds are labelled "Found live — unverified" and kept apart from our checked evidence table. If live search is down, the app shows saved results with their date.
 
-**What is real and what is planned (14 Nov, commit c4f067d).** Built, merged and checked in test run 3 (before feature freeze):
-- the three screens: a county ranking of all 22 areas, a county pathway with red, amber and grey stage cards and a limitations box beside them, and recommended actions with owner, first step, precedent and source;
-- the red-flag helper;
-- the data snapshot (3 indicators, 22 areas) and the evidence table (14 verified rows);
+**What is real and what is planned (14 Nov, main 17a9c20).** Built and merged:
+- the three screens: a home page with a map, verdict, top action and what-if, plus the ranking of all 22 areas; a county pathway with step cards and a limitations box; and recommended actions with owner, first step, precedent and source;
+- the red-flag helper (it always shows "call 112" for emergencies);
+- the data snapshot (22 areas; 3 indicators used on screen: 6411, 13, and 5033 as context; plus 3 cancer-screening attendance indicators listed on the sources page as context) and the evidence table (14 verified rows);
 - on the county page: the county brief (precomputed from the snapshot, with a button to write an AI brief) and local news, for all 22 areas;
-- on the act page: a "Find more evidence live" button under each recommended action, and the question box, which is also on the ranking page;
-- a rate limit on live search, and saved demo results, shown with their date, when live search is down.
+- on the act page: a "Find more evidence live" button under each recommended action, and the question box, which is also on the home page;
+- the national news strip on the home page, and the sources and limitations page;
+- a rate limit on live search, and saved demo results, shown with their date, when live search is down;
+- the live deploy at firstline-finland.vercel.app.
 
-The AI brief, question-box answers and evidence-finder results were checked through the API; clicking them in the UI is still to be tested. Next: the national news strip (the API works, no page shows it yet), the sources and limitations page (merged after test run 3, not yet tested), and the live deploy. Not planned: treatment access, diagnosis, accounts, patient data. `TODO (human): update this paragraph on Saturday after feature freeze to say what actually shipped.`
+Test run 4 (deployed site, commit 96ec1e1, before the new UI) clicked the AI brief, question box, "Find more evidence live", red-flag helper and sources page in a real browser. Re-run on the final deploy. No public county data exists for whether GPs spot warning signs, cancer stage at diagnosis, or first contacts through work or private care: the app says so instead of guessing. Not planned: treatment access, diagnosis, accounts, patient data.
 
 ## Challenges
 
@@ -113,14 +115,10 @@ https://github.com/HienNguyen-ComputerScience/junction-2026-app
 
 Re-check each of these against the deployed app before 08:00 Sunday:
 
-1. The "What is real and what is planned" paragraph. It was updated 14 Nov from test run 3 (pre-freeze, commit c4f067d), when the brief, county news (all 22 areas), evidence finder and question box were on pages (PRs #39, #41). On Saturday, move an item from "Next" to "Built" only if a post-freeze run sees it on a page:
-   - national news strip (API only at c4f067d);
-   - sources and limitations page (PR #10 merged after Run 3; `/sources` was 404 at c4f067d);
-   - live deploy.
-   Also drop "clicking them in the UI is still to be tested" only after a run clicks the question box and "Find more evidence live".
+1. The "What is real and what is planned" paragraph. Updated 14 Nov from main 17a9c20 (local build). After the final deploy, a test run must see every listed item on the live site; drop any it doesn't.
 2. The numbers 85.4%, 32.7%, 54.7% (Sotkanet 6411, 2025): compare with `data/values.json` and the app screen.
-3. "14 verified rows", "22 counties", "3 indicators": compare with `data/evidence.json` and `data/counties.json` (22 counties plus a Finland row).
-4. "Last 12 months" for county news and the "Found live — unverified" label: both match the UI at c4f067d (Run 3, check 3c). Re-check against the final UI.
+3. "14 verified rows", "22 areas", the indicator count: compare with `data/evidence.json`, `data/indicators.json` and `data/counties.json` (22 areas plus a Finland row).
+4. "Last 12 months" for county news and the "Found live — unverified" label: both match the UI at 17a9c20. Re-check against the final UI.
 5. "Validator drops any claim..." and "works if Sotkanet or the model is down". The brief and question box are on pages since PR #39 (Run 3), so "by design" was dropped. Both validators were tested through the API (`/api/ask`, `/api/brief`); the brief fallback and saved demo results were tested in Run 3. Re-check after freeze.
 6. Technologies list: remove or keep Supabase; add anything new in `package.json`.
 7. Red-flag helper sentence: screen 3 shipped with the helper (PR #26, Run 2). Keep the sentence. The helper must link to guidelines, never copy NICE or Käypä hoito text.
