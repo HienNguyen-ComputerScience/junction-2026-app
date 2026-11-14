@@ -144,6 +144,24 @@
     "data_updated": "2026-06-05"
   },
   {
+    "source_id": "sotkanet-3620",
+    "kind": "statistic",
+    "name": "Sotkanet 3620: Proportion of women invited to cervical cancer screening (smear test) who attended, %",
+    "url": "https://sotkanet.fi/sotkanet/en/metadata/indicators/3620",
+    "publisher": "Finnish Cancer Registry, Sotkanet",
+    "retrieved": "2026-11-14",
+    "data_updated": "2026-06-12"
+  },
+  {
+    "source_id": "sotkanet-3621",
+    "kind": "statistic",
+    "name": "Sotkanet 3621: Proportion of women invited to breast cancer screening (mammography) who attended, %",
+    "url": "https://sotkanet.fi/sotkanet/en/metadata/indicators/3621",
+    "publisher": "Finnish Cancer Registry, Sotkanet",
+    "retrieved": "2026-11-14",
+    "data_updated": "2026-06-12"
+  },
+  {
     "source_id": "sotkanet-5033",
     "kind": "statistic",
     "name": "Sotkanet 5033: Referrals for specialised health care received after processing for more than 21 days, % of the referrals received",
@@ -151,6 +169,15 @@
     "publisher": "Finnish institute for Health and Welfare (THL), Sotkanet",
     "retrieved": "2026-11-14",
     "data_updated": "2026-06-05"
+  },
+  {
+    "source_id": "sotkanet-6103",
+    "kind": "statistic",
+    "name": "Sotkanet 6103: Proportion of invited to colorectal cancer screening who attended, %",
+    "url": "https://sotkanet.fi/sotkanet/en/metadata/indicators/6103",
+    "publisher": "Finnish Cancer Registry, Sotkanet",
+    "retrieved": "2026-11-14",
+    "data_updated": "2026-06-12"
   },
   {
     "source_id": "sotkanet-6411",

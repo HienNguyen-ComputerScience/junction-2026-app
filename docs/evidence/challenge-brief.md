@@ -38,3 +38,15 @@ Source chip: Kuitunen et al., Cancer Medicine 2026. It's the challenge speaker's
 - County page: the slide-10 pathway as an 8-step strip, steps 3–5 marked, with the 127 vs 76 line and a source chip to the paper. The limitations box says 6411 covers public health centres only.
 - Data gap filled: East, Central and West Uusimaa and Vantaa–Kerava had a blank referral card. It now shows the **HUS-wide** value (74.1% of referrals processed within 3 days in 2025; Finland 76.8%), labelled "not a county figure". Source: Sotkanet 13, the HUS row. We checked it is HUS against HUS's own 2024 report: 246,244 referrals processed in 0–3 days, the same count as Sotkanet ([HUS, 31.12.2024, table 3](https://www.hus.fi/sites/default/files/2025-01/hoitoa-odottavat-potilaat-erikoisaloittain-2024-joulukuu.pdf)). The card stays grey and is not used to pick actions.
 - Still open, no public source found: whether GPs spot warning signs (step 4); cancer stage at diagnosis by county (the Cancer Registry has stage for under half of cases); share of first contacts through occupational or private care by county. 6411 is still not cancer-specific, and 5033 is still too flat to use.
+
+## Data added from the deck
+
+Slide 9 says screening participation is lower in some groups, and slide 10's pathway starts before the GP. Sotkanet has screening attendance for all 22 areas plus Finland, 2022–2024, so it is now in the snapshot (`data/values.json`) as **context only**. Source: Finnish Cancer Registry via Sotkanet, retrieved 14 Nov 2026.
+
+| Sotkanet id | Attended, % of those invited (2024) | Lowest | Highest | Finland |
+|---|---|---|---|---|
+| 3621 | Breast cancer screening (mammography), women | Helsinki 74.3 | North Ostrobothnia 85.6 | 81.6 |
+| 6103 | Colorectal cancer screening | Helsinki 69.6 | South Savo 76.9 | 73.5 |
+| 3620 | Cervical cancer screening, women | North Karelia 68.0 | South Ostrobothnia and South Savo 82.3 (tied) | 73.4 |
+
+Limits: this is attendance among people who were **invited**, not coverage of everyone. Breast and cervical count women only. The three programmes invite different age bands, so don't compare one programme with another. It is context, not ranked: it doesn't change a county's rank, stage colour or recommended action. The latest year is 2024, one year behind the GP and referral numbers.
