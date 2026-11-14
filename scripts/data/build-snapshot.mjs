@@ -6,11 +6,15 @@
 //
 // No dependencies: Node's built-in fetch. Sotkanet needs a User-Agent
 // header (requests without one get 403). Output is sorted and stable so a
-// re-run only changes lines whose data changed.
+// re-run only changes lines whose data changed. A source keeps its old
+// `retrieved` date unless the source itself or a row citing it changed (see
+// keepUnchangedRetrieved below), so a day with no new figures gives no diff.
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { ANCHORS } from "./anchors.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const DATA = join(ROOT, "data");
@@ -22,7 +26,9 @@ const USER_AGENT = "junction-2026-firstline/0.1 (hackathon data snapshot)";
 const YEARS = [2023, 2024, 2025];
 const LATEST_YEAR = 2025;
 const SCREENING_YEARS = [2022, 2023, 2024]; // screening statistics lag a year
-const RETRIEVED = new Date().toISOString().slice(0, 10);
+// RETRIEVED_DATE (YYYY-MM-DD) overrides today, to test the refresh as if run on another day.
+const RETRIEVED = process.env.RETRIEVED_DATE ?? new Date().toISOString().slice(0, 10);
+if (!/^\d{4}-\d{2}-\d{2}$/.test(RETRIEVED)) throw new Error(`RETRIEVED_DATE must be YYYY-MM-DD, got "${RETRIEVED}"`);
 
 // The indicators we show. direction tells the ranking which way is worse.
 const INDICATORS = [
@@ -141,12 +147,7 @@ const INDICATORS = [
   },
 ];
 
-// Values the spec and pitch quote. The build fails if Sotkanet disagrees.
-const ANCHORS = [
-  { county_id: "paijat-hame", indicator_id: "6411", year: 2025, value: 32.7 },
-  { county_id: "vantaa-kerava", indicator_id: "6411", year: 2025, value: 85.4 },
-  { county_id: "finland", indicator_id: "6411", year: 2025, value: 54.7 },
-];
+// Values the spec and pitch quote (ANCHORS, in anchors.mjs): the build fails if Sotkanet disagrees.
 
 // HUS (Helsinki University Hospital group) runs specialised care for Helsinki
 // and four Uusimaa counties, so Sotkanet has no referral row for those
@@ -709,7 +710,51 @@ if (problems.length) {
   process.exit(1);
 }
 
-console.log(`Writing snapshot (retrieved ${RETRIEVED}):`);
+// ------------------------------------------------- retrieved-date churn
+// Every run stamps today's date, so without this a day with no new figures would still change
+// data/sources.json. A source keeps its previous `retrieved` date when the source row itself
+// (apart from `retrieved`, so a new `data_updated` counts) and every row in the other files that
+// cites it (source_id, shared.confirmed_by, anywhere in the row) are exactly as before. So
+// `retrieved` is the date our copy of that source last changed, not the date it was last checked.
+const OUTPUT = {
+  "counties.json": counties,
+  "indicators.json": indicators,
+  "values.json": values,
+  "gaps.json": gaps,
+  "evidence.json": evidence,
+  "roadmap.json": ROADMAP,
+  "data-gaps.json": DATA_GAPS,
+};
+function keepUnchangedRetrieved() {
+  const readOld = (name) =>
+    existsSync(join(DATA, name)) ? JSON.parse(readFileSync(join(DATA, name), "utf8")) : [];
+  const before = new Map(readOld("sources.json").map((s) => [s.source_id, s]));
+  const oldFiles = Object.fromEntries(Object.keys(OUTPUT).map((name) => [name, readOld(name)]));
+  // Round-trip the new rows through JSON so both sides compare as written to disk.
+  const newFiles = JSON.parse(JSON.stringify(OUTPUT));
+  const fingerprint = (source, files) => {
+    const needle = `"${source.source_id}"`;
+    const citing = Object.entries(files).map(([name, rows]) => [
+      name,
+      rows.map((row) => JSON.stringify(row)).filter((text) => text.includes(needle)),
+    ]);
+    return JSON.stringify([{ ...source, retrieved: null }, citing]);
+  };
+  const changed = [];
+  for (const source of sources) {
+    const old = before.get(source.source_id);
+    if (old && fingerprint(old, oldFiles) === fingerprint(source, newFiles)) source.retrieved = old.retrieved;
+    else changed.push(source.source_id);
+  }
+  console.log(
+    changed.length
+      ? `Sources with new or changed rows (retrieved ${RETRIEVED}): ${changed.join(", ")}`
+      : "No source changed: every source keeps its previous retrieved date.",
+  );
+}
+keepUnchangedRetrieved();
+
+console.log("Writing snapshot:");
 write("sources.json", sources);
 write("counties.json", counties);
 write("indicators.json", indicators);
