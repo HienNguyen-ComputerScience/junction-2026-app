@@ -8,8 +8,9 @@ import { GpWaitWarningTable, PathwayStepsRow, StarterFields } from "@/components
 import { AreaTable, NO_WAY_ROUND_CAVEATS, TestsTable } from "@/components/insights/no-way-round";
 import { NoWayRoundTiles, type TileLevel } from "@/components/insights/no-way-round-tiles";
 import { PathwayRow } from "@/components/insights/pathway-row";
-import { StarterDownload } from "@/components/insights/starter-dataset";
+import { STARTER_TEMPLATE_URL } from "@/components/insights/starter-dataset";
 import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, FocusGroup, Reveal, ScrollStory } from "@/components/motion";
+import { SaveShare } from "@/components/share";
 import { SourceChip } from "@/components/source-chip";
 import {
   earlyWarning,
@@ -146,21 +147,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
             of non-urgent GP visits waited more than 7 days. Finland: <span className="figure font-semibold">{FINLAND_WAIT}</span>.
           </>
         }
-        source={
-          <>
-            <SourceChip sourceId="sotkanet-6411" year={noWayRound.year} />
-            {/* One label when both figures carry the same grade; the reasons are under "Why?". */}
-            {robust.every((a) => a.wait.grade.label === robust[0].wait.grade.label) ? (
-              <ConfidenceBadge grade={robust[0].wait.grade} showReason={false} />
-            ) : (
-              robust.map((a) => (
-                <span key={a.county_id} className="inline-flex items-center gap-2 text-base">
-                  {a.name}: <ConfidenceBadge grade={a.wait.grade} showReason={false} />
-                </span>
-              ))
-            )}
-          </>
-        }
+        source={<SourceChip sourceId="sotkanet-6411" year={noWayRound.year} />}
         caveat={{
           short: "area figures, not people; not cancer-specific",
           why: (
@@ -281,7 +268,22 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
         className="scroll-mt-20"
       >
         <div className="flex flex-col items-start gap-6 *:max-w-full">
-          <StarterDownload label="Download the recording template (Excel)" />
+          <SaveShare
+            options={[
+              { kind: "print" },
+              {
+                kind: "excel",
+                href: STARTER_TEMPLATE_URL,
+                label: "Download the recording template for Excel",
+                hint: "Columns for the figures nobody publishes yet",
+              },
+              {
+                kind: "email",
+                subject: "Where cancer care access is hardest in Finland",
+                intro: "Where access to early cancer care is hardest across Finland, from published figures:",
+              },
+            ]}
+          />
           <Disclosure show={`Show the ${fieldCount} fields`} hide={`Hide the ${fieldCount} fields`}>
             <StarterFields />
           </Disclosure>
