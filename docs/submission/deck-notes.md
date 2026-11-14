@@ -1,204 +1,128 @@
-# FirstLine deck: speaker notes and sources (Draft v4)
+# FirstLine deck: speaker notes and sources (v5, post-freeze)
 
-Related: `deck-outline.md` (older, longer outline) and the 16-slide draft in `deck-nabeo11/`. Which deck is uploaded on Sunday: TODO (lead decides).
+Files: `docs/submission/deck.html` (source) and `docs/submission/firstline-deck.pdf` (rendered: 9 pages, 1280×720 each, MediaBox 960×540 pt, about 540 KB). Story and wording follow the final pitch in `docs/pitch/demo-script.md` (PR #126/#128).
 
-Files: `docs/submission/deck.html` (source) and `docs/submission/firstline-deck.pdf` (rendered: 9 slides, 1280×720, about 960 KB). Draft v3 (14 Nov) uses the screenshots retaken at commit c4f067d, adds a crop of the live local news panel to slide 7, and updates the built-vs-next status to `docs/submission/test-runs.md` Run 3 (pre-freeze).
+Related: the 16-slide alternative in `deck-nabeo11/` (not touched by v5) and the older outline `deck-outline.md`. **Which deck is uploaded on Sunday is the lead's decision.**
 
-**Draft v4 (14 Nov, morning, main 9032e79, by fraidfax on Phương's handoff).** The new UI (PRs #85–#98) made v3 stale. What changed in `deck.html` and the PDF, and what to read instead of the v3 notes below:
-- Screenshots 01–06 and 09 retaken from a local production build of main 9032e79 at 1440×900 (the app is dark-only now). `01-ranking.png` is now the home page (map, verdict, top action, what-if); the ranking sits below it on the same page. The slide-7 news crop was re-fitted (`.livecrop` offsets).
-- Colours and labels match the app: red "Worse than Finland's level", slate grey-blue "At or better than Finland's level" (the `--amber` variable now holds the slate colour), grey "No public data". There is no amber in the app any more.
-- Slide 3: "GP spots possible cancer" → "GP recognises warning signs" (the app's step 2 name).
-- Slide 4: "Rank" → "Pick an area". Slide 6: the four HUS areas now show the HUS-wide referral value, labelled as not a county figure (no longer a grey card). Say: "Where only a wider figure exists, we show it and say so."
-- Slide 8: "Real today" adds the home page, national news strip, sources page and the live deploy. The old "Next" column is now "Not in public data yet": GP recognition of warning signs, cancer stage by county, first contacts through work or private care.
-- Slide 9: live demo URL filled in.
-- Done 14 Nov 08:45: screenshots 01–06 and 09 retaken from the live URL (main f7caadf, PRs #89–#102), slide-1 draft footer removed. Retake again only if the UI changes before Sunday. Lines below that say "amber", "grey referral" for Vantaa–Kerava, "Rank all 22 areas" or "Next: sources page / live deploy" are v3 history.
+## v5 at a glance
 
-Re-render from PowerShell. Bare `--headless` from Git Bash produced no PDF. Without `--user-data-dir`, Edge can hand off to a running instance and exit without writing.
+- **App version:** frozen commit 3bc8bc7 (feature freeze Sat 14 Nov 18:00 Helsinki), auto-deployed to https://firstline-finland.vercel.app.
+- **Screenshots:** all taken from the live site on Sat 14 Nov 2026, 18:22 to 18:25 Helsinki (UTC+2), with playwright-core and the cached headless Chromium (same method as `test-runs.md` Run 3b; script kept outside the repo). Viewport 1440×900, device scale 2, dark colour scheme, animations disabled, fonts and map loaded, mouse parked at 0,0 before each shot.
+- **Images are pre-cropped files.** `deck.html` now shows each PNG whole (`.shot` and `.livecrop img` are plain `max-width/width: 100%`). The v4 margin-trim and `.livecrop` pixel offsets are gone, so a retake needs only a new crop, not new CSS offsets.
+- **Removed:** every mention of the red-flag / symptom helper (removed from the app; the act page now has the static panel "The four referral routes a county needs"). The "TODO: real names" chip on slide 9. No "Draft" footer anywhere.
+- **Em dashes:** the only one left is the verbatim UI label "Found live — unverified" on slide 7.
+
+## Rebuild
+
+From PowerShell (bare `--headless` from Git Bash wrote no PDF before; without `--user-data-dir` Edge can hand off to a running instance and exit without writing):
 
 ```powershell
-Start-Process "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" -ArgumentList '--headless=new','--disable-gpu','--no-pdf-header-footer','--user-data-dir="<scratch dir>"','--print-to-pdf="<repo>\docs\submission\firstline-deck.pdf"','file:///<repo>/docs/submission/deck.html' -Wait
+Start-Process -Wait -FilePath 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe' -ArgumentList '--headless=new','--disable-gpu','--no-pdf-header-footer','--user-data-dir=<abs scratch dir>\edge','--print-to-pdf=<repo>\docs\submission\firstline-deck.pdf','file:///<repo>/docs/submission/deck.html'
 ```
 
-Story and wording follow `docs/pitch/demo-script.md` and `docs/pitch/exa-angle.md`.
+Check after every rebuild: the PDF's modified time changed, 9 `/Type /Page` objects, and each slide looks right. v5 check: each `section` of `deck.html` rendered with print media at 1280×720 and viewed one by one; a script asserted that no element sits outside its slide, no `overflow:hidden` box clips its content, and every `img` loaded.
 
-Sotkanet sources (`data/sources.json`; publisher THL; retrieved 2026-11-13):
+## Screenshot inventory (`docs/submission/screenshots/`)
 
-| Indicator | URL | Data updated |
+| File | What (live site, 14 Nov 18:22–18:25) | Used by |
 |---|---|---|
-| 6411 | https://sotkanet.fi/sotkanet/en/metadata/indicators/6411 | 2026-05-13 |
-| 13 | https://sotkanet.fi/sotkanet/en/metadata/indicators/13 | 2026-06-05 |
+| `10-home.png` | `/` (opens on Vantaa and Kerava): 85.4%, "Worse than Finland's level", chip "Sotkanet 6411 · 2025", "Finland 54.7%", main reason line, the three steps. Crop 736×424 CSS px. New file (the home page no longer is a ranking). | Slide 4, screen 1 |
+| `02-county-pathway.png` | `/county/vantaa-kerava`: title, main reason, the three step tabs (step 1 85.4%, step 2 "No public data", step 3 "No county figure"), gap bar. Crop 668×440. | Slide 4, screen 2 |
+| `03-act.png` | `/county/vantaa-kerava/act`: "Action 1 of 3", named GP card, First step, Owner. Crop 644×322 (left half of the card, so it stays legible). | Slide 4, screen 3 |
+| `05-exa-live.png` | County page "Local news, last 12 months" panel: "Found live — unverified · Web results via Exa, saved 14 Nov 2026", 3 of 8 dated items (2 Nov, 29 Jul, 23 Jul 2026). Crop 1128×352. | Slide 7 |
+| `01-ranking.png` | `/compare` top: "Compare all 22 areas", ranking (viewport). Name kept so `test-runs.md` links still work. | Not in deck |
+| `04-act-south-ostrobothnia.png` | `/county/south-ostrobothnia/act`, carousel on action 2: "Diagnosis 17 days faster" (viewport). | Not in deck (backs slide 5) |
+| `06-act-tall.png` | Full `/county/vantaa-kerava/act`: actions carousel, where the delay sits (step 2 "Not measured in Finland", England 17%), what-if, "The four referral routes a county needs". Replaces the old tall shot that showed the removed red-flag helper. | Not in deck |
+| `07-ask-answer.png` | `/ask` after the chip "Did Denmark's cancer fast-track pathways shorten diagnosis times?": AI answer with [1]–[5], 6 sources (3 dated, 3 "date unknown"), "saved 14 Nov 2026". | Not in deck |
+| `08-evidence-finder.png` | Act card 1 after "Find more evidence live": "Found live — unverified", 5 results (4 dated, 1 "date unknown"). | Not in deck |
+| `09-sources.png` | `/sources` top (viewport). | Not in deck |
 
----
+Paid calls while capturing: one `/ask` question and one evidence-finder click (each also run once while exploring); both were served from the saved cache ("saved 14 Nov 2026").
 
-## 1. Title
+## Changes per slide (v4 → v5)
 
-**Say:** "FirstLine shows a wellbeing services county director where the first step of early cancer care breaks in their county, and what to do about it on Monday."
+1. **Title.** No change.
+2. **Problem.** Headline now "Your area decides how long a GP visit waits." (close to the app's home headline). The sentence now explains the benchmark (booth feedback): "Share of non-urgent GP visits that wait over a week. Red means worse than Finland, and Finland itself is at 54.7%." Labels say "Vantaa and Kerava" (app name). Chart unchanged; all 23 bars re-diffed by script against `data/values.json` (6411, 2025): 0 mismatches.
+3. **Who it's for.** Stage names match the app ("1 Getting to a GP", "2 GP recognises warning signs", "3 GP to specialist referral"). Step 2 now says "not measured in Finland" with England's comparison (17%, NHS England Fingertips 2024/25). The generic "numbers sit in national tables" line is replaced by the demo script's 127 vs 76 days lymphoma line, with its source chip.
+4. **Product.** New crops of home, county page and act page. Captions: "Map of 22 areas. One number, one main reason." / "Three steps, each against Finland's level." / "Each action: owner, first step, checked source. Plus the four referral routes a county needs." Removed "red-flag helper", "precedent" (not shown on the card any more), "what-if" and "ranking below" on home (the what-if is on the act page, the ranking is on `/compare`). Shot note: live site, 14 Nov 2026 18:22 Helsinki, commit 3bc8bc7.
+5. **Act.** App wording: "17 days" + "faster diagnosis (median)" (app: "Diagnosis 17 days faster"), "odds of dying from any cause". "In the app" lines: South Ostrobothnia, slow referrals; Vantaa and Kerava, action 1.
+6. **Trust.** Middle card is now "Limits on every page": 6411 counts all non-urgent GP visits, plus the recording caveat (shown on `/compare` and `/sources`). The four HUS areas line is dropped from the slide (still in the app; say it if asked). Validator card: "A sentence whose number isn't in its source is removed." Chip "On page: Ask the evidence" (the question box lives on `/ask` now). Bottom line moved down so it no longer touches the cards.
+7. **Live layer (Exa).** New crop of the local news panel with dated items and the "Found live — unverified" label. Chip "each item dated and linked" (true for all 8 news items; not true for the `/ask` sources, which is why the slide shows the news panel). Caption says the results were saved that day. Left column: "Ask the evidence: a numbered live source on every sentence, or “nothing found”."
+8. **How it's built.** "Real today" rewritten for the frozen app: home (map, one number, one main reason); county page (3 steps, limitations, AI brief, local news); act page (actions, what-if, four referral routes); Compare (ranking, getting worse fastest); Ask the evidence, national news, sources page; live on Vercel with saved results if search is down. Red-flag helper removed.
+9. **Close.** "TODO: real names" chip removed; GitHub logins only.
 
-Numbers: none.
+Body word count stays about the same as v4 (slide 3 gained the lymphoma line, slides 4, 6 and 8 got shorter).
 
-## 2. Problem
+## Claims and sources
 
-**Say:** "In Vantaa–Kerava, 85% of non-urgent GP visits come more than a week after people ask for one. In Päijät-Häme it's a third."
-
-| Number | Source |
+### Slide 2
+| Claim | Source |
 |---|---|
-| 85.4% Vantaa and Kerava ("85%" in the sentence) | `data/values.json`: `county_id: vantaa-kerava`, `indicator_id: "6411"`, `year: 2025`, `value: 85.4`. THL Sotkanet 6411, 2025 |
-| 32.7% Päijät-Häme ("a third") | `data/values.json`: `paijat-hame` / 6411 / 2025, `value: 32.7` |
-| 54.7% Finland (chart reference row) | `data/values.json`: `finland` / 6411 / 2025, `value: 54.7` |
-| All 23 chart bars (21 counties, Helsinki, Finland) | Every `data/values.json` row with `indicator_id: "6411"` and `year: 2025`, unrounded. West Uusimaa is 40, shown as 40.0. |
+| 85.4% Vantaa and Kerava, 32.7% Päijät-Häme, 54.7% Finland, all 23 bars | `data/values.json`, `indicator_id: "6411"`, `year: 2025`. THL Sotkanet 6411 (https://sotkanet.fi/sotkanet/en/metadata/indicators/6411) |
+| "visits", never "people"; access, not cancer delay | SPEC wording rules; `data/indicators.json` 6411 limitation ("Counts all non-urgent GP visits, not only possible cancer" is on the slide) |
 
-- **Colours** follow the `data/README.md` rule, the same one behind the `status` field in `data/gaps.json`: red = worse than Finland, amber = Finland's level or better. There is no green.
-- **Limitation on the slide:** 6411 counts all non-urgent GP visits, not only possible cancer (`data/indicators.json` → 6411 `limitation`).
-- **Wording:** 6411 counts from when the need for care was *assessed*. "After people ask" is the demo script's plain-language version. If a judge pushes, say "after the need was assessed".
+Say: "In Vantaa and Kerava, 85% of non-urgent GP visits wait more than a week. Red on the map means worse than Finland, and Finland itself is at 54.7%: more than half of visits wait over a week."
 
-## 3. Who it's for
-
-**Say:** "The county owns this first step, but nobody shows its director which step breaks or what worked elsewhere. Finland's own cancer roadmap asks for stronger GP access."
-
-| Number | Source |
+### Slide 3
+| Claim | Source |
 |---|---|
-| Measure 2.5.1; 2026–2031 | `docs/evidence/evidence.json` `ev-gp-capacity-roadmap`, `quote_or_page` (p. 51). STM, *Kansallinen syöpästrategia 2026–2035: Toimeenpanon tiekartta vuosille 2026–2031*, https://files.hackjunction.app/resources/Kansallinen_syopastrategia_toimeenpanon_tiekartta_2026_2031.pdf. The chip shows the roadmap period because the publication year is not in the repo. |
-| "3 days" on the stage card | Definition of indicator 13 (`data/indicators.json`) |
+| 17% of cancers first found in an emergency, England 2024/25 | `data/sources.json` `ndrs-emergency-presentations` (NHS England NDRS via Fingertips, indicators 91356/91357); `docs/evidence/gp-recognition-gap.md`; same text in the app (`components/pathway/pathway-steps.tsx`) |
+| Step 2 not measured in Finland | `data/README.md` (`gp_recognition` has no public indicator); app step-2 card |
+| Referrals processed within 3 days | Definition of Sotkanet 13 (`data/indicators.json`) |
+| 127 vs 76 days, lymphoma patients, median from first symptoms to treatment | `data/sources.json` `kuitunen-2026`; `docs/evidence/challenge-brief.md`. Kuitunen et al., Cancer Medicine 2026;15:e71920 (DLBCL, 160 patients, 7 Finnish hospitals). Say "lymphoma patients", never "cancer patients" |
+| Roadmap measure 2.5.1 | `docs/evidence/evidence.json` `ev-gp-capacity-roadmap` (p. 51), STM roadmap 2026–2031 |
 
-- The grey "GP spots possible cancer" stage reflects `data/README.md`: `gp_recognition` has no public indicator.
-- The demo script GP-first line is now sourced (PR #38): "In health systems where the GP is the first stop, 75 to 85 percent of cancer patients start at the GP" (Vedsted & Olesen, Br J Cancer 2015, PMC4385978; Danish and UK data, not Finnish). The older wording "Most cancers are first noticed by a GP" had no source and is not used.
-
-## 4. Product
-
-**Say:** "Rank all 22 areas, open one to see where the delay sits (in Vantaa–Kerava it's getting to a GP, and grey means no public data), then act on it."
-
-- **Screenshots:** `docs/submission/screenshots/01-ranking.png` (`/`), `02-county-pathway.png` (`/county/vantaa-kerava`) and `03-act.png` (`/county/vantaa-kerava/act`). They come from Run 3: headless Edge at 1440×900 against the local dev server at commit c4f067d.
-- **How they're placed:** `deck.html` references them by relative path, and the PDF embeds them at full 1440×900. The slide trims only the blank side margins (x < 150 and x > 1290 px). That removes the Next.js dev-mode badge and no page content. Checked again on the Run 3 retakes: the pathway page's limitations box (now a sticky right-hand column) ends inside the kept area, so nothing is cut.
-- **"22 areas":** `data/counties.json`, and the ranking screen itself ("All 22 areas"). "Vantaa–Kerava: the delay is getting to a GP" is the pathway page's verdict, from `data/gaps.json`: `vantaa-kerava`, `gp_access`, `red`.
-- **In these screenshots now:** the limitations box shows on the pathway page (02), beside the stage cards.
-- **Not in these screenshots:** the brief and local news (below the fold on the pathway page; slide 7 shows the news panel), the question box (below the fold on `/` and the act page) and the red-flag helper (below the fold on the act page).
-
-## 5. Act (checked evidence)
-
-**Say:** "For Vantaa–Kerava, where the delay is getting to a GP, FirstLine shows a named GP: in Norway, keeping the same GP goes with lower mortality. For South Ostrobothnia, red at both steps, it shows Denmark's fast-track pathways, 17 days off the median time to diagnosis, and we also show that Sweden's pathways left regional gaps."
-
-| Number | Source |
+### Slide 4
+| Claim | Source |
 |---|---|
-| −17 days: median diagnostic interval after vs before pathways, Denmark (adjusted) | `evidence.json` `ev-ref-denmark-cpp`, `effect_size.value: -17`. Jensen et al., *BMC Cancer* 2015;15:308, https://pmc.ncbi.nlm.nih.gov/articles/PMC4412104/ |
-| 25% lower odds of dying, same GP >15 years vs 1 year (OR 0.75; Norway, observational) | `evidence.json` `ev-gp-continuity`, `effect_size.value: 0.75`, `effect_text`. Sandvik et al., *Br J Gen Pract* 2022, https://pmc.ncbi.nlm.nih.gov/articles/PMC8510690/ |
-| "Equal or better" outcomes, "probably"; 18 trials | `evidence.json` `ev-gp-nurse-first-contact`: `effect_text`, `quote_or_page` and `precedent` ("18 randomised trials"). Laurant et al., *Cochrane Database Syst Rev* 2018, https://pmc.ncbi.nlm.nih.gov/articles/PMC6367893/ |
-| Sweden: shorter waits, regional gaps remain (no number) | `evidence.json` `ev-ref-sweden-svf`. Regeringens skrivelse 2023/24:48 on Riksrevisionen's report RiR 2023:12, published by Riksdagen, https://www.riksdagen.se/sv/dokument-och-lagar/dokument/regeringens-skrivelse/riksrevisionens-rapport-om-statens-arbete-med_hb0348/html/. Chip: "Riksrevisionen RiR 2023:12, via Riksdagen · 2023". |
+| 22 areas | `data/counties.json` (21 counties + Helsinki; 23rd row is Finland as reference); `/compare` "Compare all 22 areas" |
+| One number, one main reason; three steps; owner, first step, checked source; four referral routes | Seen on the live site in the v5 screenshots (`10-home.png`, `02-county-pathway.png`, `03-act.png`, `06-act-tall.png`) |
 
-Where each card appears in the app (Runs 2 and 3, `docs/pitch/demo-script.md`; `04-act-south-ostrobothnia.png` shows the South Ostrobothnia act page):
-- **Named GP** (`ev-gp-continuity`): first card on `/county/vantaa-kerava/act`.
-- **Denmark fast-track** (`ev-ref-denmark-cpp`): second card on `/county/south-ostrobothnia/act`. South Ostrobothnia is red at both steps (`data/gaps.json`: 6411 = 67.8 and 13 = 68.9, both worse than Finland). Don't show the Denmark card as a Vantaa–Kerava example: its referral step is grey there.
-- **Nurse-led card:** not tied to a county on the slide.
-
-Deliberately left off this slide:
-- **Danish survival (45% → 54%):** it comes from a different paper (Jensen 2017) and carries lead-time bias.
-- **Nurse-led care "frees GP slots":** that is the action's aim, and the review did not measure waits.
-
-How to phrase Norway: say "goes with", never "cuts deaths". If asked what else didn't work: Denmark's direct CT access alone did not help significantly (`ev-rec-direct-ct-training`).
-
-## 6. Trust
-
-**Say:** "Every number carries its source, the gaps are shown in grey instead of hidden, and validators drop any AI claim whose number isn't in its source. Public data only, decision support, not diagnosis."
-
-| Number | Source |
+### Slide 5
+| Claim | Source |
 |---|---|
-| 4 areas without referral data (Vantaa and Kerava, East, Central and West Uusimaa) | `data/gaps.json`: 4 rows with `stage: referral` and `status: no_data`. Also `data/README.md`, "Known gaps". Sotkanet 13, 2025 |
-| 6411 | Indicator ID, `data/indicators.json` |
+| 17 days faster diagnosis (median, adjusted), Denmark | `data/evidence.json` `ev-ref-denmark-cpp`, `effect_size.value: -17`. Jensen et al., BMC Cancer 2015;15:308. App card: "Diagnosis 17 days faster" (`04-act-south-ostrobothnia.png`) |
+| 25% lower odds of dying from any cause, same GP over 15 years vs 1 year, Norway, observational | `ev-gp-continuity`, OR 0.75. Sandvik et al., Br J Gen Pract 2022. App card wording |
+| Nurse-led: equal or better outcomes, probably; 18 trials | `ev-gp-nurse-first-contact`. Laurant et al., Cochrane 2018 |
+| Sweden: shorter waits, regional gaps remained | `ev-ref-sweden-svf`. Riksrevisionen RiR 2023:12, via Riksdagen |
+| South Ostrobothnia slow referrals | `data/gaps.json`: referral 68.9% vs Finland 76.8%, `red`; GP access 67.8%, `red` |
 
-Built vs next (Run 3, commit c4f067d). Both are mounted on pages since PR #39, which is why the chips say "On page":
-- **County brief:** `CountyBrief` on `/county/[id]`. It shows the precomputed brief ("Precomputed from the snapshot") with a "Write AI brief" button. Validator: `lib/brief/validate.ts` (`GET /api/brief`, PR #29). It drops a claim whose number or `source_id` is not in the snapshot context, or that turns visits into people. In Run 3 the AI brief for Vantaa–Kerava had 0 dropped claims and every number matched the snapshot.
-- **Question box:** `AskBox` on `/` and on `/county/[id]/act`. Validator: `validate()` in `lib/exa/answer.ts` (`POST /api/ask`). It drops a sentence that cites no valid item, or that contains a number not found in the cited item's title, snippet or date. In Run 3 "Does drug X cure lung cancer?" returned "Nothing found in the sources." and the injection question got a refusal without calling Exa.
-- **Not click-tested:** Run 3 tested the AI brief, the question-box answers and the evidence finder through the API only. Nobody typed a question or clicked "Write AI brief" or "Find more evidence live" in the UI. Say "on the page", not "we watched it answer on screen", until a run clicks through.
-- **If a judge asks:** the Vantaa answer quotes a 45-day average wait (Vantaan Sanomat), a different measure from the 85.4% on screen (Run 3 oddity 4).
+The demo script moved Norway to the backups (oversold for a pilot). It stays on this slide as checked evidence with "observational"; say "goes with", never "cuts deaths".
 
-## 7. Live layer (Exa)
-
-**Say:** "The numbers are from THL, but what happened in Vantaa this week isn't in any dataset or any AI's memory. Exa finds it live, with a link for every claim, and we keep it apart from the checked evidence."
-
-| Item | Source |
+### Slide 6
+| Claim | Source |
 |---|---|
-| "14 actions" | `docs/evidence/evidence.json`: 14 rows, all `verified: true`; the same 14 are in `data/evidence.json` |
-| Live news crop | `docs/submission/screenshots/05-exa-live.png` (Run 3, `/county/vantaa-kerava` at 1440×2300, commit c4f067d). The slide shows only the "Local news" panel: about x 150–940, y 1762–2092 of the source image. It holds the panel badges ("Last 12 months", "Found live — unverified", "via Exa", "Cached") and the first two items, dated 2026-11-02 and 2026-07-23. |
+| 6411 counts all non-urgent GP visits | `data/indicators.json` 6411 limitation |
+| Recording caveat: where recorded visits changed by more than 20%, part of a rise may be recording | `/compare` "Getting worse fastest" footnote and `/sources` ("18 of 22 areas; for Finland they rose 43%"); demo-script backup on South Ostrobothnia |
+| Sentences whose number is not in the cited source are removed | `lib/brief/validate.ts` (county brief), `validate()` in `lib/exa/answer.ts` (`/api/ask`) |
 
-The checked column (left, solid border) and the live column (right, dashed border, "Found live — unverified") stay visibly separate. The live items are **found live and unverified**. They are not checked evidence.
-
-- **What the slide does not show or claim:** a question-box answer or evidence-finder results. Both need typing or a click, and Run 3 tested them only through the API. The question-box line in the checked column describes the rule ("answers only from linked results, or “nothing found”"), not a screen.
-- **"Cached" badge:** the screenshot was taken after the prewarm, so the panel served from cache. Say "found live", not "loaded just now".
-- **Background (no longer on the slide):** the v2 slide listed items from the 13 Nov probe (`docs/exa-probe.md`, `docs/evidence/exa-queries.md`, `docs/pitch/exa-angle.md`): Lääkärilehti, 2 Nov 2026, Vantaa–Kerava hiring doctors; Etelä-Suomen Sanomat, 10 Nov 2026, Päijät-Häme expands named doctor and nurse care; Lääkärilehti, 23 Apr 2026, counties differ in lung cancer detection (https://www.laakarilehti.fi/terveydenhuolto/keuhkosyovan-toteamisessa-eroja-hyvinvointialueiden-valilla/). The last one is also the prewarm "demo hook" in Run 3.
-
-## 8. How it's built
-
-**Say:** "Public THL data is snapshotted with a source on every row, so the demo works even if Sotkanet, Exa or the AI is down. Today the county page has the AI brief and local news for all 22 areas, and the act page has the evidence finder and question box. If live search is down, it shows saved results with their date."
-
-| Number | Source |
+### Slide 7
+| Claim | Source |
 |---|---|
-| 22 areas (21 wellbeing services counties + City of Helsinki) | `data/counties.json`. It has 23 rows; the 23rd is `finland`, `kind: country`, kept as the reference. See `data/README.md`. |
-| 3 indicators | `data/indicators.json` (6411, 13, 5033) |
-| 2023–2025 | `data/README.md` (`values.json` years) |
-| 14 checked actions | `docs/evidence/evidence.json` |
+| 14 actions, each quoted from its source | `data/evidence.json`: 14 rows |
+| News items dated and linked; "Found live — unverified" | `05-exa-live.png` (8 items, all dated). The panel showed "saved 14 Nov 2026": the live deploy served saved Exa results. Say "found live and saved today", not "loaded just now" |
 
-"Real today" comes from `docs/submission/test-runs.md` Run 3 (pre-freeze, commit c4f067d, 14 Nov 00:20–00:40 Helsinki):
-
-| Slide line | Evidence (Run 3) |
+### Slide 8
+| Claim | Source |
 |---|---|
-| Three screens, source chips, limitations box | `/`, `/county/[id]`, `/county/[id]/act` all 200; limitations box as the sticky right column on the pathway page (check 3b); PRs #23, #26, #39 |
-| County page: AI brief + local news, all 22 areas | `CountyBrief` and `CountyNews` on `/county/[id]` (check 3a; PR #39). `/api/county-news` accepts all 22 area ids (check 4; PR #41). `/api/brief` `mode: ai`, 0 dropped claims |
-| Act page: evidence finder, question box | `EvidenceFinder` ("Find more evidence live" under each of the 3 recommended cards) and `AskBox` on `/county/[id]/act` (check 3a; `06-act-tall.png`). Results and answers tested via the API only (check 8 "Not run") |
-| Question box on the ranking page; red-flag helper | `AskBox` on `/` ("Ask the evidence", check 2); `components/act/red-flag-helper.tsx` on the act page |
-| Rate limit; saved demo results if search is down | `lib/exa/rate-limit.ts`, 429 on the 21st ask in a minute (check 5); committed demo cache answers with `stale-cache` and the save date on a cold server (check 7). The cache holds only the 4 demo counties, 14 evidence rows, the lung preset, the national strip and the 3 prewarm questions |
+| Real today list | Seen on the live site at 3bc8bc7 while taking the v5 screenshots (home, county, act, `/compare`, `/ask`, `/sources`); saved-results fallback per README |
+| Not in public data yet | `data/README.md` known gaps; demo-script backups (stage known for about 38% of cases nationally; 6411 covers public health centres only) |
 
-"Next" lists what is still missing or untested:
-- **National news strip on a page:** `/api/national-news` works (200, 5 items) but no page fetches it (oddity 2).
-- **Sources & limitations page:** Run 3 found `/sources` 404 (oddity 1). PR #10 merged on 13 Nov at 22:38 UTC (commit 3c7da0f), after Run 3 at c4f067d, so it is on main but untested. The slide says "Sources page: merged after run 3, untested". Move it to "Real today" only after a run opens `/sources`.
-- **Live deploy:** no live URL yet.
-
-Move a line to "Real today" only after a test run sees it on a page.
-
-## 9. Close
-
-**Say:** "Public data, every number sourced, no patient data, and a first step a county can start on Monday. FirstLine: equal first steps, across Finland."
-
-| Number | Source |
+### Slide 9
+| Claim | Source |
 |---|---|
-| "2–3 health stations", "aged 50+" | `evidence.json` `ev-gp-continuity`, `first_step` |
-| "7-day GP access" | Definition of Sotkanet 6411 |
+| 2–3 health stations, aged 50+ | `ev-gp-continuity` `first_step`; the same "First step" text is on the act page |
+| 7-day GP access | Definition of Sotkanet 6411 |
 
-The demo script's claim "in two minutes" is left out because it has no source.
+## Removed or not used
+- Red-flag / symptom helper (slides 4 and 8): removed from the app.
+- "Rank / ranking below" on home, "what-if" on home, "precedent" on the card: no longer true of the screens.
+- Four HUS areas without a county referral figure (old slide 6): still true in the app, dropped from the slide for words.
+- "Cached" badge and "dated link on every item": the badge is gone from the panel; `/ask` sources can be "date unknown".
+- The brief for v5 said source chips read "THL · Sotkanet 6411". The live site shows "Sotkanet 6411 · 2025"; the deck keeps "THL Sotkanet 6411 · 2025".
 
----
-
-## Re-check after freeze (Sat 18:00)
-
-### Numbers
-- [ ] Run `npm run data:build`. If 6411/2025 changed in `data/values.json`, update slide 2: the big numbers, the sentence and all 23 bars. Regenerate the SVG from `values.json` rather than editing it by hand.
-- [ ] Re-count the `no_data` referral rows in `data/gaps.json` (slide 6, "4 areas").
-- [ ] Re-count the `evidence.json` rows (slides 7 and 8, "14").
-- [ ] Re-count areas and indicators (slide 8).
-- [ ] If the evidence table changed, re-check slide 5 against `ev-ref-denmark-cpp`, `ev-gp-continuity`, `ev-gp-nurse-first-contact` and `ev-ref-sweden-svf`.
-- [x] Source found for the GP-first line (PR #38): "In health systems where the GP is the first stop, 75 to 85 percent of cancer patients start at the GP" (Vedsted & Olesen, Br J Cancer 2015, PMC4385978). Danish and UK data, not Finnish.
-
-### Screenshots and live items
-- [x] Slide 4: screenshots 01–03 retaken at commit c4f067d in Run 3. Margin crop re-checked: nothing cut.
-- [x] Slide 7: real screenshot of the local news panel added (crop of `05-exa-live.png`, Run 3, commit c4f067d).
-- [ ] After the freeze: retake all screenshots (01–06) on the final build, ideally the deployed URL or a production build so no dev badge appears. Same file names, then re-render. If the news panel moves in `05-exa-live.png`, re-fit the `.livecrop` offsets in `deck.html`.
-- [ ] Slide 7: on Sunday morning, check the news crop still shows real, dated items. Never edit a date, and keep the "Found live — unverified" label.
-
-### Built vs next (slides 6 and 8)
-- [x] Updated to Run 3 (commit c4f067d): brief, county news (22 areas), evidence finder, question box, rate limit and saved demo cache moved to "Real today". Slide 6 chips changed from "API:" to "On page:".
-- [ ] Run 4 (after freeze): open `/sources`. PR #10 merged after Run 3; move "Sources & limitations page" to "Real today" only if it loads.
-- [ ] Run 4: click the question box and "Find more evidence live" in the UI. Until then, don't claim on-screen answers.
-- [ ] Move "National news strip" and "Live deploy" only if a run sees them.
-
-### Team and links (slide 9)
-- [ ] Live demo URL (README says TBD).
-- [ ] Real names next to the GitHub logins. The repo has only the logins, from `AGENTS.md`.
-- [ ] Remove the "Draft v3" footer from slide 1 for the final PDF.
-
-## Body word counts (Draft v3)
-
-Counts exclude the headline, kicker, chips, pills, footer, chart SVG and placeholder frames. They include card titles, stage labels and list items.
-
-| Slide | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
-|---|---|---|---|---|---|---|---|---|---|
-| Words | 28 | 45 | 52 | 61 | 62 | 46 | 30 | 81 | 43 |
-
-Excluding labels, prose stays at or under 35 words on most slides. The rest is diagram and card labels: stage names, list items, the "In the app" lines on slide 5 and the screenshot notes on slides 4 and 7. Slide 7 dropped from 57 because the news headlines are now inside the screenshot. Slide 8 is the densest because of the built-vs-next lists. Cut further if the team wants a strict 35.
+## Left for a human
+- [ ] Lead decides which deck is uploaded: this 9-slide deck or the 16-slide `deck-nabeo11/`.
+- [ ] Real names on slide 9 if the team wants them (only GitHub logins are in the repo).
+- [ ] Sunday morning: open the county page and check the local news panel still shows dated items with "Found live — unverified". Never edit a date. Retake `05-exa-live.png` only if the panel changes.
+- [ ] If the data snapshot changes (`npm run data:build`), regenerate the slide-2 chart from `values.json` and re-check slides 2, 3 and 9.

@@ -97,10 +97,10 @@
     display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; font-size: 17px; color: var(--muted); margin-bottom: 18px;
   }
   .step-no { display: inline-block; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: #fff; text-align: center; line-height: 34px; font-weight: 700; font-size: 18px; margin-right: 8px; }
-  .shotwrap { width: 100%; aspect-ratio: 1140 / 900; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.08); margin-bottom: 16px; background: #fff; }
-  .shot { display: block; width: 126.316%; max-width: none; height: auto; margin-left: -13.158%; }
-  .livecrop { position: relative; width: 710px; height: 297px; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: #fff; margin-top: 14px; }
-  .livecrop img { position: absolute; width: 926.1px; max-width: none; height: auto; left: -108px; top: -1536.4px; }
+  .shotwrap { width: 100%; height: 226px; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.08); margin-bottom: 16px; background: #000; display: flex; align-items: center; justify-content: center; }
+  .shot { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; }
+  .livecrop { overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: #000; margin-top: 14px; }
+  .livecrop img { display: block; width: 100%; height: auto; }
   .shotnote { position: absolute; left: 80px; right: 80px; bottom: 52px; font-size: 14px; color: var(--muted); }
   .where { font-size: 15px; color: var(--muted); margin-top: 10px; }
   .where b { color: var(--ink); font-weight: 600; }
@@ -170,12 +170,12 @@
 <!-- 2 PROBLEM -->
 <section>
   <p class="kicker">The problem</p>
-  <h1 style="margin-bottom:16px;">Where you live decides how fast you see a GP.</h1>
+  <h1 style="margin-bottom:16px;">Your area decides how long a GP visit waits.</h1>
   <div class="split">
     <div style="flex:1; padding-top:6px;">
-      <div class="stat"><div class="num red">85.4%</div><div class="lbl">Vantaa–Kerava</div></div>
+      <div class="stat"><div class="num red">85.4%</div><div class="lbl">Vantaa and Kerava</div></div>
       <div class="stat"><div class="num amber">32.7%</div><div class="lbl">Päijät-Häme</div></div>
-      <p class="body" style="font-size:23px;margin:14px 0 14px;">In Vantaa–Kerava, 85% of non-urgent GP visits come more than a week after people ask. In Päijät-Häme it's a third.</p>
+      <p class="body" style="font-size:23px;margin:14px 0 14px;">Share of non-urgent GP visits that wait over a week. Red means worse than Finland, and Finland itself is at 54.7%.</p>
       <p><span class="chip"><b>THL Sotkanet 6411</b> · 2025</span></p>
       <p class="small muted" style="margin-top:12px;font-size:16px;">Counts all non-urgent GP visits, not only possible cancer.</p>
     </div>
@@ -195,14 +195,14 @@
   <div class="path">
     <div class="stage start"><h3>Patient</h3><p>notices a symptom</p></div>
     <div class="arrow">→</div>
-    <div class="stage"><h3>Getting to a GP</h3><p>wait for a non-urgent visit</p><span class="chip"><b>Sotkanet 6411</b> · 2025</span></div>
+    <div class="stage"><h3>1 Getting to a GP</h3><p>non-urgent visits waiting over 7 days</p><span class="chip"><b>Sotkanet 6411</b> · 2025</span></div>
     <div class="arrow">→</div>
-    <div class="stage grey"><h3>GP recognises warning signs</h3><span class="pill grey">no public data</span></div>
+    <div class="stage grey"><h3>2 GP recognises warning signs</h3><p><span class="pill grey">not measured in Finland</span></p><p>England: 17% of cancers first found in an emergency</p><span class="chip"><b>NHS England, Fingertips</b> · 2024/25</span></div>
     <div class="arrow">→</div>
-    <div class="stage"><h3>GP → specialist</h3><p>referrals processed in 3 days</p><span class="chip"><b>Sotkanet 13</b> · 2025</span></div>
+    <div class="stage"><h3>3 GP to specialist referral</h3><p>referrals processed within 3 days</p><span class="chip"><b>Sotkanet 13</b> · 2025</span></div>
   </div>
-  <p class="body" style="max-width:1080px;">The numbers sit in national tables. Nothing shows a county director which step breaks, or what worked elsewhere.</p>
-  <p class="body" style="margin-top:18px;font-size:21px;">Finland's cancer roadmap asks for stronger GP access (measure 2.5.1). <span class="chip"><b>STM cancer strategy roadmap</b> · 2026–2031</span></p>
+  <p class="body" style="max-width:1080px;font-size:23px;">Why the first step matters: lymphoma patients who started at a public health centre waited a median 127 days to treatment; through private or work care, 76. <span class="chip"><b>Kuitunen et al., Cancer Medicine</b> · 2026</span></p>
+  <p class="body" style="margin-top:16px;font-size:21px;">Finland's cancer roadmap asks for stronger GP access (measure 2.5.1). <span class="chip"><b>STM cancer strategy roadmap</b> · 2026–2031</span></p>
   <div class="foot"><span>FirstLine</span><span>3</span></div>
 </section>
 
@@ -212,22 +212,22 @@
   <h1 style="margin-bottom:22px;">Three screens: pick an area, find the break, act.</h1>
   <div class="screens">
     <div class="screen">
-      <div class="shotwrap"><img class="shot" src="screenshots/01-ranking.png" alt="FirstLine home: pick an area on the map, see where its pathway breaks, the top recommended action and a what-if line"></div>
+      <div class="shotwrap"><img class="shot" src="screenshots/10-home.png" alt="FirstLine home for Vantaa and Kerava: 85.4% of non-urgent GP visits wait over 7 days, worse than Finland's level, Finland 54.7%, main reason line and the three steps"></div>
       <h3><span class="step-no">1</span>Pick an area</h3>
-      <p>Map of 22 areas: the verdict, the top action and a what-if. The full ranking sits below.</p>
+      <p>Map of 22 areas. One number, one main reason.</p>
     </div>
     <div class="screen">
-      <div class="shotwrap"><img class="shot" src="screenshots/02-county-pathway.png" alt="FirstLine county pathway screen for Vantaa and Kerava: red GP-access card and a grey no-public-data card and the HUS-wide referral value, labelled as not a county figure"></div>
+      <div class="shotwrap"><img class="shot" src="screenshots/02-county-pathway.png" alt="FirstLine county page for Vantaa and Kerava: three step tabs, step 1 at 85.4% worse than Finland's level, step 2 no public data, step 3 no county figure"></div>
       <h3><span class="step-no">2</span>Find the break</h3>
-      <p><span class="pill red">worse</span><span class="pill amber">at or better</span><span class="pill grey">no data</span><br>Vantaa–Kerava: the delay is getting to a GP.</p>
+      <p><span class="pill red">worse</span><span class="pill amber">at or better</span><span class="pill grey">no data</span><br>Three steps, each against Finland's level.</p>
     </div>
     <div class="screen">
-      <div class="shotwrap"><img class="shot" src="screenshots/03-act.png" alt="FirstLine act screen for Vantaa and Kerava: named-GP action card with owner, first step, precedent, evidence and limitations"></div>
+      <div class="shotwrap"><img class="shot" src="screenshots/03-act.png" alt="FirstLine act page for Vantaa and Kerava: action 1 of 3, give patients a named GP, first step and owner"></div>
       <h3><span class="step-no">3</span>Act</h3>
-      <p>Actions with owner, first step, precedent and source, plus a red-flag helper.</p>
+      <p>Each action: owner, first step, checked source. Plus the four referral routes a county needs.</p>
     </div>
   </div>
-  <p class="shotnote">Screenshots of the live app, firstline-finland.vercel.app, 14 Nov 2026 (main f7caadf, 1440×900 viewport; blank side margins trimmed).</p>
+  <p class="shotnote">Live site firstline-finland.vercel.app, 14 Nov 2026, 18:22 Helsinki (commit 3bc8bc7). Also on the site: Compare all 22 areas, Ask the evidence.</p>
   <div class="foot"><span>FirstLine</span><span>4</span></div>
 </section>
 
@@ -238,15 +238,15 @@
   <div class="cards">
     <div class="card">
       <h3>Fast-track pathways</h3>
-      <div class="big">−17 days</div>
-      <p class="what">median time to diagnosis, Denmark</p>
-      <div class="chiprow"><span class="chip"><b>Jensen et al., BMC Cancer</b> · 2015</span><p class="where">In the app: <b>South Ostrobothnia</b>, red at both steps</p></div>
+      <div class="big">17 days</div>
+      <p class="what">faster diagnosis (median), Denmark, after vs before the pathways</p>
+      <div class="chiprow"><span class="chip"><b>Jensen et al., BMC Cancer</b> · 2015</span><p class="where">In the app: <b>South Ostrobothnia</b>, slow referrals</p></div>
     </div>
     <div class="card">
       <h3>A named GP</h3>
       <div class="big">25% lower</div>
-      <p class="what">odds of dying, same GP &gt;15 years vs 1 year (Norway, observational)</p>
-      <div class="chiprow"><span class="chip"><b>Sandvik et al., Br J Gen Pract</b> · 2022</span><p class="where">In the app: <b>Vantaa–Kerava</b>, GP access</p></div>
+      <p class="what">odds of dying from any cause, same GP over 15 years vs 1 year (Norway, observational)</p>
+      <div class="chiprow"><span class="chip"><b>Sandvik et al., Br J Gen Pract</b> · 2022</span><p class="where">In the app: <b>Vantaa and Kerava</b>, action 1</p></div>
     </div>
     <div class="card">
       <h3>Nurse-led visits</h3>
@@ -270,17 +270,17 @@
       <div class="chiprow"><span class="chip"><b>THL Sotkanet 6411</b> · 2025</span></div>
     </div>
     <div class="card">
-      <h3>Limitations always visible</h3>
-      <p class="what" style="font-size:20px;">6411 isn't cancer-specific. 4 areas, incl. Vantaa–Kerava, have no referral figure of their own: the app shows the HUS-wide value, labelled.</p>
-      <div class="chiprow"><span class="pill grey">no public data</span> <span class="chip"><b>Sotkanet 13</b> · 2025</span></div>
+      <h3>Limits on every page</h3>
+      <p class="what" style="font-size:20px;">6411 counts all non-urgent GP visits, not only cancer. Where recorded visits changed by over 20%, part of a rise may be recording.</p>
+      <div class="chiprow"><span class="chip"><b>Sotkanet 6411</b> · 2023–2025</span></div>
     </div>
     <div class="card">
       <h3>AI can't invent numbers</h3>
-      <p class="what" style="font-size:20px;">Validators drop any claim whose number isn't in its source.</p>
-      <div class="chiprow"><span class="chip"><b>On page:</b> county brief</span> <span class="chip"><b>On page:</b> question box</span></div>
+      <p class="what" style="font-size:20px;">A sentence whose number isn't in its source is removed.</p>
+      <div class="chiprow"><span class="chip"><b>On page:</b> county brief</span> <span class="chip"><b>On page:</b> Ask the evidence</span></div>
     </div>
   </div>
-  <p class="bottomline" style="bottom:150px;">Public data only. No patient data. Decision support, not diagnosis.</p>
+  <p class="bottomline" style="bottom:110px;">Public data only. No patient data. Decision support, not diagnosis.</p>
   <div class="foot"><span>FirstLine</span><span>6</span></div>
 </section>
 
@@ -293,12 +293,12 @@
       <h3>✓ Checked evidence</h3>
       <p class="body" style="font-size:21px;">14 actions, each quoted from its source.</p>
       <p style="margin-top:14px;"><span class="chip"><b>FirstLine evidence table</b> · 2026</span></p>
-      <p class="body" style="font-size:19px;margin-top:22px;color:var(--muted);">Question box: answers only from linked results, or “nothing found”.</p>
+      <p class="body" style="font-size:19px;margin-top:22px;color:var(--muted);">Ask the evidence: a numbered live source on every sentence, or “nothing found”.</p>
     </div>
     <div class="col live">
-      <h3 style="margin-bottom:0;">Found live — unverified <span class="chip live" style="margin-left:8px;">dated link on every item</span></h3>
-      <div class="livecrop"><img src="screenshots/05-exa-live.png" alt="Local news panel on the Vantaa and Kerava county page: Last 12 months, Found live — unverified, via Exa, Cached, with dated Finnish news items"></div>
-      <p class="muted" style="font-size:14px;margin-top:8px;">Local news panel, Vantaa–Kerava county page, live site, 14 Nov 2026.</p>
+      <h3 style="margin-bottom:0;">Found live — unverified <span class="chip live" style="margin-left:8px;">each item dated and linked</span></h3>
+      <div class="livecrop"><img src="screenshots/05-exa-live.png" alt="Local news panel on the Vantaa and Kerava county page: Found live, unverified, web results via Exa, saved 14 Nov 2026, three dated Finnish news items"></div>
+      <p class="muted" style="font-size:14px;margin-top:8px;">Local news, Vantaa and Kerava county page, live site, 14 Nov 2026 (Exa results saved that day).</p>
     </div>
   </div>
   <div class="foot"><span>FirstLine</span><span>7</span></div>
@@ -323,11 +323,11 @@
     <div class="list">
       <h3>Real today</h3>
       <ul>
-        <li>Three screens, source chips, limitations box</li>
-        <li>County page: AI brief + local news, all 22 areas</li>
-        <li>Act page: evidence finder, question box</li>
-        <li>Home: map, verdict, top action, what-if</li>
-        <li>Question box, national news, red-flag helper, sources page</li>
+        <li>Home: map, one number, one main reason</li>
+        <li>County page: 3 steps, limitations, AI brief, local news</li>
+        <li>Act page: actions, what-if, four referral routes</li>
+        <li>Compare: ranking, getting worse fastest</li>
+        <li>Ask the evidence, national news, sources page</li>
         <li>Live on Vercel; saved results if search is down</li>
       </ul>
     </div>
@@ -351,7 +351,7 @@
   <dl class="meta-grid">
     <dt>Live demo</dt><dd>firstline-finland.vercel.app</dd>
     <dt>Code</dt><dd>github.com/HienNguyen-ComputerScience/junction-2026-app</dd>
-    <dt>Team</dt><dd>@HienNguyen-ComputerScience · @fraidfax · @bestawperna · @nabeo11 <span class="todo">TODO: real names</span></dd>
+    <dt>Team</dt><dd>@HienNguyen-ComputerScience · @fraidfax · @bestawperna · @nabeo11</dd>
   </dl>
   <div class="foot"><span>FirstLine · public data only · every number sourced</span><span>9</span></div>
 </section>
