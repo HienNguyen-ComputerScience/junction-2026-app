@@ -9,6 +9,7 @@ import { TextLink } from "@/components/ui/text-link";
 
 import {
   FINNISH_ROADMAP,
+  HINT_WORDS,
   KAYPA_HOITO,
   NICE_NG12,
   NO_MATCH_LINKS,
@@ -67,6 +68,7 @@ function EmptyResult() {
 
 export function RedFlagHelper() {
   const textId = useId();
+  const hintId = useId();
   const [picked, setPicked] = useState<string[]>([]);
   const [text, setText] = useState("");
 
@@ -76,6 +78,8 @@ export function RedFlagHelper() {
   const matched = RED_FLAG_CATEGORIES.filter((category) => matchedIds.has(category.id)).sort(
     (a, b) => TIERS[a.urgency].rank - TIERS[b.urgency].rank,
   );
+  // The typed words matched nothing (ticked categories don't count): say so beside the field.
+  const noTextMatch = text.trim() !== "" && typed.length === 0;
   const hasInput = picked.length > 0 || text.trim() !== "";
   const tier = matched.length > 0 ? TIERS[matched[0].urgency] : TIERS.safety_net;
   const links: GuidelineLink[] =
@@ -173,8 +177,19 @@ export function RedFlagHelper() {
             maxLength={300}
             placeholder="e.g. weight loss, tiredness"
             autoComplete="off"
+            aria-describedby={hintId}
             className="h-11 rounded-lg border border-input bg-muted px-3 text-[0.9375rem] transition-[border-color,box-shadow] outline-none placeholder:text-faint focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25"
           />
+          <p id={hintId} className="type-caption text-muted-foreground">
+            Works with words like {HINT_WORDS.join(", ")} (also in Finnish).
+          </p>
+          <div aria-live="polite" className="empty:hidden">
+            {noTextMatch ? (
+              <p className="rounded-lg border border-input bg-muted px-3 py-2 text-sm font-medium">
+                No category matched your words. If you are worried or it gets worse, contact a health professional now.
+              </p>
+            ) : null}
+          </div>
         </div>
 
         <div className="flex flex-col gap-3 border-t border-border pt-4">
@@ -201,11 +216,6 @@ export function RedFlagHelper() {
                     ? `${SECTION.category}: ${matched.map((c) => c.label.toLowerCase()).join("; ")}`
                     : "No category matched. That does not rule anything out."}
                 </p>
-                {matched.length === 0 ? (
-                  <p className="text-sm font-medium">
-                    If you are worried or it gets worse, contact a health professional now.
-                  </p>
-                ) : null}
                 <p className="font-heading text-[1.125rem] leading-[1.35] font-semibold tracking-[-0.01em] text-pretty">
                   {tier.title}
                 </p>

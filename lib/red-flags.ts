@@ -27,6 +27,7 @@ export type RedFlagCategory = {
   id: string;
   label: string; // plain-language category name
   examples: string; // a few everyday words, not a clinical list
+  hint: string; // one word the matcher is known to accept, shown as an example; tests/red-flags.test.mjs checks it
   urgency: Urgency;
   keywords: string[]; // lowercase English and Finnish stems for local matching
   links: GuidelineLink[];
@@ -122,6 +123,7 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
     id: "bleeding",
     label: "Bleeding that has no clear reason",
     examples: "blood in stool, urine or when coughing; unexpected bleeding",
+    hint: "bleeding",
     urgency: "urgent",
     keywords: [
       "blood",
@@ -136,6 +138,7 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
     id: "lump",
     label: "A new lump or swelling that doesn't go away",
     examples: "a lump in the breast, neck, armpit or elsewhere",
+    hint: "lump",
     urgency: "urgent",
     keywords: ["lump", "swell", "swollen", ...fi("kyhmy", "patti", "turvo", "turpo")],
     links: [NICE_BY_SYMPTOM, NICE_BY_SITE, KAYPA_HOITO],
@@ -144,6 +147,7 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
     id: "swallowing",
     label: "Trouble swallowing",
     examples: "food sticking, pain when swallowing",
+    hint: "swallowing",
     urgency: "urgent",
     keywords: ["swallow", "food stick", "food stuck", "food gets stuck", "chok", ...fi("niel")],
     links: [NICE_BY_SYMPTOM, NICE_BY_SITE, KAYPA_HOITO],
@@ -152,6 +156,7 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
     id: "vague",
     label: "Vague symptoms that keep going",
     examples: "weight loss without trying, tiredness, unexplained pain, nausea",
+    hint: "weight loss",
     urgency: "vague",
     keywords: [
       "weight",
@@ -199,6 +204,7 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
     id: "persistent-change",
     label: "A change that lasts or doesn't heal",
     examples: "a cough or hoarse voice that won't clear, a change in bowel habit, a sore or mole that changes",
+    hint: "cough",
     urgency: "prompt",
     keywords: [
       "cough",
@@ -237,6 +243,9 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
     links: [NICE_BY_SYMPTOM, NICE_SAFETY_NETTING, KAYPA_HOITO],
   },
 ];
+
+/** One example word per category, for the hint under the text field. Each is checked against the matcher in tests. */
+export const HINT_WORDS: string[] = RED_FLAG_CATEGORIES.map((category) => category.hint);
 
 /** Fallback when nothing matches: never reassure, always safety-net. */
 export const NO_MATCH_LINKS: GuidelineLink[] = [NICE_SAFETY_NETTING, NICE_NG12, KAYPA_HOITO];
