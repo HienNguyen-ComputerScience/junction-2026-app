@@ -13,13 +13,13 @@ const MAX_QUESTION = 300;
 
 // `query` is what is sent to /api/ask and is the demo-cache key: never reword it.
 // `label` is what the chip and the input show; without one, the query itself is shown.
-const EXAMPLES: { query: string; label?: string }[] = [
+const EXAMPLES: { query: string; label?: string; fi?: boolean }[] = [
   { query: "Did Denmark's cancer fast-track pathways shorten diagnosis times?" },
   {
     query: "How long do people wait to see a GP in Vantaa?",
     label: "How long is the wait for a non-urgent GP visit in Vantaa?",
   },
-  { query: "Onko Kainuussa lääkäripula?" },
+  { query: "Onko Kainuussa lääkäripula?", fi: true },
 ];
 
 /** A suggestion's display label maps back to its query, so the input can show the label. */
@@ -43,7 +43,11 @@ export function AskBox() {
 
   function ask(text: string) {
     const q = toQuery(text.trim());
-    if (q.length < 3 || loading) return;
+    if (loading) return;
+    if (q.length < 3) {
+      setState({ kind: "error", message: "Type a question about health care in Finland." });
+      return;
+    }
     ctrlRef.current?.abort();
     const ctrl = new AbortController();
     ctrlRef.current = ctrl;
@@ -115,7 +119,7 @@ export function AskBox() {
           type="submit"
           size="lg"
           className="h-11 px-5"
-          disabled={loading || question.trim().length < 3}
+          disabled={loading || question.trim().length === 0}
         >
           {loading ? "Searching…" : "Ask"}
           {!loading && <ArrowUp aria-hidden data-icon="inline-end" />}
@@ -136,6 +140,11 @@ export function AskBox() {
               }}
               className="min-h-10 rounded-lg border border-input px-3 py-1.5 text-left type-caption text-foreground transition-colors outline-none hover:border-foreground/25 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60 sm:min-h-9"
             >
+              {ex.fi ? (
+                <span className="mr-2 inline-flex h-5 items-center rounded-sm border border-input px-1 align-middle text-[0.6875rem] leading-none font-semibold text-muted-foreground">
+                  FI<span className="sr-only"> (in Finnish)</span>
+                </span>
+              ) : null}
               {ex.label ?? ex.query}
             </button>
           ))}

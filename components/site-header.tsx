@@ -37,7 +37,7 @@ export function SiteHeader() {
             </span>
           </Link>
           <p className="hidden truncate border-l border-border pl-3 type-caption text-muted-foreground lg:block">
-            Where early cancer care breaks down, county by county
+            For county directors: where early cancer care slows, and what to do
           </p>
         </div>
         <Suspense fallback={<NavLinks pathname={null} defaultArea={defaultArea} areaIds={areaIds} />}>

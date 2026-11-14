@@ -1,23 +1,23 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { AreaPicker, type PickerArea } from "@/components/home/area-picker";
 import { LeadFigure } from "@/components/home/lead-figure";
 import { TopAction } from "@/components/home/top-action";
-import { WhatIfPanel } from "@/components/home/what-if-panel";
 import type { FinlandMapArea } from "@/components/map/finland-map";
-import { buildPathwaySteps, PathwaySteps } from "@/components/pathway/pathway-steps";
+import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
+import { shortReason } from "@/components/pathway/wording";
 import { SourceChip } from "@/components/source-chip";
-import { TextLink } from "@/components/ui/text-link";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { bottleneckStatus, getBottleneck, pickActions } from "@/lib/act";
 import { LATEST_YEAR, type County } from "@/lib/data";
-import { bestForStage, betterFor, getMainReason } from "@/lib/main-reason";
-import { formatPct, getNationalValue, GP_WAIT_ID, REFERRAL_ID, STATUS_LABEL, type RankingRow } from "@/lib/ranking";
-import { whatIf } from "@/lib/what-if";
+import { getMainReason } from "@/lib/main-reason";
+import { GP_WAIT_ID, REFERRAL_ID, STATUS_LABEL, type RankingRow } from "@/lib/ranking";
 
 /**
- * Server half of the home tool: computes, for all 22 areas, the verdict, the compact steps, the
- * top action and the what-if, and hands them to the client picker as plain data and
- * pre-rendered parts. No API route, no fetch.
+ * Server half of the home tool: computes, for all 22 areas, the one-line reason, the lead figure,
+ * the top action and the three-step status row, and hands them to the client picker as plain
+ * data and pre-rendered parts. No API route, no fetch.
  */
 export function HomeTool({
   rows,
@@ -35,68 +35,31 @@ export function HomeTool({
     : (rows[0]?.county.id ?? all[0].id);
 
   const areas: PickerArea[] = [];
-  const steps: Record<string, ReactNode> = {};
-  const whatIfs: Record<string, ReactNode> = {};
-  const actions: Record<string, ReactNode> = {};
   const leads: Record<string, ReactNode> = {};
+  const actions: Record<string, ReactNode> = {};
+  const steps: Record<string, ReactNode> = {};
 
   for (const county of all) {
     const bottleneck = getBottleneck(county.id);
     const top = pickActions(bottleneck)[0] ?? null;
     // One node per action and per label: an area with a break reads "Recommended action 1", one
     // without reads as keeping its level.
-    const actionKey = `${top?.id}:${bottleneck.anyRed}`;
-    if (top && !actions[actionKey]) actions[actionKey] = <TopAction action={top} keepLevel={!bottleneck.anyRed} />;
-
-    // A step without data points to the next useful thing: the red-flag helper for step 2.
-    steps[county.id] = (
-      <PathwaySteps
-        steps={buildPathwaySteps(county.id)}
-        density="compact"
-        renderExtra={(step) =>
-          step.stage === "gp_recognition" ? (
-            <TextLink kind="nav" href={`/county/${county.id}/act#red-flags`} className="type-caption sm:min-h-6">
-              Red-flag helper
-            </TextLink>
-          ) : null
-        }
-      />
-    );
+    const actionId = top ? `${top.id}:${bottleneck.anyRed}` : null;
+    if (top && actionId && !actions[actionId]) {
+      actions[actionId] = <TopAction action={top} keepLevel={!bottleneck.anyRed} />;
+    }
+    steps[county.id] = <ThreeSteps countyId={county.id} />;
 
     // The figure and the sentence under it are about the same step (getMainReason).
     const reason = getMainReason(county.id);
-    if (reason.gap) leads[county.id] = <LeadFigure gap={reason.gap} best={bestForStage(reason.gap.stage)} />;
-
-    const gap = bottleneck.focus[0];
-    if (gap) {
-      const better = betterFor(gap.indicator_id);
-      whatIfs[county.id] = (
-        <WhatIfPanel
-          areaName={county.name}
-          stage={gap.stage}
-          better={better}
-          value={gap.value}
-          status={gap.status}
-          finland={gap.national_value}
-          sourceId={gap.source_id}
-          year={gap.year}
-          result={whatIf({
-            areaId: county.id,
-            value: gap.value,
-            finland: gap.national_value,
-            better,
-            best: bestForStage(gap.stage),
-          })}
-        />
-      );
-    }
+    if (reason.gap) leads[county.id] = <LeadFigure gap={reason.gap} />;
 
     areas.push({
       id: county.id,
       name: county.name,
-      verdict: reason.text,
+      verdict: shortReason(reason),
       status: bottleneckStatus(bottleneck),
-      actionId: top ? actionKey : null,
+      actionId,
     });
   }
 
@@ -114,9 +77,12 @@ export function HomeTool({
     };
   });
 
-  // The benchmark in one line, under the map: what red means, and that Finland's level is no target.
-  const finlandWait = getNationalValue(GP_WAIT_ID);
-  const bestWait = bestForStage("gp_access");
+  // The map's key names the states that appear on it, and the hatch always: Åland is drawn with it.
+  const present = new Set(mapAreas.map((area) => area.status));
+  const mapKey: ("red" | "amber" | "no_data")[] = [
+    ...(["red", "amber"] as const).filter((status) => present.has(status)),
+    "no_data",
+  ];
 
   return (
     <AreaPicker
@@ -125,29 +91,49 @@ export function HomeTool({
       defaultId={defaultId}
       year={LATEST_YEAR}
       totalAreas={all.length}
-      steps={steps}
       leads={leads}
-      whatIfs={whatIfs}
       actions={actions}
-      mapNote={
-        <>
-          Red: worse than Finland&apos;s own level on the GP wait or the referral. That level is no target
-          {finlandWait && bestWait && (
-            <>
-              : <span className="figure text-foreground">{formatPct(finlandWait.value)}</span> of non-urgent GP visits
-              in Finland come over 7 days after the ask; best area{" "}
-              <span className="figure text-foreground">{formatPct(bestWait.value)}</span>
-            </>
-          )}
-          . Not cancer-specific. Map: Statistics Finland, CC BY 4.0
-        </>
-      }
-      mapChip={
-        <span className="flex items-center gap-1.5">
-          <SourceChip sourceId={rows[0]?.gpWait.source_id ?? `sotkanet-${GP_WAIT_ID}`} year={LATEST_YEAR} />
-          <SourceChip sourceId={`sotkanet-${REFERRAL_ID}`} year={LATEST_YEAR} />
-        </span>
-      }
+      steps={steps}
+      mapKey={mapKey}
+      mapNote="Each area is coloured by the worse of its two measured steps against Finland's level. Map: Statistics Finland, CC BY 4.0."
+      mapChips={[
+        <SourceChip
+          key="gp"
+          sourceId={rows[0]?.gpWait.source_id ?? `sotkanet-${GP_WAIT_ID}`}
+          year={LATEST_YEAR}
+        />,
+        <SourceChip key="referral" sourceId={`sotkanet-${REFERRAL_ID}`} year={LATEST_YEAR} />,
+      ]}
     />
+  );
+}
+
+/**
+ * "The three steps" under the hero buttons: each step's short name and its status as a text
+ * label (no numbers), each linking to the area's pathway page.
+ */
+function ThreeSteps({ countyId }: { countyId: string }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="type-caption font-medium text-muted-foreground">The three steps</p>
+      <ol className="grid gap-x-4 gap-y-3 sm:grid-cols-3">
+        {buildPathwaySteps(countyId).map((step) => (
+          <li key={step.stage} className="min-w-0">
+            <Link
+              href={`/county/${countyId}`}
+              className="group flex flex-col items-start gap-1.5 rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              <span className="text-sm leading-snug font-medium text-foreground group-hover:underline group-hover:underline-offset-4">
+                <span className="sr-only">Step {step.step}: </span>
+                {step.title}
+              </span>
+              <StatusBadge status={step.status} size="xs">
+                {step.measure?.shared && step.measure.value === null ? "No county figure" : STATUS_LABEL[step.status]}
+              </StatusBadge>
+            </Link>
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }

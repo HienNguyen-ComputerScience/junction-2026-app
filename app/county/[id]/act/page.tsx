@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 
 import { ActionCard, ActionSummary } from "@/components/act/action-card";
 import { RedFlagHelper } from "@/components/act/red-flag-helper";
-import { AskBox } from "@/components/exa/ask-box";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
+import { WhatIfForArea } from "@/components/home/what-if-panel";
 import { buildPathwaySteps, PathwaySteps } from "@/components/pathway/pathway-steps";
 import { BackLink } from "@/components/ui/back-link";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Disclosure } from "@/components/ui/disclosure";
 import {
   Frame,
@@ -19,13 +20,7 @@ import {
 import { BarKey } from "@/components/ui/measure-bar";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TextLink } from "@/components/ui/text-link";
-import {
-  STAGE_LABELS,
-  bottleneckLede,
-  getBottleneck,
-  otherActions,
-  pickActions,
-} from "@/lib/act";
+import { STAGE_LABELS, bottleneckLede, getBottleneck, otherActions, pickActions } from "@/lib/act";
 import { counties, getCounty, LATEST_YEAR, type Evidence } from "@/lib/data";
 import { STATUS_LABEL } from "@/lib/ranking";
 
@@ -58,10 +53,9 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   return (
     <main className="page-container flex flex-col gap-8 pt-4 sm:pt-6">
       <header className="flex flex-col items-start gap-2">
-        <div className="flex flex-wrap items-center gap-x-6">
-          <BackLink href="/">Back to all areas</BackLink>
-          <BackLink href={`/county/${county.id}`}>Back to {county.name}</BackLink>
-        </div>
+        <Breadcrumb
+          items={[{ label: "Areas", href: "/" }, { label: county.name, href: `/county/${county.id}` }, { label: "Actions" }]}
+        />
         <div className="flex flex-col gap-2">
           <p className="type-caption text-balance text-muted-foreground">
             Path to early cancer care
@@ -97,6 +91,8 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
         </FramePanel>
       </Frame>
 
+      <WhatIfForArea countyId={county.id} areaName={county.name} />
+
       <Frame aria-labelledby="recommended">
         <FrameHeader>
           <FrameTitle id="recommended" className="type-title">
@@ -104,9 +100,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           </FrameTitle>
           {/* The selection rule in one line (the full rule is SELECTION_RULE in lib/act). */}
           <FrameMeta className="max-sm:col-span-2 max-sm:col-start-1 max-sm:row-start-2 max-sm:justify-start">
-            {bottleneck.anyRed
-              ? "Worst step first: one action per step, then up to three in all"
-              : "Step closest to Finland's level first: up to three in all"}
+            {bottleneck.anyRed ? "Ordered by where the pathway breaks" : "Ordered by closeness to Finland's level"}
           </FrameMeta>
         </FrameHeader>
         <div className="flex flex-col gap-3">
@@ -181,7 +175,11 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
         </FramePanel>
       </Frame>
 
-      <AskBox />
+      <p>
+        <TextLink kind="nav" href="/ask">
+          Ask the evidence
+        </TextLink>
+      </p>
 
       <nav aria-label="Page" className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
         <BackLink href={`/county/${county.id}`}>Back to {county.name}</BackLink>

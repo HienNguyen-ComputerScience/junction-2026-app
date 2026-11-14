@@ -83,7 +83,7 @@ export function SourceChip({
       rel="noopener noreferrer"
       title={title}
       aria-label={`${label}: ${title} (opens in a new tab)`}
-      className="group/chip relative inline-flex h-7 w-fit max-w-full min-w-0 items-center gap-1 rounded-sm border border-border bg-muted px-1.5 align-middle type-mark whitespace-nowrap text-muted-foreground transition-colors outline-none after:absolute after:-inset-x-0.5 after:-inset-y-2 after:content-[''] hover:border-foreground/30 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:h-6 sm:px-2"
+      className="group/chip relative inline-flex h-7 w-fit max-w-full min-w-0 items-center gap-1 rounded-sm border border-input bg-muted px-1.5 align-middle [font-family:var(--font-chip)] text-[0.75rem] leading-4 tabular-nums [word-spacing:-0.25em] whitespace-nowrap text-foreground/85 transition-colors outline-none after:absolute after:-inset-x-0.5 after:-inset-y-2 after:content-[''] hover:border-foreground/30 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:h-6 sm:px-2"
     >
       <span className="truncate">{label}</span>
       <ArrowUpRight aria-hidden className="size-3 shrink-0 opacity-70 group-hover/chip:opacity-100" />

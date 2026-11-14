@@ -52,11 +52,11 @@ const SECTION = {
 /** Before any input: one calm panel saying what to do. The result rows appear with a result. */
 function EmptyResult() {
   return (
-    <FramePanel padding="none">
+    <FramePanel padding="none" className="flex flex-col">
       <FramePanelLabel>
         <span>{SECTION.category}</span>
       </FramePanelLabel>
-      <div className="flex flex-col items-start gap-2 px-5 py-5 sm:px-6">
+      <div className="flex flex-col items-start gap-1.5 px-5 py-4 sm:px-6">
         <ListChecks aria-hidden className="size-4 text-muted-foreground" strokeWidth={1.75} />
         <p className="type-heading">No concern picked yet</p>
         <p className="type-caption text-muted-foreground">Pick a concern on the left, or type a few words.</p>
@@ -185,7 +185,13 @@ export function RedFlagHelper() {
         </div>
       </div>
 
-      <div className="lg:sticky lg:top-24 lg:col-start-2 lg:row-start-2 lg:self-start">
+      <div
+        className={cn(
+          "lg:col-start-2 lg:row-start-2",
+          // With a result the column sticks; the empty card shrinks to its content.
+          hasInput ? "lg:sticky lg:top-24 lg:self-start" : "lg:self-start",
+        )}
+      >
         <div aria-live="polite">
           {hasInput ? (
             <div className="flex flex-col gap-4 rounded-lg border border-input bg-muted p-4 sm:p-5">

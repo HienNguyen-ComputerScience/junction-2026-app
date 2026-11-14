@@ -1,34 +1,12 @@
 import type { ReactNode } from "react";
 
+import { OwnerRow } from "@/components/act/owner-row";
 import { SourceChip } from "@/components/source-chip";
 import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import { FramePanel } from "@/components/ui/frame";
 import { STAGE_LABELS } from "@/lib/act";
 import type { Evidence } from "@/lib/data";
-
-/** Label and value. Side by side when the card has room, stacked on a phone. */
-function Field({
-  label,
-  children,
-  strong = false,
-}: {
-  label: string;
-  children: ReactNode;
-  /** The one line of a card that reads in the text colour (the evidence). */
-  strong?: boolean;
-}) {
-  return (
-    <div className="grid items-start gap-x-4 gap-y-1 @md:grid-cols-[6rem_minmax(0,1fr)]">
-      <dt className="type-caption text-muted-foreground">{label}</dt>
-      <dd
-        className={`text-sm leading-relaxed text-pretty tabular-nums ${strong ? "text-foreground" : "text-muted-foreground"}`}
-      >
-        {children}
-      </dd>
-    </div>
-  );
-}
 
 /** A plain text tag (step, checked): the chip shape in the UI sans, so it never reads as a source. */
 const TAG =
@@ -37,7 +15,7 @@ const TAG =
 /** "Source checked" (the quiet provenance mark, solid: the team checked it) plus the source chip. */
 function SourceMarks({ action }: { action: Evidence }) {
   return (
-    <span className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
+    <span className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5">
       {action.verified ? <Badge variant="checked">Source checked</Badge> : null}
       <SourceChip sourceId={action.source_id} />
     </span>
@@ -47,12 +25,12 @@ function SourceMarks({ action }: { action: Evidence }) {
 /** The step to take first: the one emphasised block on a card. */
 export function FirstStep({ children, compact = false }: { children: ReactNode; compact?: boolean }) {
   return (
-    <div className="rounded-r-lg border-l-[3px] border-brand bg-muted px-4 py-3">
+    <div className="rounded-r-lg border-l-[3px] border-brand bg-muted px-4 py-2.5">
       <p className="type-caption font-medium text-muted-foreground">First step</p>
       <p
         className={
           compact
-            ? "mt-1 text-sm leading-relaxed font-medium text-pretty text-foreground"
+            ? "mt-0.5 text-sm leading-relaxed font-medium text-pretty text-foreground"
             : "mt-1 text-base leading-[1.5] font-medium text-pretty text-foreground"
         }
       >
@@ -103,14 +81,48 @@ function statisticLine({ value, unit, metric }: Effect): string {
   return `${figure}, ${metric}`;
 }
 
-/** The precedent is one line (two at most) on the card; a longer text opens in full behind a disclosure. */
-const PRECEDENT_LONG = 120;
+/**
+ * Who or what the figure compares, taken only from the data's own `effect_size.metric`: where
+ * it names a comparison ("... vs ..."), the metric is quoted as it stands. Nothing is inferred
+ * from the other fields; null when the metric names no comparison.
+ */
+export function figureQualifier({ metric }: Effect): string | null {
+  return /\svs\s/.test(metric) ? `Measured as: ${metric}` : null;
+}
 
 /**
- * One recommended action from data/evidence.json, as a panel inside a Frame.
- * Label row: the action's place in the list, its pathway stage, and its checked source.
- * Left: what to do, the first step (the emphasised block) and who owns it. Right: precedent,
- * evidence and limitations. `children` render under the evidence (e.g. a live-evidence search).
+ * The evidence headline of an action: the figure in plain words (24px) or, where the data has
+ * none the words can state outright, the evidence sentence itself in two lines. `children`
+ * (the source chip) follow it, so the number never stands without its source.
+ */
+function EvidenceStat({ action, children }: { action: Evidence; children?: ReactNode }) {
+  const stat = action.effect_size ? plainStat(action.effect_size) : null;
+  const qualifier = stat && action.effect_size ? figureQualifier(action.effect_size) : null;
+  return (
+    <div className="flex flex-col gap-1">
+      {stat ? (
+        <>
+          {/* A figure with no stated comparison in the data is labelled as a study result. */}
+          {qualifier ? null : <p className="text-[0.8125rem] leading-4 text-muted-foreground">Study finding:</p>}
+          <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p>
+          {qualifier ? <p className="text-[0.8125rem] leading-snug text-pretty text-muted-foreground">{qualifier}</p> : null}
+        </>
+      ) : (
+        <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-foreground tabular-nums">
+          {action.effect_text}
+        </p>
+      )}
+      {children}
+    </div>
+  );
+}
+
+/**
+ * One recommended action from data/evidence.json, as a panel inside a Frame. Collapsed it shows
+ * the action, its First step, one muted "Owner" line and the evidence headline
+ * with its source; the description, the evidence sentence, the precedent, the original
+ * statistic and the limitations are behind "Evidence details". `children` sit on the
+ * disclosure's row (e.g. a live-evidence search).
  */
 export function ActionCard({
   action,
@@ -122,60 +134,51 @@ export function ActionCard({
   index?: number;
   children?: ReactNode;
 }) {
-  const stat = action.effect_size ? plainStat(action.effect_size) : null;
   return (
     <FramePanel
       padding="none"
       id={index !== undefined ? `action-${index}` : undefined}
-      className="@container scroll-mt-20 px-4 py-4 sm:px-6"
+      className="@container scroll-mt-20 px-4 py-3.5 sm:px-6"
     >
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        {index !== undefined && (
-          <span className="type-caption font-medium text-muted-foreground tabular-nums">Action {index}</span>
-        )}
-        <span className={`${TAG} gap-1`}>
-          <span>Step:</span>
-          <span>{STAGE_LABELS[action.stage]}</span>
-        </span>
-        <span className="flex basis-full sm:ml-auto sm:basis-auto">
-          <SourceMarks action={action} />
-        </span>
-      </div>
-
-      <div className="mt-3 grid gap-x-10 gap-y-4 @3xl:grid-cols-2">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <h3 className="font-heading text-[1.625rem] leading-[1.2] font-semibold tracking-[-0.01em] text-pretty">
-              {plainTitle(action.action)}
-            </h3>
-          </div>
-          <FirstStep>{action.first_step}</FirstStep>
-          <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
-          <dl>
-            <Field label="Owner">{action.who_implements}</Field>
-          </dl>
+      <div className="grid gap-x-10 gap-y-2.5 @3xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+        <div className="flex flex-col gap-3">
+          <h3 className="font-heading text-[1.5rem] leading-[1.2] font-semibold tracking-[-0.01em] text-pretty">
+            {plainTitle(action.action)}
+          </h3>
+          <FirstStep compact>{action.first_step}</FirstStep>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1.5">
-            <p className="type-caption font-medium text-muted-foreground">Evidence</p>
-            {stat ? <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p> : null}
-            <p className="text-sm leading-relaxed text-pretty text-foreground tabular-nums">{action.effect_text}</p>
+        <div className="flex flex-col gap-2.5">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            {index !== undefined && (
+              <span className="type-caption font-medium text-muted-foreground tabular-nums">Action {index}</span>
+            )}
+            <span className={`${TAG} gap-1`}>
+              <span>Step:</span>
+              <span>{STAGE_LABELS[action.stage]}</span>
+            </span>
           </div>
-          <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-muted-foreground">
-            <span className="font-medium">Precedent: </span>
-            {action.precedent}
-          </p>
-          {/* One stack with one left edge: the one disclosure, then the secondary action. */}
-          <div className="flex flex-col items-start">
+          <EvidenceStat action={action}>
+            <SourceMarks action={action} />
+          </EvidenceStat>
+          {/* One row: the one disclosure, then the secondary action. */}
+          <div className="flex flex-wrap items-start gap-x-4 gap-y-1 [&>section]:w-auto [&>section]:min-w-0 [&>section]:flex-1">
             <Disclosure summary="Evidence details">
               <div className="flex flex-col gap-3 pb-2 pl-[1.375rem]">
-                {action.precedent.length > PRECEDENT_LONG ? (
-                  <div className="flex flex-col gap-1">
-                    <p className="type-caption font-medium text-muted-foreground">Full precedent</p>
-                    <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.precedent}</p>
-                  </div>
-                ) : null}
+                <div className="flex flex-col gap-1">
+                  <p className="type-caption font-medium text-muted-foreground">What to do</p>
+                  <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <p className="type-caption font-medium text-muted-foreground">Evidence</p>
+                  <p className="text-sm leading-relaxed text-pretty text-foreground tabular-nums">
+                    {action.effect_text}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <p className="type-caption font-medium text-muted-foreground">Precedent</p>
+                  <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.precedent}</p>
+                </div>
                 {action.effect_size || !action.source_id.startsWith("ev-nice") ? (
                   <div className="flex flex-col gap-1">
                     <p className="type-caption font-medium text-muted-foreground">Quote and page in the source</p>
@@ -198,9 +201,11 @@ export function ActionCard({
                 </div>
               </div>
             </Disclosure>
-            {children ? <div className="w-full pt-2">{children}</div> : null}
+            {children}
           </div>
         </div>
+
+        <OwnerRow owner={action.who_implements} className="@3xl:col-span-2" />
       </div>
     </FramePanel>
   );
@@ -216,9 +221,7 @@ export function ActionSummary({ action }: { action: Evidence }) {
       <SourceMarks action={action} />
       <h4 className="type-heading text-pretty">{plainTitle(action.action)}</h4>
       <FirstStep compact>{action.first_step}</FirstStep>
-      <dl className="mt-1">
-        <Field label="Owner">{action.who_implements}</Field>
-      </dl>
+      <OwnerRow owner={action.who_implements} />
     </FramePanel>
   );
 }
