@@ -370,7 +370,7 @@ export default function HowToReadPage() {
                       <td />
                       <th
                         scope="col"
-                        className="pr-8 pb-2 font-semibold text-forest-ink"
+                        className="pr-4 sm:pr-8 pb-2 font-semibold text-forest-ink"
                       >
                         {recordingExample.before.year}
                       </th>
@@ -386,11 +386,11 @@ export default function HowToReadPage() {
                     <tr>
                       <th
                         scope="row"
-                        className="pr-8 text-base font-semibold text-charcoal"
+                        className="pr-4 sm:pr-8 text-base font-semibold text-charcoal"
                       >
                         Waited over a week
                       </th>
-                      <td className={cn(NUM_CELL, "pr-8")}>
+                      <td className={cn(NUM_CELL, "pr-4 sm:pr-8")}>
                         <AnimatedNumber
                           value={recordingExample.before.value}
                           final={recordingExample.before.text}
@@ -408,11 +408,11 @@ export default function HowToReadPage() {
                     <tr>
                       <th
                         scope="row"
-                        className="pr-8 text-base font-semibold text-charcoal"
+                        className="pr-4 sm:pr-8 text-base font-semibold text-charcoal"
                       >
                         Recorded visits
                       </th>
-                      <td className={cn(NUM_CELL, "pr-8")}>
+                      <td className={cn(NUM_CELL, "pr-4 sm:pr-8")}>
                         <AnimatedNumber
                           value={recordingExample.before.base}
                           final={recordingExample.before.base.toLocaleString(
