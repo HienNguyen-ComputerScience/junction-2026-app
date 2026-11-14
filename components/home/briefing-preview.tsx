@@ -1,41 +1,31 @@
 import { SourceLine } from "@/components/briefing/source-line";
-import { Pill, ShareBar, STATEMENT, StatusLabel } from "@/components/briefing/ui";
-import { AnimatedNumber } from "@/components/motion";
+import { Pill, STATEMENT, StatusLabel } from "@/components/briefing/ui";
+import { AnimatedNumber, CaveatNote } from "@/components/motion";
 import type { BriefingStand } from "@/lib/briefing/model";
 import { BRIEFING_STEP_COUNT, BRIEFING_STEPS } from "@/lib/briefing/steps";
 import { formatPct } from "@/lib/ranking";
 
-/** The limitation's first sentence: "Visits, not people; all non-urgent GP visits, not only cancer-related ones." */
-function mainCaveat(limitation: string): string {
-  const end = limitation.indexOf(". ");
-  return end === -1 ? limitation : limitation.slice(0, end + 1);
-}
-
 /**
- * Step 1 of the guided briefing ("Where you stand"), as the home page's first card: the same
- * figure, statement, bars, comparison and source line as the briefing's own step 1, built from
- * the same model (`buildBriefing(id).stand`), so the home page shows the briefing working.
+ * Step 1 of the guided briefing ("Where you stand") as the home page's first card, from the
+ * briefing's own model (`buildBriefing(id).stand`): the figure in the briefing's type, its
+ * statement, Finland's figure in one status line, the source and the one main caveat.
  *
- * Differences from `StepStand`: the statement is an h2 (the home page has its own h1), the count
- * is the site's quiet one and plays on entering view, and the rank, the GP definition and the
- * two in-step buttons are left to the briefing itself. The "Next" button is the picker's (it needs the area).
+ * Left to the briefing itself: the bars, the rank line and the two in-step buttons. The statement
+ * is an h2 (the home page has its own h1) and the count is the site's quiet one.
  */
-export function BriefingPreview({ name, stand }: { name: string; stand: BriefingStand }) {
-  const tone = stand.status === "red" ? "red" : "amber";
+export function BriefingPreview({ stand }: { stand: BriefingStand }) {
   const figure = formatPct(stand.value);
-  const relation =
-    stand.value === stand.finland ? "." : stand.status === "red" ? ", which is worse." : ", which is better.";
+  const finland = formatPct(stand.finland);
+  const status =
+    stand.value === stand.finland
+      ? `Level with Finland's ${finland}.`
+      : `${stand.gapText} (${finland})${stand.status === "red" ? ", which is worse." : ", which is better."}`;
 
   return (
     <div className="flex flex-col gap-5">
-      <p className="flex flex-wrap items-center gap-x-3 gap-y-2 text-base leading-6 text-charcoal">
-        <Pill>
-          Step 1 of {BRIEFING_STEP_COUNT}
-        </Pill>
-        <span>
-          <span className="font-semibold text-forest-ink">{BRIEFING_STEPS[0].label}</span> · {name}, {stand.year}
-        </span>
-      </p>
+      <Pill>
+        Step 1 of {BRIEFING_STEP_COUNT} · {BRIEFING_STEPS[0].label}
+      </Pill>
 
       <div className="flex flex-col gap-1">
         {/* The figure as drawn. The heading below carries it for screen readers. */}
@@ -51,22 +41,13 @@ export function BriefingPreview({ name, stand }: { name: string; stand: Briefing
         </h2>
       </div>
 
+      <StatusLabel status={stand.status}>{status}</StatusLabel>
+
+      {/* The source and the one main caveat, always visible; the rest of the limitation is behind "Why?". */}
       <div className="flex flex-col gap-3">
-        <ShareBar name={name} value={stand.value} text={figure} tone={tone} index={0} />
-        <ShareBar name="Finland as a whole" value={stand.finland} text={formatPct(stand.finland)} tone="plain" index={1} />
+        <SourceLine sourceId={stand.sourceId} year={stand.year} />
+        <CaveatNote short="counts visits, not people">{stand.limitation}</CaveatNote>
       </div>
-
-      <p className="flex flex-wrap items-start gap-x-3 gap-y-1 text-base leading-6 text-charcoal">
-        <StatusLabel status={stand.status}>
-          {stand.gapText}
-          {relation}
-        </StatusLabel>
-      </p>
-
-      {/* The main caveat only; the briefing's step 1 adds what a GP is. */}
-      <SourceLine sourceId={stand.sourceId} year={stand.year}>
-        {mainCaveat(stand.limitation)}
-      </SourceLine>
     </div>
   );
 }
