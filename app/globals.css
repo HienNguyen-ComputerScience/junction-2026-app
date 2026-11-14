@@ -88,8 +88,11 @@
   /* One dark theme, no toggle. Form controls and scrollbars follow it. */
   color-scheme: dark;
 
-  /* The numeral face: Geist Mono with a narrow decimal point (see "FirstLine Point" below). */
-  --font-numeral: "FirstLine Point", var(--font-geist-mono), ui-monospace, monospace;
+  /* The numeral face: Geist (sans) with tabular figures. Geist Mono has only a slashed zero and
+     no feature to change it, so figures that must read plainly at display size are set in the
+     sans. Source chips and bare axis numerals keep the mono (type-mark). */
+  --font-numeral: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-chip: var(--font-geist-mono), ui-monospace, monospace;
 
   /* Surfaces, deepest to highest: near-black, neutral, only barely cool, so the page never
      reads as blue. The steps are small on purpose; the hairlines below carry the edges. Depth
@@ -139,13 +142,14 @@
   --status-red-soft: oklch(0.63 0.185 25 / 14%);
   --status-red-border: oklch(0.63 0.185 25 / 36%);
   --status-red-ink: oklch(0.75 0.135 23); /*  #f88985 */
-  --status-amber: oklch(0.79 0.135 78); /*    #eaaf49 */
-  --status-amber-soft: oklch(0.79 0.135 78 / 9%);
-  --status-amber-border: oklch(0.79 0.135 78 / 26%);
-  --status-amber-ink: oklch(0.85 0.105 82); /* #f0c77c */
+  /* One amber hue (76) for marker, bar, border and text: only lightness and chroma step. */
+  --status-amber: oklch(0.79 0.135 76); /*    #eaaf49 */
+  --status-amber-soft: oklch(0.79 0.135 76 / 9%);
+  --status-amber-border: oklch(0.79 0.135 76 / 30%);
+  --status-amber-ink: oklch(0.85 0.115 76); /* text */
   /* Amber as a bar fill: quieter than the marker, so the calm end of a chart stays calm.
      Markers and labels keep --status-amber. */
-  --status-amber-bar: oklch(0.7 0.088 78); /* #bd985d: calm, still amber, never grey */
+  --status-amber-bar: oklch(0.75 0.118 76); /* same hue as the marker, a step quieter, never grey */
   --status-grey: oklch(0.56 0.005 255); /*    #727577 */
   --status-grey-soft: oklch(0.94 0.003 255 / 5%);
   --status-grey-border: oklch(0.94 0.003 255 / 18%);
@@ -287,35 +291,23 @@ h2:not([class*="type-"], .font-sans) {
 }
 /* Mono, 11px: source chips and bare axis numerals (0%, 100%, years, tick values). */
 @utility type-mark {
-  font-family: var(--font-numeral);
+  font-family: var(--font-chip);
   font-size: 0.6875rem;
   line-height: 1rem;
   letter-spacing: 0;
   word-spacing: -0.25em;
   font-variant-numeric: tabular-nums;
 }
-/* The decimal point of the numeral face. Geist Mono gives "." a full cell, which opens a hole
-   in "85.4%" at 60px and reads as typewriter text. This face holds one glyph, the full stop of
-   Geist (the sans of the same family, all weights), and is listed before Geist Mono in
-   --font-numeral, so only the point changes: digits, %, + and the minus sign stay Geist Mono,
-   and columns still align because every glyph keeps a fixed advance.
-   Subset of Geist, Copyright 2024 The Geist Project Authors, SIL Open Font License 1.1. */
-@font-face {
-  font-family: "FirstLine Point";
-  src: url("data:font/woff2;base64,d09GMgABAAAAAAMQABIAAAAAB2wAAAKsAAFmqAAAAAAAAAAAAAAAAAAAAAAAAAAAGyAcKj9IVkFSRD9NVkFSPAZgP1NUQVSBOAA0L34RCAoYNjA+ATYCJAMICwYABCAFhRoHIBtLBiieg3Hj3CJcoq228o5FURxK7RTP/7P2r/vcmdAE6AOwDoODgqpiVGVVhTbCdvmyIgdsidyvzYOg1rbgia9oNwlJxOIr5scM1VqgRM8CxdD8X+WEh/5UzjrfIMnD0HL9GOGAr0kYTa1a4AC1Oe88L9kSqTgWPm9v/seY5Dwnmb46qaAzZkLOlRoDnFroAQg6C5YU2s31sCq2uOkvhIA+nAAQ7BKMifrEJ8ApGRQK+f4oqBCwXRl7Shx3wPP3zwTIQWlgmlNrw9ZOW+dNb7BRr9ed4Ooyy12kM8sF/zyA26/lG7zYsNH8d+snms3YEagD9SmmtCK2K/TpMKeem82FCQ88ra5N86LPlDWHXDKgWLt4MEEOuhsC6fc5BDKYNTSoDOcN1AcQyGg2Ech43QkCmYRMN1Pos81r8UZUFthEoUGfRtCnNYVWK9jo6YHeNwKH9inRZ4fu2c0xkDfQvAYiB3E30pd+fI4MZJCskaEMO6szklGyScYyTt0JmchknFemMk0zRWYyS/MaMifSQwIFWgQttgBaQNqd2WntiToeQBAwosAIOPBS2WfbS170u8uwVKpq65ff+/JamxePOvsyBLn3+ddOy9Kx/52W5k/4JfQf4I9Az4nipgNsVSB8UKbuJGrNTfdBAFB1J0FfsCYorYAAAGAwIxppd4iOjVf26HxhlyEO2m6OPn3WpH7tFAOm3GBQ52mGDHhhOnyFESPeYdQu7zJmyHuM2+drJoz5mUnb3WJKX7Yy7UBGmDGRNWZ1ucKcgdxg3q48+PoLujxL2cTCidAzMXO2pjoam1iYmRMG5ha2RhITadGFsBxVo4bbUXt2UE3TpOaSYeFsQ+tS6j+zsZCzs2ZkI2iFIsT8VtpG9uesqXSrFOobqRJUawu6np0N1ZYF6CWtAA==") format("woff2");
-  font-weight: 100 900;
-  font-display: block;
-  unicode-range: U+002E;
-}
-
-/* Every data number is Geist Mono, tabular: one numeral face on every screen.
+/* Numerals. One rule: a number inside a line of text is `figure` (sans, tabular); a standalone
+   key figure is `numeral` (a size on top). Both are Geist with tabular figures, so zeros are
+   plain and columns align. Source chips stay mono (type-mark).
    `numeral`: key figures. Pair with a text-* size (20px to 80px). The tracking tightens with
-   the size, so "85.4%" at 60px is set tight (-0.04em) and a 20px figure stays open (-0.015em). */
+   the size, so "85.4%" at 60px is set tight and a 20px figure stays open. */
 @utility numeral {
   font-family: var(--font-numeral);
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: normal;
-  letter-spacing: calc(-0.055em + 0.8px);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "zero" 0;
+  letter-spacing: calc(-0.05em + 0.8px);
   font-weight: 500;
   line-height: 0.95;
 }
@@ -324,10 +316,7 @@ h2:not([class*="type-"], .font-sans) {
    unit ("+30.7 pts", "76.8%"), never the words around it. */
 @utility figure {
   font-family: var(--font-numeral);
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: normal;
-  letter-spacing: -0.02em;
-  word-spacing: -0.3em;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 /* Legend labels (BarKey) and the short notes under a chart: 13px, one step up from muted. */

@@ -220,8 +220,8 @@ function BarAxis({
   const labelY = tick === "bottom" ? "top-0.5" : "bottom-0";
   return (
     <div aria-hidden className="relative h-7">
-      <span className={`absolute left-0 type-mark text-faint ${labelY}`}>0%</span>
-      <span className={`absolute right-0 type-mark text-faint ${labelY}`}>100%</span>
+      <span className={`absolute left-0 figure type-note text-faint ${labelY}`}>0%</span>
+      <span className={`absolute right-0 figure type-note text-faint ${labelY}`}>100%</span>
       <span
         className={`absolute -translate-x-1/2 type-note font-medium whitespace-nowrap text-foreground ${labelY}`}
         style={finlandX}

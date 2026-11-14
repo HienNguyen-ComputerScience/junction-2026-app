@@ -7,10 +7,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // The one primary style: the solid accent. Disabled, it is the same fill at a lower
-        // opacity, so it still reads as the primary action, only not available yet.
+        // The one primary style: the solid accent. Disabled, it is a neutral raised surface with a
+        // hairline and faint text, clearly inactive and never a dim accent.
         default:
-          "bg-primary text-primary-foreground hover:bg-[color-mix(in_oklch,var(--primary),black_12%)] disabled:opacity-45",
+          "bg-primary text-primary-foreground hover:bg-[color-mix(in_oklch,var(--primary),black_12%)] disabled:border-input disabled:bg-muted disabled:text-faint disabled:opacity-100",
+        // Secondary but important: accent text and hairline, no fill.
+        "outline-accent":
+          "border-brand/50 bg-transparent text-brand-ink hover:bg-brand-soft aria-expanded:bg-brand-soft disabled:border-input disabled:text-faint disabled:opacity-100",
         outline:
           "border-input bg-muted text-foreground hover:bg-accent aria-expanded:bg-accent",
         secondary:

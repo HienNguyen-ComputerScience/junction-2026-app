@@ -156,20 +156,18 @@ export function FinlandAxis({
 }) {
   const x = clamp(finland);
   const reach = Math.min(x, 100 - x);
-  const box: CSSProperties = {
-    left: `${x - reach}%`,
-    right: `${100 - x - reach}%`,
-    justifyContent: "safe center",
-  };
+  // Near the right end the centred label would run into "100%": it sits to the left of its tick
+  // instead, ending on the line. Elsewhere it is centred on the tick.
+  const leftOfTick = x >= 72;
+  const box: CSSProperties = leftOfTick
+    ? { left: 0, right: `${100 - x}%`, justifyContent: "flex-end", paddingRight: 6 }
+    : { left: `${x - reach}%`, right: `${100 - x - reach}%`, justifyContent: "safe center" };
   return (
     <div aria-hidden className={cn("relative h-4 type-note text-faint", className)}>
-      {x > 30 && <span className="absolute left-0 type-mark">0%</span>}
-      {x < 70 && <span className="absolute right-0 type-mark">100%</span>}
-      <span
-        className={cn("absolute inset-y-0 flex justify-center", x > 50 && "flex-row-reverse")}
-        style={box}
-      >
-        <span className="font-medium whitespace-nowrap text-foreground">{withFigures(label)}</span>
+      {x > 30 && <span className="absolute left-0 figure">0%</span>}
+      <span className="absolute right-0 figure">100%</span>
+      <span className="absolute inset-y-0 flex" style={box}>
+        <span className="font-semibold whitespace-nowrap text-foreground">{withFigures(label)}</span>
       </span>
     </div>
   );
