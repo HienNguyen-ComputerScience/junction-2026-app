@@ -19,7 +19,7 @@ export function BriefingPreview({ stand }: { stand: BriefingStand }) {
   const status =
     stand.value === stand.finland
       ? `Same as Finland overall: ${finland}.`
-      : `${stand.gapText} (Finland overall: ${finland})${stand.status === "red" ? ", a longer wait." : ", a shorter wait."}`;
+      : `${stand.gapText} (${finland})${stand.status === "red" ? ", a longer wait." : ", a shorter wait."}`;
 
   return (
     <div className="flex flex-col gap-5">

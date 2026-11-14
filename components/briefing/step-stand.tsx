@@ -51,14 +51,14 @@ export function StepStand({ briefing, confidence }: { briefing: Briefing; confid
 
       <div className="animate-fade-up flex flex-col gap-3" style={i(3)}>
         <ShareBar name={county.name} value={stand.value} text={figure} tone={tone} index={4} />
-        <ShareBar name="Finland as a whole" value={stand.finland} text={formatPct(stand.finland)} tone="plain" index={5} />
+        <ShareBar name="Finland overall" value={stand.finland} text={formatPct(stand.finland)} tone="plain" index={5} />
       </div>
 
       <div className="animate-fade-up flex flex-col gap-3" style={i(4)}>
         <p className="flex flex-wrap items-start gap-x-3 gap-y-1 text-base leading-6 text-charcoal">
           <StatusLabel status={stand.status}>
             {stand.gapText}
-            {stand.value === stand.finland ? "." : stand.status === "red" ? ", which is worse." : ", which is better."}
+            {stand.value === stand.finland ? "." : stand.status === "red" ? ", a longer wait." : ", a shorter wait."}
           </StatusLabel>
           <span>{stand.rankText}</span>
         </p>

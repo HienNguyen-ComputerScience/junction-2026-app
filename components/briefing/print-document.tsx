@@ -58,7 +58,7 @@ export function BriefingPrint({ briefing }: { briefing: Briefing }) {
 
       <Section number={1}>
         <p>
-          <strong>{formatPct(stand.value)}</strong> {stand.statement} Finland as a whole: {formatPct(stand.finland)}.
+          <strong>{formatPct(stand.value)}</strong> {stand.statement} Finland overall: {formatPct(stand.finland)}.
         </p>
         <p>
           {stand.gapText}. {stand.rankText}
