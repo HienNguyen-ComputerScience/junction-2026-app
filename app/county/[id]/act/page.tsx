@@ -8,7 +8,7 @@ import { lowerFirst, STEP_SHORT } from "@/components/act/action-copy";
 import { ActionItem } from "@/components/act/action-item";
 import { ReferralRoutes } from "@/components/act/referral-routes";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
-import { AnimatedNumber, Disclosure, Reveal } from "@/components/motion";
+import { AnimatedNumber, CaveatNote, Disclosure, Reveal } from "@/components/motion";
 import { SourceChip } from "@/components/source-chip";
 import { BackLink } from "@/components/ui/back-link";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -36,14 +36,20 @@ export async function generateMetadata({ params }: PageProps<"/county/[id]/act">
 
 /** What the lead figure counts, in one short line under it. */
 const FIGURE_CAPTION: Record<string, string> = {
-  "6411": "of GP visits waited over 7 days",
-  "13": "of referrals handled within 3 days",
+  "6411": "of non-urgent GP visits waited over 7 days",
+  "13": "of referrals processed within 3 days",
+};
+
+/** The figure's main caveat in a few words, always visible; the indicator's full limitation is behind "Why?". */
+const FIGURE_CAVEAT: Record<string, string> = {
+  "6411": "All non-urgent GP visits, not only cancer",
+  "13": "When assessment starts, not when the patient is seen",
 };
 
 /** The page's one statement: the area's main delay, in at most 12 words. */
 function statement(name: string, { focus, anyRed }: Bottleneck): string {
   if (focus.length === 0) return `${name}: no published pathway figures`;
-  if (!anyRed) return `${name}: no measured step worse than Finland`;
+  if (!anyRed) return `${name}: no step worse than Finland. Closest: ${lowerFirst(STEP_SHORT[focus[0].stage])}`;
   return `${name}'s ${focus.length > 1 ? "worst " : ""}delay: ${lowerFirst(STEP_SHORT[focus[0].stage])}`;
 }
 
@@ -58,9 +64,6 @@ function whyNotes(countyName: string, bottleneck: Bottleneck): string[] {
     );
   }
   notes.push("GP recognises warning signs: there is no public data on this anywhere in Finland.");
-  const lead = bottleneck.focus[0];
-  const indicator = lead ? getIndicator(lead.indicator_id) : undefined;
-  if (indicator) notes.push(`What the figure covers: ${indicator.limitation}`);
   return notes;
 }
 
@@ -113,6 +116,11 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
               </span>
               <SourceChip sourceId={lead.source_id} year={lead.year} />
             </span>
+            {FIGURE_CAVEAT[lead.indicator_id] ? (
+              <CaveatNote short={FIGURE_CAVEAT[lead.indicator_id]} className="mt-2">
+                {getIndicator(lead.indicator_id)?.limitation}
+              </CaveatNote>
+            ) : null}
           </Reveal>
         ) : null}
         <Reveal index={2}>
