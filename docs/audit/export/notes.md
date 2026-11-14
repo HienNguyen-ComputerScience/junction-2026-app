@@ -114,4 +114,8 @@ See the PR body for the verify command output. The click-through script (playwri
   - The email link's address was fetched and answered 200.
 - No horizontal scroll at 390px. One control per page and no other export buttons. The old `/plan` address lands on `/act`.
 
+The final run was made against the production build (`next start`) after the last foundation merge: 107 checks, 0 failures. The dev server, run before that merge, showed both labels of every Disclosure ("Why?" and "Hide why") after hot-reloading the foundation's new `globals.css`. The production build shows one label, so this is stale dev CSS, not a bug; restart `npm run dev` after merging.
+
+On the briefing's last step at 1366×768, the first option sits under the step's fixed Back bar until the reader scrolls a little, as the old buttons did. Moving the options above the three-line summary would fix that. It was left alone to keep this change small.
+
 Screenshots: `docs/audit/export/screenshots/` (`<page>-<desktop|phone>[-open].png`, `act-print-media.png`, etc.).
