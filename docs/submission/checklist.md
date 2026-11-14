@@ -1,41 +1,40 @@
 # FirstLine: submission checklist
 
-Owner of this file: nabeo11 (submission). Written from repo state on Fri 13 Nov 2026 (about 22:00 Helsinki). All times are Helsinki time. Nothing here is marked done unless the file exists in the repo or the step is confirmed on the board; every other human step is `TODO (human)`. Updated 14 Nov from test runs 3 and 3b, merged PRs and the board.
+Owner of this file: nabeo11 (submission). Written from repo state on Fri 13 Nov 2026 (about 22:00 Helsinki). All times are Helsinki time. Nothing here is marked done unless the file exists in the repo, a PR is merged, or the step is confirmed on the board; every other human step is `TODO (human)`. Updated Sat 14 Nov 18:50 against the frozen commit 3bc8bc7 (feature freeze was 18:00), from the PR and issue lists, README.md, test Run 4 and Run 4b, `deck-notes.md` and the board.
 
 Legend for status: **Ready in repo** (content exists, still needs pasting or uploading by a human) · **Draft** (exists, will change) · **TODO (human)** (only a person can do it).
 
-## What is built vs not yet (from git, PRs, issues and test run 3, 14 Nov)
+## What is built (frozen commit 3bc8bc7, Sat 14 Nov 18:50)
 
 Sources:
-- `gh pr view` and `gh issue view` (14 Nov);
-- [test-runs.md](test-runs.md) Run 3 (pre-freeze, commit c4f067d = merge of PR #41) and Run 3b (browser click-test, commit 0e40cdf, PR #50).
+- `gh pr list --state all` and `gh issue list --state all` (14 Nov, 18:50);
+- [test-runs.md](test-runs.md): Run 4 (pre-freeze, deployed site, commit 96ec1e1) and Run 4b (post-freeze, commit 3bc8bc7: 13 PASS, 0 FAIL, 5 NOTE, 1 NOT RUN);
+- the lead agent's live check of 43 questions on this build at 18:07 (board): 43/43, no network errors, plus a browser click-through at 1280 and 390 wide;
+- `README.md` and `deck-notes.md`.
 
-Run 3 tested commit c4f067d. PRs #45 (22:36 UTC) and #10 (22:38 UTC) merged after it and are not covered by any test run yet.
+Production runs main 3bc8bc7 (through PR #132). Vercel deploys main automatically from GitHub. Only PR #124 (one-page judge cheat sheet, docs) is still open.
 
 | Part | State | Where |
 |---|---|---|
 | Next.js scaffold, shadcn/ui | Merged (PR #4) | `app/`, `components/ui/` |
-| Data snapshot: 3 Sotkanet indicators, 22 areas plus Finland, evidence rows | Merged (PR #11, #13) | `data/`, `data/README.md` |
-| Evidence table (14 verified rows), red-flag sources, mentor log, demo script | Merged (PR #7); demo script wording fixed (PR #28) | `docs/evidence/`, `docs/pitch/demo-script.md` |
-| Exa query plan, judge test set, pitch angle | Merged (PR #5) | `docs/evidence/exa-queries.md`, `docs/evidence/exa-judge-tests.md`, `docs/pitch/exa-angle.md` |
-| Source chip and site header | Merged (PR #15) | `components/source-chip.tsx`, `components/site-header.tsx` |
-| Screens 1 and 2 (county ranking, county pathway with stage cards and limitations box) | Merged (PR #23, #39); pass in Run 3. Limitations box is now a sticky column beside the stage cards | `app/page.tsx`, `app/county/[id]/`, `components/ranking/`, `components/pathway/` |
-| Screen 3 (actions plus red-flag helper) | Merged (PR #26); passes in Run 3 | `app/county/[id]/act/`, `components/act/` |
-| Exa server layer: `/api/county-news`, `/api/national-news`, `/api/evidence`, `/api/ask` (cache, answer validator) | Merged (PR #16, hardened in PR #41, issue #33 closed); pass in Run 3 | `lib/exa/`, `app/api/` |
-| County news for all 22 areas | Merged (PR #41); passes in Run 3 | `app/api/county-news/` |
-| Rate limit and committed demo cache (saved results with their date when live search is down) | Merged (PR #41); pass in Run 3 | `lib/exa/rate-limit.ts`, `data/exa-cache/` |
-| AI county brief with snapshot validator and fallback | Merged (PR #29); mounted on the county page (PR #39); `/api/brief` passes in Run 3 | `lib/brief/`, `app/api/brief/`, `components/brief/` |
-| Exa UI panels: county news, evidence finder, question box | Mounted (PR #39, issue #32 closed). County news on the county page; evidence finder and question box on the act page; question box also on the ranking page. Answers and evidence results tested via the API in Run 3, then clicked in the browser in Run 3b (commit 0e40cdf): question box, evidence finder and "Write AI brief" work | `components/exa/` |
-| National news strip | API works (Run 3). Shown on the ranking page `/`, under the question box (up to 4 dated items, "Found live — unverified"; not yet in a test run) | `components/exa/national-news.tsx`, `/api/national-news` |
-| Polish: 404 for unknown counties, collapse extra actions | Merged (PR #45) after Run 3. PR #49 made the first request a real 404. Run 3b (browser, commit 0e40cdf): `/county/narnia` shows the 404 page; the extra actions were not exercised | `app/` |
-| Sources and limitations page | Merged (PR #10, issue #9 closed) at 22:38 UTC, after Run 3. Run 3b (browser, commit 0e40cdf): loads, header link works, lists the 3 Sotkanet indicators and limitations; **does not list the evidence-table sources** | `app/sources/` |
-| E2E docs and browser run | Merged (PR #25, #27, #35, #36) | `docs/pitch/`, `docs/evidence/` |
-| Submission pack (this folder) | Merged (PR #30, #40). Run 3 refresh: PR #46, issue #43 closed; Run 3b: PR #50, issue #47 closed. nabeo11's drafts: PR #42 merged on 14 Nov (commit 113f6ad) | `docs/submission/` |
-| MIT `LICENSE` | Added at the repo root (issue #51); README links to it. Whether the repo is public is still a human step | `LICENSE`, `README.md` |
-| Live URL (Vercel) | Deployed: https://firstline-finland.vercel.app (Vercel project `firstline-finland`, keys set; deploys are manual, the repo is not linked to Vercel). Checked on the deployed site 14 Nov (board): pages 200, unknown county 404, AI brief, county news, evidence finder and question box live | `README.md` "Live demo" |
-| Pitch video | Not in repo | TODO (human) |
+| Data snapshot: 11 Sotkanet indicators, 22 areas plus Finland. Two drive the steps (6411 GP wait over 7 days, 13 referrals processed within 3 days). Nine are context only: referrals waiting over 21 days, three cancer-screening attendance rates, occupational-health and public and private doctor visits, five-year survival for bowel and breast cancer. Also a labelled HUS-wide referral value for four Uusimaa areas | Merged (PR #11, #13, #83, #84, #102, #105) | `data/`, `data/README.md` |
+| Evidence table (14 verified rows), mentor log, demo script | Merged (PR #7); later booth-feedback and step-2 updates (PR #111, #112, #117, #118, #120). Final pitch: PR #126, #128 | `docs/evidence/`, `docs/pitch/` |
+| Home (`/`): area list and map, one card with the area's figure against Finland, one reason line, top action | Merged (PR #96, #119); passes in Run 4b. Home uses its own area, not the remembered one (PR #130) | `app/page.tsx`, `components/` |
+| Compare (`/compare`): all 22 areas ranked, "Getting worse fastest" with the recording caveat | Merged (PR #119, #129); passes in Run 4b (22 rows match `values.json`) | `app/compare/` |
+| Ask (`/ask`): question box answered only from live results, national news | Merged (PR #119); Run 4b asked 8 questions, all cited or refused cleanly; lead's 43/43 check | `app/ask/`, `components/exa/` |
+| County page: three step tabs, step-2 "Not measured in Finland" card with England's emergency-presentation share, limitations box always visible, recording caveat | Merged (PR #119, #121, #129); passes in Run 4b | `app/county/[id]/`, `components/pathway/` |
+| Act page: actions carousel ("Action 1 of 3"), what-if, static panel "The four referral routes a county needs" (replaces the typed symptom and red-flag helper, which was removed in PR #127; there is no symptom input) | Merged (PR #125, #127); passes in Run 4b | `app/county/[id]/act/`, `components/act/` |
+| Exa server layer: `/api/county-news`, `/api/national-news`, `/api/evidence`, `/api/ask` (cache, rate limit, answer validator, saved results with their date) | Merged (PR #16, #41, #73 fixes, #91, #92, #115, #116); outage and 429 paths pass in Run 4b | `lib/exa/`, `app/api/`, `data/exa-cache/` |
+| Live search panels with a close button | Merged (PR #132). Run 4b: close works on the ask box and the evidence finder; 3 notes (focus drops to the page body after closing; on a 390 px phone the close button of the evidence finder sits about 30 px outside the panel edge; news panels have no close button) | `components/exa/` |
+| County brief with snapshot validator and fallback | Merged (PR #29, #39, #89, #93); `brief:check` passes 23 checks in Run 4b. The AI rewrite button was not retried after the freeze | `lib/brief/`, `app/api/brief/`, `components/brief/` |
+| Custom "Page not found" page and error page | Merged (PR #130). 404 passes in Run 4b; the error page was read but not seen on screen (NOT RUN) | `app/not-found.tsx`, `app/error.tsx` |
+| Sources and limitations page | Reorganised in PR #123 (earlier PR #10, #62, #87, #97); loads at 200 in Run 4b (content not re-read there) | `app/sources/` |
+| Submission pack (this folder) | Merged (PR #30, #40, #42, #46, #50, #71, #100, #104). Post-freeze pass (Run 4b, deck v5, this file and the submission text): this PR | `docs/submission/` |
+| MIT `LICENSE` | At the repo root (PR #52); README links to it. Repo is public | `LICENSE`, `README.md` |
+| Live URL (Vercel) | https://firstline-finland.vercel.app. Vercel project `firstline-finland`, keys set, deployed automatically from `main` through the GitHub integration (README). Checked at 18:07 (board) and in Run 4b | `README.md` "Live demo" |
+| Pitch video | A 1:43 draft cut exists (PR #81, build scripts in `docs/pitch/video-build/`; board). Not final: upload, public setting and the link are human steps. The cut was made before the home, act and compare changes, so check it against the frozen screens | `docs/pitch/video-build/`, TODO (human) |
 
-Re-check this table after the freeze (Sat 18:00) with `gh pr list --state all`, `gh issue list --state all` and a post-freeze test run in [test-runs.md](test-runs.md).
+Open notes from Run 4b for the lead (none is a blocker): `docs/pitch/demo-script.md` lines 17, 29 and 55 and `docs/pitch/e2e-checklist.md` line 17 no longer match the screen.
 
 ## 1. Preliminary submission: Fri 13 Nov, 23:59 (aim for 23:30)
 
@@ -56,16 +55,16 @@ Platform: hackjunction.app. Needs a draft project and the chosen challenge. Both
 | [ ] | Submissions open on the platform (Sat 12:00): open the form and check each field exists | nabeo11 | [submission-text.md](submission-text.md) | TODO (human) |
 | [ ] | Ask the sponsor questions at the AstraZeneca and Exa booths; log answers | nabeo11 | [sponsor-questions.md](sponsor-questions.md); answers go to `docs/evidence/mentor-log.md` | Draft |
 | [ ] | Attend the Exa workshop (Sat 16:30) | whole team | `docs/junction-2026-guide.md` | TODO (human) |
-| [ ] | Merge screens 1 and 2 (issue #17) | HienNguyen-ComputerScience (app) | `app/` | Merged (PR #23); box left for the owner |
-| [ ] | Merge screen 3 and red-flag helper (issue #21) | HienNguyen-ComputerScience | `app/` | Merged (PR #26); box left for the owner |
-| [ ] | Merge Exa UI panels (PR #22) and mount them, the question box and the AI brief on the pages (issue #32) | HienNguyen-ComputerScience | `app/`, `components/exa/`, `components/brief/` | Mounted (PR #39, issue #32 closed; Run 3). National news strip now on `/` (#66). Box left for the owner |
-| [ ] | Merge sources and limitations page (PR #10) | bestawperna | `app/sources/` | Merged (PR #10, 13 Nov 22:38 UTC), after Run 3; loads in Run 3b but lists only the 3 Sotkanet indicators. Box left for the owner |
-| [x] | Deploy to Vercel and write the live URL into README.md | HienNguyen-ComputerScience (deploy) | `README.md` "Live demo" | Done 14 Nov (not auto-deploying; redeploy after the freeze) |
-| [ ] | Decide demo credentials: the app has no accounts, so write "none needed" if still true | HienNguyen-ComputerScience | `README.md` | TODO (human) |
-| [ ] | Run the manual test pass on the deployed URL and fill in `test-runs.md` | nabeo11 (test runs) and bestawperna (manual demo testing, Exa live queries) | `docs/submission/test-runs.md` | Run 3 logged (pre-freeze; local dev server, commit c4f067d); Run 3b logged: browser click-test of the main flows (commit 0e40cdf, `playwright-core` because the Playwright MCP could not start); Run 4 logged: deployed-URL browser test with the judge question set (commit 96ec1e1, 14 Nov 03:05 Helsinki; Finnish Helsinki question returns "Nothing found", see its findings); post-freeze run still to do |
-| [ ] | Update the sentences in [submission-text.md](submission-text.md) listed under "Update on Saturday" | nabeo11 | [submission-text.md](submission-text.md) | Draft |
+| [x] | Merge screens 1 and 2 (issue #17) | HienNguyen-ComputerScience (app) | `app/` | Merged (PR #23); later rebuilt as home, compare and county pages (PR #119). Ticked on the merged PRs |
+| [x] | Merge screen 3 (issue #21) | HienNguyen-ComputerScience | `app/` | Merged (PR #26, then PR #125 and #127: the typed helper was replaced by the four referral routes panel). Ticked on the merged PRs |
+| [x] | Merge Exa UI panels (PR #22) and mount them, the question box and the AI brief on the pages (issue #32) | HienNguyen-ComputerScience | `app/`, `components/exa/`, `components/brief/` | Mounted (PR #39, issue #32 closed); the question box and national news moved to `/ask` (PR #119); close buttons PR #132. Ticked on the merged PRs |
+| [x] | Merge sources and limitations page (PR #10) | bestawperna | `app/sources/` | Merged (PR #10), reorganised in PR #123. Ticked on the merged PRs |
+| [x] | Deploy to Vercel and write the live URL into README.md | HienNguyen-ComputerScience (deploy) | `README.md` "Live demo" | Done 14 Nov. Vercel now deploys `main` automatically from GitHub (README, board) |
+| [ ] | Decide demo credentials: the app has no accounts, so write "none needed" if still true | HienNguyen-ComputerScience | `README.md` | README says "Demo credentials: none needed (public, no login)". TODO (human): confirm and tick |
+| [x] | Run the manual test pass on the deployed URL and fill in `test-runs.md` | nabeo11 (test runs) and bestawperna (manual demo testing, Exa live queries) | `docs/submission/test-runs.md` | Run 4 (pre-freeze, deployed site, commit 96ec1e1, 14 Nov 03:05) and Run 4b (post-freeze, commit 3bc8bc7, 18:20 to 18:35: 13 PASS, 0 FAIL, 5 NOTE, 1 NOT RUN) are logged. Also the lead agent's 43/43 live question check at 18:07 (board). Ticked on `test-runs.md`; Run 5 (Sunday morning) is still to do |
+| [x] | Update the sentences in [submission-text.md](submission-text.md) listed under "Update on Saturday" | nabeo11 | [submission-text.md](submission-text.md) | Done in the post-freeze pass: the section is now a dated record (checked 14 Nov 18:50 against 3bc8bc7). Re-check on Sunday before pasting |
 | [ ] | Pick the freshest real news item for the demo county and screenshot it with the date visible | fraidfax (pitch) | `docs/pitch/exa-angle.md` prep checklist | TODO (human) |
-| [ ] | Feature freeze at 18:00: after this, only fixes | all | `AGENTS.md` | n/a |
+| [ ] | Feature freeze at 18:00: after this, only fixes | all | `AGENTS.md` | Passed: the lead's board post says production runs the frozen commit 3bc8bc7. Box left for the lead |
 
 ## 3. Final submission: Sun 15 Nov, 10:00 (aim for 08:00)
 
@@ -75,24 +74,24 @@ Mirrors the "Final submission checklist" in [docs/junction-2026-guide.md](../jun
 
 | Done | Item | Owner | Content | Status |
 |---|---|---|---|---|
-| [ ] | Project name, punchline, description | nabeo11 | [submission-text.md](submission-text.md) | Draft |
+| [ ] | Project name, punchline, description | nabeo11 | [submission-text.md](submission-text.md), [final-description-draft.md](final-description-draft.md) | Ready in repo (matches the frozen build; the removed typed helper is gone from both). Pasting into the form is TODO (human) |
 | [ ] | Challenge(s): AstraZeneca main, Exa second | nabeo11 | [submission-text.md](submission-text.md) | Ready in repo |
-| [ ] | Technologies used | nabeo11 | [submission-text.md](submission-text.md) | Ready in repo; re-check against `package.json` on Sunday |
-| [ ] | 2-minute pitch video, public (YouTube or Vimeo), not a second over | fraidfax (pitch, video) | Outline: [../pitch/demo-script.md](../pitch/demo-script.md) "2:00 video outline"; Exa beat: [../pitch/exa-angle.md](../pitch/exa-angle.md) | TODO (human): record, upload, set public, check length is 2:00 or less |
+| [ ] | Technologies used | nabeo11 | [submission-text.md](submission-text.md) | Ready in repo; checked against `package.json` on 14 Nov 18:50 (Supabase removed: not used). Re-check on Sunday |
+| [ ] | 2-minute pitch video, public (YouTube or Vimeo), not a second over | fraidfax (pitch, video) | Outline: [../pitch/demo-script.md](../pitch/demo-script.md) "2:00 video outline"; Exa beat: [../pitch/exa-angle.md](../pitch/exa-angle.md); build scripts `../pitch/video-build/` | Draft cut of 1:43 exists (board, PR #81). TODO (human): final cut from the frozen screens, upload, set public, check length is 2:00 or less, send the link |
 | [ ] | Record the video only after re-running Exa on Sunday morning so the "this week" item is real | fraidfax | [../pitch/exa-angle.md](../pitch/exa-angle.md) | TODO (human) |
-| [ ] | Demo link (live URL opens for someone not logged in anywhere) | HienNguyen-ComputerScience | `README.md` "Live demo" | TODO (human) |
+| [ ] | Demo link (live URL opens for someone not logged in anywhere) | HienNguyen-ComputerScience | `README.md` "Live demo" | URL is in README and the form text: https://firstline-finland.vercel.app. TODO (human): open it in a private window on Sunday |
 | [ ] | Source code link: https://github.com/HienNguyen-ComputerScience/junction-2026-app | nabeo11 | `git remote get-url origin` | Ready in repo |
 | [x] | Repo is public, or shared so organisers can open it; all submissions are MIT-licensed | HienNguyen-ComputerScience | Repo settings. MIT `LICENSE` exists at the repo root (PR #52) | Done: repo is public (14 Nov); MIT `LICENSE` at the repo root (PR #52) |
 | [ ] | Source code publicity setting on the form | nabeo11 | [submission-text.md](submission-text.md) | TODO (human) |
 | [ ] | Credit preference on the form | nabeo11 | [submission-text.md](submission-text.md) | TODO (human) |
-| [ ] | Pitch deck as PDF | nabeo11 (deck) | `docs/submission/firstline-deck.pdf` (source `deck.html`, notes `deck-notes.md`) | Draft v4 in repo (14 Nov: new UI, screenshots from main 9032e79 local build, see `deck-notes.md`); screenshots retaken from the live URL on 14 Nov (main f7caadf), "Draft" footer removed. A second 16-slide draft is in `deck-nabeo11/`. Which PDF is uploaded on Sunday: TODO (lead decides) |
+| [ ] | Pitch deck as PDF | nabeo11 (deck) | `docs/submission/firstline-deck.pdf` (source `deck.html`, notes `deck-notes.md`) | Deck v5 in repo: 9 slides, built from the frozen build 3bc8bc7, screenshots retaken from the live site on 14 Nov 18:22, no Draft footer, no mention of the removed helper (see `deck-notes.md`). A 16-slide alternative is in `deck-nabeo11/`. Which PDF is uploaded on Sunday: TODO (lead decides) |
 | [ ] | Team phone numbers and Discord usernames | nabeo11 | Collect from each member; never commit them to the repo | TODO (human) |
 | [ ] | Set status to FINAL | nabeo11 | none | TODO (human) |
 | [ ] | Re-open the submitted project and check every field saved | nabeo11 | none | TODO (human) |
-| [ ] | README.md current: problem, solution, stack, how to run, live URL, demo credentials, AI tools used, pre-existing code and templates (Junction requires declaring these) | HienNguyen-ComputerScience (README) | `README.md`. Live URL, credentials and "Team" (only one name listed) are still TBD | Draft |
+| [ ] | README.md current: problem, solution, stack, how to run, live URL, demo credentials, AI tools used, pre-existing code and templates (Junction requires declaring these) | HienNguyen-ComputerScience (README) | `README.md` | Draft: live URL, "Demo credentials: none needed", license, team and AI tools are in; README was updated for the removed helper (board). TODO (human): final read on Sunday |
 | [ ] | No code written before the event; pre-existing items declared | all | `README.md` "Pre-existing code and templates"; [submission-text.md](submission-text.md) | Ready in repo |
 | [ ] | No secrets committed; `.env.local` stays local | all | `AGENTS.md` Security | TODO (human): last scan before Sunday 08:00 |
-| [ ] | Pitch video is 2:00 or less and the deck is a PDF (hard limits from `AGENTS.md`) | fraidfax, nabeo11 | n/a | TODO (human) |
+| [ ] | Pitch video is 2:00 or less and the deck is a PDF (hard limits from `AGENTS.md`) | fraidfax, nabeo11 | n/a | Deck is a PDF in repo (9 pages). TODO (human): the video length once the final cut exists |
 
 ## 4. Live peer review: Sun 10:30–14:00
 
