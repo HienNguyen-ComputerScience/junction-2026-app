@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, Search } from "lucide-react";
+import { ArrowUp, ArrowUpRight, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -70,6 +70,7 @@ export function AskBox() {
   const data = state.kind === "done" ? state.data : null;
   const unavailable = data?.freshness === "unavailable" || (state.kind === "error" && state.message === "");
   const answered = data?.answer && data.answer.sentences.length > 0;
+  const reason = data?.mainReason && Array.isArray(data.mainReason.sources) ? data.mainReason : null;
 
   return (
     <Frame id="ask" aria-labelledby="ask-heading" className="scroll-mt-4">
@@ -81,7 +82,7 @@ export function AskBox() {
           <LiveMark result={data} />
         </FrameMeta>
         <FrameDescription>
-          Answered only from live Exa search results, with a numbered source for every sentence. Decision support,
+          Answered from live Exa search results, with a numbered source for every sentence. Decision support,
           not medical advice.
         </FrameDescription>
       </FrameHeader>
@@ -144,6 +145,30 @@ export function AskBox() {
       <div aria-live="polite" className="-mt-5 [&>*]:mt-5">
           {loading && <LoadingRows label="Searching and writing an answer from the results" rows={2} />}
           {state.kind === "error" && state.message !== "" && <p className="text-sm text-muted-foreground">{state.message}</p>}
+          {/* From the snapshot, not the search: shown first, and also when the live search is down. */}
+          {reason && (
+            <p className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[0.9375rem] leading-relaxed text-pretty text-foreground">
+              <span>
+                <span className="block type-caption text-muted-foreground">
+                  Dashboard data{data?.county ? ` for ${data.county.name}` : ""}, not from the search
+                </span>
+                {reason.text}
+              </span>
+              {reason.sources.map((source) => (
+                <a
+                  key={source.url}
+                  href={source.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${source.label} (opens in a new tab)`}
+                  className="inline-flex h-7 items-center gap-1 rounded-sm border border-border bg-muted px-1.5 type-mark whitespace-nowrap text-muted-foreground transition-colors outline-none hover:border-foreground/30 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:h-6 sm:px-2"
+                >
+                  {source.label}
+                  <ArrowUpRight aria-hidden className="size-3 shrink-0 opacity-70" />
+                </a>
+              ))}
+            </p>
+          )}
           {unavailable && <Unavailable />}
           {data && data.freshness !== "unavailable" && (
             <div className="space-y-5 border-t border-border pt-5">

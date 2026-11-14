@@ -2,21 +2,16 @@ import { SourceChip } from "@/components/source-chip";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import type { Gap } from "@/lib/data";
 import { formatPct, STATUS_LABEL } from "@/lib/ranking";
-
-/** What the bottleneck step's share counts: the county hero's wording for the same step. */
-const CAPTION: Record<Gap["stage"], string> = {
-  gp_access: "of non-urgent GP visits waited more than 7 days",
-  referral: "of referrals were processed within 3 days (higher is faster)",
-  gp_recognition: "",
-};
+import type { AreaValue } from "@/lib/what-if";
 
 /**
- * The home tool's focal number: the bottleneck step's share as the page's largest mark, its
- * status and source beside it, and one caption with what it counts and Finland's value.
- * Nothing for a step without a value.
+ * The focal number of the home card and the county header: the step's share as the largest
+ * mark, its status and source beside it, and under it the benchmark it is read against:
+ * Finland's own level and the best area's. What the share counts is said once, by the main
+ * reason sentence that follows. Nothing for a step without a value.
  */
-export function LeadFigure({ gap }: { gap: Gap }) {
-  if (gap.value === null || !CAPTION[gap.stage]) return null;
+export function LeadFigure({ gap, best }: { gap: Gap; best: AreaValue | null }) {
+  if (gap.value === null) return null;
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
@@ -33,7 +28,13 @@ export function LeadFigure({ gap }: { gap: Gap }) {
         </div>
       </div>
       <p className="text-sm text-pretty text-muted-foreground">
-        {CAPTION[gap.stage]} · Finland <span className="figure text-foreground">{formatPct(gap.national_value)}</span>
+        Finland <span className="figure text-foreground">{formatPct(gap.national_value)}</span>
+        {best && (
+          <>
+            {" "}
+            · best area <span className="figure text-foreground">{formatPct(best.value)}</span> ({best.name})
+          </>
+        )}
       </p>
     </div>
   );

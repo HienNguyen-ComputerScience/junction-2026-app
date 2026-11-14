@@ -22,6 +22,10 @@ export type AskResponse = {
   freshness: Freshness;
   /** YYYY-MM-DD, sent on cached and stale-cache responses. */
   retrievedAt?: string;
+  /** The area the question was scoped to, if it names one. */
+  county?: { id: string; name: string };
+  /** When the question names an area: its main reason sentence from the snapshot (data, not search). */
+  mainReason?: { text: string; sources: { label: string; url: string }[] };
   /** True when the question gate refused it: no search ran, so no status badge. */
   offTopic?: boolean;
   /** Sentences the checker removed because their numbers weren't in the cited source. Absent on older cached replies. */

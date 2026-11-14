@@ -8,16 +8,11 @@ import type { FinlandMapArea } from "@/components/map/finland-map";
 import { buildPathwaySteps, PathwaySteps } from "@/components/pathway/pathway-steps";
 import { SourceChip } from "@/components/source-chip";
 import { TextLink } from "@/components/ui/text-link";
-import { bottleneckLede, bottleneckStatus, getBottleneck, pickActions } from "@/lib/act";
-import { indicators, LATEST_YEAR, type County, type Stage } from "@/lib/data";
-import { getStageGap, GP_WAIT_ID, REFERRAL_ID, STATUS_LABEL, type RankingRow } from "@/lib/ranking";
-import { bestArea, whatIf, type Better } from "@/lib/what-if";
-
-/** Which way the stage's share is better, read from the indicator's direction. */
-function betterFor(indicatorId: string): Better {
-  const direction = indicators.find((indicator) => indicator.indicator_id === indicatorId)?.direction;
-  return direction === "lower_is_worse" ? "higher" : "lower";
-}
+import { bottleneckStatus, getBottleneck, pickActions } from "@/lib/act";
+import { LATEST_YEAR, type County } from "@/lib/data";
+import { bestForStage, betterFor, getMainReason } from "@/lib/main-reason";
+import { formatPct, getNationalValue, GP_WAIT_ID, REFERRAL_ID, STATUS_LABEL, type RankingRow } from "@/lib/ranking";
+import { whatIf } from "@/lib/what-if";
 
 /**
  * Server half of the home tool: computes, for all 22 areas, the verdict, the compact steps, the
@@ -38,16 +33,6 @@ export function HomeTool({
   const defaultId = all.some((county) => county.id === initialAreaId)
     ? (initialAreaId as string)
     : (rows[0]?.county.id ?? all[0].id);
-
-  // The best published share per stage, among the areas with a value of their own.
-  const best = (stage: Stage, better: Better) =>
-    bestArea(
-      all.flatMap((county) => {
-        const value = getStageGap(county.id, stage)?.value;
-        return value == null ? [] : [{ id: county.id, name: county.name, value }];
-      }),
-      better,
-    );
 
   const areas: PickerArea[] = [];
   const steps: Record<string, ReactNode> = {};
@@ -78,9 +63,12 @@ export function HomeTool({
       />
     );
 
+    // The figure and the sentence under it are about the same step (getMainReason).
+    const reason = getMainReason(county.id);
+    if (reason.gap) leads[county.id] = <LeadFigure gap={reason.gap} best={bestForStage(reason.gap.stage)} />;
+
     const gap = bottleneck.focus[0];
     if (gap) {
-      leads[county.id] = <LeadFigure gap={gap} />;
       const better = betterFor(gap.indicator_id);
       whatIfs[county.id] = (
         <WhatIfPanel
@@ -97,7 +85,7 @@ export function HomeTool({
             value: gap.value,
             finland: gap.national_value,
             better,
-            best: best(gap.stage, better),
+            best: bestForStage(gap.stage),
           })}
         />
       );
@@ -106,7 +94,7 @@ export function HomeTool({
     areas.push({
       id: county.id,
       name: county.name,
-      verdict: bottleneckLede(bottleneck),
+      verdict: reason.text,
       status: bottleneckStatus(bottleneck),
       actionId: top ? actionKey : null,
     });
@@ -126,6 +114,10 @@ export function HomeTool({
     };
   });
 
+  // The benchmark in one line, under the map: what red means, and that Finland's level is no target.
+  const finlandWait = getNationalValue(GP_WAIT_ID);
+  const bestWait = bestForStage("gp_access");
+
   return (
     <AreaPicker
       areas={areas.sort((a, b) => a.name.localeCompare(b.name, "en"))}
@@ -137,6 +129,19 @@ export function HomeTool({
       leads={leads}
       whatIfs={whatIfs}
       actions={actions}
+      mapNote={
+        <>
+          Red: worse than Finland&apos;s own level on the GP wait or the referral. That level is no target
+          {finlandWait && bestWait && (
+            <>
+              : <span className="figure text-foreground">{formatPct(finlandWait.value)}</span> of non-urgent GP visits
+              in Finland come over 7 days after the ask; best area{" "}
+              <span className="figure text-foreground">{formatPct(bestWait.value)}</span>
+            </>
+          )}
+          . Not cancer-specific. Map: Statistics Finland, CC BY 4.0
+        </>
+      }
       mapChip={
         <span className="flex items-center gap-1.5">
           <SourceChip sourceId={rows[0]?.gpWait.source_id ?? `sotkanet-${GP_WAIT_ID}`} year={LATEST_YEAR} />

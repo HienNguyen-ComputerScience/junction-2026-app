@@ -475,3 +475,38 @@ test("counting: quota used up at the Claude step with an expired cached answer: 
   assert.ok(r.json.answer);
   assert.deepEqual(calls, { exa: 2, claude: 2 });
 });
+
+// ---------- main reason: the area's data sentence leads every reply that names an area ----------
+
+const VANTAA_REASON =
+  "Main reason: 85.4% of non-urgent GP visits here come more than a week after people ask, 30.7 points above Finland and worse than in 2023 (58.0%).";
+
+test("main reason: a question that names an area carries its data sentence, live and from the cache", async () => {
+  const live = await ask(Q);
+  assert.equal(live.json.freshness, "live");
+  assert.equal(live.json.county.id, "vantaa-kerava");
+  assert.equal(live.json.mainReason.text, VANTAA_REASON);
+  assert.deepEqual(live.json.mainReason.sources.map((s) => s.label), ["Sotkanet 6411 · 2025"]);
+  assert.match(live.json.mainReason.sources[0].url, /^https:\/\//);
+  // The sentence is not part of the written answer, so the checker never sees it.
+  assert.ok(live.json.answer.sentences.every((s) => !s.text.includes("Main reason")));
+  const cached = await ask(Q);
+  assert.equal(cached.json.freshness, "cache");
+  assert.equal(cached.json.mainReason.text, VANTAA_REASON);
+});
+
+test("main reason: still there when Exa is down and when nothing is found", async () => {
+  const down = await ask("GP waits in Vantaa health centres during an outage", { outage: true });
+  assert.equal(down.json.freshness, "unavailable");
+  assert.equal(down.json.mainReason.text, VANTAA_REASON);
+  mode.claude = "nothing";
+  const none = await ask("How long are GP waits in Vantaa this autumn?");
+  assert.equal(none.json.nothingFound, true);
+  assert.equal(none.json.mainReason.text, VANTAA_REASON);
+});
+
+test("main reason: absent when the question names no area", async () => {
+  const r = await ask("Did Denmark's cancer fast-track pathways shorten diagnosis times in health care?");
+  assert.equal(r.status, 200);
+  assert.equal(r.json.mainReason, undefined);
+});

@@ -18,6 +18,7 @@ import { ASK_DOMAINS, ASK_EXAMPLES, COUNTIES, GOV_FI, TTL } from "@/lib/exa/conf
 import { demoCacheGet } from "@/lib/exa/demo-cache";
 import { clientIp, hit, limitedReply, type LimitedReply } from "@/lib/exa/rate-limit";
 import { detectCounty, filterRelevant, isOnTopic, namesOtherCountry } from "@/lib/exa/relevance";
+import { getMainReason, reasonLinks } from "@/lib/main-reason";
 
 // POST /api/ask  { "question": "..." }
 // Answers only from Exa results. Each answer sentence cites items by 1-based index;
@@ -59,6 +60,8 @@ type AskResponse = {
   freshness: Freshness;
   /** Optional: the area the question was scoped to. */
   county?: { id: string; name: string };
+  /** Optional, with `county`: the area's main reason sentence from the snapshot, and its source links. */
+  mainReason?: { text: string; sources: { label: string; url: string }[] };
   /** Optional: YYYY-MM-DD when served from a cache. */
   retrievedAt?: string;
   /** Set only on the off-topic gate reply: no search ran, so the UI hides the freshness badge. */
@@ -94,7 +97,15 @@ export async function POST(request: NextRequest) {
 
   const countyId = detectCounty(question, AREAS);
   const county = countyId ? COUNTIES.get(countyId) : undefined;
-  const scope = county ? { county: { id: county.id, name: county.name } } : {};
+  // A named area: its main reason sentence from the snapshot (data, not search) goes with every
+  // reply for it, separate from `answer`, so the checker never sees it and it survives an outage.
+  const reason = county ? getMainReason(county.id) : null;
+  const scope = county
+    ? {
+        county: { id: county.id, name: county.name },
+        ...(reason && reason.kind !== "no_data" && { mainReason: { text: reason.text, sources: reasonLinks(reason) } }),
+      }
+    : {};
 
   // Off-topic or junk: answer "nothing found" without spending an Exa call.
   if (!isOnTopic(question, countyId)) {
@@ -117,7 +128,7 @@ export async function POST(request: NextRequest) {
   // The TTL depends on what the entry holds (answer vs nothing-found), so it is applied here.
   const ttlMs = cached ? askTtl(cached.value, ASK_TTL) : TTL.ask;
   if (cached && cached.ageMs < ttlMs) {
-    return NextResponse.json({ ...cached.value, freshness: "cache", retrievedAt: cached.retrievedAt });
+    return NextResponse.json({ ...cached.value, ...scope, freshness: "cache", retrievedAt: cached.retrievedAt });
   }
   if (outage) return respond(await compute());
   const running = inflight.get(cacheKey);
@@ -135,7 +146,7 @@ export async function POST(request: NextRequest) {
 
   async function compute(): Promise<Outcome> {
     const stale = (): Outcome | null =>
-      cached ? { body: { ...cached.value, freshness: "stale-cache", retrievedAt: cached.retrievedAt } } : null;
+      cached ? { body: { ...cached.value, ...scope, freshness: "stale-cache", retrievedAt: cached.retrievedAt } } : null;
 
     // Counts this request once, just before it first spends. Returns what to send if over the limit.
     let counted = false;
