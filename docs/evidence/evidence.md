@@ -127,7 +127,7 @@ Clear symptom-based criteria that, when met, send the patient straight to the ri
 
 Each cancer type gets a pathway with maximum waits for each step from referral to treatment. Denmark introduced these nationally in 2007-2009.
 
-- **Who does it:** National health authority sets the pathways; county hospital districts reserve diagnostic slots
+- **Who does it:** Wellbeing services county: specialist care director reserves diagnostic slots; pathway rules are national
 - **First step:** Measure the county's current time from GP referral to first specialist test for 2-3 cancers to set a baseline.
 - **Precedent:** Denmark's cancer patient pathways (Kræftpakkeforløb), 2007-2009.
 - **Effect:** The median diagnostic interval was 17 days shorter after the pathways than before (49 to 32 days unadjusted). Three-year relative survival for patients diagnosed via primary care rose from 45% to 54%. — *effect size: -17 days (median diagnostic interval, after vs before pathways (adjusted))*
@@ -153,7 +153,7 @@ Sweden copied Denmark's model (SVF, from 2015) and tied state money to regions r
 
 Patients with weight loss, fatigue, unexplained pain or nausea don't fit a single-cancer pathway, so they wait longest. A diagnostic centre gives GPs one place to refer them for a fast full work-up.
 
-- **Who does it:** County hospital district (internal medicine) with primary care
+- **Who does it:** Wellbeing services county: specialist care (internal medicine) with primary care
 - **First step:** Name one internal-medicine unit as the county's 'vague symptoms' referral point with a fixed weekly slot allocation.
 - **Precedent:** Denmark: national urgent route to diagnostic centres since 2012, at least one per region (~15 centres).
 - **Effect:** About 15-20% of patients referred to Danish diagnostic centres have cancer. — *effect size: not quantified*
@@ -166,7 +166,7 @@ Patients with weight loss, fatigue, unexplained pain or nausea don't fit a singl
 
 England piloted multidisciplinary diagnostic centres (later Rapid Diagnostic Centres) for patients whose symptoms could be cancer but don't fit a site-specific route.
 
-- **Who does it:** County hospital district + primary care; could start as one pilot site
+- **Who does it:** Wellbeing services county: specialist care + primary care; could start as one pilot site
 - **First step:** Track referrals, cancers found and days to diagnosis from day one, using the UK pilot's measures so results are comparable.
 - **Precedent:** England's ACE programme: 5 MDC projects (Airedale, Greater Manchester, Leeds, London, Oxford), 2016-2018; now NHS Rapid Diagnostic Centres.
 - **Effect:** 2,961 patients were referred and 241 cancers diagnosed: a conversion rate of 8%, across a broad range of cancer types including rare ones. — *effect size: 8 % (conversion rate (cancers diagnosed / patients referred))*
@@ -192,7 +192,7 @@ Incomplete referrals bounce back or get triaged wrongly. A template that asks fo
 
 The GP sends a question to a specialist and gets an answer in about a day. Unneeded referrals drop out of the queue, so suspected-cancer referrals move faster. Not a replacement for an urgent cancer referral.
 
-- **Who does it:** County hospital district specialty leads + primary care
+- **Who does it:** Wellbeing services county: hospital specialty leads + primary care
 - **First step:** Start with one specialty that has a long queue and track answer time and avoided referrals.
 - **Precedent:** Champlain BASE eConsult, Ontario, Canada (100,000+ cases).
 - **Effect:** GPs get an answer in a median of 0.9 days, and two-thirds of cases are resolved without a face-to-face specialist visit. — *effect size: 0.9 days (median specialist response time)*
