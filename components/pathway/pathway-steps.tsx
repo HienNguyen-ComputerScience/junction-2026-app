@@ -246,6 +246,9 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
       <p className={cn("type-caption text-pretty text-muted-foreground", compact ? "pt-0.5" : "pt-2")}>
         {description}
         {shared ? ` ${sharedLabel(shared.name)}.` : ""}
+        {shown !== null && measure && (
+          <span className="block">({measure.direction === "higher is faster" ? "higher is better" : "lower is better"})</span>
+        )}
       </p>
 
       <MeasureBar

@@ -10,12 +10,17 @@ export type CarouselItem = {
   id: string;
   /** A short name of the item: the tooltip and accessible name of its numbered step button. */
   label: string;
+  /**
+   * Two or three words from the item's own title, shown next to its number. Shown only when every
+   * item has one, so the buttons stay alike; otherwise the numbers stand alone and `label` is the tooltip.
+   */
+  shortLabel?: string;
   node: ReactNode;
 };
 
 /**
  * One row of cards you move along, with no library: a CSS scroll-snap track plus buttons.
- *  - "single": one card at full width, a small peek of the next; a header row says "Action 1 of 3"
+ *  - "single": one card at exactly the full width, none of the next one in view; a header row says "Action 1 of 3"
  *    and has numbered step buttons (`showSteps`) and Previous/Next.
  *  - "multi": compact cards, about three at once from lg (two from sm, one on a phone); the
  *    counter reads "1–3 of 8".
@@ -48,6 +53,7 @@ export function CardCarousel({
   const [view, setView] = useState({ first: 0, last: 0, atStart: true, atEnd: items.length < 2 });
   const total = items.length;
   const Noun = noun.charAt(0).toUpperCase() + noun.slice(1);
+  const named = items.every((item) => Boolean(item.shortLabel));
 
   const measure = useCallback(() => {
     const track = trackRef.current;
@@ -155,13 +161,15 @@ export function CardCarousel({
                   aria-current={i === view.first ? "true" : undefined}
                   onClick={() => goTo(i)}
                   className={cn(
-                    "inline-flex size-9 items-center justify-center rounded-lg border text-sm font-medium tabular-nums transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                    "inline-flex h-9 min-w-9 items-center justify-center gap-1.5 rounded-lg border text-sm font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                    named ? "px-2.5" : "px-0",
                     active
                       ? "border-transparent bg-primary text-primary-foreground"
                       : "border-input bg-muted text-foreground hover:border-foreground/25 hover:bg-accent",
                   )}
                 >
-                  {i + 1}
+                  <span className="tabular-nums">{i + 1}</span>
+                  {named && <span className="max-sm:sr-only">{item.shortLabel}</span>}
                 </button>
               );
             })}
@@ -205,8 +213,8 @@ export function CardCarousel({
             className={cn(
               "flex min-w-0 shrink-0 grow-0 snap-start",
               layout === "single"
-                ? "basis-[calc(100%-2.5rem)]"
-                : "basis-[calc(100%-2.5rem)] sm:basis-[calc((100%-0.75rem)/2)] lg:basis-[calc((100%-1.5rem)/3)]",
+                ? "basis-full"
+                : "basis-full sm:basis-[calc((100%-0.75rem)/2)] lg:basis-[calc((100%-1.5rem)/3)]",
             )}
           >
             {item.node}

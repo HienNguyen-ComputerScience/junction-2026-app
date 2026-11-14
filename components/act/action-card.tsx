@@ -47,6 +47,45 @@ export const plainTitle = (title: string) =>
     // Omaolo is named with what it is at its first use, which is the title of its own action.
     .replace("the national digital symptom assessment (Omaolo)", "Omaolo (the national online symptom checker)");
 
+const ARTICLES = new Set(["a", "an", "the"]);
+/** Words that end the noun phrase a title starts with ("... with maximum time limits"). */
+const PHRASE_END = new Set(["to", "with", "in", "on", "of", "for", "so", "and", "or", "before", "that", "they", "by", "as", "from", "into"]);
+
+/**
+ * Two or three words from an action's own title, for a small button: the title without its
+ * leading verb, up to the first preposition, conjunction or bracket ("Introduce cancer fast-track
+ * pathways with ..." gives "Cancer fast-track pathways"). Only the words of the title, never
+ * reworded. Null when the title has no clean short phrase (it would be cut mid-phrase, or is a
+ * single lower-case word), so the caller shows no label rather than a wrong one.
+ */
+export function shortTitle(title: string): string | null {
+  const rest = plainTitle(title).split(/\s+/).slice(1);
+  const out: string[] = [];
+  let ended = false;
+  for (const raw of rest) {
+    if (raw.startsWith("(")) {
+      ended = true;
+      break;
+    }
+    const word = raw.replace(/[,:;]+$/, "");
+    if (ARTICLES.has(word.toLowerCase())) continue;
+    if (PHRASE_END.has(word.toLowerCase())) {
+      ended = true;
+      break;
+    }
+    out.push(word);
+    if (word !== raw) {
+      ended = true;
+      break;
+    }
+  }
+  if (!ended && rest.length > 0) ended = true; // the title itself ended
+  if (!ended || out.length === 0 || out.length > 3) return null;
+  if (out.length === 1 && !/^\p{Lu}/u.test(out[0])) return null;
+  const text = out.join(" ");
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 type Effect = NonNullable<Evidence["effect_size"]>;
 
 const rounded = (n: number) => String(Math.round(n * 10) / 10);

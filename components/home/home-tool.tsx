@@ -123,6 +123,8 @@ function ThreeSteps({ countyId }: { countyId: string }) {
           <li key={step.stage} className="min-w-0">
             <Link
               href={`/county/${countyId}?step=${step.step}`}
+              title={`See step ${step.step}`}
+              aria-label={`See step ${step.step}: ${step.title}, ${step.measure?.shared && step.measure.value === null ? "No county figure" : STATUS_LABEL[step.status]}`}
               className="group flex h-full items-start justify-between gap-2 rounded-lg border border-border bg-muted px-3.5 py-3 transition-colors outline-none hover:border-foreground/40 hover:bg-accent focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             >
               <span className="flex min-w-0 flex-col items-start gap-1.5">

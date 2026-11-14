@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 
-import { FirstStep, plainTitle } from "@/components/act/action-card";
+import { FirstStep, plainTitle, shortTitle } from "@/components/act/action-card";
 import { OwnerRow } from "@/components/act/owner-row";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -215,6 +215,7 @@ function Claims({
                 items={segment.items.map(({ claim, layout }, i) => ({
                   id: `${i}-${claim.text.slice(0, 24)}`,
                   label: plainTitle(layout.action),
+                  shortLabel: shortTitle(layout.action) ?? undefined,
                   node: <ActionRow layout={layout} chips={chips} sourceIds={claim.source_ids} />,
                 }))}
               />
