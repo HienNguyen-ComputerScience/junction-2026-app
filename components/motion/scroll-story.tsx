@@ -69,13 +69,13 @@ export function ScrollStory({
         (entries) => {
           for (const entry of entries) {
             if (!entry.isIntersecting) continue;
-            const index = stepRefs.current.indexOf(entry.target as HTMLDivElement);
+            const index = stepRefs.current.findIndex((s) => s !== null && s.contains(entry.target));
             if (index >= 0) setStep(index);
           }
         },
         { rootMargin: "-45% 0px -45% 0px" },
       );
-      for (const el of stepRefs.current) if (el) observer.observe(el);
+      for (const el of stepRefs.current) if (el) observer.observe(el.querySelector("[data-focus-item]") ?? el);
     };
     start();
     wide.addEventListener("change", start);
