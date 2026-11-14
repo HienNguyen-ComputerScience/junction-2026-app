@@ -232,6 +232,19 @@ function buildLimitations(county: County): LimitationItem[] {
     sourceId: "kuitunen-2026",
   });
 
+  // How many working-age visits skip that public queue (context only, Sotkanet 2371 vs 293).
+  const occupational = getValue(county.id, "2371");
+  const publicVisits = getValue(county.id, "293");
+  const occupationalFinland = getValue("finland", "2371");
+  const publicFinland = getValue("finland", "293");
+  if (occupational && publicVisits && occupationalFinland && publicFinland) {
+    const n = (value: number) => Math.round(value).toLocaleString("en-GB");
+    items.push({
+      text: `Working-age people (15-64) in ${county.name} made ${n(occupational.value)} occupational-health doctor visits per 1,000 residents in ${occupational.year}, against ${n(publicVisits.value)} public primary-care doctor visits (Finland ${n(occupationalFinland.value)} and ${n(publicFinland.value)}). These are visits, not people. Occupational visits are outside the public queue the GP wait measures. People over 64, who are most cancer patients, are not in these numbers.`,
+      sourceId: "sotkanet-2371",
+    });
+  }
+
   items.push({
     text: "GP recognition of possible cancer has no public indicator, so step 2 is grey for every county. No public county data shows it yet; one candidate would be the share of cancers first found through an emergency visit.",
   });

@@ -19,7 +19,7 @@ Do not hand-edit the JSON; change `scripts/data/build-snapshot.mjs` and rebuild.
 | `sources.json` | a source: a Sotkanet indicator, the region list, or a study behind an action | `source_id`, `kind` (`statistic` / `evidence`), `name`, `url`, `publisher`, `retrieved`, `data_updated` |
 | `counties.json` | an area: 21 wellbeing services counties, the City of Helsinki, and Finland (`kind: "country"`, kept out of rankings and routes) | `id` (URL slug), `kind`, `name`, `name_fi`, `sotkanet_region_id`, `source_id` |
 | `indicators.json` | an indicator we show | `indicator_id`, `name`, `short_name`, `unit`, `direction`, `stage`, `limitation`, `source_id` |
-| `values.json` | one area × indicator × year value (2023–2025; screening indicators 2022–2024) | `county_id`, `indicator_id`, `year`, `value`, `abs_value`, `source_id` |
+| `values.json` | one area × indicator × year value (2023–2025; screening indicators 2022–2024; context-only indicators 2371, 293, 692 have stage null) | `county_id`, `indicator_id`, `year`, `value`, `abs_value`, `source_id` |
 | `gaps.json` | the 2025 status of one pathway stage in one county | `county_id`, `stage`, `indicator_id`, `status`, `value`, `national_value`, `note`, `source_id`, optional `shared` (a wider value such as HUS, shown labelled, never as the county's) |
 | `evidence.json` | a recommended action with its precedent and source (from `docs/evidence/evidence.json`, verified rows only) | Luan's fields minus `source_url` / `source_title`, plus `source_id` |
 

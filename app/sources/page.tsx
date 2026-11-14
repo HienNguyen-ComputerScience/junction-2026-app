@@ -75,7 +75,7 @@ export default function SourcesPage() {
         <Frame aria-labelledby="indicator-sources">
           <FrameHeader>
             <FrameTitle id="indicator-sources">The public indicators</FrameTitle>
-            <FrameDescription>Published on Sotkanet by the Finnish Institute for Health and Welfare (THL), and by the Finnish Cancer Registry for the three screening indicators. Links open the official definitions.</FrameDescription>
+            <FrameDescription>Published on Sotkanet by the Finnish Institute for Health and Welfare (THL), by the Finnish Cancer Registry for the three screening indicators, and by Kela for private-visit reimbursements. Links open the official definitions.</FrameDescription>
           </FrameHeader>
           <div className="flex flex-col gap-1.5">
             {sourceRows.map(({ indicator, source, years }) => (
