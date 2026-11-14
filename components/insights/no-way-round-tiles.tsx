@@ -9,8 +9,8 @@ export type TileLevel = 0 | 1 | 2 | 3;
 
 const FILL: Record<TileLevel, string> = {
   0: "border-border-mist bg-cream-paper text-charcoal",
-  1: "border-transparent bg-mint-veil text-charcoal",
-  2: "border-transparent bg-sage-mist text-charcoal",
+  1: "border-border bg-mint-veil text-charcoal",
+  2: "border-border bg-sage-mist text-charcoal",
   3: "border-transparent bg-forest-ink text-cream-paper font-semibold",
 };
 

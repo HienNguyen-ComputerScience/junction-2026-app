@@ -115,6 +115,8 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
   const first = warning?.series[0];
   const last = warning?.series[warning.series.length - 1];
   const fieldCount = starterDataset.sections.reduce((n, s) => n + s.fields.length, 0);
+  // The counts behind Goal 3's own measure: the section tied to roadmap measure 3.1.2.
+  const goal3Count = starterDataset.sections.find((s) => s.measure_id === "3.1.2")?.fields.length ?? 0;
   const steps = getPathwayRow(DEFAULT_AREA)?.steps ?? [];
   const notPublished = steps.filter((s) => !s.published).length;
 
@@ -259,7 +261,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
       <Chunk
         id="starter-dataset"
         eyebrow="What to record from Monday"
-        statement={`${capital(word(notPublished))} of ${word(steps.length)} steps to cancer treatment are not published by area.`}
+        statement={`${capital(word(notPublished))} of ${word(steps.length)} steps of the cancer pathway are not published by area.`}
         figure={<PathwayStepsRow />}
         meaning={
           <>
@@ -285,7 +287,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
           </Disclosure>
           <div className="flex max-w-[68ch] flex-col items-start gap-3 rounded-[14px] bg-keylime-wash p-6">
             <p className="text-base font-semibold text-pretty text-forest-ink">
-              Two of the counts measure Goal 3 of the national cancer strategy directly.
+              {capital(word(goal3Count))} of the counts measure Goal 3 of the national cancer strategy directly.
             </p>
             <Disclosure show="Show the Goal 3 link" hide="Hide the Goal 3 link" tone="quiet">
               <Goal3Detail />

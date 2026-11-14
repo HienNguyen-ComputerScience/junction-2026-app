@@ -7,7 +7,7 @@ Branch `t3/rework-insights-scroll-story`, on top of `t3/experimental-real-user-a
 | | Words |
 |---|---|
 | Before | **2,851** |
-| After | **231** as the script counts it. Of these, 36 are the 22 area names in the picture and 16 are the step names and "Not published" in the pathway row, so the prose is about **179**. The picture's 13-word legend is `aria-hidden` (each box carries its own screen-reader text), so the script does not count it. |
+| After | **245**: 232 as the script counts it, plus the picture's 13-word legend, which the script skips because it is `aria-hidden` (each box carries its own screen-reader text) but which is visible. Of the 245, 36 are the 22 area names in the picture and 16 are the step names and "Not published" in the pathway row. **Counting those picture labels, the page is over the 200 budget; without them, the prose is about 193.** |
 
 The script, kept in the session's scratchpad, removes source chips, pills and badges, button and `summary` labels, tables, form controls, closed `<details>` content and screen-reader-only text. It still counts a `CaveatNote`'s always-visible short text and a `ConfidenceBadge`'s visible reason.
 
@@ -18,7 +18,7 @@ Screenshots: `before-*.png` and `after-*.png` show the first two screen heights 
 1. **The finding** (lead `Chunk`, h1). "In two areas the GP queue is long, with no way round it." Then Central Finland 73.5% and South Savo 69.7% counting up, the unit line with Finland's 54.7%, one source chip (Sotkanet 6411 · 2025, the same for both), one grade label ("Read the trend with care", the same for both) and a `CaveatNote`: "area figures, not people; not cancer-specific".
 2. **How the two stand out** (`ScrollStory`). The picture shows the 22 areas as boxes. Four short steps: all 22 → a longer wait than Finland → 8 of them also use the other routes less → only the two hold under all six cut-offs. Each level has its own fill **and** its own number of dots, so the picture does not rely on colour alone. Two buttons sit below: "Show how we tested this" and "Show the full table".
 3. **Early warning** (`Chunk`). "Only South Karelia's GP wait is plainly getting worse." Then 53.3% → 60.3%, with its source chip and grade label. "15 more look worse, but their recorded visits changed or are incomplete." The `CaveatNote` reads "three years only: a direction, not a forecast". Two buttons: "Show all 22 areas" and "Show how we grade each figure".
-4. **What to record from Monday** (`Chunk`, `#starter-dataset`). "Three of seven steps to cancer treatment are not published by area." Then the seven steps in one row, with the three gaps dashed and labelled "Not published", and "18 quarterly counts let a county measure them itself." The `CaveatNote` reads "counts only, no patient data". Below that come the primary button "Download the recording template (Excel)", "Show the 18 fields", one framed Goal 3 line with "Show the Goal 3 link", and "Show one area's figures for each step" (the picker; it opens by itself when an area has been chosen, `/insights?area=<id>#pathway`).
+4. **What to record from Monday** (`Chunk`, `#starter-dataset`). "Three of seven steps of the cancer pathway are not published by area." Then the seven steps in one row, with the three gaps dashed and labelled "Not published", and "18 quarterly counts let a county measure them itself." The `CaveatNote` reads "counts only, no patient data". Below that come the primary button "Download the recording template (Excel)", "Show the 18 fields", one framed Goal 3 line (its count, two, is taken from the template section tied to roadmap measure 3.1.2) with "Show the Goal 3 link", and "Show one area's figures for each step" (the picker; it opens by itself when an area has been chosen, `/insights?area=<id>#pathway`).
 
 All of it sits in one `FocusGroup`.
 
@@ -36,7 +36,7 @@ All of it sits in one `FocusGroup`.
 | Paragraph "On the main view, 8 of 22… 16 of 22 are below Finland on occupational-health visits…" | "8" in story step 3; the 16-of-22 sentence deleted | Method detail. It is still in `docs/audit/insights/notes.md`. |
 | "How it was worked out" paragraph | Deleted | The intro to "Show how we tested this" says the same. |
 | Mint "What these figures do not show" box (4 bullets) | `CaveatNote` with the 4 bullets behind "Why?" | One main caveat, visible; the detail is in place on request. |
-| Two scatter charts and their legend | One picture: 22 boxes narrowing to two | The narrowing is the finding. The scatter's magnitudes are in the full table. Two panels did not fit the sticky slot at 1366×768. |
+| Two scatter charts and their legend | One picture: 22 boxes narrowing to two | The narrowing is the finding. The scatter's magnitudes are in the full table. (We estimated, but did not measure, that two panels would not fit the sticky slot at 1366×768.) |
 | Full table of 22 areas | Behind "Show the full table" | Reference, not story. |
 | Starter dataset h2, eyebrow and statement | Chunk statement and the step row | The "Not published" steps are the reason for the template, so they now sit together. |
 | Slate "No patient data" box (3 bullets) and the "One row per cancer group…" sentence | `CaveatNote` "counts only, no patient data", bullets behind "Why?"; the sentence deleted | The template's Read me sheet says it. |
@@ -45,7 +45,7 @@ All of it sits in one `FocusGroup`.
 | Confidence-grade section (h2, paragraph incl. "18 of 22 areas changed by more than a fifth", rules panel) | One button, "Show how we grade each figure", in the early-warning chunk | Brief: a small button, not a paragraph. `/how-to-read` returns 404 on this branch, so there is nothing to link to yet. |
 | Pathway section: picker, 7-cell strip, 7 detail cards, 4-bullet caveat box | A seven-step row (no area needed: the gaps are the same everywhere) in the template chunk; picker and detail cards behind "Show one area's figures for each step"; the caveat box became a `CaveatNote` "side by side, not cause and effect" | The point is "Not published". The county page has no such row (its `PathwayStrip` is the eight-step stepper without these figures), so linking out was not possible. The strip duplicated the detail cards, so it is gone (`strip={false}`). |
 | Early warning: h2, method paragraph, summary paragraph (GP 16 of 22, bowel 22 of 22), "Getting worse" heading and screening note, the warning cards, the "possible changes" cards, the all-figures table | One chunk for the GP wait: the South Karelia figure, the "15 more" line, the caveat, and "Show all 22 areas" (GP-wait table) | The GP wait is the page's subject. **Dropped from this page:** the referral (5), breast screening (5) and cervical screening (6) "getting worse" flags and the bowel-screening comparability flags. The `EarlyWarning` component is unchanged and can show them elsewhere. |
-| Goal 3 section (h2, 3 paragraphs, 4 chips, keylime panel) | One framed line, "Two of the counts measure Goal 3 of the national cancer strategy directly.", with the detail and its 4 chips behind "Show the Goal 3 link" | Brief. |
+| Goal 3 section (h2, 3 paragraphs, 4 chips, keylime panel) | One framed line, "Two of the counts measure Goal 3 of the national cancer strategy directly." (the "two" is taken from the data, not typed), with the detail and its 4 chips behind "Show the Goal 3 link" | Brief. |
 | Page title "What the data shows, and what to start counting" | "Where access is hardest", matching the nav label | Shorter. |
 
 ## Component changes (all in `components/insights`)
@@ -63,8 +63,19 @@ All of it sits in one `FocusGroup`.
 - **390px:** the picture sits above the text in its final state, and there is no sideways scroll even with every disclosure open (the scroll width was 988 before the fix).
 - **Reduced motion:** the page reads as a static document, with the picture in its final state.
 - **Print** (print media, A4 PDF): all 11 `<details>` are open, the picture is not sticky, and the story is in its final state; 21 pages.
+- **No JavaScript:** every chunk is at full opacity once its CSS fade has played (only the decorative arrow icons stay at 0.6–0.7). The picture shows its final state (2 dark, 6 sage, 6 mint), and the picker and the template link are in the HTML.
+- **390px, motion on:** after a scroll to the bottom every Reveal is at opacity 1, the scroll width stays 390 and the story stays in its final state.
+- **Print without backgrounds** (`print-color-adjust: economy`, as the print dialog defaults to): the mint boxes would lose their fill, so the tinted boxes now carry a hairline edge. Their dots still show the level, and the dark boxes and the dashed "Not published" cells print legibly.
 - **Template:** the button downloads `firstline-cancer-pathway-starter-template.xlsx` (9,444 bytes, valid zip).
 - **Area picker:** choosing Vantaa and Kerava loads `/insights?area=vantaa-kerava#pathway`, with the disclosure open on "The whole pathway in Vantaa and Kerava".
+
+## Decisions the team lead may want to reverse
+
+- The referral and screening "getting worse" flags are no longer on this page.
+- The print button is gone. The shared "Save or share" control will cover printing.
+- Both hero figures share one source chip and one grade label (they are identical).
+- The one-area pathway, with its picker, sits behind a button.
+- The story has four steps; the brief asked for two or three text blocks.
 
 ## Known leftovers
 
