@@ -499,35 +499,56 @@ h2:not([class*="type-"], .font-sans) {
 :not(svg *)[data-story-state="current"] {
   box-shadow: 0 0 0 2px var(--color-forest-ink);
 }
-/* The text block being read gets a Forest Ink rule at its side (from 1024px, while telling). */
+/* The text block being read gets a Forest Ink rule at its side (from 1024px, while telling).
+   Inside a FocusGroup the mint card marks it instead. */
 @media (min-width: 1024px) {
-  .scroll-story-step > * {
+  .scroll-story-step:not([data-focus-group] *) > * {
     border-left: 2px solid transparent;
     padding-left: 1.5rem;
     transition: border-color var(--motion-rise) var(--motion-ease);
   }
-  [data-scroll-story="telling"] .scroll-story-step[data-active] > * {
+  [data-scroll-story="telling"] .scroll-story-step[data-active]:not([data-focus-group] *) > * {
     border-left-color: var(--color-forest-ink);
   }
 }
 
-/* FocusGroup (components/motion/focus-group.tsx). While the effect is on (set by script after
-   hydration, away from the page's top and bottom), items other than the one in focus step back.
-   The floor is measured, not guessed: at 0.8 every text/surface pair used in a chunk still passes
-   AA (charcoal on cream 8.3:1, red ink 5.4:1, muted text on keylime 4.5:1); 0.3 and 0.5 fail. */
-[data-focus-item] {
+/* FocusGroup (components/motion/focus-group.tsx): fade the card, never the text. Every item is a
+   card with constant padding (nothing moves when focus changes).
+   - Neutral (before script, reduced motion, print) and out of focus: Cream Paper with an inset
+     Border Mist hairline (no layout shift, no coloured border). Light pills inside (caveat note,
+     source chip) take a Border Mist fill so they stay visible on cream. Out of focus: scale 0.96.
+   - In focus (nearest the middle, or holding keyboard focus or an opened "Show …"): Mint Veil,
+     no hairline, scale 1.02.
+   - Items with a tint of their own take the same two surfaces.
+   Text stays at full opacity. Measured AA, on mint / on cream: charcoal 12.1 / 15.8, Forest Ink
+   9.3 / 12.1, red status ink 7.0 / 9.0, muted 6.8 / 8.8, faint 5.8 / 7.5; pill text on Border
+   Mist: charcoal 13.7, Forest Ink 10.5; cream on a Forest Ink pill 12.1. */
+[data-focus-group] [data-focus-item] {
+  padding: clamp(1.3125rem, 1rem + 1.5vw, 2.625rem);
+  border-radius: 14px;
+  background-color: var(--color-cream-paper);
+  box-shadow: inset 0 0 0 1px var(--color-border-mist);
   transition:
-    opacity 350ms var(--motion-ease),
+    background-color 350ms var(--motion-ease),
+    box-shadow 350ms var(--motion-ease),
     transform 350ms var(--motion-ease);
 }
-[data-focus-group][data-focus-on] [data-focus-item]:not([data-focus="in"]):not(:focus-within):not(:has(details[open])) {
-  opacity: 0.85;
+[data-focus-group] [data-focus-item] :is([data-slot="caveat-note"], .source-chip) {
+  background-color: var(--color-border-mist);
 }
-@media (min-width: 640px) {
-  [data-focus-group][data-focus-on] [data-focus-item]:not([data-focus="in"]):not(:focus-within):not(:has(details[open])) {
-    opacity: 0.8;
-    transform: scale(0.98);
-  }
+[data-focus-group][data-focus-on] [data-focus-item] {
+  transform: scale(0.96);
+}
+[data-focus-group][data-focus-on] :is([data-focus-item][data-focus="in"], [data-focus-item]:focus-within, [data-focus-item]:has(details[open])) {
+  background-color: var(--color-mint-veil);
+  box-shadow: inset 0 0 0 1px transparent;
+  transform: scale(1.02);
+}
+[data-focus-group][data-focus-on] :is([data-focus-item][data-focus="in"], [data-focus-item]:focus-within, [data-focus-item]:has(details[open])) [data-slot="caveat-note"] {
+  background-color: var(--color-mint-veil);
+}
+[data-focus-group][data-focus-on] :is([data-focus-item][data-focus="in"], [data-focus-item]:focus-within, [data-focus-item]:has(details[open])) .source-chip {
+  background-color: var(--color-cream-paper);
 }
 
 /* Open/closed wording of a summary follows its own <details> only (nested disclosures included). */
@@ -560,7 +581,6 @@ details[open] > summary [data-when="closed"] {
 /* Reduced motion: everything is simply there. A step a button has not shown yet stays hidden. */
 @media (prefers-reduced-motion: reduce) {
   [data-focus-item] {
-    opacity: 1 !important;
     transform: none !important;
     transition: none !important;
   }
@@ -619,9 +639,13 @@ details[open] > summary [data-when="closed"] {
     min-height: 0 !important;
     break-inside: avoid;
   }
-  [data-focus-item] {
-    opacity: 1 !important;
+  /* FocusGroup cards in their neutral state, with paper-sized padding. */
+  [data-focus-group] [data-focus-item] {
+    transition: none !important;
     transform: none !important;
+    background-color: var(--color-cream-paper) !important;
+    box-shadow: inset 0 0 0 1px var(--color-border-mist) !important;
+    padding: 10pt 12pt !important;
   }
   html,
   body {
@@ -672,7 +696,8 @@ details[open] > summary [data-when="closed"] {
     break-inside: avoid;
   }
   /* A tall list item (a whole action card) may break; keeping it whole leaves a blank page. */
-  .print-flow {
+  .print-flow,
+  .print-flow > [data-slot="disclosure"] {
     break-inside: auto !important;
   }
   h1,

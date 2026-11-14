@@ -130,11 +130,11 @@ export function ScrollStory({
                 stepRefs.current[index] = el;
               }}
               data-story-block={index}
-              data-focus-item=""
               data-active={step === index ? "" : undefined}
               className="scroll-story-step flex flex-col justify-center lg:min-h-[75vh]"
             >
-              {content}
+              {/* The block itself, not its screen-height slot, is the FocusGroup card. */}
+              <div data-focus-item="">{content}</div>
             </div>
           ))}
         </div>

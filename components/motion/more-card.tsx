@@ -31,7 +31,7 @@ export function MoreCard({
       </h2>
       <ul className="divide-y divide-border">
         {rows.map((row) => (
-          <li key={row.key} className={cn("flex flex-col gap-3 py-4", row.print === false && "print:hidden")}>
+          <li key={row.key} className={cn("print-flow flex flex-col gap-3 py-4", row.print === false && "print:hidden")}>
             <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
               <p className="text-base font-semibold text-pretty text-forest-ink">{row.label}</p>
               {row.action ? <div className="shrink-0">{row.action}</div> : null}
