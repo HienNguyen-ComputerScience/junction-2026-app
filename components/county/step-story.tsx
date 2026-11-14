@@ -116,7 +116,7 @@ export function StepStoryText({ step, trend }: { step: PlanStep; trend?: ReactNo
         <p className="type-eyebrow">Step {step.number}</p>
       </Reveal>
       <Reveal index={1}>
-        <h3 className="font-display text-[1.5rem] leading-[1.2] font-light text-forest-ink">{step.label}</h3>
+        <h3 className="font-display text-[1.25rem] leading-[1.2] font-light text-forest-ink sm:text-[1.5rem]">{step.label}</h3>
       </Reveal>
       <Reveal index={2} className="flex max-w-[52ch] flex-col gap-2 text-[1.0625rem] leading-relaxed text-pretty">
         <StepFacts step={step} />

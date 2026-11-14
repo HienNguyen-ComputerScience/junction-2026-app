@@ -83,7 +83,8 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
         </div>
       </AreaLead>
 
-      <section aria-labelledby="steps-heading" className="flex flex-col gap-8 py-16 sm:py-24">
+      {/* A short top gap: the section heading shows on the first screen, so the page doesn't look finished under the hero. */}
+      <section aria-labelledby="steps-heading" className="flex flex-col gap-8 pt-8 pb-16 sm:pt-10 sm:pb-24">
         <Reveal className="motion-loud">
           <h2 id="steps-heading" className="type-title">
             {bottleneck.anyRed ? "Where care is delayed" : "Where the pathway stands"}
