@@ -1,37 +1,32 @@
-import { ArrowDown } from "lucide-react";
-import Link from "next/link";
-import type { ReactNode } from "react";
-import { cn } from "cn";
 import { notFound } from "next/navigation";
 
 import { ActionCard, ActionSummary } from "@/components/act/action-card";
 import { RedFlagHelper } from "@/components/act/red-flag-helper";
 import { AskBox } from "@/components/exa/ask-box";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
-import { SourceChip } from "@/components/source-chip";
+import { buildPathwaySteps, PathwaySteps } from "@/components/pathway/pathway-steps";
 import { BackLink } from "@/components/ui/back-link";
 import { Disclosure } from "@/components/ui/disclosure";
 import {
   Frame,
   FrameDescription,
-  FrameFooter,
   FrameHeader,
+  FrameMeta,
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
-import { BarKey, MeasureBar } from "@/components/ui/measure-bar";
-import { gapToFinland } from "@/components/ranking/ranking-list";
-import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
+import { BarKey } from "@/components/ui/measure-bar";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { TextLink } from "@/components/ui/text-link";
 import {
-  SELECTION_RULE,
   STAGE_LABELS,
   getBottleneck,
   otherActions,
   pickActions,
   type Bottleneck,
 } from "@/lib/act";
-import { counties, getCounty, getGaps, type Evidence, type Gap, type Stage } from "@/lib/data";
-import { formatPct, getIndicator, STATUS_LABEL } from "@/lib/ranking";
+import { counties, getCounty, LATEST_YEAR, type Evidence, type Stage } from "@/lib/data";
+import { STATUS_LABEL } from "@/lib/ranking";
 
 // Counties are a fixed, known set, so a blocking route is fine here.
 export const instant = false;
@@ -40,9 +35,6 @@ export function generateStaticParams() {
   return counties.map((county) => ({ id: county.id }));
 }
 
-/** The pathway, in order: the numbered steps on the county page. */
-const PATHWAY: Stage[] = ["gp_access", "gp_recognition", "referral"];
-
 /** Stages as they read inside a sentence. */
 const STAGE_IN_SENTENCE: Record<Stage, string> = {
   gp_access: "getting to a GP",
@@ -50,23 +42,7 @@ const STAGE_IN_SENTENCE: Record<Stage, string> = {
   referral: "the GP to specialist referral",
 };
 
-/**
- * A data sentence with its percentages set in the figure face ("(Finland 54.7%)"), so every
- * data number on the page uses the same numerals. The words stay in the text face.
- */
-function withFigures(text: string): ReactNode {
-  return text.split(/(\d+(?:\.\d+)?%)/).map((part, i) =>
-    i % 2 === 1 ? (
-      <span key={i} className="figure">
-        {part}
-      </span>
-    ) : (
-      part
-    ),
-  );
-}
-
-/** The one-line answer above the stat strip. The full summary sentence sits under it. */
+/** The one-line answer beside the section title. */
 function bottleneckLede(bottleneck: Bottleneck): string {
   const { focus, anyRed } = bottleneck;
   if (focus.length === 0) return "No 2025 pathway data is published for this county.";
@@ -83,23 +59,16 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
 
   const bottleneck = getBottleneck(county.id);
   const recommended = pickActions(bottleneck);
-  const first = recommended.at(0);
   const others = otherActions(county.id, recommended);
   const unmeasured = others.filter((group) => group.unmeasured && group.stage !== "gp_recognition");
   const remaining = others.filter((group) => !unmeasured.includes(group));
   const otherCount = others.reduce((total, group) => total + group.actions.length, 0);
-  // Every measured step of this county, drawn in pathway order below (display only: the
-  // bottleneck and the picked actions above stay as computed).
-  const stageGaps = getGaps(county.id);
 
   return (
-    <main className="page-container flex flex-col gap-6 pt-4 sm:gap-8 sm:pt-6">
-      {/* A 12-column grid: the title and the lede span nine, so the lede sets the measure. */}
-      <header className="grid grid-cols-12 gap-x-6 gap-y-3">
-        <BackLink href={`/county/${county.id}`} className="col-span-12">
-          Back to {county.name} pathway
-        </BackLink>
-        <div className="col-span-12 flex flex-col gap-2 lg:col-span-9">
+    <main className="page-container flex flex-col gap-6 pt-4 sm:pt-6">
+      <header className="flex flex-col items-start gap-2">
+        <BackLink href={`/county/${county.id}`}>Back to {county.name} pathway</BackLink>
+        <div className="flex flex-col gap-2">
           <p className="type-caption text-balance text-muted-foreground">
             Path to early cancer care
             <span className="max-sm:hidden"> · </span>
@@ -107,55 +76,31 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           </p>
           <h1 className="type-page">{county.name}: what to do next</h1>
         </div>
-        {first ? (
-          <div className="col-span-12 flex flex-col items-start gap-3 pt-1 lg:col-span-9">
-            <p className="type-lede text-pretty text-foreground lg:text-[1.375rem] lg:leading-8">
-              <span className="text-muted-foreground">Start here: </span>
-              {first.first_step}
-            </p>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <Link
-                href="#action-1"
-                className="inline-flex h-9 items-center gap-1.5 rounded-sm text-sm font-medium text-brand-ink underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
-              >
-                Action 1 below
-                <ArrowDown aria-hidden strokeWidth={1.75} className="size-4" />
-              </Link>
-              <SourceChip sourceId={first.source_id} />
-            </div>
-          </div>
-        ) : null}
       </header>
 
+      {/* The compact step strip: where the delay sits, in one short row, so the first action
+          is on the first screen. The full detail of each step is on the county page. */}
       <Frame aria-labelledby="where-heading">
-        <FrameHeader>
+        <FrameHeader className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
           <FrameTitle id="where-heading" className="type-title">
-            Where the delay sits
+            Where the delay sits ({LATEST_YEAR})
           </FrameTitle>
-          <p className="col-span-2 pt-1 text-[0.9375rem] text-pretty text-foreground">
-            {bottleneckLede(bottleneck)}
-          </p>
+          <p className="text-sm text-pretty text-foreground">{bottleneckLede(bottleneck)}</p>
+          <BarKey items={["finland"]} className="sm:ml-auto" />
         </FrameHeader>
-        {/* One stat strip: the steps in pathway order, as on the county page. From md up the
-            columns share six grid rows, so every part sits on the same line in every column. */}
-        <FramePanel
-          padding="none"
-          role="list"
-          className="flex flex-col divide-y divide-border md:grid md:auto-cols-fr md:grid-flow-col md:grid-rows-[repeat(6,auto)] md:divide-x md:divide-y-0"
-        >
-          {PATHWAY.map((stage, i) =>
-            stage === "gp_recognition" ? (
-              <RecognitionStat key={stage} step={i + 1} />
-            ) : (
-              stageGaps
-                .filter((gap) => gap.stage === stage)
-                .map((gap) => <StageStat key={stage} step={i + 1} gap={gap} />)
-            ),
-          )}
+        <FramePanel padding="none">
+          <PathwaySteps
+            steps={buildPathwaySteps(county.id)}
+            density="compact"
+            renderExtra={(step) =>
+              step.stage === "gp_recognition" ? (
+                <TextLink kind="jump" href="#red-flags" className="type-caption sm:min-h-6">
+                  Red-flag helper
+                </TextLink>
+              ) : null
+            }
+          />
         </FramePanel>
-        <FrameFooter className="pt-4">
-          <BarKey />
-        </FrameFooter>
       </Frame>
 
       <Frame aria-labelledby="recommended">
@@ -163,7 +108,10 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           <FrameTitle id="recommended" className="type-title">
             Recommended actions
           </FrameTitle>
-          <FrameDescription className="max-w-[52rem]">{SELECTION_RULE}</FrameDescription>
+          {/* The selection rule in one line (the full rule is SELECTION_RULE in lib/act). */}
+          <FrameMeta className="max-sm:col-span-2 max-sm:col-start-1 max-sm:row-start-2 max-sm:justify-start">
+            Worst stage first, one action per stage, up to three
+          </FrameMeta>
         </FrameHeader>
         <div className="flex flex-col gap-1.5">
           {recommended.map((action, index) => (
@@ -176,17 +124,12 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
         {otherCount > 0 ? (
           <Disclosure
             className="mt-1.5"
-            summaryClassName="min-h-11 w-full gap-2 rounded-panel px-3 hover:no-underline sm:px-4"
+            summaryClassName="min-h-11 w-full gap-2 rounded-panel px-3 sm:px-4"
             summary={
-              <span className="flex flex-1 flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
-                <span className="text-sm font-medium text-foreground hover:underline hover:underline-offset-4">
-                  <span className="group-open/disc:hidden">Show</span>
-                  <span className="hidden group-open/disc:inline">Hide</span> {otherCount} other
-                  evidence-backed {otherCount === 1 ? "option" : "options"}
-                </span>
-                <span className="type-micro font-normal text-muted-foreground">
-                  Not picked for {county.name}, grouped by stage
-                </span>
+              <span>
+                <span className="group-open/disc:hidden">Show</span>
+                <span className="hidden group-open/disc:inline">Hide</span> {otherCount} other evidence-backed{" "}
+                {otherCount === 1 ? "option" : "options"}
               </span>
             }
           >
@@ -233,9 +176,8 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           <FrameTitle id="red-flags" className="type-title scroll-mt-24">
             Red-flag helper for GPs
           </FrameTitle>
-          <FrameDescription className="max-w-[52rem]">
-            Supports the &ldquo;GP recognises warning signs&rdquo; step: a concern in, the warning-sign
-            category and the fastest referral route out, with the guideline to check.
+          <FrameDescription>
+            For the &ldquo;GP recognises warning signs&rdquo; step: a concern in, the referral route out.
           </FrameDescription>
         </FrameHeader>
         <FramePanel padding="lg">
@@ -243,180 +185,15 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
         </FramePanel>
       </Frame>
 
-      <Frame aria-labelledby="ask-heading">
-        <FrameHeader>
-          <FrameTitle id="ask-heading" className="type-title">
-            Ask the evidence, answered live from Exa search results
-          </FrameTitle>
-        </FrameHeader>
-        <AskBox />
-      </Frame>
+      <AskBox />
 
       <nav aria-label="Page" className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
         <BackLink href={`/county/${county.id}`}>Back to {county.name} pathway</BackLink>
-        <Link
-          href="/sources"
-          className="inline-flex h-9 items-center rounded-sm type-caption font-medium text-brand-ink underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
+        <TextLink kind="nav" href="/sources" className="type-caption">
           Sources and limitations
-        </Link>
+        </TextLink>
       </nav>
     </main>
-  );
-}
-
-/** The step number, drawn like the county page's pathway nodes. */
-const STEP_MARK: Record<Gap["status"], string> = {
-  // Dark ink on the saturated fills: 5.0:1 on red, 9.7:1 on amber.
-  red: "bg-status-red text-background",
-  amber: "bg-status-amber text-background",
-  no_data: "border border-dashed border-status-grey-ink/60 bg-card text-status-grey-ink",
-};
-
-/**
- * One column of the stat strip. From md up the columns share six grid rows (head, figure,
- * comparison, caption, bar, source), so every part sits at the same height in every column.
- */
-function StatColumn({ children }: { children: ReactNode }) {
-  return (
-    <div role="listitem" className="flex min-w-0 flex-col px-4 pt-4 pb-5 sm:px-6 sm:pt-5 sm:pb-6 md:row-span-6 md:grid md:grid-rows-subgrid">
-      {children}
-    </div>
-  );
-}
-
-/** Row 1: the step mark inline before the step name, so every part below shares the column edge. */
-function StatTitle({ step, title, status }: { step: number; title: string; status: Gap["status"] }) {
-  return (
-    <div className="flex items-center gap-3">
-      <span
-        aria-hidden
-        className={cn(
-          "flex size-7 shrink-0 items-center justify-center rounded-full text-[0.8125rem] font-semibold tabular-nums",
-          STEP_MARK[status],
-        )}
-      >
-        {step}
-      </span>
-      <h3 className="min-w-0 font-heading text-base leading-7 font-semibold tracking-normal text-pretty">
-        <span className="sr-only">Step {step}: </span>
-        {title}
-      </h3>
-    </div>
-  );
-}
-
-/** Row 2: the status badge with the source chip beside it, as on the county page. */
-function StatStatus({ status, children }: { status: Gap["status"]; children?: ReactNode }) {
-  return (
-    <div className="flex min-h-6 flex-wrap items-center gap-x-3 gap-y-2 pt-3">
-      <StatusBadge status={status} size="xs">
-        {STATUS_LABEL[status]}
-      </StatusBadge>
-      {children}
-    </div>
-  );
-}
-
-/** In the figure's place when there is no value: a plain statement, never a dash. */
-function NoFigure({ children }: { children: ReactNode }) {
-  return (
-    <p className="pt-5 text-[0.9375rem] leading-snug text-pretty text-muted-foreground">
-      {children}
-    </p>
-  );
-}
-
-/** Which way is better, from the indicator's direction. Referrals: a higher share is faster. */
-function directionNote(gap: Gap): string | null {
-  const direction = getIndicator(gap.indicator_id)?.direction;
-  if (direction === "higher_is_worse") return "lower is better";
-  if (direction === "lower_is_worse") return gap.stage === "referral" ? "higher is faster" : "higher is better";
-  return null;
-}
-
-/** What each measured share counts, continuing from the figure above it. */
-const STAT_CAPTION: Record<Stage, string> = {
-  gp_access: "of non-urgent GP visits waited more than 7 days",
-  gp_recognition: "",
-  referral: "of referrals were processed within 3 days",
-};
-
-/**
- * One measured step: the figure and its gap to Finland, the caption, the bar against Finland,
- * the source. Without a county value: a statement, the note, and the hatched track.
- */
-function StageStat({ step, gap }: { step: number; gap: Gap }) {
-  const direction = directionNote(gap);
-  // Composed here from the values, in the words every other screen uses ("non-urgent GP visits").
-  const caption = `${STAT_CAPTION[gap.stage]} in ${gap.year} (Finland ${formatPct(gap.national_value)}).`;
-  return (
-    <StatColumn>
-      <StatTitle step={step} title={STAGE_LABELS[gap.stage]} status={gap.status} />
-      <StatStatus status={gap.status}>
-        <SourceChip sourceId={gap.source_id} year={gap.year} />
-      </StatStatus>
-      {gap.value !== null ? (
-        <>
-          <p className={cn("pt-5 numeral text-[2.75rem] sm:text-[3rem]", STATUS_FIGURE[gap.status])}>
-            {formatPct(gap.value)}
-          </p>
-          <p className="flex flex-wrap items-baseline gap-x-1.5 pt-2.5 type-note text-muted-foreground">
-            <span className={cn("figure font-medium", STATUS_FIGURE[gap.status])}>
-              {gapToFinland(gap.value, gap.national_value)}
-            </span>
-            <span>
-              vs Finland{direction ? `, ${direction}` : null}
-            </span>
-          </p>
-        </>
-      ) : (
-        // No county value: the data note says so in the figure's place; nothing to repeat below.
-        <>
-          <NoFigure>{gap.note}</NoFigure>
-          <span aria-hidden className="max-md:hidden" />
-        </>
-      )}
-      {gap.value !== null ? (
-        <p className="pt-3 type-caption text-pretty text-muted-foreground">{withFigures(caption)}</p>
-      ) : (
-        <span aria-hidden className="max-md:hidden" />
-      )}
-      <MeasureBar
-        className="pt-5"
-        value={gap.value}
-        finland={gap.national_value}
-        finlandLabel={`Finland ${formatPct(gap.national_value)}`}
-        status={gap.status}
-      />
-    </StatColumn>
-  );
-}
-
-/** The step no statistic measures anywhere: the same rows, with the red-flag helper in the source row. */
-function RecognitionStat({ step }: { step: number }) {
-  return (
-    <StatColumn>
-      <StatTitle step={step} title={STAGE_LABELS.gp_recognition} status="no_data" />
-      <StatStatus status="no_data" />
-      <NoFigure>No public data anywhere in Finland</NoFigure>
-      <span aria-hidden className="max-md:hidden" />
-      <p className="pt-3 type-caption text-pretty text-muted-foreground">
-        No statistic shows how often GPs spot possible cancer at the first visit, so nobody can see how
-        this step performs.
-      </p>
-      <div className="flex flex-col gap-2 pt-5">
-        <MeasureBar value={null} finland={null} status="no_data" />
-        <p className="h-4 type-note text-muted-foreground">No indicator, so nothing to draw</p>
-        <a
-          href="#red-flags"
-          className="inline-flex h-9 w-fit items-center gap-1 rounded-sm type-caption font-medium text-brand-ink underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          The red-flag helper below supports it
-          <ArrowDown aria-hidden strokeWidth={1.75} className="size-4" />
-        </a>
-      </div>
-    </StatColumn>
   );
 }
 

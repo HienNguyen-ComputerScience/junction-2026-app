@@ -4,6 +4,8 @@ import { useId, useState } from "react";
 import { Check, ShieldAlert } from "lucide-react";
 import { cn } from "cn";
 
+import { TextLink } from "@/components/ui/text-link";
+
 import {
   FINNISH_ROADMAP,
   KAYPA_HOITO,
@@ -20,14 +22,9 @@ function LinkList({ links, className }: { links: GuidelineLink[]; className?: st
     <ul className={cn("flex flex-col gap-2 max-sm:gap-0.5", className)}>
       {links.map((link) => (
         <li key={link.url}>
-          <a
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-sm underline decoration-foreground/30 underline-offset-4 outline-none transition-colors hover:text-brand-ink hover:decoration-brand-ink focus-visible:ring-3 focus-visible:ring-ring/50 max-sm:inline-block max-sm:py-1.5"
-          >
+          <TextLink kind="external" href={link.url} inline className="max-sm:inline-block max-sm:py-1.5">
             {link.label}
-          </a>
+          </TextLink>
         </li>
       ))}
     </ul>
@@ -163,7 +160,7 @@ export function RedFlagHelper() {
                   </span>
                   <span className="min-w-0 flex-1 text-pretty">{category.label}</span>
                   {fromText && (
-                    <span className="shrink-0 type-micro text-muted-foreground">
+                    <span className="shrink-0 type-caption text-muted-foreground">
                       Matched<span className="sr-only"> by your description</span>
                     </span>
                   )}
@@ -190,14 +187,10 @@ export function RedFlagHelper() {
         </div>
 
         <div className="flex flex-col gap-3 border-t border-border pt-4">
-          <p className="type-micro text-muted-foreground">
-            Our own plain-language categories, not guideline text. UK guideline, Finnish criteria pending
-            (roadmap 2.5.2). Exact criteria, ages and tests are in the guidelines:
+          <p className="type-caption text-muted-foreground">
+            Our own plain-language categories, not guideline text. Exact criteria:
           </p>
-          <LinkList
-            links={[NICE_NG12, KAYPA_HOITO, FINNISH_ROADMAP]}
-            className="type-caption text-foreground/90"
-          />
+          <LinkList links={[NICE_NG12, KAYPA_HOITO, FINNISH_ROADMAP]} className="type-caption" />
         </div>
       </div>
 

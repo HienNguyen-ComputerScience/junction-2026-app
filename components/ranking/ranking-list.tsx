@@ -1,4 +1,4 @@
-import { ChevronRight, TrendingDown, TrendingUp } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 
@@ -24,10 +24,11 @@ type Props = {
 };
 
 // Desktop (lg): rank | area | bar | GP wait | referral (with the row's chevron at its end).
-// The bar cell spans the row's full height, so the Finland line runs unbroken from row to row.
+// The bar cell spans the row's full height, so the Finland line runs unbroken from row to row
+// of a group. It is drawn through bar rows only: a group heading has no bar and no line.
 // Below lg: area (rank inline before the name) | value, then the change and gap line, the bar, and the referral line.
 const ROW_GRID =
-  "grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 lg:grid-cols-[2rem_minmax(0,10.5rem)_minmax(0,1fr)_8.5rem_15.5rem] lg:gap-x-5";
+  "grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 lg:grid-cols-[2rem_minmax(0,12rem)_minmax(0,1fr)_10.5rem_15.5rem] lg:gap-x-5";
 
 // The referral column is a second indicator, not a detail of the GP wait: a hairline with 24px
 // on each side separates the two, in the header, the group headings and every row alike.
@@ -81,14 +82,14 @@ export function RankingList({
           wherever the list is scrolled. The bar column's second line is its axis. */}
       <div className={`${ROW_GRID} hidden border-b border-border px-5 lg:grid`}>
         <HeadCell line1="#" />
-        <HeadCell line1="Area" line2={`change since ${FIRST_YEAR}`} />
+        <HeadCell line1="Area" />
         <div className="flex flex-col pt-3">
           <span className="flex h-6 items-center truncate type-caption font-medium text-foreground">
             Non-urgent GP visits waiting over 7 days
           </span>
-          <BarAxis finlandX={finlandX} finlandLabel={finlandLabel} tick="bottom" />
+          <BarAxis finlandX={finlandX} finlandLabel={finlandLabel} />
         </div>
-        <HeadCell line1="GP wait" line2="gap to Finland" className="items-end text-right" />
+        <HeadCell line1="GP wait" className="items-end text-right" />
         <HeadCell
           line1="Referrals processed within 3 days"
           line2={
@@ -101,21 +102,11 @@ export function RankingList({
         />
       </div>
 
-      {/* Below lg: one line that says what the bar and the line are. The rest is in the key
-          under the list, so the first rows start high on a phone. */}
-      <p className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-border px-4 py-3 type-micro text-muted-foreground sm:px-5 lg:hidden">
-        {/* Both swatches sit in the same 24px slot as the key under the list (BarKey), so the
-            two labels share one left edge. */}
-        <span className="flex items-center gap-2">
-          <span aria-hidden className="h-2.5 w-6 shrink-0 rounded-[2px] bg-foreground/45" />
-          Bar: non-urgent GP visits waiting over 7 days
-        </span>
-        <span className="flex items-center gap-2">
-          <span aria-hidden className="relative h-2.5 w-6 shrink-0 rounded-[2px] bg-track">
-            <span className="absolute -inset-y-0.5 left-1/2 w-0.5 -translate-x-1/2 bg-foreground" />
-          </span>
-          <span>Line: {withFigures(finlandLabel)}</span>
-        </span>
+      {/* Below lg: one line that says what the bar and the line are, before the data. The key
+          is under the list. */}
+      <p className="border-b border-border px-4 py-3 type-caption text-pretty text-muted-foreground sm:px-5 lg:hidden">
+        Bars: non-urgent GP visits waiting over 7 days. White line, and the gap in each row:{" "}
+        {withFigures(finlandLabel)}.
       </p>
 
       <ol className="flex flex-col px-1.5 py-1.5 lg:px-0 lg:py-0">
@@ -131,7 +122,6 @@ export function RankingList({
                   count={groupSize}
                   total={total}
                   first={i === 0}
-                  finlandX={finlandX}
                   gpWaitSourceId={gpWaitSourceId}
                   referralSourceId={referralSourceId}
                 />
@@ -154,7 +144,6 @@ export function RankingList({
               count={unranked.length}
               total={total}
               first={false}
-              finlandX={finlandX}
             />
           </li>
         )}
@@ -173,7 +162,7 @@ export function RankingList({
                 {county.name}
               </span>
               <span className="flex items-center justify-end gap-2 py-4 lg:col-start-4">
-                <StatusBadge status="no_data" size="xs" variant="quiet">
+                <StatusBadge status="no_data" variant="quiet">
                   No public data
                 </StatusBadge>
                 <RowChevron className="absolute top-1/2 right-2.5 -translate-y-1/2 lg:hidden" />
@@ -186,13 +175,6 @@ export function RankingList({
         ))}
       </ol>
 
-      {/* The chart's base, desktop: the line ends on the axis it started from. */}
-      <div aria-hidden className={`${ROW_GRID} hidden px-5 lg:grid`}>
-        <div className="col-start-3 pb-3">
-          <BarAxis finlandX={finlandX} finlandLabel={finlandLabel} tick="top" />
-        </div>
-        <span className={REFERRAL_COL} />
-      </div>
     </div>
   );
 }
@@ -210,41 +192,24 @@ function HeadCell({
     <span className={`flex flex-col pt-3 pb-2 ${className}`}>
       <span className="flex h-6 items-center type-caption font-medium text-foreground">{line1}</span>
       {line2 && (
-        <span className="flex h-5 items-center type-micro text-muted-foreground">{line2}</span>
+        <span className="flex h-5 items-center type-caption text-muted-foreground">{line2}</span>
       )}
     </span>
   );
 }
 
-/**
- * The bar column's axis: 0% and 100% at the ends, Finland's label centred on the line, and a
- * short tick that joins the line running through the rows (below the labels in the header,
- * above them under the last row).
- */
-function BarAxis({
-  finlandX,
-  finlandLabel,
-  tick,
-}: {
-  finlandX: CSSProperties;
-  finlandLabel: string;
-  tick: "top" | "bottom";
-}) {
-  const labelY = tick === "bottom" ? "top-0.5" : "bottom-0";
+/** The bar column's axis: 0% and 100% at the ends, Finland's label centred on the line. */
+function BarAxis({ finlandX, finlandLabel }: { finlandX: CSSProperties; finlandLabel: string }) {
   return (
-    <div aria-hidden className="relative h-7">
-      <span className={`absolute left-0 figure type-note text-faint ${labelY}`}>0%</span>
-      <span className={`absolute right-0 figure type-note text-faint ${labelY}`}>100%</span>
+    <div aria-hidden className="relative h-7 type-caption">
+      <span className="absolute top-0.5 left-0 figure text-faint">0%</span>
+      <span className="absolute top-0.5 right-0 figure text-faint">100%</span>
       <span
-        className={`absolute -translate-x-1/2 type-note font-medium whitespace-nowrap text-foreground ${labelY}`}
+        className="absolute top-0.5 -translate-x-1/2 font-medium whitespace-nowrap text-foreground"
         style={finlandX}
       >
         {withFigures(finlandLabel)}
       </span>
-      <span
-        className={`absolute h-2 w-px bg-foreground ${tick === "bottom" ? "-bottom-px" : "top-0"}`}
-        style={finlandX}
-      />
     </div>
   );
 }
@@ -266,15 +231,14 @@ function countRun(rows: RankingRow[], start: number): number {
 }
 
 /**
- * Group heading. Every group has the same structure: the status badge and its count, then one
- * source chip over each figure column. The Finland line passes through it unbroken.
+ * Group heading. Every group has the same structure: the status badge and its count of all the
+ * areas, then one source chip over each figure column. No bar, so no Finland line.
  */
 function GroupDivider({
   status,
   count,
   total,
   first,
-  finlandX,
   gpWaitSourceId,
   referralSourceId,
 }: {
@@ -283,7 +247,6 @@ function GroupDivider({
   /** All areas in the list: the count reads "14 of 22 areas", beside the group's source chips. */
   total: number;
   first: boolean;
-  finlandX: CSSProperties;
   /** Given for the groups that show figures: one chip per column, per group heading. */
   gpWaitSourceId?: string;
   referralSourceId?: string;
@@ -292,32 +255,23 @@ function GroupDivider({
     <div
       className={`${ROW_GRID} px-2.5 lg:px-5 ${first ? "" : "mt-1.5 border-t border-border lg:mt-0"}`}
     >
-      <div className="col-span-2 flex min-w-0 items-center gap-2 pt-3 pb-2 whitespace-nowrap lg:col-span-2 lg:pt-4 lg:pb-2">
+      <div className="col-span-2 flex min-w-0 items-center gap-2 pt-3 pb-2 whitespace-nowrap lg:col-span-3 lg:pt-4 lg:pb-2">
         <StatusBadge status={status} size="sm">
           {STATUS_LABEL[status]}
         </StatusBadge>
-        <span className="shrink-0 type-micro text-muted-foreground">
+        <span className="shrink-0 type-caption text-muted-foreground">
           <span className="figure">{count}</span> of <span className="figure">{total}</span> areas
         </span>
       </div>
-      <div aria-hidden className="relative hidden lg:block">
-        <span className="absolute -top-px bottom-0 w-px bg-foreground" style={finlandX} />
-      </div>
       {/* Source chips, siblings of the row links (never inside one). Desktop: one over each
           figure column, the GP wait chip ending on the figures' right edge. Below lg: both on
-          one row under the label. */}
+          one wrapping row under the label, GP wait first. */}
       {gpWaitSourceId && referralSourceId ? (
-        <div className="col-span-2 flex flex-wrap items-center gap-x-4 gap-y-2 pb-2 lg:contents">
-          {/* Below lg the chips carry a muted label outside the chip: the column header that
-              names them is not on a phone. */}
-          <span className="flex shrink-0 items-center gap-2 lg:col-start-4 lg:justify-end lg:pt-4 lg:pb-2">
-            <span className="w-[4.25rem] type-micro text-muted-foreground lg:hidden">GP wait</span>
-            <span className="flex shrink-0">
-              <SourceChip sourceId={gpWaitSourceId} year={LATEST_YEAR} />
-            </span>
+        <div className="col-span-2 flex flex-wrap items-center gap-2 pb-2 lg:contents">
+          <span className="flex shrink-0 lg:col-start-4 lg:justify-end lg:pt-4 lg:pb-2">
+            <SourceChip sourceId={gpWaitSourceId} year={LATEST_YEAR} />
           </span>
-          <span className={`flex shrink-0 items-center gap-2 lg:pt-4 lg:pb-2 ${REFERRAL_COL}`}>
-            <span className="w-[4.25rem] type-micro text-muted-foreground lg:hidden">Referrals</span>
+          <span className={`flex shrink-0 lg:pt-4 lg:pb-2 ${REFERRAL_COL}`}>
             <SourceChip sourceId={referralSourceId} year={LATEST_YEAR} />
           </span>
         </div>
@@ -407,17 +361,16 @@ function RankingRowLink({
       {/* Second line: the change since FIRST_YEAR and the gap to Finland. One flex line below lg,
           two cells of the grid on desktop. */}
       <span className="col-span-2 col-start-1 row-start-2 flex items-center justify-between gap-x-3 pt-0.5 lg:contents">
-        <span className="flex h-5 items-center lg:col-start-2 lg:row-start-2 lg:h-[1.625rem] lg:items-start">
+        <span className="flex h-5 min-w-0 items-center lg:col-start-2 lg:row-start-2 lg:h-[1.625rem] lg:items-start">
           <ChangeSince change={row.gpWaitChange} />
         </span>
         <span className="flex h-5 items-center justify-end lg:col-start-4 lg:row-start-2 lg:h-[1.625rem] lg:items-start">
-          <StatusBadge status={row.gpStatus} size="xs" variant="quiet" className="h-4">
+          <StatusBadge status={row.gpStatus} variant="quiet">
             <span>
               <span className="sr-only">{STATUS_LABEL[row.gpStatus]}: </span>
-              <span className="figure font-medium text-foreground/80">
-                {gapToFinland(row.gpWait.value, nationalGpWait)}
-              </span>{" "}
-              vs Finland
+              <span className="figure">{gapToFinland(row.gpWait.value, nationalGpWait)}</span>
+              {/* On a phone the line above the list says what the gap is measured against. */}
+              <span className="max-lg:sr-only"> vs Finland</span>
             </span>
           </StatusBadge>
         </span>
@@ -462,7 +415,7 @@ function RankingRowLink({
               index={index}
             />
           </span>
-          <StatusBadge status={referralStatus} size="xs" variant="quiet" className="lg:h-4">
+          <StatusBadge status={referralStatus} variant="quiet">
             <span>
               {REFERRAL_TAG[referralStatus]}
               {referralStatus !== "no_data" && (
@@ -483,30 +436,22 @@ function RankingRowLink({
 }
 
 /**
- * Change in percentage points since FIRST_YEAR: a 12px trend icon in the text colour, then the
- * signed figure at primary weight. The icon and the sign carry the direction; colour stays
- * reserved for status.
+ * Change in percentage points since FIRST_YEAR, in words: "27.4 pts worse since 2023". No arrow
+ * and no sign (a rising arrow reads as good news), and no colour: colour is for status.
  */
 function ChangeSince({ change }: { change: number | null }) {
   if (change === null) return null;
-  if (change === 0) {
-    return (
-      <span className="type-micro text-muted-foreground">no change since {FIRST_YEAR}</span>
-    );
-  }
-  const up = change > 0;
-  const Trend = up ? TrendingUp : TrendingDown;
+  const size = Math.abs(change).toFixed(1);
   return (
-    <span className="flex items-center gap-1.5 type-micro text-muted-foreground">
-      <Trend aria-hidden strokeWidth={1.75} className="size-3 shrink-0 text-foreground" />
-      <span>
-        <span className="sr-only">{up ? "Up" : "Down"} </span>
-        <span className="figure font-medium text-foreground">
-          <span aria-hidden>{up ? "+" : "−"}</span>
-          {Math.abs(change).toFixed(1)} pts
-        </span>{" "}
-        since {FIRST_YEAR}
-      </span>
+    <span className="truncate type-caption text-muted-foreground">
+      {size === "0.0" ? (
+        "No change"
+      ) : (
+        <>
+          <span className="figure">{size} pts</span> {change > 0 ? "worse" : "better"}
+        </>
+      )}{" "}
+      since {FIRST_YEAR}
     </span>
   );
 }

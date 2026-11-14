@@ -35,7 +35,7 @@ export function LimitationsBox({
       <aside aria-label="Limitations" className={className}>
         <Disclosure
           className="rounded-panel border border-frame-border bg-frame"
-          summaryClassName="min-h-11 w-full gap-1.5 px-3.5 py-2.5 type-micro font-medium hover:no-underline"
+          summaryClassName="min-h-11 w-full gap-1.5 px-3.5 py-2.5 hover:no-underline"
           summary={
             <span>
               {TITLE} <span className="font-normal text-muted-foreground tabular-nums">({items.length})</span>

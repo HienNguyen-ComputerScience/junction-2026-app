@@ -82,7 +82,7 @@ export function ActionCard({
     <FramePanel
       padding="none"
       id={index !== undefined ? `action-${index}` : undefined}
-      className="@container scroll-mt-20 px-4 py-4 sm:px-6 sm:py-5"
+      className="@container scroll-mt-20 px-4 py-4 sm:px-6"
     >
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         {index !== undefined && (
@@ -118,26 +118,26 @@ export function ActionCard({
             <Field label="Precedent" tone="quiet">
               {action.precedent}
             </Field>
-            <Field label="Evidence">
-              {action.effect_text}
-              <div className="mt-1 flex flex-col items-start">
-                {/* NICE content may not be reproduced outside the UK: link only, never the quote. */}
-                {action.source_id.startsWith("ev-nice") ? null : (
-                  <Disclosure summary="Quote and page in the source">
-                    <p className="mb-2 border-l-2 border-border pl-3 type-caption text-muted-foreground">
-                      {action.quote_or_page}
-                    </p>
-                  </Disclosure>
-                )}
-                {children}
-              </div>
-            </Field>
+            <Field label="Evidence">{action.effect_text}</Field>
           </dl>
-          <Disclosure summary="Limitations" className="@md:pl-[7rem]" summaryClassName="@md:-ml-[7rem] @md:w-fit">
-            <p className="pb-1 text-sm leading-relaxed text-pretty text-muted-foreground">
-              {action.limitations}
-            </p>
-          </Disclosure>
+          {/* One stack with one left edge, under the evidence text: the two disclosures, then
+              the secondary action. */}
+          <div className="flex flex-col items-start @md:pl-[7rem]">
+            {/* NICE content may not be reproduced outside the UK: link only, never the quote. */}
+            {action.source_id.startsWith("ev-nice") ? null : (
+              <Disclosure summary="Quote and page in the source">
+                <p className="mb-2 border-l-2 border-border pl-3 type-caption text-muted-foreground">
+                  {action.quote_or_page}
+                </p>
+              </Disclosure>
+            )}
+            <Disclosure summary="Limitations">
+              <p className="pb-2 text-sm leading-relaxed text-pretty text-muted-foreground">
+                {action.limitations}
+              </p>
+            </Disclosure>
+            {children ? <div className="w-full pt-2">{children}</div> : null}
+          </div>
         </div>
       </div>
     </FramePanel>

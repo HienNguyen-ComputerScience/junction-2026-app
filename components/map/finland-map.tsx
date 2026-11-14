@@ -18,11 +18,12 @@ import {
 /**
  * Map of Finland's 22 areas (21 wellbeing services counties and the City of Helsinki), filled
  * by data status. Presentational and server-rendered: no client JavaScript, hover and focus
- * are CSS only. Boundaries: Statistics Finland, CC BY 4.0 (see finland-paths.ts).
+ * are CSS only. Boundaries: Statistics Finland, CC BY 4.0 (see finland-paths.ts). The borders
+ * between areas are drawn in the panel colour, so the map belongs on a panel (`bg-card`).
  *
  * Give the figure a height through `className` (200px to 420px, e.g. `h-80`); the map takes
  * its width from that height (0.574 of it). Each highlighted area adds a label column beside
- * the map, about 120px wide, on the side where its leader crosses less land.
+ * the map, about 115px wide, on the side where its leader crosses less land.
  *
  * Åland is part of Finland but not one of the app's 22 areas: it is drawn as a neutral
  * outline (a hairline and a faint ground, its two largest islands), with no link and no
@@ -53,26 +54,25 @@ type Props = {
   className?: string;
 };
 
-// Fills at a calm strength, from the status tokens (never a colour of their own, so a palette
-// change needs no edit here). Hover and keyboard focus lift the fill one step.
+// The fills of the bars, at the strength of the bars: an area that is worse than Finland is the
+// solid red of a bar's gap, an area at or better is the slate of a bar. The map's key and the
+// bars' key are therefore one key, with identical swatches. Hover and keyboard focus lift the
+// fill a step towards white.
 const AREA_FILL: Record<GapStatus, string> = {
-  red: "fill-status-red/60 group-hover:fill-status-red/85 group-focus-visible:fill-status-red/85",
+  red: "fill-status-red group-hover:[fill:color-mix(in_oklch,var(--status-red),white_18%)] group-focus-visible:[fill:color-mix(in_oklch,var(--status-red),white_18%)]",
   amber:
-    "fill-status-amber-bar/50 group-hover:fill-status-amber-bar/75 group-focus-visible:fill-status-amber-bar/75",
+    "fill-status-amber-bar group-hover:[fill:color-mix(in_oklch,var(--status-amber-bar),white_18%)] group-focus-visible:[fill:color-mix(in_oklch,var(--status-amber-bar),white_18%)]",
   no_data:
     "[fill:var(--hatch)] group-hover:[fill:var(--hatch-lift)] group-focus-visible:[fill:var(--hatch-lift)]",
 };
 
-// An area of a few pixels (Helsinki, Vantaa and Kerava) would lose most of itself to a border
-// in the page colour. It is drawn after its neighbours instead, one step lighter than they
-// are, with a 1px outline in its own status token at full strength, so it reads as one solid
+// An area of a few pixels (Helsinki, Vantaa and Kerava) would lose most of itself to a border.
+// It is drawn after its neighbours instead, with a thinner hairline, so it stays one solid
 // mark that can be found.
 const SMALL_AREA: Record<GapStatus, string> = {
-  red: "stroke-status-red fill-status-red/85 group-hover:fill-status-red group-focus-visible:fill-status-red",
-  amber:
-    "stroke-status-amber-bar fill-status-amber-bar/75 group-hover:fill-status-amber-bar group-focus-visible:fill-status-amber-bar",
-  no_data:
-    "stroke-status-grey fill-status-grey/60 group-hover:fill-status-grey group-focus-visible:fill-status-grey",
+  red: AREA_FILL.red,
+  amber: AREA_FILL.amber,
+  no_data: "fill-status-grey/60 group-hover:fill-status-grey group-focus-visible:fill-status-grey",
 };
 
 // Labels are HTML, so their type stays 12px at every map size. Each is two 16px lines on a
@@ -234,10 +234,11 @@ export function FinlandMap({
                 <use
                   href={`#${pathId(area.id)}`}
                   clipPath={small ? undefined : `url(#${clipId(area.id)})`}
-                  strokeWidth={1}
+                  strokeWidth={small ? 0.75 : 1}
                   className={cn(
                     "transition-colors group-focus-visible:stroke-ring group-focus-visible:[stroke-width:4px]",
-                    small ? SMALL_AREA[area.status] : ["stroke-background", AREA_FILL[area.status]],
+                    "stroke-card",
+                    small ? SMALL_AREA[area.status] : AREA_FILL[area.status],
                   )}
                 />
               </Link>
@@ -304,7 +305,7 @@ function Leader({ item }: { item: Placed }) {
         }}
       />
       <span
-        className="pointer-events-none absolute size-1 -translate-1/2 bg-foreground outline-1 outline-background"
+        className="pointer-events-none absolute size-1 -translate-1/2 bg-foreground outline-1 outline-card"
         style={{ left: x, top: y }}
       />
     </span>
@@ -331,8 +332,8 @@ function LabelColumn({ side, labels }: { side: Side; labels: Placed[] }) {
           )}
           style={{ top: y }}
         >
-          <span className="type-micro font-medium text-foreground">{area.name}</span>
-          <StatusBadge status={area.status} size="xs" variant="quiet" className="h-4 type-micro">
+          <span className="type-caption leading-4 font-medium text-foreground">{area.name}</span>
+          <StatusBadge status={area.status} variant="quiet" className="h-4 leading-4">
             <span className="figure">{area.valueLabel ?? STATUS_LABEL[area.status]}</span>
           </StatusBadge>
         </span>
