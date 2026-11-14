@@ -45,7 +45,7 @@ import { SaveShare, type ShareOption } from "@/components/share";
 | Page | Where | Options |
 |---|---|---|
 | Actions `/county/<id>/act` | Right of the title (under it on phones) | Print the page; Word and Excel of the plan (recommended actions; only when there are any); Email |
-| Briefing, step 6 (`…/take-it-to-your-board`) | The step's body, open (`inline`) | Print the whole briefing (the 4-page document, unchanged); Word and Excel of the plan with the briefing's actions, the target level of the action in focus and the year chosen in step 5; Email a link to step 1 of the briefing |
+| Briefing, step 6 (`…/take-it-to-your-board`) | Right under the step's statement, open (`inline`, two columns from 640px), before the three-line recap, so all four options are on the first screen at 1366×768 and 390×844 | Print the whole briefing (the 4-page document, unchanged); Word and Excel of the plan with the briefing's actions, the target level of the action in focus and the year chosen in step 5; Email a link to step 1 of the briefing |
 | Compare `/compare` | Where the Excel and Print buttons were, in the lead chunk | Print; Excel (the table of all areas, `/compare/export`) |
 | Area `/county/<id>` | Where the plan and Print buttons were, next to "See what to do" | Print; Email |
 
@@ -77,7 +77,7 @@ The read-back of every downloaded file found no "board", and found "visits", "So
 ## "Board": what is left
 
 - **User-facing text:** none. Checked by scanning `document.body.innerText` and the page title on home, act, the briefing's last step, compare and the area page at both sizes, and by grepping `app components lib` and the Word and Excel files. `data/*.json` has no "board".
-- **Step 6 label:** "Save or share this briefing". It feeds the pill, the page title ("Step 6 of 6: Save or share this briefing") and step 5's Next button. On paper, section 6 is headed "The action plan as a file" and points to the act page for the Word and Excel files.
+- **Step 6 label:** "Save or share this briefing". It feeds the pill and the page title ("Step 6 of 6: Save or share this briefing"). Step 5's Next button says "Next: save or share", kept short so it fits on one line at 390px. On paper, section 6 is headed "The action plan as a file" and points to the act page for the Word and Excel files.
 - **Home:** "6 short steps · about 2 minutes · download or print at the end".
 - **One leftover, in an address:** step 6's URL slug is still `take-it-to-your-board`. `proxy.ts` (repo root config, not this branch's) duplicates the slug list to return real 404s, so changing it only in `lib/briefing/steps.ts` would 404 the step. To finish it, the owner of `proxy.ts` does both of these in one commit:
   1. In `lib/briefing/steps.ts`, set the step's slug to `save-or-share`.
@@ -116,6 +116,6 @@ See the PR body for the verify command output. The click-through script (playwri
 
 The final run was made against the production build (`next start`) after the last foundation merge: 107 checks, 0 failures. The dev server, run before that merge, showed both labels of every Disclosure ("Why?" and "Hide why") after hot-reloading the foundation's new `globals.css`. The production build shows one label, so this is stale dev CSS, not a bug; restart `npm run dev` after merging.
 
-On the briefing's last step at 1366×768, the first option sits under the step's fixed Back bar until the reader scrolls a little, as the old buttons did. Moving the options above the three-line summary would fix that. It was left alone to keep this change small.
+A separate check opened step 5, picked 2030, pressed Next and downloaded the Word file from step 6. The link carries `year=2030` and the document says "by the end of 2030", not 2028.
 
 Screenshots: `docs/audit/export/screenshots/` (`<page>-<desktop|phone>[-open].png`, `act-print-media.png`, etc.).
