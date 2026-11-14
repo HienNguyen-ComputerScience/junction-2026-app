@@ -116,6 +116,29 @@ const INDICATORS = [
     limitation:
       "Share of residents who got a Kela reimbursement for a private doctor visit in the year, any specialty, not only GPs. Visits with no reimbursement claim are not counted. Listed on this page as context only: not shown on county pages and not used for ranking or stage status.",
   },
+  // Cancer stage by county is not published (the Cancer Registry shows stage
+  // nationally only). 5-year relative survival is published by county.
+  // Context only (stage null). The 2024 value covers patients diagnosed 2015-2024.
+  {
+    indicator_id: "3627",
+    short_name: "Bowel cancer 5-year relative survival",
+    unit: "%",
+    direction: "lower_is_worse",
+    stage: null,
+    years: SCREENING_YEARS,
+    limitation:
+      "Age-standardised 5-year relative survival of bowel cancer patients. Each year's value covers patients diagnosed in that year and the nine before it (2024: diagnosed 2015-2024). Cancer stage by county is not published, and survival mixes how early cancer is found with how well it is treated. Small counties vary from year to year. Context only: one line on county pages, not used for ranking, status or actions.",
+  },
+  {
+    indicator_id: "3625",
+    short_name: "Breast cancer 5-year relative survival",
+    unit: "%",
+    direction: "lower_is_worse",
+    stage: null,
+    years: SCREENING_YEARS,
+    limitation:
+      "Age-standardised 5-year relative survival of breast cancer patients. Each year's value covers patients diagnosed in that year and the nine before it (2024: diagnosed 2015-2024). Cancer stage by county is not published, and survival mixes how early cancer is found with how well it is treated. Small counties vary from year to year. Context only: one line on county pages, not used for ranking, status or actions.",
+  },
 ];
 
 // Values the spec and pitch quote. The build fails if Sotkanet disagrees.

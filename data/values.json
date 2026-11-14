@@ -2649,6 +2649,1110 @@
   },
   {
     "county_id": "central-finland",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "central-finland",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 93,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "central-finland",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "central-ostrobothnia",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 87,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "central-ostrobothnia",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 90,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "central-ostrobothnia",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 91,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "central-uusimaa",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 90,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "central-uusimaa",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "central-uusimaa",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "east-uusimaa",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 91,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "east-uusimaa",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 90,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "east-uusimaa",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 90,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "finland",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "finland",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "finland",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "helsinki",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "helsinki",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "helsinki",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 91,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "kainuu",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 88,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "kainuu",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 89,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "kainuu",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 89,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "kanta-hame",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "kanta-hame",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "kanta-hame",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "kymenlaakso",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 93,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "kymenlaakso",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 93,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "kymenlaakso",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 93,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "lapland",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "lapland",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "lapland",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "north-karelia",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 90,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "north-karelia",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 90,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "north-karelia",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 90,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "north-ostrobothnia",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 90,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "north-ostrobothnia",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 91,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "north-ostrobothnia",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 90,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "north-savo",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 94,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "north-savo",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 94,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "north-savo",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 93,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "ostrobothnia",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 90,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "ostrobothnia",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "ostrobothnia",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "paijat-hame",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "paijat-hame",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 91,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "paijat-hame",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 91,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "pirkanmaa",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 93,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "pirkanmaa",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 93,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "pirkanmaa",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 93,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "satakunta",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 93,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "satakunta",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "satakunta",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "south-karelia",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "south-karelia",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "south-karelia",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "south-ostrobothnia",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 91,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "south-ostrobothnia",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 93,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "south-ostrobothnia",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 93,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "south-savo",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 90,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "south-savo",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 91,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "south-savo",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 91,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "southwest-finland",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "southwest-finland",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 93,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "southwest-finland",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 94,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "vantaa-kerava",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "vantaa-kerava",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "vantaa-kerava",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 94,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "west-uusimaa",
+    "indicator_id": "3625",
+    "year": 2022,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "west-uusimaa",
+    "indicator_id": "3625",
+    "year": 2023,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "west-uusimaa",
+    "indicator_id": "3625",
+    "year": 2024,
+    "value": 92,
+    "abs_value": null,
+    "source_id": "sotkanet-3625"
+  },
+  {
+    "county_id": "central-finland",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 67,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "central-finland",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 67,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "central-finland",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 72,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "central-ostrobothnia",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 61,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "central-ostrobothnia",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 66,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "central-ostrobothnia",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 70,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "central-uusimaa",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 67,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "central-uusimaa",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 71,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "central-uusimaa",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 74,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "east-uusimaa",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 76,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "east-uusimaa",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 70,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "east-uusimaa",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 72,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "finland",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 67,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "finland",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 67,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "finland",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 68,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "helsinki",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 72,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "helsinki",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 71,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "helsinki",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 71,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "kainuu",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 62,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "kainuu",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 59,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "kainuu",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 64,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "kanta-hame",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 67,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "kanta-hame",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 66,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "kanta-hame",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 66,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "kymenlaakso",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 63,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "kymenlaakso",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 65,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "kymenlaakso",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 70,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "lapland",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 72,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "lapland",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 73,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "lapland",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 73,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "north-karelia",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 67,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "north-karelia",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 66,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "north-karelia",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 66,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "north-ostrobothnia",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 69,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "north-ostrobothnia",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 70,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "north-ostrobothnia",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 69,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "north-savo",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 63,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "north-savo",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 62,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "north-savo",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 64,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "ostrobothnia",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 68,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "ostrobothnia",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 71,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "ostrobothnia",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 71,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "paijat-hame",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 65,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "paijat-hame",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 64,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "paijat-hame",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 63,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "pirkanmaa",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 65,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "pirkanmaa",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 65,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "pirkanmaa",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 66,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "satakunta",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 60,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "satakunta",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 58,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "satakunta",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 64,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "south-karelia",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 66,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "south-karelia",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 62,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "south-karelia",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 65,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "south-ostrobothnia",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 62,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "south-ostrobothnia",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 63,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "south-ostrobothnia",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 65,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "south-savo",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 68,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "south-savo",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 69,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "south-savo",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 72,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "southwest-finland",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 68,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "southwest-finland",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 69,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "southwest-finland",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 67,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "vantaa-kerava",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 72,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "vantaa-kerava",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 72,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "vantaa-kerava",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 73,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "west-uusimaa",
+    "indicator_id": "3627",
+    "year": 2022,
+    "value": 68,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "west-uusimaa",
+    "indicator_id": "3627",
+    "year": 2023,
+    "value": 69,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "west-uusimaa",
+    "indicator_id": "3627",
+    "year": 2024,
+    "value": 70,
+    "abs_value": null,
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "county_id": "central-finland",
     "indicator_id": "5033",
     "year": 2023,
     "value": 0,

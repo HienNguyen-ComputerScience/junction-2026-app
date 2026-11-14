@@ -88,5 +88,25 @@
     "stage": null,
     "limitation": "Share of residents who got a Kela reimbursement for a private doctor visit in the year, any specialty, not only GPs. Visits with no reimbursement claim are not counted. Listed on this page as context only: not shown on county pages and not used for ranking or stage status.",
     "source_id": "sotkanet-692"
+  },
+  {
+    "indicator_id": "3627",
+    "name": "Five-year relative survival rate of bowel cancer patients, %",
+    "short_name": "Bowel cancer 5-year relative survival",
+    "unit": "%",
+    "direction": "lower_is_worse",
+    "stage": null,
+    "limitation": "Age-standardised 5-year relative survival of bowel cancer patients. Each year's value covers patients diagnosed in that year and the nine before it (2024: diagnosed 2015-2024). Cancer stage by county is not published, and survival mixes how early cancer is found with how well it is treated. Small counties vary from year to year. Context only: one line on county pages, not used for ranking, status or actions.",
+    "source_id": "sotkanet-3627"
+  },
+  {
+    "indicator_id": "3625",
+    "name": "Five-year relative survival rate of breast cancer patients, %",
+    "short_name": "Breast cancer 5-year relative survival",
+    "unit": "%",
+    "direction": "lower_is_worse",
+    "stage": null,
+    "limitation": "Age-standardised 5-year relative survival of breast cancer patients. Each year's value covers patients diagnosed in that year and the nine before it (2024: diagnosed 2015-2024). Cancer stage by county is not published, and survival mixes how early cancer is found with how well it is treated. Small counties vary from year to year. Context only: one line on county pages, not used for ranking, status or actions.",
+    "source_id": "sotkanet-3625"
   }
 ]

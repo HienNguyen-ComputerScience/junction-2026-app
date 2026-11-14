@@ -180,6 +180,24 @@
     "data_updated": "2026-06-12"
   },
   {
+    "source_id": "sotkanet-3625",
+    "kind": "statistic",
+    "name": "Sotkanet 3625: Five-year relative survival rate of breast cancer patients, %",
+    "url": "https://sotkanet.fi/sotkanet/en/metadata/indicators/3625",
+    "publisher": "Finnish Cancer Registry, Sotkanet",
+    "retrieved": "2026-11-14",
+    "data_updated": "2026-06-12"
+  },
+  {
+    "source_id": "sotkanet-3627",
+    "kind": "statistic",
+    "name": "Sotkanet 3627: Five-year relative survival rate of bowel cancer patients, %",
+    "url": "https://sotkanet.fi/sotkanet/en/metadata/indicators/3627",
+    "publisher": "Finnish Cancer Registry, Sotkanet",
+    "retrieved": "2026-11-14",
+    "data_updated": "2026-06-12"
+  },
+  {
     "source_id": "sotkanet-5033",
     "kind": "statistic",
     "name": "Sotkanet 5033: Referrals for specialised health care received after processing for more than 21 days, % of the referrals received",
