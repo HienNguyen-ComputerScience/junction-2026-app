@@ -8,15 +8,16 @@ import { useStoryStep } from "@/components/motion";
 export type TileLevel = 0 | 1 | 2 | 3;
 
 /**
- * Each level a clear step on the palette: cream, mint, then sage with a Forest Ink edge, then
- * Forest Ink. The edge (2px on every box, so nothing shifts) keeps level 2 apart from level 1
+ * Each level a clear step on the palette: cream, mint, sage with a Forest Ink edge, then slate
+ * with the same edge. Never the Forest Ink fill: that is the primary button, and a tile is not
+ * one. The edge (2px on every box, so nothing shifts) keeps levels 2 and 3 apart from level 1
  * even when a print drops the fills; the dots carry the level without colour.
  */
 const FILL: Record<TileLevel, string> = {
   0: "border-border-mist bg-cream-paper text-charcoal",
   1: "border-forest-ink/25 bg-mint-veil text-charcoal",
   2: "border-forest-ink bg-sage-mist text-forest-ink font-semibold",
-  3: "border-forest-ink bg-forest-ink text-cream-paper font-semibold",
+  3: "border-forest-ink bg-slate-hush text-forest-ink font-semibold",
 };
 
 const SAYS: Record<TileLevel, string> = {
@@ -59,6 +60,18 @@ export function NoWayRoundTiles({
   };
   return (
     <div className="flex flex-col gap-4">
+      {/* The key comes first, so it is on screen before the boxes it explains. Without counts it only repeats each box's own screen-reader text; with counts it adds facts, so it is read. */}
+      <ul aria-hidden={counts ? undefined : true} aria-label={counts ? "Legend" : undefined} className="flex flex-col gap-1.5 text-base">
+        {([1, 2, 3] as const).map((level) => (
+          <li key={level} className="flex items-center gap-2.5">
+            <span className={cn("inline-flex h-6 w-10 items-center justify-center rounded-sm border-2", FILL[level])}>
+              <Dots level={level} />
+            </span>
+            {counts ? <span className="figure min-w-[2ch] text-right font-semibold">{areas.filter((a) => a.level >= level).length}</span> : null}
+            {level === 1 ? "Longer GP wait than Finland overall" : level === 2 ? "… and few private or work-health doctor visits instead" : "… true in every one of the six tests we ran"}
+          </li>
+        ))}
+      </ul>
       <ul className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
         {areas.map((a) => {
           const level = shown(a.level);
@@ -78,18 +91,6 @@ export function NoWayRoundTiles({
             </li>
           );
         })}
-      </ul>
-      {/* Without counts the legend only repeats each box's own screen-reader text; with counts it adds facts, so it is read. */}
-      <ul aria-hidden={counts ? undefined : true} aria-label={counts ? "Legend" : undefined} className="flex flex-col gap-1.5 text-base">
-        {([1, 2, 3] as const).map((level) => (
-          <li key={level} className="flex items-center gap-2.5">
-            <span className={cn("inline-flex h-6 w-10 items-center justify-center rounded-sm border-2", FILL[level])}>
-              <Dots level={level} />
-            </span>
-            {counts ? <span className="figure min-w-[2ch] text-right font-semibold">{areas.filter((a) => a.level >= level).length}</span> : null}
-            {level === 1 ? "Longer GP wait than Finland overall" : level === 2 ? "… and few private or work-health doctor visits instead" : "… true in every one of the six tests we ran"}
-          </li>
-        ))}
       </ul>
     </div>
   );
