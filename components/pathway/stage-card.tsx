@@ -89,15 +89,16 @@ export function StageCard({ step, title, status, measure, emptyText }: StageCard
       </h3>
 
       {/* The source sits with the status, so it is on screen with the number it backs. On a
-          phone the chip drops the year (the frame title carries it) so both fit on one line. */}
+          phone and in the three-column row the chip drops the year (the frame title carries it),
+          so even the long amber label and the chip fit on one line. */}
       <div className="flex flex-wrap content-start items-center gap-2 pt-2">
         <StatusBadge status={status}>{STATUS_LABEL[status]}</StatusBadge>
         {measure && (
           <>
-            <span className="contents sm:hidden">
+            <span className="contents sm:max-lg:hidden">
               <SourceChip sourceId={measure.sourceId} />
             </span>
-            <span className="contents max-sm:hidden">
+            <span className="hidden sm:max-lg:contents">
               <SourceChip sourceId={measure.sourceId} year={measure.year} />
             </span>
           </>
@@ -309,6 +310,15 @@ function TrendChart({
   status: GapStatus;
 }) {
   const f = Math.min(100, Math.max(0, finland));
+  // Value labels sit 6px above their bar. One that would straddle the Finland line moves just
+  // above it instead, so the line stays one unbroken line.
+  const PLOT = 128;
+  const LABEL = 20;
+  const finlandPx = (f / 100) * PLOT;
+  const labelBottom = (value: number) => {
+    const bottom = (Math.min(100, Math.max(0, value)) / 100) * PLOT + 6;
+    return bottom < finlandPx + 3 && bottom + LABEL > finlandPx - 3 ? finlandPx + 5 : bottom;
+  };
   return (
     <figure className="flex min-w-0 flex-col gap-3 lg:max-w-[44rem]">
       <figcaption className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
@@ -338,7 +348,7 @@ function TrendChart({
                           "absolute z-10 bg-card px-1 figure text-[0.8125rem] leading-5",
                           i === latestIndex ? "font-semibold text-foreground" : "text-muted-foreground",
                         )}
-                        style={{ bottom: `calc(${Math.min(100, Math.max(0, point.value))}% + 0.375rem)` }}
+                        style={{ bottom: `${labelBottom(point.value)}px` }}
                       >
                         {formatPct(point.value)}
                       </span>

@@ -122,7 +122,8 @@ function ClaimRow({ claim, chips }: { claim: BriefClaim; chips: Record<string, R
           <dd className={DD}>{withFigures(layout.body)}</dd>
         </dl>
       ) : (
-        <p className={DD}>{withFigures(claim.text)}</p>
+        // No label to show: the sentence takes the label column too, so the row has no hole.
+        <p className={`${DD} sm:col-span-2 sm:col-start-1 sm:max-w-[52rem]`}>{withFigures(claim.text)}</p>
       )}
       {sources}
     </li>

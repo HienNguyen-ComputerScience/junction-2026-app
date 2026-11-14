@@ -66,7 +66,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             </p>
             <h1 className="type-page">{county.name}</h1>
           </div>
-          <p className="max-w-[40rem] type-lede lg:max-w-[31rem] lg:text-[1.375rem] lg:leading-8">
+          <p className="max-w-[40rem] type-lede lg:max-w-[34rem] lg:text-[1.375rem] lg:leading-8">
             {getVerdict(county.id)}
           </p>
           <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
@@ -86,7 +86,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           </FrameTitle>
         </FrameHeader>
         <FramePanel padding="none">
-          <ol className="grid grid-cols-1 p-4 sm:p-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] lg:px-0 lg:pt-4 lg:pb-6">
+          <ol className="grid grid-cols-1 p-4 sm:p-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)_minmax(0,1.1fr)] lg:px-0 lg:pt-4 lg:pb-6">
             {stages.map((stage, index) => (
               <li
                 key={stage.title}

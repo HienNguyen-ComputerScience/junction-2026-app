@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { cn } from "cn";
 
 import { SourceChip } from "@/components/source-chip";
@@ -58,14 +59,14 @@ export function LimitationsBox({
     <aside
       aria-labelledby="limitations-heading"
       className={cn(
-        "flex flex-col gap-3 rounded-panel border border-frame-border bg-frame p-4 sm:px-5",
+        "flex flex-col gap-2.5 rounded-panel border border-frame-border bg-frame px-4 pt-4 pb-2.5 sm:px-5",
         className,
       )}
     >
       <h2 id="limitations-heading" className="font-sans text-[0.9375rem] leading-snug font-semibold tracking-normal">
         {TITLE}
       </h2>
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col gap-2.5">
         {first.map((item) => (
           <Limitation key={item.text} item={item} />
         ))}
@@ -80,9 +81,9 @@ export function LimitationsBox({
               <span className="hidden group-open/disc:inline">Show fewer</span>
             </>
           }
-          className="-my-1.5"
+          className="-mt-1"
         >
-          <ul className="flex flex-col gap-3 pt-1 pb-2">
+          <ul className="flex flex-col gap-2.5 pt-1 pb-2">
             {rest.map((item) => (
               <Limitation key={item.text} item={item} />
             ))}
@@ -90,6 +91,19 @@ export function LimitationsBox({
         </Disclosure>
       )}
     </aside>
+  );
+}
+
+/** Percentages (and ranges such as "0-3%") in the figure face, as everywhere else; words unchanged. */
+function withFigures(text: string): ReactNode {
+  return text.split(/(\d+(?:\.\d+)?(?:[-–]\d+(?:\.\d+)?)?%)/).map((part, i) =>
+    i % 2 === 1 ? (
+      <span key={i} className="figure">
+        {part}
+      </span>
+    ) : (
+      part
+    ),
   );
 }
 
@@ -101,14 +115,14 @@ function Limitation({ item }: { item: LimitationItem }) {
   const split = item.sourceId ? item.text.indexOf(": ") : -1;
   if (split <= 0) {
     return (
-      <li className="flex flex-col gap-1">
-        <p className={BODY}>{item.text}</p>
+      <li className="flex flex-col gap-0.5">
+        <p className={BODY}>{withFigures(item.text)}</p>
         {item.sourceId && <SourceChip sourceId={item.sourceId} />}
       </li>
     );
   }
   return (
-    <li className="flex flex-col gap-1">
+    <li className="flex flex-col gap-0.5">
       <div className="flex items-center justify-between gap-3">
         <p className="text-[0.8125rem] leading-5 font-semibold text-foreground">
           {item.text.slice(0, split)}
@@ -116,7 +130,7 @@ function Limitation({ item }: { item: LimitationItem }) {
         </p>
         {item.sourceId && <SourceChip sourceId={item.sourceId} />}
       </div>
-      <p className={BODY}>{item.text.slice(split + 2)}</p>
+      <p className={BODY}>{withFigures(item.text.slice(split + 2))}</p>
     </li>
   );
 }
