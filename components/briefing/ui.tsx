@@ -44,7 +44,7 @@ export function Pill({ children, className }: { children: ReactNode; className?:
   );
 }
 
-const LINE_WIDTHS = [40, 47, 53, 58, 55, 47, 40];
+const LINE_WIDTHS = [24, 72, 44];
 
 /**
  * The only decoration: a few thin Forest Ink lines that slide in from the card's left edge.
