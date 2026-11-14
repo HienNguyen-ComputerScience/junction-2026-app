@@ -28,7 +28,7 @@ import {
  * outline (a hairline and a faint ground, its two largest islands), with no link and no
  * status, so the country keeps its shape and nothing suggests a value that does not exist.
  *
- * Status is never colour alone: every area's link is named "Name: 85.4%, Worse than Finland"
+ * Status is never colour alone: every area's link is named "Name: 85.4%, Worse than Finland's level"
  * (shown as a tooltip too), and highlighted areas carry a text label. The page's own legend
  * names the colours.
  *

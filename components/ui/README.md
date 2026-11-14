@@ -28,7 +28,7 @@ Every bar is zero-based (0 to 100%) and carries a thin off-white marker at Finla
 - At or better than Finland: slate (`bg-status-amber-bar`; the token name is historical). Slate is not "good", and a slate figure stays in the text colour (`STATUS_FIGURE`).
 - Grey fill: only a mark without a status, i.e. the "Finland overall" bar and the earlier years of the trend. Hatched track: no public data.
 - The map of Finland (`components/map/finland-map.tsx`) fills its areas with the same tokens at the same strength as the bars: `status-red`, `status-amber-bar`, the hatch.
-- `<BarKey items />`: the key, one row of swatches drawn like the marks: "Finland's value", "Worse than Finland" (tint then solid), "At or better than Finland's level", "No public data". **One key per page** (home: in the hero card; county: under the steps; act: beside the strip's title), with `items` limited to the marks in view. No prose legends: a sentence under a chart is only for what a swatch cannot say.
+- `<BarKey items />`: the key, one row of swatches drawn like the marks: "Finland's value", "Worse than Finland's level" (tint then solid), "At or better than Finland's level", "No public data". **One key per page** (home: under the map; county: under the steps; act: beside the strip's title), with `items` limited to the marks in view. No prose legends: a sentence under a chart is only for what a swatch cannot say.
 - `withFigures("Finland 54.7%")` sets the numbers of a one-string label in the figure face.
 
 ## Buttons and links
