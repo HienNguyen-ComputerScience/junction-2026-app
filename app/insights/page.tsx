@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { type ReactNode, Suspense } from "react";
+import { cn } from "cn";
 
 import { ConfidenceBadge } from "@/components/insights/confidence-badge";
 import { Goal3Detail } from "@/components/insights/goal3-link";
@@ -8,10 +9,11 @@ import { GpWaitWarningTable, PathwayStepsRow, StarterFields } from "@/components
 import { AreaTable, NO_WAY_ROUND_CAVEATS, TestsTable } from "@/components/insights/no-way-round";
 import { NoWayRoundTiles, type TileLevel } from "@/components/insights/no-way-round-tiles";
 import { PathwayRow } from "@/components/insights/pathway-row";
-import { STARTER_TEMPLATE_URL } from "@/components/insights/starter-dataset";
-import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, FocusGroup, Reveal, ScrollStory } from "@/components/motion";
+import { StarterDownload } from "@/components/insights/starter-dataset";
+import { AnimatedNumber, CaveatNote, Disclosure, Reveal } from "@/components/motion";
 import { SaveShare } from "@/components/share";
 import { SourceChip } from "@/components/source-chip";
+import { dataGaps } from "@/lib/data";
 import {
   earlyWarning,
   formatValue,
@@ -19,13 +21,15 @@ import {
   type NwrArea,
   noWayRound,
   pathwayAreas,
+  rules,
   starterDataset,
 } from "@/lib/insights";
+import { MOTION_LOUD_CLASS } from "@/lib/motion";
 
 export const metadata: Metadata = {
   title: "Where access is hardest | FirstLine",
   description:
-    "Where a long GP wait meets few other routes to a doctor, which area's wait is plainly getting worse, and what a county can start recording.",
+    "Where a long GP wait meets few other routes to a doctor, which area's wait is plainly getting worse, which steps of the cancer pathway nobody publishes, and what a county can start recording.",
 };
 
 const DEFAULT_AREA = noWayRound.robust_areas[0] ?? pathwayAreas[0].id;
@@ -41,37 +45,96 @@ function tileLevel(a: NwrArea): TileLevel {
   return a.wait.value > noWayRound.finland.wait ? 1 : 0;
 }
 
-/** A step of the story: a short serif line, then what backs it. */
-function StoryStep({ title, children }: { title: string; children?: ReactNode }) {
+/**
+ * One insight as one framed unit: eyebrow, the finding in one serif sentence, its visual, then
+ * source chips and the main caveat (always visible), then plainly labelled "Show …" buttons for
+ * the method and the full figures. Open on paper.
+ */
+function InsightCard({
+  id,
+  eyebrow,
+  title,
+  visual,
+  meaning,
+  source,
+  caveat,
+  action,
+  more,
+  split = false,
+  className,
+}: {
+  id: string;
+  eyebrow: string;
+  title: ReactNode;
+  visual: ReactNode;
+  meaning?: ReactNode;
+  source?: ReactNode;
+  caveat?: ReactNode;
+  action?: ReactNode;
+  more: ReactNode;
+  /** From 1024px the visual sits beside the text instead of under it. */
+  split?: boolean;
+  className?: string;
+}) {
+  const side = split ? "lg:col-start-1" : "";
   return (
-    <div className="motion-loud flex flex-col items-start gap-4 py-6">
-      <Reveal>
-        <h3 className="max-w-[24ch] font-display text-[1.75rem] leading-[1.2] font-light text-pretty text-forest-ink sm:text-[2.25rem]">
-          {title}
-        </h3>
-      </Reveal>
-      {children ? (
-        <Reveal index={1} className="flex flex-col items-start gap-3 *:max-w-full">
-          {children}
-        </Reveal>
-      ) : null}
-    </div>
+    // Reveal takes no id, so the anchor and the label sit on the section inside it.
+    <Reveal
+      className={cn(
+        "rounded-[14px] border border-frame-border bg-cream-paper p-[21px] sm:p-8 print:p-[10pt]",
+        className,
+      )}
+    >
+      <section
+        id={id}
+        aria-labelledby={`${id}-title`}
+        className={cn(
+          "flex scroll-mt-28 flex-col gap-6 print:gap-3",
+          split && "lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:content-start lg:gap-x-12 print:flex",
+        )}
+      >
+        <div className={cn("flex flex-col gap-2", side)}>
+          <p className="type-eyebrow">{eyebrow}</p>
+          <h2 id={`${id}-title`} className="type-title max-w-[34ch] text-pretty text-forest-ink">
+            {title}
+          </h2>
+        </div>
+        <div className={cn("min-w-0", split && "lg:col-start-2 lg:row-span-4 lg:row-start-1")}>{visual}</div>
+        {meaning ? <p className={cn("max-w-[60ch] text-base text-pretty text-foreground", side)}>{meaning}</p> : null}
+        {source || caveat ? (
+          <div className={cn("flex flex-col items-start gap-3 *:max-w-full", side)}>
+            {source ? <div className="flex flex-wrap items-center gap-2">{source}</div> : null}
+            {caveat}
+          </div>
+        ) : null}
+        {action}
+        <div className="flex flex-col items-start gap-2 border-t border-frame-border pt-4 *:max-w-full lg:col-span-2 print:border-0 print:pt-0">
+          {more}
+        </div>
+      </section>
+    </Reveal>
   );
 }
 
-const SECTION_TITLE =
-  "max-w-[24ch] font-display text-[2rem] leading-[1.15] font-light text-pretty text-forest-ink sm:text-[2.75rem]";
+/** A "Show …" inside a card: quiet, and full width once open. */
+function More({ show, hide, defaultOpen, children }: { show: string; hide: string; defaultOpen?: boolean; children: ReactNode }) {
+  return (
+    <Disclosure show={show} hide={hide} tone="quiet" defaultOpen={defaultOpen} className="w-full" contentClassName="flex flex-col gap-5 pt-3 pb-2">
+      {children}
+    </Disclosure>
+  );
+}
 
 /** The area picker: a plain form, so it works without script and the address can be shared. */
 function AreaPicker({ selected }: { selected: string }) {
   return (
     <form action="/insights#pathway" method="get" className="flex flex-wrap items-end gap-3" data-print="hide">
-      <label className="flex flex-col gap-1.5 text-base font-semibold text-forest-ink">
+      <label className="flex max-w-full flex-col gap-1.5 text-base font-semibold text-forest-ink">
         Area
         <select
           name="area"
           defaultValue={selected}
-          className="min-h-11 min-w-[16rem] rounded-lg border border-input bg-cream-paper px-3 text-base font-normal text-charcoal"
+          className="min-h-11 w-[16rem] max-w-full rounded-lg border border-input bg-cream-paper px-3 text-base font-normal text-charcoal"
         >
           {pathwayAreas.map((a) => (
             <option key={a.id} value={a.id}>
@@ -94,16 +157,38 @@ function AreaPicker({ selected }: { selected: string }) {
 async function AreaPathway({ searchParams }: { searchParams: PageProps<"/insights">["searchParams"] }) {
   const { area } = await searchParams;
   const chosen = typeof area === "string" && pathwayAreas.some((a) => a.id === area) ? area : null;
+  return <AreaPathwayBody chosen={chosen} />;
+}
+
+/**
+ * The disclosure itself. Also the Suspense fallback: the static shell (and a reader without
+ * script, who never sees the streamed part) still gets the picker and the default area's figures.
+ */
+function AreaPathwayBody({ chosen }: { chosen: string | null }) {
   return (
-    <Disclosure
-      show="Show one area's figures for each step"
-      hide="Hide the area's figures"
-      defaultOpen={chosen !== null}
-      contentClassName="flex flex-col gap-6 pt-6"
-    >
+    <More show="Show one area's figures for each step" hide="Hide the area's figures" defaultOpen={chosen !== null}>
       <AreaPicker selected={chosen ?? DEFAULT_AREA} />
       <PathwayRow areaId={chosen ?? DEFAULT_AREA} strip={false} />
-    </Disclosure>
+    </More>
+  );
+}
+
+/** How the early-warning flag is set, with the thresholds read from data/insights/rules.json. */
+function WarningMethod() {
+  const { about_same_points: points, recording_change_above: change } = rules.constants;
+  const recording = rules.grade_rules.find((r) => r.id === "recording-change");
+  const gap = rules.grade_rules.find((r) => r.id === "publisher-gap");
+  return (
+    <div className="flex max-w-[60rem] flex-col gap-2 text-base text-pretty">
+      <p>
+        For each area we compare the first and the last published year. A change of more than {points} percentage point
+        {points === 1 ? "" : "s"} in the worse direction is &ldquo;getting worse&rdquo;. When the number of visits behind the
+        figure moved by more than {Math.round(change * 100)}% in a year, or THL reports visits missing, the flag is
+        &ldquo;Possible, check recording&rdquo; instead.
+      </p>
+      {recording ? <p>{recording.rule}</p> : null}
+      {gap ? <p>{gap.rule}</p> : null}
+    </div>
   );
 }
 
@@ -119,38 +204,43 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
   // The counts behind Goal 3's own measure: the section tied to roadmap measure 3.1.2.
   const goal3Count = starterDataset.sections.find((s) => s.measure_id === "3.1.2")?.fields.length ?? 0;
   const steps = getPathwayRow(DEFAULT_AREA)?.steps ?? [];
-  const notPublished = steps.filter((s) => !s.published).length;
+  const notPublished = steps.filter((s) => !s.published);
+  // The source behind each unpublished step: the data-gap row it points to.
+  const gapSources = [
+    ...new Set(
+      notPublished
+        .map((s) => dataGaps.find((g) => g.id === s.data_gap_id)?.source_id)
+        .filter((id): id is string => typeof id === "string"),
+    ),
+  ];
 
   return (
-    <main className="page-container pt-4 pb-16 sm:pt-6">
-      <FocusGroup>
-      {/* 1. The finding. */}
-      <Chunk
-        lead
-        as="h1"
-        eyebrow={`GP wait, ${noWayRound.year}`}
-        statement={`In ${word(robust.length)} areas the GP queue is long, with no way round it.`}
-        figure={
-          <div className="grid gap-8 sm:grid-cols-2 sm:gap-12">
-            {robust.map((a) => (
-              <div key={a.county_id} className="flex flex-col items-start gap-3 *:max-w-full">
-                <p className="type-heading text-forest-ink">{a.name}</p>
-                <p className="numeral text-[4rem] leading-none text-status-red-ink sm:text-[5.5rem] print:text-[32pt]">
-                  <AnimatedNumber value={a.wait.value} final={formatValue("6411", a.wait.value)} level="loud" />
-                </p>
-              </div>
-            ))}
-          </div>
-        }
-        meaning={
-          <>
-            of non-urgent GP visits waited more than 7 days. Finland: <span className="figure font-semibold">{FINLAND_WAIT}</span>.
-          </>
-        }
-        source={<SourceChip sourceId="sotkanet-6411" year={noWayRound.year} />}
-        caveat={{
-          short: "area figures, not people; not cancer-specific",
-          why: (
+    <main className={cn("page-container flex flex-col gap-10 pt-4 pb-16 sm:gap-12 sm:pt-6", MOTION_LOUD_CLASS)}>
+      {/* The finding: one serif statement, the two figures, source and main caveat. */}
+      <header className="flex flex-col items-start gap-6 *:max-w-full">
+        <Reveal className="flex max-w-[52rem] flex-col gap-3">
+          <p className="type-eyebrow">Where access is hardest · GP wait, {noWayRound.year}</p>
+          <h1 className="font-display text-[2.5rem] leading-[1.1] font-light text-balance text-forest-ink sm:text-[3.5rem]">
+            In {word(robust.length)} areas the GP queue is long, with no way round it.
+          </h1>
+        </Reveal>
+        <Reveal index={1} className="flex flex-wrap gap-x-14 gap-y-6">
+          {robust.map((a) => (
+            <div key={a.county_id} className="flex flex-col gap-2">
+              <p className="type-heading text-forest-ink">{a.name}</p>
+              <p className="numeral text-[4rem] leading-none text-status-red-ink sm:text-[5.5rem] print:text-[32pt]">
+                <AnimatedNumber value={a.wait.value} final={formatValue("6411", a.wait.value)} level="loud" />
+              </p>
+            </div>
+          ))}
+        </Reveal>
+        <Reveal index={2} className="flex max-w-[60ch] flex-col items-start gap-3 *:max-w-full">
+          <p className="text-[1.1875rem] leading-[1.6] text-pretty text-foreground">
+            of non-urgent GP visits waited more than 7 days. Finland overall:{" "}
+            <span className="figure font-semibold">{FINLAND_WAIT}</span>.
+          </p>
+          <SourceChip sourceId="sotkanet-6411" year={noWayRound.year} />
+          <CaveatNote short="area figures, not people; not cancer-specific">
             <ul className="flex list-disc flex-col gap-1.5 pl-5">
               {NO_WAY_ROUND_CAVEATS.map((text) => (
                 <li key={text}>{text}</li>
@@ -161,148 +251,143 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
                 </li>
               ))}
             </ul>
-          ),
-        }}
+          </CaveatNote>
+        </Reveal>
+      </header>
+
+      {/* 1. The grid of 22 areas: how the two were found. */}
+      <InsightCard
+        id="no-way-round"
+        eyebrow={`All ${c.areas} areas, ${noWayRound.year}`}
+        title={`${c.wait_above_finland} areas wait longer than Finland overall, but only ${word(c.long_few_every_test)} have no way round it in all ${word(TESTS)} tests.`}
+        visual={<NoWayRoundTiles areas={tiles} counts />}
+        split
+        source={
+          <>
+            <SourceChip sourceId="sotkanet-6411" year={noWayRound.year} />
+            <SourceChip sourceId={robust[0].occupational.source_id} year={robust[0].occupational.year} />
+            <SourceChip sourceId={robust[0].private.source_id} year={robust[0].private.year} />
+          </>
+        }
+        more={
+          <>
+            <More show="Show how we tested this" hide="Hide how we tested this">
+              <TestsTable />
+            </More>
+            <More show={`Show the figures for all ${c.areas} areas`} hide={`Hide the figures for all ${c.areas} areas`}>
+              <AreaTable />
+            </More>
+          </>
+        }
       />
 
-      {/* 2. From 22 areas to two. */}
-      <section aria-labelledby="nwr-heading" className="flex flex-col gap-8 py-16 sm:py-24">
-        <Reveal className="motion-loud">
-          <h2 id="nwr-heading" className={SECTION_TITLE}>
-            How the {word(robust.length)} stand out
-          </h2>
-        </Reveal>
-        <ScrollStory
-          label={`The ${c.areas} areas, ${noWayRound.year}`}
-          className="grid-cols-1 *:min-w-0"
-          picture={<NoWayRoundTiles areas={tiles} />}
-          steps={[
-            <StoryStep key="all" title={`All ${c.areas} areas, ${noWayRound.year}.`} />,
-            <StoryStep key="long" title={`A longer GP wait than Finland overall (${FINLAND_WAIT}).`}>
-              <SourceChip sourceId="sotkanet-6411" year={noWayRound.year} />
-            </StoryStep>,
-            <StoryStep key="few" title={`${c.long_few_main} of them also use occupational-health and private doctors less than Finland overall.`}>
-              <div className="flex flex-wrap gap-2">
-                <SourceChip sourceId={robust[0].occupational.source_id} year={robust[0].occupational.year} />
-                <SourceChip sourceId={robust[0].private.source_id} year={robust[0].private.year} />
-              </div>
-            </StoryStep>,
-            <StoryStep
-              key="two"
-              title={`Only ${robust.map((a) => a.name).join(" and ")} stay there under all ${TESTS} cut-offs we tested.`}
-            />,
-          ]}
-        />
-        <div className="flex flex-col items-start gap-3 rounded-lg bg-slate-hush px-7 py-5 sm:px-10 *:max-w-full">
-          <Disclosure show="Show how we tested this" hide="Hide how we tested this">
-            <TestsTable />
-          </Disclosure>
-          <Disclosure show="Show the full table" hide="Hide the full table">
-            <AreaTable />
-          </Disclosure>
-        </div>
-      </section>
-
-      {/* 3. Early warning. */}
+      {/* 2. Early warning. */}
       {warning && first && last ? (
-        <Chunk
+        <InsightCard
+          id="early-warning"
           eyebrow="Early warning · GP wait"
-          statement={`Only ${warning.name}'s GP wait is plainly getting worse.`}
-          figure={
-            <ChunkFigure tone="alarm" unit={`of non-urgent GP visits waited over 7 days, ${first.year} → ${last.year}`}>
-              {formatValue("6411", first.value ?? 0)} →{" "}
-              <AnimatedNumber value={last.value ?? 0} from={first.value ?? 0} final={formatValue("6411", last.value ?? 0)} level="loud" />
-            </ChunkFigure>
+          title={`Only ${warning.name}'s GP wait is plainly getting worse.`}
+          visual={
+            <p className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+              <span className="numeral text-[2.5rem] leading-none text-status-red-ink sm:text-[4rem] print:text-[28pt]">
+                {formatValue("6411", first.value ?? 0)} →{" "}
+                <AnimatedNumber value={last.value ?? 0} from={first.value ?? 0} final={formatValue("6411", last.value ?? 0)} level="loud" />
+              </span>
+              <span className="max-w-[26ch] text-base text-pretty text-foreground">
+                of non-urgent GP visits in {warning.name} waited over 7 days, {first.year} → {last.year}
+              </span>
+            </p>
           }
-          meaning={`${gp.check} more look worse, but their recorded visits changed or are incomplete.`}
+          meaning={`${capital(String(gp.check))} more look worse, but their recorded visits changed or are incomplete.`}
           source={
             <>
               <SourceChip sourceId={warning.source_id} year={last.year} />
               <ConfidenceBadge areaId={warning.county_id} indicatorId="6411" year={last.year} showReason={false} />
             </>
           }
-          caveat={{
-            short: "three years only: a direction, not a forecast",
-            why: (
-              <>
-                For each area we compare the first and the last published year. A change of more than 1 percentage point
-                in the worse direction is &ldquo;getting worse&rdquo;. When the number of visits behind the figure moved by
-                more than a fifth in a year, or THL reports visits missing, the flag is &ldquo;Possible, check
-                recording&rdquo; instead.
-              </>
-            ),
-          }}
-        >
-          <div className="flex flex-col items-start gap-3 *:max-w-full">
-            <Disclosure show={`Show all ${gp.areas} areas`} hide={`Hide the ${gp.areas} areas`}>
-              <GpWaitWarningTable />
-            </Disclosure>
-            <Disclosure show="Show how we grade each figure" hide="Hide how we grade each figure">
-              <GradingRulesBody />
-            </Disclosure>
-          </div>
-        </Chunk>
+          caveat={<CaveatNote short="three years only: a direction, not a forecast" />}
+          more={
+            <>
+              <More show="Show how we flag and grade a change" hide="Hide how we flag and grade a change">
+                <WarningMethod />
+                <GradingRulesBody />
+              </More>
+              <More show={`Show all ${gp.areas} areas`} hide={`Hide the ${gp.areas} areas`}>
+                <GpWaitWarningTable />
+              </More>
+            </>
+          }
+        />
       ) : null}
 
-      {/* 4–6. What a county can record: the empty steps, the template, Goal 3. */}
-      <Chunk
+      {/* 3. The pathway with its gaps. */}
+      <InsightCard
+        id="pathway"
+        eyebrow="The cancer pathway"
+        title={`${capital(word(notPublished.length))} of ${word(steps.length)} steps to cancer treatment are not published by area.`}
+        visual={<PathwayStepsRow />}
+        source={gapSources.map((id) => (
+          <SourceChip key={id} sourceId={id} />
+        ))}
+        more={
+          <Suspense fallback={<AreaPathwayBody chosen={null} />}>
+            <AreaPathway searchParams={searchParams} />
+          </Suspense>
+        }
+      />
+
+      {/* 4. What a county can start recording: the page's one primary action. */}
+      <InsightCard
         id="starter-dataset"
         eyebrow="What to start recording"
-        statement={`${capital(word(notPublished))} of ${word(steps.length)} steps of the cancer pathway are not published by area.`}
-        figure={<PathwayStepsRow />}
-        meaning={
-          <>
-            <span className="figure font-semibold">{fieldCount}</span> quarterly counts let a county measure them itself.
-          </>
+        title={`${fieldCount} quarterly counts let a county measure those steps itself.`}
+        visual={
+          <ol aria-label={`The ${fieldCount} counts in ${starterDataset.sections.length} groups`} className="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+            {starterDataset.sections.map((s) => (
+              <li key={s.id} className="flex items-baseline gap-3 rounded-sm bg-keylime-wash px-3 py-2.5 text-base text-pretty">
+                <span className="numeral min-w-[1.5ch] text-[1.75rem] leading-none text-forest-ink">{s.fields.length}</span>
+                <span>{s.title}</span>
+              </li>
+            ))}
+          </ol>
         }
-        caveat={{
-          short: "counts only, no patient data",
-          why: (
+        meaning={`${capital(word(goal3Count))} of them measure Goal 3 of the national cancer strategy directly.`}
+        caveat={
+          <CaveatNote short="counts only, no patient data">
             <ul className="flex list-disc flex-col gap-1.5 pl-5">
               {starterDataset.privacy.map((p) => (
                 <li key={p}>{p}</li>
               ))}
             </ul>
-          ),
-        }}
-        className="scroll-mt-20"
-      >
-        <div className="flex flex-col items-start gap-6 *:max-w-full">
-          <SaveShare
-            options={[
-              { kind: "print" },
-              {
-                kind: "excel",
-                href: STARTER_TEMPLATE_URL,
-                label: "Download the recording template for Excel",
-                hint: "Columns for the figures nobody publishes yet",
-              },
-              {
-                kind: "email",
-                subject: "Where cancer care access is hardest in Finland",
-                intro: "Where access to early cancer care is hardest across Finland, from published figures:",
-              },
-            ]}
-          />
-          <Disclosure show={`Show the ${fieldCount} fields`} hide={`Hide the ${fieldCount} fields`}>
-            <StarterFields />
-          </Disclosure>
-          <div className="flex max-w-[68ch] flex-col items-start gap-3 rounded-[14px] bg-keylime-wash p-6">
-            <p className="text-base font-semibold text-pretty text-forest-ink">
-              {capital(word(goal3Count))} of the counts measure Goal 3 of the national cancer strategy directly.
-            </p>
-            <Disclosure show="Show the Goal 3 link" hide="Hide the Goal 3 link" tone="quiet">
+          </CaveatNote>
+        }
+        action={
+          <div className="flex flex-wrap items-center gap-3 *:max-w-full">
+            <StarterDownload label="Download the recording template (Excel)" />
+            <SaveShare
+              className="print:hidden"
+              options={[
+                { kind: "print" },
+                {
+                  kind: "email",
+                  subject: "Where cancer care access is hardest in Finland",
+                  intro: "Where access to early cancer care is hardest across Finland, from published figures:",
+                },
+              ]}
+            />
+          </div>
+        }
+        more={
+          <>
+            <More show={`Show the ${fieldCount} fields`} hide={`Hide the ${fieldCount} fields`}>
+              <StarterFields />
+            </More>
+            <More show="Show the Goal 3 link" hide="Hide the Goal 3 link">
               <Goal3Detail />
-            </Disclosure>
-          </div>
-          <div id="pathway" className="scroll-mt-20">
-            <Suspense fallback={null}>
-              <AreaPathway searchParams={searchParams} />
-            </Suspense>
-          </div>
-        </div>
-      </Chunk>
-      </FocusGroup>
+            </More>
+          </>
+        }
+      />
     </main>
   );
 }
