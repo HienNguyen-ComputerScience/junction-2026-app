@@ -138,6 +138,10 @@ export default function SourcesPage() {
           ))}
         </ul>
         <p className="px-3 pt-4 pb-2 type-caption text-pretty text-muted-foreground sm:px-4">Results labelled “Found live — unverified” come from Exa live search. They are not checked by the team.</p>
+        <p className="px-3 pb-2 type-caption text-pretty text-muted-foreground sm:px-4">
+          Map boundaries: Statistics Finland, wellbeing services counties 2025 (1:4 500 000), CC BY 4.0.{" "}
+          <a className="text-brand-ink underline underline-offset-4" href="https://www.stat.fi/org/avoindata/paikkatietoaineistot_en.html" target="_blank" rel="noopener noreferrer">Statistics Finland open data</a>
+        </p>
       </Frame>
 
       <nav aria-label="Page">

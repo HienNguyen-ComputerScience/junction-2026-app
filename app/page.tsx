@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import { AskBox } from "@/components/exa/ask-box";
 import { NationalNews } from "@/components/exa/national-news";
+import { FinlandMap, type FinlandMapArea } from "@/components/map/finland-map";
 import { gapToFinland, RankingList } from "@/components/ranking/ranking-list";
 import { SourceChip } from "@/components/source-chip";
 import {
@@ -42,6 +43,23 @@ export default function CountyRankingPage() {
 
   const gap = worst.gpWait.value - best.gpWait.value;
   const ratio = worst.gpWait.value / best.gpWait.value;
+  // The map's areas come from the same ranking the list below uses, linked the same way.
+  const mapAreas: FinlandMapArea[] = [
+    ...rows.map((row) => ({
+      id: row.county.id,
+      name: row.county.name,
+      href: `/county/${row.county.id}`,
+      status: row.gpStatus,
+      valueLabel: formatPct(row.gpWait.value),
+    })),
+    ...unranked.map((county) => ({
+      id: county.id,
+      name: county.name,
+      href: `/county/${county.id}`,
+      status: "no_data" as const,
+      valueLabel: null,
+    })),
+  ];
   const redCount = rows.filter((row) => row.gpStatus === "red").length;
 
   return (
@@ -51,7 +69,7 @@ export default function CountyRankingPage() {
           does. Kept short, so the first ranking row is in the first desktop viewport. */}
       <section
         aria-labelledby="home-title"
-        className="grid gap-3 sm:gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-start lg:gap-12"
+        className="grid gap-3 sm:gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start lg:gap-12"
       >
         <div className="flex flex-col">
           <p className="flex items-center gap-2.5 text-sm leading-6 font-medium text-foreground sm:text-[0.9375rem]">
@@ -100,32 +118,56 @@ export default function CountyRankingPage() {
                 <SourceChip sourceId={worst.gpWait.source_id} year={LATEST_YEAR} />
               </span>
             </div>
-            <ul className="flex flex-col gap-3 px-4 pt-3 pb-3 sm:gap-5 sm:px-5 sm:pt-5 sm:pb-4">
-              <CompareRow
-                name={worst.county.name}
-                value={worst.gpWait.value}
-                status={worst.gpStatus}
-                finland={nationalGpWait.value}
-                index={0}
-                emphasis
-                chip={<SourceChip sourceId={worst.gpWait.source_id} year={LATEST_YEAR} />}
-              />
-              <CompareRow
-                name="Finland overall"
-                value={nationalGpWait.value}
-                status={null}
-                finland={nationalGpWait.value}
-                index={1}
-              />
-              <CompareRow
-                name={best.county.name}
-                value={best.gpWait.value}
-                status={best.gpStatus}
-                finland={nationalGpWait.value}
-                index={2}
-                axisLabel={`Finland ${formatPct(nationalGpWait.value)}`}
-              />
-            </ul>
+            <div className="grid sm:grid-cols-[auto_minmax(0,1fr)]">
+              {/* The map: on a phone it is on top, with the worst and best areas named; from sm
+                  it stands plain beside the rows, which are its labels. */}
+              <div className="flex items-center justify-center border-b border-border px-4 py-4 sm:border-r sm:border-b-0 sm:px-5 sm:py-2">
+                <FinlandMap
+                  areas={mapAreas}
+                  highlight={[worst.county.id, best.county.id]}
+                  className="h-[17.5rem] sm:hidden"
+                />
+                <FinlandMap areas={mapAreas} className="hidden h-[18rem] sm:flex" />
+              </div>
+              <ul className="flex flex-col gap-3 px-4 pt-3 pb-3 sm:gap-4 sm:px-5 sm:pt-4 sm:pb-3">
+                <CompareRow
+                  name={worst.county.name}
+                  value={worst.gpWait.value}
+                  status={worst.gpStatus}
+                  finland={nationalGpWait.value}
+                  index={0}
+                  emphasis
+                  chip={<SourceChip sourceId={worst.gpWait.source_id} year={LATEST_YEAR} />}
+                />
+                <CompareRow
+                  name="Finland overall"
+                  value={nationalGpWait.value}
+                  status={null}
+                  finland={nationalGpWait.value}
+                  index={1}
+                />
+                <CompareRow
+                  name={best.county.name}
+                  value={best.gpWait.value}
+                  status={best.gpStatus}
+                  finland={nationalGpWait.value}
+                  index={2}
+                  axisLabel={`Finland ${formatPct(nationalGpWait.value)}`}
+                />
+              </ul>
+            </div>
+            <div className="flex flex-col gap-1.5 border-t border-border px-4 py-2.5 sm:px-5">
+              <ul className="flex flex-col gap-x-6 gap-y-1 type-legend sm:flex-row sm:flex-wrap sm:items-center">
+                <MapKeyItem swatch="bg-status-red/60">Worse than Finland</MapKeyItem>
+                <MapKeyItem swatch="bg-status-amber-bar/50">
+                  At or better than Finland&apos;s level
+                </MapKeyItem>
+              </ul>
+              <div className="flex flex-col type-note text-pretty text-muted-foreground">
+                <p>Each area coloured by its status. Select an area to open it.</p>
+                <p>Map: Statistics Finland, wellbeing services counties 2025, CC BY 4.0</p>
+              </div>
+            </div>
           </FramePanel>
         </Frame>
         <p className="type-caption text-pretty text-muted-foreground sm:hidden">
@@ -190,6 +232,16 @@ export default function CountyRankingPage() {
 
       <NationalNews />
     </main>
+  );
+}
+
+/** One item of the map's key: the same 24x10 swatch slot as BarKey, in the map's own fill. */
+function MapKeyItem({ swatch, children }: { swatch: string; children: ReactNode }) {
+  return (
+    <li className="flex items-center gap-2">
+      <span aria-hidden className={`h-2.5 w-6 shrink-0 rounded-[2px] ${swatch}`} />
+      <span>{children}</span>
+    </li>
   );
 }
 
