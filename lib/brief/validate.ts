@@ -14,8 +14,8 @@
 //      only matches a percentage fact, never a percentage-point difference;
 //   3. every cited statistic source backs at least one of its numbers (evidence
 //      sources may be cited for the action they describe);
-//   4. no spelled-out numbers ("nine in ten", "doubled"): those can't be checked;
-//   5. it does not turn a share of GP visits into a share of people.
+//   4. no spelled-out numbers ("two in three", "nine in ten", "doubled"): those can't be checked;
+//   5. a claim citing the GP-visits indicator (6411) never calls them people.
 
 import type { BriefContext, DroppedClaim, ModelBrief, ModelClaim, ValidationResult } from "./types";
 
@@ -40,8 +40,9 @@ export function numberTokens(text: string): NumberToken[] {
   return tokens;
 }
 
+// Bare "one" is deliberately not listed ("no one", "the one closest"); only its numeric uses are.
 const SPELLED =
-  /\b(ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|half|halved|twice|double|doubled|triple|tripled|quarter)\b/i;
+  /\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|half|halved|twice|double|doubled|triple|tripled|quarters?|thirds?|fifths?|one (?:in|out of) \w+|one[- ](?:third|quarter|fifth))\b/i;
 
 const PEOPLE = /\b(people|persons|residents|inhabitants|citizens|patients)\b/i;
 
@@ -114,8 +115,8 @@ export function checkClaim(claim: ModelClaim, context: BriefContext): string | n
     if (idle.length > 0) return `source ${idle.join(", ")} is cited but backs none of the claim's numbers`;
   }
 
-  const sharesGpVisits = cited.has("sotkanet-6411") && tokens.some(({ token }) => token.percent);
-  if (sharesGpVisits && PEOPLE.test(text)) return "6411 counts non-urgent GP visits, not people";
+  // 6411 counts GP visits, so any claim citing it must not talk about people, with or without a %.
+  if (cited.has("sotkanet-6411") && PEOPLE.test(text)) return "6411 counts non-urgent GP visits, not people";
 
   return null;
 }
