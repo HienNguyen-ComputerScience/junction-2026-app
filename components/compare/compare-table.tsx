@@ -3,7 +3,7 @@
 import { ArrowDown, ArrowUp, ChevronDown } from "lucide-react";
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { useId, useMemo, useState } from "react";
+import { Fragment, useId, useMemo, useState } from "react";
 import { cn } from "cn";
 
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -70,7 +70,7 @@ function Heading({
     <th
       scope="col"
       aria-sort={active ? (ascending ? "ascending" : "descending") : undefined}
-      className={cn("px-3 pb-3 text-left align-bottom text-base font-semibold text-foreground first:pl-0 last:pr-0", className)}
+      className={cn("px-3 pb-3 text-left align-bottom text-base font-semibold text-foreground first:pl-0 last:pr-0 xl:px-2 xl:first:pl-0 xl:last:pr-0", className)}
     >
       {keyName ? (
         <button
@@ -93,8 +93,25 @@ function Heading({
       ) : (
         children
       )}
-      {sub ? <span className="block font-normal text-muted-foreground">{sub}</span> : null}
+      {sub ? <span className="block max-w-[15rem] font-normal text-muted-foreground">{sub}</span> : null}
     </th>
+  );
+}
+
+/**
+ * Short status words for the wide table, where the column heading already says "Compared with
+ * Finland overall". The phone list and screen readers keep the full label.
+ */
+const SHORT_GP = { red: "Longer wait", amber: "Same or shorter wait", no_data: "No public data" } as const;
+const SHORT_REFERRAL = { red: "Slower", amber: "Same or faster", no_data: "No public data" } as const;
+
+/** The status in short words on screen, the full label for screen readers. */
+function ShortStatus({ short, full }: { short: string; full: string }) {
+  return (
+    <>
+      <span aria-hidden>{short}</span>
+      <span className="sr-only">{full}</span>
+    </>
   );
 }
 
@@ -115,10 +132,11 @@ function GpFigure({ row }: { row: CompareRow }) {
   );
 }
 
-function GpStatus({ row, wide = false }: { row: CompareRow; wide?: boolean }) {
+function GpStatus({ row, short = false }: { row: CompareRow; short?: boolean }) {
+  const full = statusLabel(row.gpStatus, "gp_access");
   return (
-    <StatusBadge status={row.gpStatus} variant="quiet" className={cn(BADGE, wide && "xl:whitespace-nowrap")}>
-      {statusLabel(row.gpStatus, "gp_access")}
+    <StatusBadge status={row.gpStatus} variant="quiet" className={cn(BADGE, short && "xl:shrink-0 xl:whitespace-nowrap")}>
+      {short ? <ShortStatus short={SHORT_GP[row.gpStatus]} full={full} /> : full}
     </StatusBadge>
   );
 }
@@ -142,22 +160,28 @@ function Change({ row }: { row: CompareRow }) {
 }
 
 function Referral({ row, inline = false }: { row: CompareRow; inline?: boolean }) {
-  if (row.referral !== null)
+  if (row.referral !== null) {
+    const full = statusLabel(row.referralStatus, "referral");
     return (
-      <span className={inline ? "inline" : "flex flex-col items-start gap-1"}>
+      <span className={inline ? "inline" : "flex flex-wrap items-baseline gap-x-2.5 gap-y-1 xl:flex-nowrap"}>
         <span className="figure text-base">{pct(row.referral)}</span>
-        <StatusBadge status={row.referralCityOnly ? "no_data" : row.referralStatus} variant="quiet" className={cn(BADGE, inline && "ml-2")}>
-          {row.referralCityOnly ? "City units only" : statusLabel(row.referralStatus, "referral")}
+        <StatusBadge status={row.referralCityOnly ? "no_data" : row.referralStatus} variant="quiet" className={cn(BADGE, inline ? "ml-2" : "xl:shrink-0 xl:whitespace-nowrap")}>
+          {row.referralCityOnly ? "City units only" : inline ? full : <ShortStatus short={SHORT_REFERRAL[row.referralStatus]} full={full} />}
         </StatusBadge>
       </span>
     );
+  }
   if (row.referralShared)
-    return (
+    return inline ? (
       <span className="text-base">
         No figure of its own.{" "}
         <span className="text-muted-foreground">
           HUS-wide: <span className="figure">{pct(row.referralShared.value)}</span>
         </span>
+      </span>
+    ) : (
+      <span className="text-base text-muted-foreground xl:whitespace-nowrap">
+        HUS-wide: <span className="figure">{pct(row.referralShared.value)}</span>, not its own
       </span>
     );
   return <span className="text-base">No public data</span>;
@@ -170,11 +194,26 @@ function Referral({ row, inline = false }: { row: CompareRow; inline?: boolean }
  * referrals. No motion. Under 640px the same rows, in the same order, are a compact list (one short
  * block per area); on paper a twin table with every column.
  */
-export function CompareTable({ rows, finland, finlandReferral }: { rows: CompareRow[]; finland: number; finlandReferral: number }) {
+export function CompareTable({
+  rows,
+  finland,
+  finlandReferral,
+  recordingKey,
+}: {
+  rows: CompareRow[];
+  finland: number;
+  finlandReferral: number;
+  /** What the marker means, in full words, shown where the marker is first read. */
+  recordingKey: string;
+}) {
   const [sort, setSort] = useState<SortKey>("gp");
   const selectId = useId();
   const sorted = useMemo(() => [...rows].sort((a, b) => compare(sort, a, b)), [rows, sort]);
   const current = SORTS.find((option) => option.key === sort)?.label ?? "";
+  // In the default order (longest wait first) a line marks Finland overall, as in the chart: the
+  // areas above it wait longer, the areas below the same or less. Other orders have no line.
+  const lineBefore =
+    sort === "gp" ? sorted.findIndex((row, i) => i > 0 && sorted[i - 1].gpStatus === "red" && row.gpStatus !== "red") : -1;
 
   return (
     <div className="flex flex-col gap-4">
@@ -209,41 +248,50 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
           <tr className="border-b border-border">
             <Heading sort={sort} onSort={setSort} className="w-14">Rank</Heading>
             <Heading sort={sort} onSort={setSort} keyName="name">Area</Heading>
-            <Heading sort={sort} onSort={setSort} keyName="gp" sub={<>Finland overall: <span className="figure">{pct(finland)}</span></>}>
+            <Heading sort={sort} onSort={setSort} keyName="gp" sub={<>Compared with Finland overall: <span className="figure">{pct(finland)}</span></>}>
               GP visits waiting over 7 days, 2025
             </Heading>
-            <Heading sort={sort} onSort={setSort} keyName="change" sub={<>{RECORDING_MARK} recording changed, see note below</>}>
+            <Heading sort={sort} onSort={setSort} keyName="change" sub={<>{RECORDING_MARK} {recordingKey}</>}>
               Change since 2023
             </Heading>
-            <Heading sort={sort} onSort={setSort} keyName="referral" sub={<>Finland overall: <span className="figure">{pct(finlandReferral)}</span></>}>
+            <Heading sort={sort} onSort={setSort} keyName="referral" sub={<>Compared with Finland overall: <span className="figure">{pct(finlandReferral)}</span></>}>
               Referrals handled within 3 days, 2025
             </Heading>
           </tr>
         </thead>
         <tbody>
-          {sorted.map((row) => (
-            <tr key={row.id} className="border-b border-border last:border-b-0">
-              <td className="py-3 pr-3 align-top">
-                <span className="figure text-muted-foreground">{row.rank}</span>
-              </td>
-              <td className="px-3 py-3 align-top">
-                <Link href={`/county/${row.id}`} className={LINK}>
-                  {row.name}
-                </Link>
-              </td>
-              <td className="px-3 py-3 align-top">
-                <span className="flex flex-col items-start gap-1">
-                  <GpFigure row={row} />
-                  <GpStatus row={row} wide />
-                </span>
-              </td>
-              <td className="px-3 py-3 align-top text-base xl:whitespace-nowrap">
-                <Change row={row} />
-              </td>
-              <td className="py-3 pl-3 align-top">
-                <Referral row={row} />
-              </td>
-            </tr>
+          {sorted.map((row, i) => (
+            <Fragment key={row.id}>
+              {i === lineBefore ? (
+                <tr>
+                  <td colSpan={5} className="py-2">
+                    <FinlandLine finland={finland} />
+                  </td>
+                </tr>
+              ) : null}
+              <tr className="border-b border-border transition-colors last:border-b-0 hover:bg-keylime-wash">
+                <td className="py-2.5 pr-3 align-baseline xl:pr-2">
+                  <span className="figure text-muted-foreground">{row.rank}</span>
+                </td>
+                <td className="px-3 py-2.5 align-baseline lg:whitespace-nowrap xl:px-2">
+                  <Link href={`/county/${row.id}`} className={LINK}>
+                    {row.name}
+                  </Link>
+                </td>
+                <td className="px-3 py-2.5 align-baseline xl:px-2">
+                  <span className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 xl:flex-nowrap">
+                    <GpFigure row={row} />
+                    <GpStatus row={row} short />
+                  </span>
+                </td>
+                <td className="px-3 py-2.5 align-baseline text-base xl:whitespace-nowrap xl:px-2">
+                  <Change row={row} />
+                </td>
+                <td className="py-2.5 pl-3 align-baseline xl:pl-2">
+                  <Referral row={row} />
+                </td>
+              </tr>
+            </Fragment>
           ))}
         </tbody>
       </table>
@@ -256,7 +304,7 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
           <span className="figure">{pct(finland)}</span>. In brackets: points above (+) or below (−) Finland overall.
         </p>
         <p>
-          <span className="font-semibold">{RECORDING_MARK}</span> after a change since 2023: recording changed, see note below.
+          <span className="font-semibold">{RECORDING_MARK}</span> {recordingKey}.
         </p>
         <p>
           <span className="font-semibold">Referrals:</span> handled within 3 days, 2025. Finland overall:{" "}
@@ -264,8 +312,14 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
         </p>
       </div>
       <ol aria-label={`All areas. Order: ${current}.`} className="flex flex-col sm:hidden print:hidden">
-        {sorted.map((row) => (
-          <li key={row.id} className="flex flex-col gap-1 border-b border-border py-3 first:pt-0 last:border-b-0 last:pb-0">
+        {sorted.map((row, i) => (
+          <Fragment key={row.id}>
+          {i === lineBefore ? (
+            <li className="border-b border-border py-3">
+              <FinlandLine finland={finland} />
+            </li>
+          ) : null}
+          <li className="flex flex-col gap-1 border-b border-border py-3 first:pt-0 last:border-b-0 last:pb-0">
             <p className="flex items-baseline justify-between gap-3">
               <span>
                 <span className="figure text-muted-foreground">{row.rank}. </span>
@@ -288,10 +342,24 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
               <Referral row={row} inline />
             </p>
           </li>
+          </Fragment>
         ))}
       </ol>
       <PrintTable rows={sorted} finland={finland} finlandReferral={finlandReferral} order={current} />
     </div>
+  );
+}
+
+/** The chart's dashed Finland overall line, as a row between the areas that wait longer and the rest. */
+function FinlandLine({ finland }: { finland: number }) {
+  return (
+    <span className="flex items-center gap-3 text-base font-semibold text-forest-ink">
+      <span aria-hidden className="w-6 shrink-0 border-t-2 border-dashed border-forest-ink" />
+      <span className="shrink-0">
+        Finland overall: <span className="figure">{pct(finland)}</span>
+      </span>
+      <span aria-hidden className="min-w-0 flex-1 border-t-2 border-dashed border-forest-ink" />
+    </span>
   );
 }
 

@@ -41,10 +41,11 @@ function SectionHead({ id, children }: { id: string; children: ReactNode }) {
 
 /**
  * Every area side by side, as a plain document: the headline (how many areas wait longer than
- * Finland overall), the one picture (all areas as bars, with Finland overall's line), the table
- * (five columns, sortable, downloadable), and one framed line on which areas got worse since the
- * first year, with the five largest rises behind "Show …". Every caveat is one framed line, with
- * the per-area detail behind a button that opens on paper.
+ * Finland overall) with the one picture beside it on a wide screen (all areas as bars, with
+ * Finland overall's line), the table (five columns, sortable, downloadable) with one framed unit
+ * of notes and sources under it, and one framed line on which areas got worse since the first
+ * year, with the five largest rises behind "Show …". Per-area detail sits behind buttons that open
+ * on paper.
  */
 export default function ComparePage() {
   const rows = getCompareRows();
@@ -55,10 +56,12 @@ export default function ComparePage() {
 
   return (
     <main className={cn("page-container print-wide flex flex-col gap-12 pt-6 pb-16 sm:pt-8 print:gap-6 print:pt-0", MOTION_LOUD_CLASS)}>
+      {/* The claim and its picture side by side on a wide screen, so the bars are on the first screen; stacked elsewhere and on paper. */}
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start lg:gap-12 print:block">
       <Chunk
         lead
         as="h1"
-        className="pb-0 sm:pb-0"
+        className="pt-0 pb-0 sm:pt-0 sm:pb-0 lg:[&_h1]:text-[3rem]"
         eyebrow={`Compare all ${lead.total} areas, ${LATEST_YEAR}`}
         statement={howManyLonger(lead.worse, lead.total)}
         figure={
@@ -81,49 +84,54 @@ export default function ComparePage() {
         />
       </Chunk>
 
-      <section aria-labelledby="spread-heading" className="flex flex-col gap-5">
-        <SectionHead id="spread-heading">Where you live decides how long a visit waits</SectionHead>
-        <CompareChart
-          rows={rows}
-          finland={lead.finlandGp}
-          year={LATEST_YEAR}
-          caption={
-            <>
-              <p>
-                Longest wait: {lead.longest.name}, <span className="figure font-semibold">{pct(lead.longest.gp)}</span>. Shortest:{" "}
-                {lead.shortest.name}, <span className="figure font-semibold">{pct(lead.shortest.gp)}</span>,{" "}
-                <span className="figure">{lead.spread.toFixed(1)}</span> points less.
-              </p>
-              {chip}
-            </>
-          }
-        />
-      </section>
+      <CompareChart
+        rows={rows}
+        finland={lead.finlandGp}
+        year={LATEST_YEAR}
+        caption={
+          <>
+            <p>
+              Longest wait: {lead.longest.name}, <span className="figure font-semibold">{pct(lead.longest.gp)}</span>. Shortest:{" "}
+              {lead.shortest.name}, <span className="figure font-semibold">{pct(lead.shortest.gp)}</span>,{" "}
+              <span className="figure">{lead.spread.toFixed(1)}</span> points less.
+            </p>
+            {chip}
+          </>
+        }
+      />
+      </div>
 
       <section aria-labelledby="table-heading" className="flex flex-col gap-5 print:break-before-page print:gap-2">
         <SectionHead id="table-heading">Every area, side by side</SectionHead>
         <div className={cn(COMPARE_FRAME, "print-bare max-sm:rounded-none max-sm:border-0 max-sm:border-y max-sm:bg-transparent max-sm:px-0")}>
-          <CompareTable rows={rows} finland={lead.finlandGp} finlandReferral={lead.finlandReferral} />
+          <CompareTable
+            rows={rows}
+            finland={lead.finlandGp}
+            finlandReferral={lead.finlandReferral}
+            recordingKey={`Read with care: recorded visits changed by more than ${RECORDING_PCT}% since ${FIRST_YEAR}`}
+          />
         </div>
-        {marked.length > 0 ? (
-          <div className={cn(COMPARE_FRAME, "print-keep flex flex-col gap-1")}>
-            <p className="text-base text-pretty text-foreground">
-              <span className="font-semibold">* Read with care:</span> in {marked.length} areas the share rose and recorded visits
-              changed by more than {RECORDING_PCT}% since {FIRST_YEAR}. Part of that rise may be how visits are recorded, not how
-              long they waited.
-            </p>
-            <Disclosure show={`Show the ${marked.length} areas`} hide="Hide the areas" tone="quiet" contentClassName="pt-2">
-              <ul className="flex flex-col">
-                {marked.map((row) => (
-                  <li key={row.id} className="border-t border-frame-border py-2 text-base text-pretty">
-                    <span className="font-semibold">{row.name}:</span> {row.recording?.toLowerCase()}
-                  </li>
-                ))}
-              </ul>
-            </Disclosure>
-          </div>
-        ) : null}
-        <div className={cn(COMPARE_FRAME, "print-keep flex flex-col gap-1")}>
+        {/* One unit under the table: what the marker and the labels mean, then the sources. */}
+        <div className={cn(COMPARE_FRAME, "print-flow flex flex-col divide-y divide-frame-border py-0 sm:py-0")}>
+          {marked.length > 0 ? (
+            <div className="flex flex-col gap-1 py-4 sm:py-[21px]">
+              <p className="text-base text-pretty text-foreground">
+                <span className="font-semibold">* Read with care:</span> in {marked.length} areas the share rose and recorded visits
+                changed by more than {RECORDING_PCT}% since {FIRST_YEAR}. Part of that rise may be how visits are recorded, not how
+                long they waited.
+              </p>
+              <Disclosure show={`Show the ${marked.length} areas`} hide="Hide the areas" tone="quiet" contentClassName="pt-2">
+                <ul className="flex flex-col">
+                  {marked.map((row) => (
+                    <li key={row.id} className="border-t border-frame-border py-2 text-base text-pretty">
+                      <span className="font-semibold">{row.name}:</span> {row.recording?.toLowerCase()}
+                    </li>
+                  ))}
+                </ul>
+              </Disclosure>
+            </div>
+          ) : null}
+          <div className="flex flex-col gap-1 py-4 sm:py-[21px]">
           <p className="text-base text-pretty text-foreground">
             Status compares each area with Finland overall, not with a clinical standard. The figure in brackets is points above (+)
             or below (−) Finland overall. Changes under 1 point read &ldquo;About the same&rdquo;.
@@ -141,11 +149,12 @@ export default function ComparePage() {
               </p>
             </div>
           </Disclosure>
+          </div>
+          <p className="flex flex-wrap items-center gap-2 py-4 text-base text-muted-foreground sm:py-[21px] print:text-[8.5pt]">
+            Sources: <SourceChip sourceId={lead.gpSourceId} year={LATEST_YEAR} /> GP waits,{" "}
+            <SourceChip sourceId={lead.referralSourceId} year={LATEST_YEAR} /> referrals.
+          </p>
         </div>
-        <p className="flex flex-wrap items-center gap-2 text-base text-muted-foreground print:text-[8.5pt]">
-          Sources: <SourceChip sourceId={lead.gpSourceId} year={LATEST_YEAR} /> GP waits,{" "}
-          <SourceChip sourceId={lead.referralSourceId} year={LATEST_YEAR} /> referrals.
-        </p>
       </section>
 
       <section aria-labelledby="worse-heading" className="flex flex-col gap-5">
