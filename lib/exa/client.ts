@@ -125,13 +125,19 @@ const open = (globalCache.__exaCache ??= new Map<string, Entry>());
 const pinned = (globalCache.__exaPinned ??= new Map<string, Entry>());
 const MAX_OPEN_ENTRIES = 500;
 
-export function cacheGet<T>(key: string, ttlMs: number): { value: T; fresh: boolean; retrievedAt: string } | null {
+/** `ageMs` lets a caller pick the TTL at read time from the cached value (see lib/exa/ask-cache.ts). */
+export function cacheGet<T>(
+  key: string,
+  ttlMs: number,
+): { value: T; fresh: boolean; retrievedAt: string; ageMs: number } | null {
   const e = pinned.get(key) ?? open.get(key);
   if (!e) return null;
+  const ageMs = Date.now() - e.at;
   return {
     value: e.value as T,
-    fresh: Date.now() - e.at < ttlMs,
+    fresh: ageMs < ttlMs,
     retrievedAt: new Date(e.at).toISOString().slice(0, 10),
+    ageMs,
   };
 }
 

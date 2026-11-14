@@ -14,7 +14,11 @@ const WINDOW_MS = 60_000;
 const LIMITS: Record<Bucket, { perIp: number; global: number }> = {
   news: { perIp: 60, global: 600 }, // county + national strips: cheap, mostly cached
   evidence: { perIp: 40, global: 200 }, // up to ~6 panels per action page
-  ask: { perIp: 20, global: 60 }, // free text: every new question is a paid call
+  // ask: the route counts only requests that will search (cache hits, the off-topic gate and 400s are
+  // free). Judges at the venue share one public IP, so per IP is 40 (two thirds of the global cap: the
+  // venue can't be locked out by its own clicks, and other visitors keep 20). The global 60 per minute
+  // per instance is the spend cap and is unchanged.
+  ask: { perIp: 40, global: 60 },
   brief: { perIp: 20, global: 60 }, // each uncached request is one Claude call
 };
 const MAX_TRACKED_IPS = 5_000;
