@@ -30,7 +30,7 @@
 
 Every bar is zero-based (0 to 100%) and carries a thin off-white marker at Finland's value. Use `components/ui/measure-bar.tsx`, never a hand-made bar:
 
-- `<MeasureBar value finland finlandLabel status />`: bar, line and axis. `value={null}` draws a hatched empty track (no public data), `finland={null}` draws no line. `size`: `"sm"` 6px (compact steps), default, `"lg"` (the home card). `gapLabel`: the distance to Finland as text ("+30.7 pts", from `gapToFinland(value, finland)` in `components/ranking/ranking-list.tsx`).
+- `<MeasureBar value finland finlandLabel status />`: bar, line and axis. `value={null}` draws a hatched empty track (no public data), `finland={null}` draws no line. `size`: `"sm"` 6px (compact steps), default, `"lg"` (the home card). `gapLabel`: the distance to Finland as text ("30.7 points worse than Finland", from `pointsVsFinland(value, finland, higherIsBetter)` in `components/pathway/wording.ts`).
 - `BarFill`, `FinlandTick`, `FinlandAxis`: the parts, for custom layouts (the ranking draws one continuous 1px line down the bar rows, and only through bar rows).
 - **One treatment for "worse than Finland", on every bar (big bars, the ranking's mini bars, the home card, the judged column of the trend):** a wait bar's solid red is the gap to Finland and touches the line; a referral bar ends at its value and its shortfall is hatched, never solid.
   - a **wait** share (lower is better): tinted red up to the Finland line, solid red beyond it;
@@ -39,7 +39,7 @@ Every bar is zero-based (0 to 100%) and carries a thin off-white marker at Finla
 - At or better than Finland: slate (`bg-status-amber-bar`; the token name is historical). Slate is not "good", and a slate figure stays in the text colour (`STATUS_FIGURE`).
 - Grey fill: only a mark without a status, i.e. the "Finland overall" bar and the earlier years of the trend. Hatched track: no public data.
 - The map of Finland (`components/map/finland-map.tsx`) fills its areas with the same tokens at the same strength as the bars: `status-red`, `status-amber-bar`, the hatch.
-- `<BarKey items />`: the key, one row of swatches drawn like the marks: "Finland's value", "Worse than Finland's level" (tint then solid), "Short of Finland's level" (tint then faded hatching: a referral bar short of the line), "At or better than Finland's level", "No public data". **One key per page** (home: under the map; county: under the steps; act: beside the strip's title), with `items` limited to the marks in view. No prose legends: a sentence under a chart is only for what a swatch cannot say.
+- `<BarKey items />`: the key, one row of swatches drawn like the marks: "Finland's value", "Worse than Finland's level" (tint then solid), "Gap to Finland's level" (tint then faded hatching: a referral bar short of the line), "At or better than Finland's level", "No public data". **One key per page** (home: under the map; county: under the steps; act: beside the strip's title), with `items` limited to the marks in view. No prose legends: a sentence under a chart is only for what a swatch cannot say.
 - `withFigures("Finland 54.7%")` sets the numbers of a one-string label in the figure face.
 
 ## Buttons and links
@@ -62,7 +62,7 @@ Bricolage Grotesque for headlines, Geist for text and numbers, Geist Mono for so
 - 12px and 11px are for marks only: `type-note` (labels drawn on a chart or an axis), `type-mark` (mono source chips), badges.
 - `type-legend`: 13px, for the labels of `BarKey` (it sets it itself).
 - **Numbers: one face, Geist with tabular figures.** `numeral` for standalone key figures, with a size (`numeral text-[2.25rem]`), coloured with `STATUS_FIGURE[status]` (red ink only when worse than Finland). `figure` for a number inside a line of text; wrap the number with its unit and nothing else.
-- Say "percentage points" once per section where gaps first appear (a heading line or description); rows keep "pts". "HUS-wide" is explained once, in the ranking footer ("one shared figure for the hospital district (HUS) that serves these areas"); the step cards only carry the label "HUS-wide value, not a county figure". Gaps to Finland: "+30.7 pts vs Finland" / "−21.9 pts vs Finland", one decimal, a true minus sign (`gapToFinland`). Change over time is written in words, with no arrow and no colour: "27.4 pts worse since 2023".
+- Say "percentage points" once per section where gaps first appear (a heading line or description); rows keep "pts". "HUS-wide" is explained once, in the ranking footer ("one shared figure for the hospital district (HUS) that serves these areas"); the step cards only carry the label "HUS-wide value, not a county figure". Gaps to Finland on a step card: "30.7 points worse than Finland" / "21.9 points better than Finland", one decimal, no sign (`pointsVsFinland`). Change over time is written in words, with no arrow and no colour: "27.4 pts worse since 2023".
 - Always "non-urgent GP visits"; never people or patients "waiting", and the app never does a "diagnosis".
 
 ## Surfaces and frames

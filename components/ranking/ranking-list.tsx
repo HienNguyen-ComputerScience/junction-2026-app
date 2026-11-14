@@ -54,17 +54,6 @@ const REFERRAL_TAG: Record<GapStatus, string> = {
   no_data: "No public data",
 };
 
-/**
- * The gap to Finland in percentage points, for display: the difference of the two one-decimal
- * figures shown on screen, with a real minus sign. "+" means a larger share than Finland.
- */
-export function gapToFinland(value: number, finland: number): string {
-  const diff = Number(value.toFixed(1)) - Number(finland.toFixed(1));
-  const abs = Math.abs(diff).toFixed(1);
-  if (abs === "0.0") return "0.0 pts";
-  return `${diff > 0 ? "+" : "−"}${abs} pts`;
-}
-
 export function RankingList({
   rows,
   unranked,

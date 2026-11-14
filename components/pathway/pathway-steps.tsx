@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "cn";
 
-import { gapToFinland } from "@/components/ranking/ranking-list";
+import { HUS_FULL, pointsVsFinland } from "@/components/pathway/wording";
 import { SourceChip } from "@/components/source-chip";
 import { MeasureBar } from "@/components/ui/measure-bar";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
@@ -222,15 +222,14 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
         )}
         {value !== null && measure && (
           <span className="pb-px type-caption whitespace-nowrap text-muted-foreground">
-            <span className={cn("figure font-medium", STATUS_FIGURE[status])}>
-              {gapToFinland(value, measure.finland)}
-            </span>{" "}
-            vs Finland
+            <span className={cn("font-medium", STATUS_FIGURE[status])}>
+              {pointsVsFinland(value, measure.finland, step.stage === "referral")}
+            </span>
           </span>
         )}
         {shared && (
           <span className="pb-px type-caption text-pretty text-muted-foreground">
-            {shared.name}-wide: <span className="figure">{formatPct(shared.value)}</span>
+            {shared.name === "HUS" ? HUS_FULL : shared.name} value: <span className="figure">{formatPct(shared.value)}</span>
           </span>
         )}
       </div>

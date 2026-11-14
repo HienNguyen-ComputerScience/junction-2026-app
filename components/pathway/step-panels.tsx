@@ -40,6 +40,7 @@ export function buildStepTabs(countyId: string, steps: PathwayStep[]): StepTab[]
   return steps.map((step) => {
     const empty = !step.measure || step.measure.value === null;
     const why = WHY[step.stage];
+    const trendStage = trendFor(countyId, step);
     return {
       id: step.stage,
       tab: <TabFace step={step} />,
@@ -55,6 +56,7 @@ export function buildStepTabs(countyId: string, steps: PathwayStep[]): StepTab[]
           </span>
         ) : undefined,
       panel: <StepPanel countyId={countyId} step={step} />,
+      aside: trendStage ? <TrendStrip stages={[trendStage]} areaName={countyId} /> : undefined,
     };
   });
 }
@@ -73,7 +75,15 @@ function TabFace({ step }: { step: PathwayStep }) {
         </span>
       </span>
       {value !== null ? (
-        <span className={cn("numeral text-[1.75rem] leading-none", STATUS_FIGURE[status])}>{formatPct(value)}</span>
+        // The selected tab's number is the page's focal point (44px); the others stay quiet.
+        <span
+          className={cn(
+            "numeral text-[1.75rem] leading-none group-aria-selected/tab:text-[2.75rem]",
+            STATUS_FIGURE[status],
+          )}
+        >
+          {formatPct(value)}
+        </span>
       ) : (
         // No figure of the area's own: never a big number. The hospital group's value, when
         // there is one, is a small muted line under the badge, not the step's number.
@@ -84,11 +94,33 @@ function TabFace({ step }: { step: PathwayStep }) {
       </StatusBadge>
       {shared ? (
         <span className="type-caption text-muted-foreground">
-          {shared.name}-wide: <span className="figure">{formatPct(shared.value)}</span>
+          {shared.name === "HUS" ? HUS_FULL : shared.name} value: <span className="figure">{formatPct(shared.value)}</span>
         </span>
       ) : null}
     </>
   );
+}
+
+/** The step's trend card (the county page shows it beside the tabs), or null when it has under two years. */
+function trendFor(countyId: string, step: PathwayStep): TrendStage | null {
+  const { measure, status } = step;
+  const indicatorId = INDICATOR[step.stage];
+  if (!measure || measure.value === null || !indicatorId) return null;
+  const trend = getTrend(countyId, indicatorId).map(({ year, value: point }) => ({
+    year,
+    value: point?.value ?? null,
+  }));
+  if (trend.length < 2) return null;
+  return {
+    step: step.step,
+    title: step.title,
+    status,
+    sourceId: measure.sourceId,
+    year: measure.year,
+    direction: measure.direction,
+    trend,
+    nationalTrend: YEARS.map((year) => ({ year, value: getNationalValue(indicatorId, year)?.value ?? null })),
+  };
 }
 
 function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) {
@@ -119,7 +151,7 @@ function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) 
           {measure.shared ? (
             <>
               <p className="text-sm text-pretty text-muted-foreground">
-                Referrals from here go to {measure.shared.name === "HUS" ? HUS_FULL : measure.shared.name}, which
+                Referrals from here go to {measure.shared.name}, which
                 publishes one figure for all its areas.
               </p>
               <p className="text-sm font-medium text-foreground">
@@ -144,24 +176,6 @@ function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) 
     );
   }
 
-  const indicatorId = INDICATOR[step.stage];
-  const trend = indicatorId
-    ? getTrend(countyId, indicatorId).map(({ year, value: point }) => ({ year, value: point?.value ?? null }))
-    : [];
-  const trendStage: TrendStage | null =
-    indicatorId && trend.length > 1
-      ? {
-          step: step.step,
-          title: step.title,
-          status,
-          sourceId: measure.sourceId,
-          year: measure.year,
-          direction: measure.direction,
-          trend,
-          nationalTrend: YEARS.map((year) => ({ year, value: getNationalValue(indicatorId, year)?.value ?? null })),
-        }
-      : null;
-
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-2.5">
@@ -171,7 +185,6 @@ function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) 
           <MeasureBar value={value} finland={measure.finland} finlandLabel={finlandLabel} status={status} />
         </div>
       </div>
-      {trendStage && <TrendStrip stages={[trendStage]} areaName={countyId} />}
       {step.stage === "referral" && <LateReferrals countyId={countyId} />}
     </div>
   );

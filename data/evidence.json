@@ -26,7 +26,8 @@
     "effect_size": {
       "value": 0.75,
       "unit": "odds ratio",
-      "metric": "mortality, >15 years vs 1 year with the same GP"
+      "metric": "mortality, >15 years vs 1 year with the same GP",
+      "population": "Norway: patients with the same GP over 15 years vs 1 year"
     },
     "quote_or_page": "Abstract, Results: \"OR for dying decreased gradually from 0.92 (95% CI = 0.86 to 0.98) after 2-3 years' duration, to 0.75 (95% CI = 0.70 to 0.80) after an RGP-patient relationship of >15 years.\"",
     "limitations": "Observational study, so association not proven cause (authors argue dose-response suggests causation). Not cancer-specific. Does not measure waiting time to see a GP.",
@@ -45,7 +46,8 @@
     "effect_size": {
       "value": 97.6,
       "unit": "%",
-      "metric": "share of triage assessments judged safe vs nurse"
+      "metric": "share of triage assessments judged safe vs nurse",
+      "population": "877 real patients at Finnish health centres, judged against a triage nurse"
     },
     "quote_or_page": "Abstract, Results: \"Safe assessments by the ESC accounted for 97.6% (856/877; 95% CI 95.6%-98.0%) of all assessments made.\"",
     "limitations": "Measures safety vs a nurse, not shorter waits. Exact agreement 53.7%, sensitivity 62.6%. Data collected 2019. Authors are from the developer's network. Not cancer-specific.",
@@ -124,7 +126,8 @@
     "effect_size": {
       "value": -17,
       "unit": "days",
-      "metric": "median diagnostic interval, after vs before pathways (adjusted)"
+      "metric": "median diagnostic interval, after vs before pathways (adjusted)",
+      "population": "cancer patients, after the pathways were introduced vs before"
     },
     "quote_or_page": "Abstract, Results: \"The median diagnostic interval was 14 (95% CI: 11;16) days shorter during and 17 (95% CI: 15;19) days shorter after the implementation of CPPs than before.\" Survival: Jensen et al. BMC Cancer 2017 (https://pmc.ncbi.nlm.nih.gov/articles/PMC5585953/), Abstract: \"the RS3years rose from 45% (95% CI: 42;47) before to 54% (95% CI: 52;56) after CPP implementation.\"",
     "limitations": "Before/after comparison, not randomised. Survival gain may partly reflect lead-time and selection bias (authors say so). 63% of Danish cancer patients in 2010 were not initially referred to a pathway.",
@@ -158,7 +161,8 @@
     "effect_size": {
       "value": 0.9,
       "unit": "days",
-      "metric": "median specialist response time"
+      "metric": "median specialist response time",
+      "population": "GPs asking specialists for advice through eConsult"
     },
     "quote_or_page": "Abstract: \"PCPs receive responses in a median of 0.9 days\" ... \"two-thirds of cases are resolved without the patient needing a face-to-face specialist visit\"",
     "limitations": "Conference abstract by the programme's own team. Avoided referrals are GP-reported. Not cancer-specific; must never delay an urgent suspected-cancer referral.",
@@ -207,7 +211,8 @@
     "effect_size": {
       "value": 18,
       "unit": "%",
-      "metric": "referral quality score, template vs control"
+      "metric": "referral quality score, template vs control",
+      "population": "referrals from practices using templates vs control practices"
     },
     "quote_or_page": "Abstract, Results: \"referrals in the intervention group scored 18% higher (95% CI (11%, 25%), p < 0.001) on the referral quality score than the control group.\"",
     "limitations": "Measures referral quality, not time to diagnosis. Included study-staff visits to practices, not just the template.",
@@ -226,7 +231,8 @@
     "effect_size": {
       "value": 8,
       "unit": "%",
-      "metric": "conversion rate (cancers diagnosed / patients referred)"
+      "metric": "conversion rate (cancers diagnosed / patients referred)",
+      "population": "2,961 patients with non-specific symptoms referred to diagnostic centres"
     },
     "quote_or_page": "Abstract, Results: \"In total, 2961 patients were referred into the MDCs and 241 cancers were diagnosed.\" Conclusions: \"The MDC model diagnoses cancer in patients with non-specific symptoms, with a conversion rate of 8%\"",
     "limitations": "No comparison group, so we don't know how much faster diagnosis was than usual care. Conversion rate is a yield measure, not a speed measure.",

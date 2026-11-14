@@ -5,7 +5,7 @@ import type { MainReason } from "@/lib/main-reason";
 // as they are; only how a gap is said on screen is set here.
 
 /** The hospital group's name, spelled out at its first use on a page. */
-export const HUS_FULL = "HUS (Helsinki University Hospital region)";
+export const HUS_FULL = "HUS (Helsinki hospital district)";
 
 /**
  * The gap to Finland in words, from the two one-decimal figures shown on screen: "30.7
@@ -15,6 +15,18 @@ export function gapWords(value: number, finland: number): string {
   const diff = Math.round((Number(value.toFixed(1)) - Number(finland.toFixed(1))) * 10) / 10;
   if (diff === 0) return "Level with Finland";
   return `${Math.abs(diff).toFixed(1)} percentage points ${diff > 0 ? "above" : "below"} Finland's level`;
+}
+
+/**
+ * The gap to Finland for a step card, in words and without a sign: "13.1 points worse than
+ * Finland", "7.9 points better than Finland", "level with Finland". `higherIsBetter` is true for a
+ * share where more is faster (referrals processed in time); a GP wait is the other way round.
+ */
+export function pointsVsFinland(value: number, finland: number, higherIsBetter: boolean): string {
+  const diff = Math.round((Number(value.toFixed(1)) - Number(finland.toFixed(1))) * 10) / 10;
+  if (diff === 0) return "Level with Finland";
+  const better = higherIsBetter ? diff > 0 : diff < 0;
+  return `${Math.abs(diff).toFixed(1)} points ${better ? "better" : "worse"} than Finland`;
 }
 
 const STEP_NAME: Partial<Record<Stage, string>> = {

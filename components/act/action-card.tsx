@@ -41,7 +41,11 @@ export function FirstStep({ children, compact = false }: { children: ReactNode; 
 }
 
 /** An action title without its trailing full stop (stripped at render; the data keeps its text). */
-export const plainTitle = (title: string) => title.replace(/\.+\s*$/, "");
+export const plainTitle = (title: string) =>
+  title
+    .replace(/\.+\s*$/, "")
+    // Omaolo is named with what it is at its first use, which is the title of its own action.
+    .replace("the national digital symptom assessment (Omaolo)", "Omaolo (the national online symptom checker)");
 
 type Effect = NonNullable<Evidence["effect_size"]>;
 
@@ -82,11 +86,13 @@ function statisticLine({ value, unit, metric }: Effect): string {
 }
 
 /**
- * Who or what the figure compares, taken only from the data's own `effect_size.metric`: where
- * it names a comparison ("... vs ..."), the metric is quoted as it stands. Nothing is inferred
- * from the other fields; null when the metric names no comparison.
+ * Who or what the figure compares. Preferred: the data's own short `effect_size.population`
+ * line (who was studied, where, against what), written only from the stored text. Otherwise,
+ * where the metric names a comparison ("... vs ..."), the metric is quoted as it stands.
+ * Nothing is inferred; null when neither exists.
  */
-export function figureQualifier({ metric }: Effect): string | null {
+export function figureQualifier({ metric, population }: Effect): string | null {
+  if (population) return population;
   return /\svs\s/.test(metric) ? `Measured as: ${metric}` : null;
 }
 

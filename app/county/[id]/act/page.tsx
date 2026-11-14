@@ -66,33 +66,6 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
         </div>
       </header>
 
-      {/* The compact step strip: where the delay sits, in one short row, so the first action
-          is on the first screen. The full detail of each step is on the county page. */}
-      <Frame aria-labelledby="where-heading">
-        <FrameHeader className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-          <FrameTitle id="where-heading" className="type-title">
-            {bottleneck.anyRed ? "Where the delay sits" : "Where the pathway stands"} ({LATEST_YEAR})
-          </FrameTitle>
-          <p className="text-sm text-pretty text-foreground">{bottleneckLede(bottleneck)}</p>
-          <BarKey items={["finland", "short"]} className="sm:ml-auto" />
-        </FrameHeader>
-        <FramePanel padding="none">
-          <PathwaySteps
-            steps={buildPathwaySteps(county.id)}
-            density="compact"
-            renderExtra={(step) =>
-              step.stage === "gp_recognition" ? (
-                <TextLink kind="jump" href="#red-flags" className="type-caption sm:min-h-6">
-                  Red-flag helper
-                </TextLink>
-              ) : null
-            }
-          />
-        </FramePanel>
-      </Frame>
-
-      <WhatIfForArea countyId={county.id} areaName={county.name} />
-
       <Frame aria-labelledby="recommended">
         <FrameHeader>
           <FrameTitle id="recommended" className="type-title">
@@ -160,6 +133,33 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           </Disclosure>
         ) : null}
       </Frame>
+
+      {/* The compact step strip, under the actions (the first action is on the first screen):
+          where the delay sits. The full detail of each step is on the county page. */}
+      <Frame aria-labelledby="where-heading">
+        <FrameHeader className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <FrameTitle id="where-heading" className="type-title">
+            {bottleneck.anyRed ? "Where the delay sits" : "Where the pathway stands"} ({LATEST_YEAR})
+          </FrameTitle>
+          <p className="text-sm text-pretty text-foreground">{bottleneckLede(bottleneck)}</p>
+          <BarKey items={["finland", "short"]} className="sm:ml-auto" />
+        </FrameHeader>
+        <FramePanel padding="none">
+          <PathwaySteps
+            steps={buildPathwaySteps(county.id)}
+            density="compact"
+            renderExtra={(step) =>
+              step.stage === "gp_recognition" ? (
+                <TextLink kind="jump" href="#red-flags" className="type-caption sm:min-h-6">
+                  Red-flag helper
+                </TextLink>
+              ) : null
+            }
+          />
+        </FramePanel>
+      </Frame>
+
+      <WhatIfForArea countyId={county.id} areaName={county.name} />
 
       <Frame aria-labelledby="red-flags">
         <FrameHeader>

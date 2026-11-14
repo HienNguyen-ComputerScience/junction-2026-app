@@ -445,6 +445,11 @@ for (const [file, rows] of Object.entries(files)) {
       problems.push(`${file}[${i}]: shared.confirmed_by "${row.shared.confirmed_by}" is not in sources`);
     if (!row.source_id || !sourceIds.has(row.source_id))
       problems.push(`${file}[${i}]: source_id "${row.source_id}" is not in sources`);
+    if (file === "evidence" && row.effect_size && "population" in row.effect_size) {
+      const { population } = row.effect_size;
+      if (typeof population !== "string" || !population.trim() || population.trim().split(/\s+/).length > 12)
+        problems.push(`${file}[${i}]: effect_size.population must be a non-empty string of at most 12 words`);
+    }
     if ("county_id" in row && !countyIds.has(row.county_id))
       problems.push(`${file}[${i}]: unknown county_id "${row.county_id}"`);
     if (row.indicator_id != null && file !== "indicators" && !indicatorIds.has(row.indicator_id))

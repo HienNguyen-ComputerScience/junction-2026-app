@@ -31,7 +31,7 @@ export type WhatIf =
       toBest: (AreaValue & { amount: number }) | null;
     };
 
-/** One decimal, the way gapToFinland rounds: each share to one decimal, then the difference. */
+/** One decimal, the way the gap words round: each share to one decimal, then the difference. */
 export function diff1(a: number, b: number): number {
   return Math.round((Number(a.toFixed(1)) - Number(b.toFixed(1))) * 10) / 10;
 }

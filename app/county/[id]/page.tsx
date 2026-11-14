@@ -9,7 +9,7 @@ import { LimitationsBox, type LimitationItem } from "@/components/pathway/limita
 import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
 import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { buildStepTabs } from "@/components/pathway/step-panels";
-import { StepTabs } from "@/components/pathway/step-tabs";
+import { StepAside, StepTabs, StepTabsProvider } from "@/components/pathway/step-tabs";
 import { HUS_FULL, shortReason } from "@/components/pathway/wording";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { buttonVariants } from "@/components/ui/button";
@@ -63,26 +63,36 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
       {/* Desktop: name, verdict and the three steps (one at a time) on the left, the limitations
           box beside them, so both are on the first screen. Below lg the limitations are a
           one-line disclosure under the main action instead (never both at the same width). */}
-      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-start lg:gap-10">
-        <header className="flex flex-col items-start gap-4">
-          <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
-          <h1 className="type-page lg:text-[2.5rem] lg:leading-[1.1]">{county.name}</h1>
-          <p className="max-w-[44rem] text-base leading-relaxed text-pretty text-foreground">{shortReason(reason)}</p>
-          <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
-            {anyRed ? "See all actions" : "Actions to keep this level"}
-            <ArrowRight aria-hidden data-icon="inline-end" />
-          </Link>
-          <section aria-labelledby="steps-heading" className="w-full">
-            <h2 id="steps-heading" className="sr-only">
-              The first three steps, compared with Finland ({LATEST_YEAR})
-            </h2>
-            <StepTabs tabs={tabs} defaultId={reasonStage ?? "gp_access"} label={`The first three steps, ${LATEST_YEAR}`} />
-          </section>
-          <LimitationsBox items={limitations} variant="disclosure" className="mt-2 w-full lg:hidden" />
-        </header>
+      <StepTabsProvider tabs={tabs} defaultId={reasonStage ?? "gp_access"}>
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-start lg:gap-10">
+          <header className="flex flex-col items-start gap-4">
+            <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
+            <h1 className="type-page lg:text-[2.5rem] lg:leading-[1.1]">{county.name}</h1>
+            <p className="max-w-[44rem] text-base leading-relaxed text-pretty text-foreground">{shortReason(reason)}</p>
+            <section aria-labelledby="steps-heading" className="w-full">
+              <h2 id="steps-heading" className="sr-only">
+                The first three steps, compared with Finland ({LATEST_YEAR})
+              </h2>
+              <StepTabs
+                label={`The first three steps, ${LATEST_YEAR}`}
+                action={
+                  <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
+                    {anyRed ? "See all actions" : "Actions to keep this level"}
+                    <ArrowRight aria-hidden data-icon="inline-end" />
+                  </Link>
+                }
+              />
+            </section>
+            <LimitationsBox items={limitations} variant="disclosure" className="mt-2 w-full lg:hidden" />
+          </header>
 
-        <LimitationsBox items={limitations} className="max-lg:hidden" />
-      </div>
+          {/* Right column: the limitations, then the selected step's trend under them. */}
+          <div className="flex flex-col gap-4 max-lg:mt-4">
+            <LimitationsBox items={limitations} className="max-lg:hidden" />
+            <StepAside />
+          </div>
+        </div>
+      </StepTabsProvider>
 
       <PathwayStrip countyId={county.id} />
 

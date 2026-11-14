@@ -89,7 +89,8 @@ export type Evidence = {
   first_step: string;
   precedent: string;
   effect_text: string;
-  effect_size: { value: number; unit: string; metric: string } | null;
+  /** `population`: who/where/against what the figure was measured, only where the stored text says so. */
+  effect_size: { value: number; unit: string; metric: string; population?: string } | null;
   quote_or_page: string;
   limitations: string;
   verified: boolean;
