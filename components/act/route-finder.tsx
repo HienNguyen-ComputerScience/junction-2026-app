@@ -110,13 +110,10 @@ export function RouteFinder({ chips }: { chips: Record<string, ReactNode> }) {
   const selectedId = fromText ? typed[0].id : picked;
   const selected =
     RED_FLAG_CATEGORIES.find((category) => category.id === selectedId) ?? null;
-  // The typed words matched nothing: say so beside the field, and fall back to the safety net.
+  // The typed words matched nothing: say so beside the field and below, but don't light up a
+  // route card. A highlighted "Safety-net" card would read as a verdict on unmatched words.
   const noTextMatch = text.trim() !== "" && !fromText;
-  const route: Urgency | null = selected
-    ? selected.urgency
-    : noTextMatch
-      ? "safety_net"
-      : null;
+  const route: Urgency | null = selected ? selected.urgency : null;
   const links = selected ? selected.links : NO_MATCH_LINKS;
 
   function pick(id: string) {
