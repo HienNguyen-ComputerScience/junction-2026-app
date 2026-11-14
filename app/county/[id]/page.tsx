@@ -64,12 +64,12 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const trends = new Map(buildStepTabs(county.id, buildPathwaySteps(county.id)).map((tab) => [tab.id, tab.aside]));
 
   return (
-    <main className="page-container flex flex-col pt-4 sm:pt-6">
+    <main className="page-container flex flex-col pt-4">
       <FocusGroup>
       <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
 
       <AreaLead countyId={county.id}>
-        <div data-print="hide" className="flex flex-wrap items-start gap-2.5 pt-2">
+        <div data-print="hide" className="flex flex-wrap items-start gap-2.5">
           <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
             {bottleneck.anyRed ? "See what to do" : "Actions to keep this level"}
             <ArrowRight aria-hidden data-icon="inline-end" />
@@ -85,7 +85,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
 
       <section aria-labelledby="steps-heading" className="flex flex-col gap-8 py-16 sm:py-24">
         <Reveal className="motion-loud">
-          <h2 id="steps-heading" className="max-w-[24ch] font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.75rem]">
+          <h2 id="steps-heading" className="type-title">
             {bottleneck.anyRed ? "Where care is delayed" : "Where the pathway stands"}
           </h2>
         </Reveal>
@@ -96,7 +96,6 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             <StepStoryText
               key={step.stage}
               step={step}
-              flag={step.stage === reasonStage ? "The main delay" : undefined}
               trend={trends.get(step.stage)}
             />
           ))}
@@ -105,7 +104,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
 
       <section aria-labelledby="limits-heading" className="flex flex-col gap-5 pb-16 sm:pb-24">
         <Reveal className="motion-loud">
-          <h2 id="limits-heading" className="max-w-[24ch] font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.75rem]">
+          <h2 id="limits-heading" className="type-title">
             What these figures cannot tell you
           </h2>
         </Reveal>
