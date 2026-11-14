@@ -121,8 +121,8 @@ function Options({ options, done, id, labelledBy, label, columns = false }: {
  * A disclosure, not an ARIA menu: the options are ordinary buttons and links in Tab order, which
  * is what a reader who is not fluent with web apps already knows. It opens on click (never on
  * hover), closes on Escape, on a click outside and when an option is used, and gives the
- * keyboard focus back to the button. On a phone the list sits in the page flow under the button,
- * so it cannot be covered by a fixed bar; from 640px it floats over the page below. Hidden on paper.
+ * keyboard focus back to the button. At every width the list opens in the page flow under the
+ * button and pushes what follows down, so no later block can paint over it. Hidden on paper.
  *
  * `inline`: the options are shown at once with no button, for a place whose whole job is
  * saving or sharing (the last step of the briefing).
@@ -136,7 +136,7 @@ export function SaveShare({
 }: {
   options: ShareOption[];
   inline?: boolean;
-  /** From 640px the list floats under the button, lined up with its start or its end edge. */
+  /** From 640px the compact list sits under the button, lined up with its start or its end edge. */
   align?: "start" | "end";
   label?: string;
   className?: string;
@@ -189,7 +189,7 @@ export function SaveShare({
       ref={wrapper}
       data-slot="save-share"
       data-print="hide"
-      className={cn("relative flex w-full flex-col items-start gap-2 print:hidden sm:w-auto", className)}
+      className={cn("flex w-full flex-col items-start gap-2 print:hidden sm:w-auto", className)}
       onBlur={(event) => {
         // Tabbing out of the list closes it, without moving the focus back.
         if (open && !event.currentTarget.contains(event.relatedTarget as Node | null) && event.relatedTarget) setOpen(false);
@@ -211,7 +211,7 @@ export function SaveShare({
         <div
           // Its own stagger index: an --i inherited from a Reveal around the control would delay it.
           style={{ "--i": 0 } as CSSProperties}
-          className={cn("animate-fade-up z-30 w-full rounded-[14px] bg-mint-veil p-2 sm:absolute sm:top-full sm:mt-2 sm:w-[22rem]", align === "end" ? "sm:right-0" : "sm:left-0")}>
+          className={cn("animate-fade-up w-full rounded-[14px] bg-mint-veil p-2 sm:w-[22rem]", align === "end" ? "sm:self-end" : "sm:self-start")}>
           <Options options={options} done={close} id={panelId} labelledBy={triggerId} />
         </div>
       ) : (

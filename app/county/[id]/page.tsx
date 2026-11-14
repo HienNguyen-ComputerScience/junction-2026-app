@@ -69,7 +69,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
       <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
 
       <AreaLead countyId={county.id}>
-        <div data-print="hide" className="flex flex-wrap gap-2.5 pt-2">
+        <div data-print="hide" className="flex flex-wrap items-start gap-2.5 pt-2">
           <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
             {bottleneck.anyRed ? "See what to do" : "Actions to keep this level"}
             <ArrowRight aria-hidden data-icon="inline-end" />
