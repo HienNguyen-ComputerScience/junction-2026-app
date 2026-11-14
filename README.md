@@ -6,20 +6,22 @@ Junction 2026, AstraZeneca challenge "Equal Care Across Finland". FirstLine show
 Whether you get early cancer care in Finland depends on where you live, and no one shows a county director where their county's pathway breaks.
 
 ## Solution
-Three screens, all built from a committed data snapshot (`data/`, see `data/README.md`) in which every number has a source:
+Five screens, all built from a committed data snapshot (`data/`, see `data/README.md`) in which every number has a source. FirstLine is for county administrators, not for patients or GPs.
 
-1. **County ranking** (`/`): the 21 wellbeing services counties and the City of Helsinki ranked by the share of non-urgent GP visits that come more than 7 days after people ask (Sotkanet 6411), with referral speed (Sotkanet 13) alongside. Every number has a source chip. Below the ranking, a strip of national cancer-care news found live with Exa.
-2. **County pathway** (`/county/[id]`): where the delay sits (getting to a GP, GP recognising warning signs, GP to specialist), as red / amber / grey stage cards; a limitations box that is always on screen; a plain-language brief for the county director (Claude writes it from the snapshot, a validator drops any claim whose number or source is not in the snapshot, and a precomputed brief is shown otherwise); and local news found live with Exa.
-3. **Act** (`/county/[id]/act`): up to three recommended actions for the county's red stages, each with an owner, a first step, a precedent and a checked source, plus a live Exa "find more evidence" panel per action (marked "Found live — unverified"); a red-flag helper for GPs (decision support, runs only in the browser, links to NICE NG12 and Käypä hoito instead of reproducing them); and a question box answered only from live Exa search results.
+1. **Home** (`/`): pick an area from a list or the map. One answer card shows the area's figure against Finland's level and its top action.
+2. **Compare** (`/compare`): all areas ranked by the share of non-urgent GP visits that come more than 7 days after people ask (Sotkanet 6411), with referral speed (Sotkanet 13) alongside. Every number has a source chip.
+3. **County pathway** (`/county/[id]`): where the delay sits (getting to a GP, GP recognising warning signs, GP to specialist), shown as three steps compared with Finland; a limitations box that is always on screen; a plain-language brief for the county director (Claude writes it from the snapshot, a validator drops any claim whose number or source is not in the snapshot, and a precomputed brief is shown otherwise); and local news found live with Exa.
+4. **Act** (`/county/[id]/act`): recommended actions, each with an owner, a first step, a precedent and a checked source, plus a live Exa "find more evidence" panel per action (marked "Found live — unverified"); a what-if that shows how many fewer non-urgent GP visits would wait over 7 days if the area reached a better level (arithmetic on the published shares, not a forecast); and "The four referral routes a county needs", a static panel (decision support, not diagnosis) that links to NICE NG12 and Käypä hoito instead of reproducing them. It has no symptom input.
+5. **Ask** (`/ask`): a question box answered only from live Exa search results, with a numbered source for every sentence, plus national cancer-care news.
 
-The question box is on its own page (`/ask`). Sources and limitations: `/sources` (data sources, the evidence behind each recommended action, and what is found live and unverified).
+Sources and limitations: `/sources` (data sources, the evidence behind each recommended action, and what is found live and unverified).
 
 ## Live demo
 URL: https://firstline-finland.vercel.app
 Demo credentials: none needed (public, no login).
 
-Hosted on Vercel (project `firstline-finland`), deployed from `main` with the Vercel CLI (`vercel deploy --prod`); it is not auto-deployed on push, so the live site can lag behind `main`.
-The AI-written brief and live Exa search need `ANTHROPIC_API_KEY` and `EXA_API_KEY` set in the Vercel project; without them the site shows the precomputed brief and dated cached Exa results.
+Hosted on Vercel (project `firstline-finland`), deployed automatically from `main` through the GitHub integration.
+The AI-written brief and live Exa search need `ANTHROPIC_API_KEY` and `EXA_API_KEY` set in the Vercel project. Without `ANTHROPIC_API_KEY` the site shows the precomputed brief. Without `EXA_API_KEY` (or when Exa is down) an Exa panel shows saved results with their date when a committed cache entry exists for that request, and otherwise a clear "unavailable" state.
 
 ## Stack
 Next.js 16 (App Router, Cache Components), TypeScript, Tailwind CSS 4, shadcn/ui, hosted on Vercel. Data: a static JSON snapshot of THL Sotkanet, rebuilt by a script. Claude API (brief and Exa answers) and Exa search are called server-side only. No database, no patient data.
@@ -35,14 +37,14 @@ Optional environment variables in `.env.local` (names only; never commit values)
 - `ANTHROPIC_API_KEY`: the AI-written county brief and the written answers in the question box.
 - `EXA_API_KEY`: county news, the evidence finder and the question box.
 
-The app works without them: the county brief falls back to the precomputed brief, and the live Exa panels show a clear "unavailable" state while the rest of the page works.
+The app works without them: the county brief falls back to the precomputed brief, and an Exa panel shows saved results with their date when a committed cache entry exists for that request (`data/exa-cache/`), otherwise a clear "unavailable" state, while the rest of the page works.
 
 On Windows, `npm run dev` (Turbopack) can crash on some machines. `npm run build && npm run start` works.
 
 Other scripts:
 - `npm run data:build`: refetch Sotkanet and rewrite `data/*.json` (fails if any `source_id` does not resolve).
 - `npm run brief:check`: checks that the brief validator drops untraceable claims and that the precomputed brief passes it for every area.
-- `npm test`: unit tests (red-flag matching, the question-box route, Exa relevance and caching).
+- `npm test`: unit tests (ranking, area status, the act page data and what-if, recording caveats, the question-box route and answer checker, Exa relevance, caching and rate limits).
 - `npm run exa:prewarm`: fills the Exa caches for the demo questions and county pages (needs `EXA_API_KEY`).
 
 Before saying "done": `npm test && npm run brief:check && npm run typecheck && npm run lint && npm run build`.
