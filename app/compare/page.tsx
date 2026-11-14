@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import { cn } from "cn";
 
+import { COMPARE_FRAME, CompareChart } from "@/components/compare/compare-chart";
 import { CompareTable } from "@/components/compare/compare-table";
 import { EarlyWarning } from "@/components/home/early-warning";
-import { CompareBars } from "@/components/compare/compare-story";
-import { StoryFact } from "@/components/compare/story-fact";
-import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, FocusGroup, MoreCard, Reveal, ScrollStory } from "@/components/motion";
+import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, Reveal } from "@/components/motion";
 import { SaveShare } from "@/components/share";
 import { SourceChip } from "@/components/source-chip";
-import { FramePanel } from "@/components/ui/frame";
-import { BarKey } from "@/components/ui/measure-bar";
 import { FIRST_YEAR, getCompareLead, getCompareRows, LATEST_YEAR } from "@/lib/compare";
 import { counties } from "@/lib/data";
+import { MOTION_LOUD_CLASS } from "@/lib/motion";
 import { getIndicator, GP_WAIT_ID } from "@/lib/ranking";
+import { RECORDING_CHANGE_ABOVE } from "@/lib/recording";
 
 export const metadata: Metadata = { title: "Compare all 22 areas | FirstLine" };
 
 const pct = (value: number) => `${value.toFixed(1)}%`;
+const RECORDING_PCT = Math.round(RECORDING_CHANGE_ABOVE * 100);
 
 /** The headline follows the data, so a refresh never leaves it wrong. */
 function howManyLonger(worse: number, total: number) {
@@ -26,23 +28,37 @@ function howManyLonger(worse: number, total: number) {
   return "Fewer than half the areas wait longer than Finland overall";
 }
 
+/** A section heading: the serif title, revealed once. */
+function SectionHead({ id, children }: { id: string; children: ReactNode }) {
+  return (
+    <Reveal>
+      <h2 id={id} className="type-title scroll-mt-24 text-forest-ink">
+        {children}
+      </h2>
+    </Reveal>
+  );
+}
+
 /**
- * Every area side by side, told on scroll: how many areas are slower than Finland overall (the headline),
- * then a ScrollStory over the 22 bars (the longest wait, the shortest, the largest rise), then the
- * full table, sortable and downloadable, open at the end.
+ * Every area side by side, as a plain document: the headline (how many areas wait longer than
+ * Finland overall), the one picture (all areas as bars, with Finland overall's line), the table
+ * (five columns, sortable, downloadable), and one framed line on which areas got worse since the
+ * first year, with the five largest rises behind "Show …". Every caveat is one framed line, with
+ * the per-area detail behind a button that opens on paper.
  */
 export default function ComparePage() {
   const rows = getCompareRows();
   const lead = getCompareLead(rows);
   const gpIndicator = getIndicator(GP_WAIT_ID);
   const chip = <SourceChip sourceId={lead.gpSourceId} year={LATEST_YEAR} />;
+  const marked = rows.filter((row) => row.recording !== null).sort((a, b) => a.name.localeCompare(b.name, "en"));
 
   return (
-    <main className="page-container print-wide flex max-w-[1200px] flex-col pt-6 sm:pt-8 print:pt-0">
-      <FocusGroup>
+    <main className={cn("page-container print-wide flex max-w-[1200px] flex-col gap-12 pt-6 pb-16 sm:pt-8 print:gap-6 print:pt-0", MOTION_LOUD_CLASS)}>
       <Chunk
         lead
         as="h1"
+        className="pb-0 sm:pb-0"
         eyebrow={`Compare all ${lead.total} areas, ${LATEST_YEAR}`}
         statement={howManyLonger(lead.worse, lead.total)}
         figure={
@@ -65,122 +81,94 @@ export default function ComparePage() {
         />
       </Chunk>
 
-      <section aria-labelledby="spread-heading" className="flex flex-col gap-8 py-16 sm:py-24 print:break-before-page print:py-0">
-        <Reveal className="motion-loud">
-          <h2 id="spread-heading" className="max-w-[24ch] font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.75rem]">
-            Where you live decides how long a visit waits
-          </h2>
-        </Reveal>
-        <ScrollStory
-          label="All areas by the share of GP visits waiting more than 7 days"
-          picture={
-            <CompareBars
-              rows={rows}
-              finland={lead.finlandGp}
-              focus={[lead.longest.id, lead.shortest.id, lead.fastest?.id ?? null]}
-              firstYear={FIRST_YEAR}
-            />
+      <section aria-labelledby="spread-heading" className="flex flex-col gap-5">
+        <SectionHead id="spread-heading">Where you live decides how long a visit waits</SectionHead>
+        <CompareChart
+          rows={rows}
+          finland={lead.finlandGp}
+          year={LATEST_YEAR}
+          caption={
+            <>
+              <p>
+                Longest wait: {lead.longest.name}, <span className="figure font-semibold">{pct(lead.longest.gp)}</span>. Shortest:{" "}
+                {lead.shortest.name}, <span className="figure font-semibold">{pct(lead.shortest.gp)}</span>,{" "}
+                <span className="figure">{lead.spread.toFixed(1)}</span> points less.
+              </p>
+              {chip}
+            </>
           }
-          steps={[
-            <StoryFact
-              key="longest"
-              eyebrow="The longest wait"
-              statement={lead.longest.name}
-              value={lead.longest.gp}
-              final={pct(lead.longest.gp)}
-              tone="alarm"
-              meaning="of non-urgent GP visits waited more than 7 days."
-              source={chip}
-            />,
-            <StoryFact
-              key="shortest"
-              eyebrow="The shortest wait"
-              statement={lead.shortest.name}
-              value={lead.shortest.gp}
-              final={pct(lead.shortest.gp)}
-              meaning={`waited more than 7 days: ${lead.spread.toFixed(1)} points less than ${lead.longest.name}.`}
-              source={chip}
-            />,
-            lead.fastest ? (
-              <StoryFact
-                key="rising"
-                eyebrow={`Worse than in ${FIRST_YEAR}: ${lead.rising} of ${lead.withTrend} areas`}
-                statement={`${lead.fastest.name} rose the most`}
-                value={lead.fastest.gpChange ?? 0}
-                final={`+${(lead.fastest.gpChange ?? 0).toFixed(1)}`}
-                unit="points"
-                tone="alarm"
-                meaning={`From ${pct(lead.fastest.gpFirst ?? 0)} in ${FIRST_YEAR} to ${pct(lead.fastest.gp)} in ${LATEST_YEAR}. Rises under 1 point count as about the same.`}
-                source={<SourceChip sourceId={lead.gpSourceId} />}
-                caveat={
-                  lead.risingWithRecordingChange > 0
-                    ? `in ${lead.risingWithRecordingChange} of the ${lead.rising} areas, recorded visits changed by more than 20%`
-                    : undefined
-                }
-                why="The share is of the visits recorded with waiting-time data. Where that number moved a lot, part of a change in the share may be how visits are recorded, not how long they waited."
-              />
-            ) : (
-              <StoryFact
-                key="rising"
-                eyebrow={`Worse than in ${FIRST_YEAR}`}
-                statement={`${lead.rising} of ${lead.withTrend} areas`}
-                meaning="rose by at least 1 point."
-                source={chip}
-              />
-            ),
-          ]}
         />
       </section>
 
-      <section aria-labelledby="table-heading" className="flex flex-col gap-5 pb-16 sm:pb-24 print:break-before-page print:gap-2 print:pb-0">
-        <Reveal className="motion-loud flex flex-col gap-2">
-          <p className="type-eyebrow">The full table</p>
-          <h2 id="table-heading" className="scroll-mt-24 font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.75rem]">
-            Every area, side by side
-          </h2>
-        </Reveal>
-        <div className="flex flex-col gap-3 print:hidden">
-          <BarKey items={["finland", "red", "amber"]} />
-          <Disclosure label="what the referral labels mean" tone="quiet">
-            <p className="max-w-[68ch] text-base">
-              <span className="font-semibold">HUS-wide:</span> Central, East and West Uusimaa and Vantaa and Kerava send their
-              referrals to HUS (the Helsinki University Hospital group), which publishes one figure for all of them. It is shown
-              for context and is not the area&apos;s own figure. <span className="font-semibold">City units only:</span> the
-              Helsinki figure covers the city&apos;s own specialist units; most Helsinki referrals go to HUS.
+      <section aria-labelledby="table-heading" className="flex flex-col gap-5 print:break-before-page print:gap-2">
+        <SectionHead id="table-heading">Every area, side by side</SectionHead>
+        <div className={cn(COMPARE_FRAME, "print-bare max-sm:rounded-none max-sm:border-0 max-sm:border-y max-sm:bg-transparent max-sm:px-0")}>
+          <CompareTable rows={rows} finland={lead.finlandGp} finlandReferral={lead.finlandReferral} />
+        </div>
+        {marked.length > 0 ? (
+          <div className={cn(COMPARE_FRAME, "print-keep flex flex-col gap-1")}>
+            <p className="text-base text-pretty text-foreground">
+              <span className="font-semibold">* Read with care:</span> in {marked.length} areas the share rose and recorded visits
+              changed by more than {RECORDING_PCT}% since {FIRST_YEAR}. Part of that rise may be how visits are recorded, not how
+              long they waited.
             </p>
+            <Disclosure show={`Show the ${marked.length} areas`} hide="Hide the areas" tone="quiet" contentClassName="pt-2">
+              <ul className="flex flex-col">
+                {marked.map((row) => (
+                  <li key={row.id} className="border-t border-frame-border py-2 text-base text-pretty">
+                    <span className="font-semibold">{row.name}:</span> {row.recording?.toLowerCase()}
+                  </li>
+                ))}
+              </ul>
+            </Disclosure>
+          </div>
+        ) : null}
+        <div className={cn(COMPARE_FRAME, "print-keep flex flex-col gap-1")}>
+          <p className="text-base text-pretty text-foreground">
+            Status compares each area with Finland overall, not with a clinical standard. The figure in brackets is points above (+)
+            or below (−) Finland overall. Changes under 1 point read &ldquo;About the same&rdquo;.
+          </p>
+          <Disclosure label="what the referral labels mean" tone="quiet" contentClassName="pt-2">
+            <div className="flex max-w-[68ch] flex-col gap-2 text-base text-pretty">
+              <p>
+                <span className="font-semibold">HUS-wide:</span> Central, East and West Uusimaa and Vantaa and Kerava send their
+                referrals to HUS (the Helsinki University Hospital group), which publishes one figure for all four. It is shown for
+                context and is not the area&apos;s own figure.
+              </p>
+              <p>
+                <span className="font-semibold">City units only:</span> the Helsinki figure covers the city&apos;s own specialist
+                units; most Helsinki referrals go to HUS.
+              </p>
+            </div>
           </Disclosure>
         </div>
-        <FramePanel padding="none" className="print-bare p-5 sm:p-7">
-          <CompareTable rows={rows} finland={lead.finlandGp} finlandReferral={lead.finlandReferral} />
-        </FramePanel>
-        <p className="hidden text-[8.5pt] text-muted-foreground print:block">
-          HUS-wide: Central, East and West Uusimaa and Vantaa and Kerava have no referral figure of their own; HUS (the Helsinki
-          University Hospital group) publishes one value for all four, shown in brackets. City units only: the Helsinki figure
-          covers the city&apos;s own units; most Helsinki referrals go to HUS. Changes under 1 point read &ldquo;About the
-          same&rdquo;. Where recorded visits changed by more than 20%, part of a change may be how visits are recorded.
-        </p>
-        <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground print:text-[8.5pt]">
+        <p className="flex flex-wrap items-center gap-2 text-base text-muted-foreground print:text-[8.5pt]">
           Sources: <SourceChip sourceId={lead.gpSourceId} year={LATEST_YEAR} /> GP waits,{" "}
           <SourceChip sourceId={lead.referralSourceId} year={LATEST_YEAR} /> referrals.
         </p>
       </section>
 
-      <MoreCard
-        title="More on all areas"
-        className="mb-8"
-        rows={[
-          {
-            key: "worsening",
-            label: `The five areas getting worse fastest since ${FIRST_YEAR}`,
-            children: (
-              <Disclosure show="Show the five areas" hide="Hide the five areas">
-                <EarlyWarning areas={counties} sourceId={lead.gpSourceId} />
-              </Disclosure>
-            ),
-          },
-        ]}
-      />
-      </FocusGroup>
+      <section aria-labelledby="worse-heading" className="flex flex-col gap-5">
+        <SectionHead id="worse-heading">Worse than in {FIRST_YEAR}</SectionHead>
+        <div className={cn(COMPARE_FRAME, "print-flow flex flex-col gap-1")}>
+          <p className="text-base text-pretty text-foreground">
+            In <span className="figure font-semibold">{lead.rising}</span> of {lead.withTrend} areas the share waiting over 7 days
+            rose by at least 1 point since {FIRST_YEAR}.
+            {lead.rising > 0 ? (
+              <>
+                {" "}
+                <span className="font-semibold">Read with care:</span> in {lead.risingWithRecordingChange} of the {lead.rising},
+                recorded visits changed by more than {RECORDING_PCT}%.
+              </>
+            ) : null}
+          </p>
+          {lead.fastest ? (
+            <Disclosure show="Show the five largest rises" hide="Hide the largest rises" tone="quiet" contentClassName="pt-3">
+              <EarlyWarning areas={counties} sourceId={lead.gpSourceId} />
+            </Disclosure>
+          ) : null}
+        </div>
+      </section>
     </main>
   );
 }
