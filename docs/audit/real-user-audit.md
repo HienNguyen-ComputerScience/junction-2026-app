@@ -133,30 +133,41 @@ I checked the unit of every measured effect in `data/evidence.json` against the 
 
 None is in the unit of 6411 or 13. A slider that moved a county's 6411 "after the action" would need an invented effect size, which the data-honesty rule (20% of the score) forbids. The one effect measured in time with a range is Denmark's −17 days, and Finland publishes no county baseline for the diagnostic interval. So the honest forms of "simulation" here are: (a) a target calculator on published shares (what the gap is, what pace closes it by a chosen year), and (b) for the fast-track action only, the Danish effect applied to a baseline the county types in itself, labelled as an estimate with its range. Counts of visits are avoided as headline figures: the count behind 6411 is the number of recorded visits, which changed by more than 20% in 18 of 22 areas between 2023 and 2025.
 
-## Ranked build list
+## Direction added by the team lead after the first version of this audit
+
+Two instructions arrived while the build was starting. Both are folded into the list below.
+
+1. **Deliver the stand-out as a guided briefing.** Do not make the director dig through the data; bring it to them one small piece at a time, with motion and plainly labelled buttons: pick the area → where you stand (one number, with its source) → where on the pathway it breaks → whether it is getting worse → what to do on Monday → what the target means → a page to print or send to the board. Motion only moves when a button is pressed, every number keeps its source and its limitation, reduced-motion is respected, and the old pages stay as "the full table" behind it.
+2. **Restyle the whole app** to a light "cream paper" theme (Forest Ink `#0f3e17`, Cream Paper `#fffefc`, keylime / mint / sage / slate surfaces, a light display serif with a plain sans, 14px radii, pills, no shadows), at the theme level first and then by sweeping components. Status colours keep their meaning and their text labels. `app/sources/` is a teammate's and is not edited; it takes the look from the shared tokens.
+
+How this fits the audit: the guided briefing answers findings 1.3, 2.1, 4.3 and J.1–J.3 directly (one thing per screen, one obvious button, nothing to discover), and the action plan becomes its last step and its printable output rather than a separate destination. The light theme removes finding 4.2 at the root: a page that is already dark-on-light prints as it looks.
+
+## Ranked build list (revised)
 
 | Rank | Item | Findings | Rubric |
 |---|---|---|---|
-| 1 | **County action plan** (`/county/<id>/plan`): board paper with target setter, action rows, measures, what to record, sources, limits; Print, Word, Excel, email | 2.2, 2.6, 3.1–3.3, 4.1–4.4, J.1–J.3 | Actionability, Clarity, Data transparency |
-| 2 | Print styles site-wide, Print buttons, all actions printed | 4.1, 4.2 | Execution, Clarity |
-| 3 | Act page: the three actions as a numbered list, one obvious button to the plan | 2.1, 2.3 | Actionability, Clarity |
-| 4 | Finland overall (`/national`): counts, gap between areas over time, national actions with roadmap schedule, data-gap to-do list, Goal 3 line | N.1–N.3 | Insight, Actionability, Data transparency, minimum requirement |
-| 5 | Compare: sortable table, change since 2023 for all, Excel download, side-by-side with a chosen area | 6.1, 6.2, 7.2 | Insight, Clarity |
-| 6 | Plain wording pass (source chips, live search labels, close buttons, example-question label) | 1.1, 2.4, 5.1 | Clarity |
-| 7 | Fast-track estimate with the county's own baseline (Denmark, −17 days, range 15–19) | J.2 | Actionability, Data transparency |
-| 8 | County page: step tabs as plain sections | 1.3 | Clarity |
+| 1 | **Guided briefing** (`/briefing/<id>`): six steps, one statement or one figure each, a labelled Next and Back, "Step n of 6", buttons inside the steps (show the source, compare with another area, choose an action, set the target). Ends in the action plan. | 1.3, 2.1, 2.6, 4.3, J.1–J.3 | Clarity, Actionability, Execution |
+| 2 | **County action plan** (`/county/<id>/plan`), the briefing's last step and its output: target, action rows (responsible role, first step, national measure, schedule and funding route, measure of success, fields for the named person, review date and local cost), what to start recording, limits, sources. Print, Word, Excel, email. | 2.2, 3.1–3.3, 4.1–4.4 | Actionability, Data transparency |
+| 3 | **Cream-paper theme for the whole app**, tokens first, then components, the map and the bars. | 4.2, lead's instruction | Clarity, Execution |
+| 4 | Print styles, Print buttons, closed sections opened on paper | 4.1, 4.2 | Execution |
+| 5 | Act page: the three actions as a numbered list, one obvious button onward | 2.1, 2.3 | Actionability, Clarity |
+| 6 | Finland overall (`/national`): counts per step, the gap between areas over time, national actions with the roadmap's schedule, the data-gap to-do list, the Goal 3 line | N.1–N.3 | Insight, Actionability, Data transparency, minimum requirement |
+| 7 | Compare: a table that sorts, change since 2023 for every area, Excel download | 6.1, 7.2 | Insight, Clarity |
+| 8 | Plain wording pass (live search labels, close buttons, example-question label) | 1.1, 2.4, 5.1 | Clarity |
+| 9 | Fast-track estimate with the county's own baseline (Denmark, −17 days, range 15–19) | J.2 | Actionability, Data transparency |
+| 10 | County page: step tabs as plain sections | 1.3 | Clarity |
 
-## The stand-out feature: the county action plan
+## The stand-out feature: a guided briefing that ends in a board-ready action plan
 
-**What it is.** For each of the 22 areas, one page that is already a board paper: where the area stands (with sources), a target the director sets (level and year) and what it implies per year, the recommended actions as rows with the responsible role, the first step, the national roadmap measure, schedule and funding route it belongs to, the published figure that will show whether it worked, fields for the named person, the date and the local cost, the things the county must start recording because nobody publishes them, and the sources and limits in full. Three clear buttons: Print or save as PDF, Download as Word, Download for Excel.
+**What it is.** The director picks their area and presses "Start the briefing". Six screens follow, each with one statement or one figure that moves into place, its source and its limitation beside it, and one large button that says where it goes next ("Next: where the delay is"). Inside the steps there are buttons for the questions this person actually asks: "Show me the source", "Compare with another area", "Action 1 / 2 / 3", "Set the target". The last screen is the action plan: where the area stands, the target the director set and the yearly pace it implies, the recommended actions as rows (responsible role, first step, the national roadmap measure, schedule and funding route, the published figure that will show whether it worked, fields for the named person, the date and the local cost), what the county must start recording because nobody publishes it, and the sources and limits in full. Three buttons: Print or save as PDF, Download as Word, Download for Excel.
 
 **Why this one.**
 
-- **Actionability (30%)** asks whether a health centre or county could implement the proposal. Today the answer rests on one "First step" sentence inside a carousel. A plan with owner, first step, schedule, measure and sign-off fields is the form in which a county actually adopts something. It is also what AstraZeneca can carry into the follow-up project with a county.
-- **Two-minute test (Clarity 10%, Execution 15%).** Pick area → "Open the action plan" → the whole answer is on one page → Print. Nothing to discover.
-- **Data transparency (20%).** The plan prints every source in full under the figures, states what is not published (cost, the diagnostic interval, GP recognition) instead of filling it in, and turns each gap into a line the county can act on.
-- **The primary persona.** It gives this person exactly what their old software gave them: a report with labelled fields that prints, downloads and can be forwarded. The three hardest findings of the audit (4.1, 4.2, 4.3) are all "I cannot take this out of the browser".
-- **Why not the simulator as the headline.** See above: an honest one is small. The target setter and the fast-track estimate are built into the plan, where they are useful, instead of standing alone as a gimmick.
+- **Actionability (30%)** asks whether a health centre or county could implement the proposal. Today the answer rests on one "First step" sentence inside a carousel. A plan with owner, first step, schedule, measure and sign-off fields is the form in which a county actually adopts something, and it is what AstraZeneca can carry into the follow-up project with a county.
+- **Two-minute test (Clarity 10%, Execution 15%).** The briefing is the two-minute test turned into the product: six presses of one button take a judge from the gap, to where it sits, to what to do, to a page that prints. Nothing has to be found.
+- **Data transparency (20%).** No number appears without its source chip and the limitation that applies; the plan prints every source in full, states what is not published (cost, the diagnostic interval, GP recognition) instead of filling it in, and turns each gap into a line the county can act on.
+- **The primary persona.** One thing per screen, a visible step count, a labelled way forward and back, and at the end what their old software gave them: a report with labelled fields that prints, downloads and can be forwarded. The three hardest findings of the audit (4.1, 4.2, 4.3) are all "I cannot take this out of the browser".
+- **Why not a simulator as the headline.** See above: an honest one is small. The target setter is a step of the briefing and a section of the plan, where it is useful, instead of standing alone.
 
 ## Status after the build
 
