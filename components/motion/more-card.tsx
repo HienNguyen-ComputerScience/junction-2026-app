@@ -15,7 +15,7 @@ export function MoreCard({
 }: {
   /** "More for Kainuu", "More on Finland". */
   title: string;
-  rows: { key: string; label: ReactNode; action: ReactNode; children?: ReactNode }[];
+  rows: { key: string; label: ReactNode; action?: ReactNode; children?: ReactNode }[];
   id?: string;
   className?: string;
 }) {
@@ -33,7 +33,7 @@ export function MoreCard({
           <li key={row.key} className="flex flex-col gap-3 py-4">
             <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
               <p className="text-base font-semibold text-pretty text-forest-ink">{row.label}</p>
-              <div className="shrink-0">{row.action}</div>
+              {row.action ? <div className="shrink-0">{row.action}</div> : null}
             </div>
             {row.children}
           </li>

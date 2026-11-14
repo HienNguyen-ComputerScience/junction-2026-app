@@ -7,18 +7,18 @@ import { CountyBrief } from "@/components/brief/county-brief";
 import { CountyNews } from "@/components/exa/county-news";
 import { LimitationsBox, type LimitationItem } from "@/components/pathway/limitations-box";
 import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
-import { RecordingNote } from "@/components/pathway/recording-note";
 import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { buildStepTabs } from "@/components/pathway/step-panels";
-import { PrintButton, Reveal } from "@/components/motion";
-import { StepUnit } from "@/components/stat/step-unit";
+import { StepsPicture, StepStoryText } from "@/components/county/step-story";
+import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, MoreCard, PrintButton, Reveal, ScrollStory } from "@/components/motion";
+import { SourceChip } from "@/components/source-chip";
 import { HUS_FULL, shortReason } from "@/components/pathway/wording";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { buttonVariants } from "@/components/ui/button";
 import { getBottleneck, pickActions } from "@/lib/act";
 import { getAreaSteps } from "@/lib/plan-model";
 import { getMainReason } from "@/lib/main-reason";
-import { counties, gaps, getCounty, getValue, LATEST_YEAR, type County } from "@/lib/data";
+import { counties, gaps, getCounty, getValue, LATEST_YEAR, type County, type Stage } from "@/lib/data";
 import {
   formatPct,
   getIndicator,
@@ -48,6 +48,18 @@ export async function generateMetadata({ params }: PageProps<"/county/[id]">): P
   return { title: `${county.name}: ${title} | FirstLine` };
 }
 
+/** The headline figure's unit, in words, after the numeral. */
+const LEAD_UNIT: Partial<Record<Stage, string>> = {
+  gp_access: "of non-urgent GP visits waited more than 7 days",
+  referral: "of referrals were processed within 3 days",
+};
+
+/** The headline figure's one main caveat: a few words always visible, the indicator's own text behind "Why?". */
+const LEAD_CAVEAT: Partial<Record<Stage, string>> = {
+  gp_access: "counts visits, not people, and all non-urgent visits, not only possible cancer",
+  referral: "measures when assessment starts, not when a specialist is seen",
+};
+
 export default async function CountyPathwayPage({ params }: PageProps<"/county/[id]">) {
   const { id } = await params;
   const county = getCounty(id);
@@ -55,25 +67,50 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
 
   const limitations = buildLimitations(county);
   const bottleneck = getBottleneck(county.id);
-  // The verdict is the main reason sentence, the same one as on the home card; the step it is
-  // about is flagged as the main delay, so the two always agree.
+  // The main reason is the same sentence as on the home card; the step it is about is flagged as
+  // the main delay and leads the page, so the two always agree.
   const reason = getMainReason(county.id);
   const reasonStage = bottleneck.anyRed ? (reason.gap?.stage ?? null) : null;
   const steps = getAreaSteps(county.id);
+  const lead = steps.find((step) => step.stage === reasonStage && step.value !== null) ?? steps.find((step) => step.value !== null) ?? null;
+  const leadIndicator = lead?.indicatorId ? getIndicator(lead.indicatorId) : undefined;
   // Each step's trend (2023-2025), from the same builder the old tabs used.
   const trends = new Map(buildStepTabs(county.id, buildPathwaySteps(county.id)).map((tab) => [tab.id, tab.aside]));
   const actions = pickActions(bottleneck);
   const planHref = `/county/${county.id}/plan?actions=${actions.map((action) => action.id).join(",")}`;
 
+  const leadMeaning = lead
+    ? `${lead.statusLabel}${lead.finland !== null ? ` (Finland ${formatPct(lead.finland)})` : ""}${
+        lead.changeText ? `, and ${lead.changeText}` : ""
+      }.`
+    : shortReason(reason);
+  const leadCaveat = lead?.caveat
+    ? { short: "part of the rise may be how visits are recorded", why: lead.caveat }
+    : lead && LEAD_CAVEAT[lead.stage]
+      ? { short: LEAD_CAVEAT[lead.stage], why: leadIndicator ? spellHus(leadIndicator.limitation) : undefined }
+      : undefined;
+
   return (
-    <main className="page-container flex flex-col gap-12 pt-4 sm:gap-16 sm:pt-6">
-      <header className="flex flex-col items-start gap-4">
-        <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
-        <p className="type-eyebrow">{county.name_fi}</p>
-        <h1 className="type-display">{county.name}</h1>
-        <p className="type-lede max-w-[62ch] text-pretty text-foreground">{shortReason(reason)}</p>
-        {reason.caveat && <RecordingNote caveat={reason.caveat} className="max-w-[62ch]" />}
-        <div data-print="hide" className="flex flex-wrap gap-2.5 pt-1">
+    <main className="page-container flex flex-col pt-4 sm:pt-6">
+      <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
+
+      <Chunk
+        lead
+        as="h1"
+        eyebrow={`${county.name_fi} · ${lead ? lead.label : "The first three steps"}, ${LATEST_YEAR}`}
+        statement={county.name}
+        figure={
+          lead && lead.value !== null ? (
+            <ChunkFigure tone={lead.status === "red" ? "alarm" : "plain"} unit={LEAD_UNIT[lead.stage]}>
+              <AnimatedNumber value={lead.value} final={formatPct(lead.value)} level="loud" />
+            </ChunkFigure>
+          ) : undefined
+        }
+        meaning={leadMeaning}
+        source={lead?.sourceId ? <SourceChip sourceId={lead.sourceId} year={lead.year} /> : undefined}
+        caveat={leadCaveat}
+      >
+        <div data-print="hide" className="flex flex-wrap gap-2.5 pt-2">
           <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
             {bottleneck.anyRed ? "See what to do" : "Actions to keep this level"}
             <ArrowRight aria-hidden data-icon="inline-end" />
@@ -83,48 +120,70 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           </Link>
           <PrintButton size="lg" />
         </div>
-      </header>
+      </Chunk>
 
-      <section aria-labelledby="steps-heading" className="flex flex-col gap-5">
-        <Reveal className="flex flex-col gap-2">
-          <p className="type-eyebrow">The first three steps, {LATEST_YEAR}</p>
-          <h2 id="steps-heading" className="type-title">
+      <section aria-labelledby="steps-heading" className="flex flex-col gap-8 py-16 sm:py-24">
+        <Reveal className="motion-loud">
+          <h2 id="steps-heading" className="max-w-[24ch] font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.75rem]">
             {bottleneck.anyRed ? "Where care is delayed" : "Where the pathway stands"}
           </h2>
-          <p className="max-w-[68ch] text-base text-muted-foreground">
-            Each step compared with Finland&apos;s level. The colours compare with Finland, not with a clinical standard.
-          </p>
         </Reveal>
-        <div className="grid gap-3 lg:grid-cols-3 print:grid-cols-3">
-          {steps.map((step, i) => (
-            <StepUnit key={step.stage} step={step} index={i} flag={step.stage === reasonStage ? "The main delay" : undefined}>
-              {/* On paper the card says the change since 2023 in words; the chart would push it off the page. */}
-              {trends.get(step.stage) ? <div className="pt-1 print:hidden">{trends.get(step.stage)}</div> : null}
-            </StepUnit>
+        <ScrollStory
+          label={`The first three steps in ${county.name}`}
+          picture={<StepsPicture steps={steps} mainStage={reasonStage} year={LATEST_YEAR} />}
+          steps={steps.map((step) => (
+            <StepStoryText
+              key={step.stage}
+              step={step}
+              flag={step.stage === reasonStage ? "The main delay" : undefined}
+              trend={trends.get(step.stage)}
+            />
           ))}
-        </div>
+        />
       </section>
 
-      <section aria-labelledby="limits-heading" className="flex flex-col gap-4">
-        <Reveal className="flex flex-col gap-2">
-          <p className="type-eyebrow">Read before you use these figures</p>
-          <h2 id="limits-heading" className="type-title">
+      <section aria-labelledby="limits-heading" className="flex flex-col gap-5 pb-16 sm:pb-24">
+        <Reveal className="motion-loud">
+          <h2 id="limits-heading" className="max-w-[24ch] font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.75rem]">
             What these figures cannot tell you
           </h2>
         </Reveal>
         <LimitationsBox items={limitations} visibleCount={4} />
       </section>
 
-      {/* The eight-step strip is screen context; its one figure (127 vs 76 days) is in the limitations. */}
-      <div className="print:hidden">
-        <PathwayStrip countyId={county.id} />
-      </div>
-
-      {/* Screen tools (an AI rewrite, live news): not on paper, where the steps above carry the figures. */}
-      <div className="flex flex-col gap-12 sm:gap-16 print:hidden">
-        <CountyBrief countyId={county.id} />
-        <CountyNews key={county.id} countyId={county.id} />
-      </div>
+      <MoreCard
+        title={`More for ${county.name}`}
+        className="mb-8"
+        rows={[
+          {
+            key: "path",
+            label: "The whole path to treatment",
+            children: (
+              <Disclosure show="Show the eight steps" hide="Hide the eight steps">
+                <PathwayStrip countyId={county.id} />
+              </Disclosure>
+            ),
+          },
+          {
+            key: "brief",
+            label: "A short brief in words, with an AI rewrite checked against the figures",
+            children: (
+              <Disclosure show="Show the brief" hide="Hide the brief">
+                <CountyBrief countyId={county.id} />
+              </Disclosure>
+            ),
+          },
+          {
+            key: "news",
+            label: "Local news, last 12 months (found live, unverified)",
+            children: (
+              <Disclosure show="Show the news" hide="Hide the news">
+                <CountyNews key={county.id} countyId={county.id} />
+              </Disclosure>
+            ),
+          },
+        ]}
+      />
     </main>
   );
 }
