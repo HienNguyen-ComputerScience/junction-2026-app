@@ -61,7 +61,7 @@ export function TrendStrip({ stages, areaName }: { stages: TrendStage[]; areaNam
           ))}
         </span>
       </FramePanelLabel>
-      <div className="flex flex-col gap-4 px-4 py-5 sm:px-6">
+      <div className="flex flex-col gap-4 px-5 py-5 sm:px-6">
         {withTrend.length > 0 && (
           <ul className="flex flex-col divide-y divide-border">
             {withTrend.map((stage) => (

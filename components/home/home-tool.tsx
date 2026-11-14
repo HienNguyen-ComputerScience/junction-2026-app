@@ -7,6 +7,7 @@ import { WhatIfPanel } from "@/components/home/what-if-panel";
 import type { FinlandMapArea } from "@/components/map/finland-map";
 import { buildPathwaySteps, PathwaySteps } from "@/components/pathway/pathway-steps";
 import { SourceChip } from "@/components/source-chip";
+import { TextLink } from "@/components/ui/text-link";
 import { getBottleneck, pickActions, type Bottleneck } from "@/lib/act";
 import { indicators, LATEST_YEAR, type County, type Stage } from "@/lib/data";
 import { formatPct, getStageGap, GP_WAIT_ID, STATUS_LABEL, type RankingRow } from "@/lib/ranking";
@@ -64,7 +65,20 @@ export function HomeTool({ rows, unranked }: { rows: RankingRow[]; unranked: Cou
     const top = pickActions(bottleneck)[0] ?? null;
     if (top && !actions[top.id]) actions[top.id] = <TopAction action={top} />;
 
-    steps[county.id] = <PathwaySteps steps={buildPathwaySteps(county.id)} density="compact" />;
+    // A step without data points to the next useful thing: the red-flag helper for step 2.
+    steps[county.id] = (
+      <PathwaySteps
+        steps={buildPathwaySteps(county.id)}
+        density="compact"
+        renderExtra={(step) =>
+          step.stage === "gp_recognition" ? (
+            <TextLink kind="nav" href={`/county/${county.id}/act#red-flags`} className="type-caption sm:min-h-6">
+              Red-flag helper
+            </TextLink>
+          ) : null
+        }
+      />
+    );
 
     const gap = bottleneck.focus[0];
     if (gap) {

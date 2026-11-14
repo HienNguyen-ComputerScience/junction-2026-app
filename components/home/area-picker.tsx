@@ -133,26 +133,33 @@ export function AreaPicker({
         ref={answerRef}
         className="grid scroll-mt-4 content-start gap-2 md:grid-cols-2 lg:col-start-2 lg:row-span-2 lg:row-start-1"
       >
-        <FramePanel padding="none" className="flex flex-col gap-3 px-5 pt-5 pb-5 sm:px-6 md:col-span-2" aria-live="polite">
-          <p className="type-caption font-medium text-muted-foreground">
-            {area.name}, {year}: where the pathway breaks
-          </p>
-          {leads[area.id] ?? null}
-          <h2 className="type-heading text-pretty text-foreground">{area.verdict}</h2>
+        {/* The answer: the figure and the verdict on the left, the way to the actions on the
+            right (under them on a phone), so the main button is on the first screen. */}
+        <FramePanel
+          padding="none"
+          className="grid gap-x-8 gap-y-5 px-5 pt-5 pb-5 sm:px-6 md:col-span-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-end"
+        >
+          <div className="flex flex-col gap-3" aria-live="polite">
+            <p className="type-caption font-medium text-muted-foreground">
+              {area.name}, {year}: where the pathway breaks
+            </p>
+            {leads[area.id] ?? null}
+            <h2 className="type-heading text-pretty text-foreground">{area.verdict}</h2>
+          </div>
+          <div className="flex flex-col items-start gap-3 md:items-end">
+            <Link href={`/county/${area.id}/act`} className={cn(buttonVariants({ size: "lg" }), "max-sm:w-full")}>
+              See all actions
+              <ArrowRight aria-hidden data-icon="inline-end" />
+            </Link>
+            <TextLink kind="nav" href={`/county/${area.id}`} className="text-sm">
+              Full pathway for {area.name}
+            </TextLink>
+          </div>
         </FramePanel>
 
         {action && <div className="md:col-span-2">{action}</div>}
         {what && <div className="md:col-span-2">{what}</div>}
 
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 px-1 pt-1.5 pb-1 md:col-span-2">
-          <Link href={`/county/${area.id}/act`} className={cn(buttonVariants({ size: "lg" }), "max-sm:w-full")}>
-            See all actions for {area.name}
-            <ArrowRight aria-hidden data-icon="inline-end" />
-          </Link>
-          <TextLink kind="nav" href={`/county/${area.id}`} className="text-sm">
-            Full pathway for {area.name}
-          </TextLink>
-        </div>
 
         {/* The three steps come after the answer and the action, so both fit the first screen. */}
         <FramePanel padding="none" className="md:col-span-2">
@@ -166,7 +173,7 @@ export function AreaPicker({
       </div>
 
       {/* The map: last on a phone, under the picker from lg. */}
-      <FramePanel padding="none" className="max-lg:order-last lg:col-start-1 lg:row-start-2">
+      <FramePanel padding="none" className="max-lg:order-last lg:col-start-1 lg:row-start-2 lg:self-start">
         <FramePanelLabel>
           <span>Non-urgent GP visits waiting over 7 days</span>
           {mapChip}

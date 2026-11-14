@@ -88,7 +88,7 @@ function withFigures(text: string): ReactNode {
   );
 }
 
-const ROW = "grid gap-x-6 px-4 py-4 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:px-6 md:grid-cols-[8.5rem_minmax(0,1fr)_auto]";
+const ROW = "grid gap-x-6 px-5 py-4 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:px-6 md:grid-cols-[8.5rem_minmax(0,1fr)_auto]";
 const DT = "type-caption text-muted-foreground sm:col-start-1 sm:pt-px";
 const DD = "text-sm leading-relaxed text-pretty sm:col-start-2";
 
@@ -119,7 +119,7 @@ function ActionRow({
   sourceIds: string[];
 }) {
   return (
-    <li className="grid gap-y-3 border-b border-border px-4 py-4 last:border-b-0 sm:px-6 lg:col-span-3 lg:grid-cols-subgrid lg:items-start">
+    <li className="grid gap-y-3 border-b border-border px-5 py-4 last:border-b-0 sm:px-6 lg:col-span-3 lg:grid-cols-subgrid lg:items-start">
       <div className="flex min-w-0 flex-col gap-1.5">
         <h4 className="type-heading text-pretty">{layout.action}</h4>
         <dl className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-3 type-caption text-muted-foreground">
@@ -320,7 +320,7 @@ export function CountyBriefClient({
               </span>
             )}
           </FramePanelLabel>
-          <div className="flex flex-col gap-2 px-4 py-4 sm:px-6 sm:py-5">
+          <div className="flex flex-col gap-2 px-5 py-4 sm:px-6 sm:py-5">
             <p className="max-w-[60rem] text-[1.0625rem] leading-relaxed font-medium text-pretty">{withFigures(brief.headline)}</p>
             {brief.mode === "ai" && brief.headline_precomputed && (
               <p className="type-caption text-muted-foreground">
@@ -340,7 +340,7 @@ export function CountyBriefClient({
           {folded.length > 0 && (
             <Disclosure
               className="border-t border-border"
-              summaryClassName="min-h-11 w-full px-4 sm:px-6"
+              summaryClassName="min-h-11 w-full px-5 sm:px-6"
               summary={
                 <>
                   <span className="group-open/disc:hidden">

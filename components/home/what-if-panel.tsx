@@ -106,7 +106,7 @@ export function WhatIfPanel({
     // the right. No title strip: the small heading leads the left column.
     <FramePanel
       padding="none"
-      className="grid h-full gap-x-10 gap-y-4 px-5 py-5 sm:px-6 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:items-center"
+      className="grid h-full gap-x-10 gap-y-4 px-5 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-center"
     >
       <div className="flex flex-col gap-2.5">
         <h3 className="font-sans type-caption font-medium text-muted-foreground">What if: {STAGE_LABELS[stage]}</h3>

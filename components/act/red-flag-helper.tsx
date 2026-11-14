@@ -47,7 +47,7 @@ function EmptyResult() {
       <FramePanelLabel>
         <span>{SECTION.category}</span>
       </FramePanelLabel>
-      <div className="flex flex-col items-start gap-2 px-4 py-5 sm:px-6">
+      <div className="flex flex-col items-start gap-2 px-5 py-5 sm:px-6">
         <ListChecks aria-hidden className="size-4 text-muted-foreground" strokeWidth={1.75} />
         <p className="type-heading">No concern picked yet</p>
         <p className="type-caption text-muted-foreground">Pick a concern on the left, or type a few words.</p>
