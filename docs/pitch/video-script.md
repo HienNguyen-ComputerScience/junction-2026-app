@@ -58,3 +58,7 @@ If the Exa strip shows a newer Vantaa–Kerava item on recording day, say that o
 - *"Is 6411 about cancer?"* No, it is all non-urgent GP visits. It is the best public measure of the first step, and the app says so on every county page.
 - *"Did these actions really work?"* We show the honest result. Sweden cut waits but regional gaps stayed. Denmark's direct CT alone didn't help significantly. Both are in the evidence table with sources.
 - *"How is Exa different from the checked table?"* Exa results are labelled "found live — unverified" and never mixed into the checked evidence. The validator drops any sentence whose number isn't in a returned source.
+
+## Screen recording
+
+Take 1 (14 Nov, live site, silent, 1920×1080, 66 s) covers shots 3–7: ranking → Vantaa–Kerava page → named-GP card → South Ostrobothnia Denmark card → red-flag helper ("weight loss, tiredness") → Local news. Saved outside the repo as `Junction 2026/firstline-screens-take1.mp4`. Re-record with `docs/pitch/record-screens.js` (run it in a folder with `npm i playwright@1.49.1 && npx playwright install chromium`; not a project dependency). Still to add: title and close slides, the 0:12 pathway slide, and the voice-over.
