@@ -215,7 +215,7 @@ export function FinlandMap({
             <title>Åland: not one of the 22 areas in this data</title>
           </path>
 
-          {drawn.map(({ area, shape, small }) => {
+          {drawn.map(({ area, small }) => {
             const name = area.valueLabel
               ? `${area.name}: ${area.valueLabel}, ${STATUS_LABEL[area.status]}`
               : `${area.name}: ${STATUS_LABEL[area.status]}`;
@@ -240,17 +240,6 @@ export function FinlandMap({
                     small ? SMALL_AREA[area.status] : ["stroke-background", AREA_FILL[area.status]],
                   )}
                 />
-                {/* A small area also takes the pointer on a 10px dot at its anchor. */}
-                {small && (
-                  <path
-                    d={`M${shape.cx},${shape.cy}h0.01`}
-                    vectorEffect="non-scaling-stroke"
-                    strokeWidth={10}
-                    strokeLinecap="round"
-                    pointerEvents="stroke"
-                    className="fill-none stroke-transparent"
-                  />
-                )}
               </Link>
             );
           })}
