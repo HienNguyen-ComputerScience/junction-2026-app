@@ -23,7 +23,7 @@ export function SiteHeader() {
   const areaIds = counties.map((county) => county.id);
   const defaultArea = getRanking()[0]?.county.id ?? areaIds[0];
   return (
-    <header className="border-b border-border bg-background">
+    <header className="border-b border-frame-border bg-background print:hidden">
       <div className="page-container flex h-14 items-center justify-between gap-4 sm:gap-6">
         <div className="flex min-w-0 items-center gap-3">
           <Link

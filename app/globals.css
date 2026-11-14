@@ -154,14 +154,16 @@
   --primary-foreground: var(--color-cream-paper);
 
   /* Data status: the only hues outside the greens, and never colour alone (a text label goes
-     with every use). red = worse than Finland, slate (token status-amber, a historical name:
+     with every use). The alarm colour is a rust (terracotta), not a signal red: it reads as
+     urgent next to the greens without fighting them, and its tint is a warm clay, not a pink.
+     The token is still called status-red. red = worse than Finland, slate (token status-amber, a historical name:
      the data value stays "amber") = at or better than Finland's level, grey = no public data.
      Fill for bars and marks (3:1 or more on cream, keylime, mint and sage), soft + border for
      chips, ink for text (AA on every surface). */
-  --status-red: #c5392f; /*      mark: 5.2:1 on cream, 4.6:1 on keylime, 3.4:1 on sage */
-  --status-red-soft: color-mix(in srgb, #c5392f 12%, transparent);
-  --status-red-border: color-mix(in srgb, #c5392f 45%, transparent);
-  --status-red-ink: #9c1f18; /*  text: 7.9:1 on cream, 6.9:1 on keylime, 5.2:1 on sage */
+  --status-red: #ad4a22; /*      mark: 5.5:1 on cream, 4.8:1 on keylime, 3.6:1 on sage */
+  --status-red-soft: color-mix(in srgb, #ad4a22 13%, transparent);
+  --status-red-border: color-mix(in srgb, #ad4a22 50%, transparent);
+  --status-red-ink: #7c3110; /*  text: 9:1 on cream, 7.9:1 on keylime, 5.9:1 on sage */
   /* The tinted part of a red bar (the share up to Finland's line), opaque so a bar and the
      key's swatch are the same pixels. */
   --status-red-tint: color-mix(in srgb, var(--status-red) 42%, var(--card));
@@ -390,30 +392,198 @@ h2:not([class*="type-"], .font-sans) {
   );
 }
 
-/* ---- Motion: one curve, one load moment (bars grow in). Final state is the base style. ---- */
+/* ---- Motion: one curve, two volume levels. Mirrors lib/motion.ts; keep the two in step. ----
+   Quiet is the default (detail pages). `motion-loud` on an ancestor switches a subtree to the
+   louder set (the guided briefing). Only opacity and transform move. The final state is always
+   the base style, so the page is complete before any script runs. */
+:root {
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-rise: 320ms;
+  --motion-stagger: 60ms;
+  --motion-bar: 500ms;
+  --motion-distance: 8px;
+  --motion-open: 280ms;
+}
+.motion-loud {
+  --motion-rise: 500ms;
+  --motion-stagger: 120ms;
+  --motion-bar: 700ms;
+  --motion-distance: 14px;
+  --motion-open: 360ms;
+}
+
 @keyframes fl-bar-grow {
   from {
     transform: scaleX(0);
   }
 }
-@keyframes fl-fade-up {
+@keyframes fl-rise {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(var(--motion-distance));
+  }
+}
+@keyframes fl-fade {
+  from {
+    opacity: 0;
   }
 }
 @utility animate-bar-grow {
   transform-origin: left center;
-  animation: fl-bar-grow 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: fl-bar-grow var(--motion-bar) var(--motion-ease) both;
   animation-delay: calc(var(--i, 0) * 14ms);
 }
 @utility animate-fade-up {
-  animation: fl-fade-up 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--i, 0) * 50ms);
+  animation: fl-rise var(--motion-rise) var(--motion-ease) both;
+  animation-delay: calc(var(--i, 0) * var(--motion-stagger));
 }
+/* A thin Forest Ink rule that draws itself from the left edge: the one decoration. */
+@utility animate-line-in {
+  transform-origin: left center;
+  animation: fl-bar-grow var(--motion-bar) var(--motion-ease) both;
+  animation-delay: calc(var(--i, 0) * var(--motion-stagger));
+}
+
+/* Reveal (components/motion/reveal.tsx). "load": plays as the page paints. "wait": below the
+   fold, held back by script until it scrolls into view. "in": playing or played. "hold": a step
+   that a button has not shown yet (hidden from screen readers too). Unlayered on purpose: the
+   waiting states must beat the animate-* utilities on the bars inside. */
+[data-reveal] {
+  animation: fl-rise var(--motion-rise) var(--motion-ease) both;
+  animation-delay: calc(var(--i, 0) * var(--motion-stagger));
+}
+[data-reveal="wait"],
+[data-reveal="hold"] {
+  animation: none;
+  opacity: 0;
+}
+[data-reveal="hold"] {
+  visibility: hidden;
+}
+/* AnimatedBar, and any bar inside a Reveal: the fill grows when its container plays. */
+[data-bar-fill] {
+  transform-origin: left center;
+  animation: fl-bar-grow var(--motion-bar) var(--motion-ease) both;
+  animation-delay: calc(var(--i, 0) * var(--motion-stagger));
+}
+[data-bar="wait"] [data-bar-fill],
+[data-reveal="wait"] [data-bar-fill],
+[data-reveal="hold"] [data-bar-fill],
+[data-reveal="wait"] .animate-bar-grow,
+[data-reveal="hold"] .animate-bar-grow,
+[data-reveal="wait"] .animate-line-in,
+[data-reveal="hold"] .animate-line-in {
+  animation: none;
+  transform: scaleX(0);
+}
+/* AnimatedNumber: the final value fades in with the page, so the count that script starts a
+   moment later never follows a flash of the finished number. */
+[data-number-final] {
+  animation: fl-fade var(--motion-rise) var(--motion-ease) both;
+}
+
+/* Disclosure (components/motion/disclosure.tsx): a native <details> that eases open where the
+   browser can animate one, and simply opens elsewhere. */
+@supports (interpolate-size: allow-keywords) {
+  details.disclosure {
+    interpolate-size: allow-keywords;
+  }
+  details.disclosure::details-content {
+    height: 0;
+    overflow: clip;
+    opacity: 0;
+    transition:
+      height var(--motion-open) var(--motion-ease),
+      opacity var(--motion-open) var(--motion-ease),
+      content-visibility var(--motion-open) allow-discrete;
+  }
+  details.disclosure[open]::details-content {
+    height: auto;
+    opacity: 1;
+  }
+}
+
+/* Reduced motion: everything is simply there. A step a button has not shown yet stays hidden. */
 @media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  [data-bar-fill],
+  [data-number-final],
   .animate-bar-grow,
-  .animate-fade-up {
-    animation: none;
+  .animate-fade-up,
+  .animate-line-in {
+    animation: none !important;
+  }
+  [data-reveal="wait"] {
+    opacity: 1;
+  }
+  [data-reveal="hold"] {
+    opacity: 1;
+  }
+  [data-bar="wait"] [data-bar-fill],
+  [data-reveal="wait"] [data-bar-fill],
+  [data-reveal="wait"] .animate-bar-grow,
+  [data-reveal="wait"] .animate-line-in {
+    transform: none;
+  }
+  details.disclosure::details-content {
+    transition: none !important;
+  }
+}
+
+/* ---- Paper. A page prints as it reads: dark text on white, every section open, no chrome. ----
+   Hide anything that only makes sense on a screen with print:hidden or data-print="hide". */
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+    height: auto !important;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  [data-print="hide"],
+  nextjs-portal {
+    display: none !important;
+  }
+  /* Nothing waits for a scroll or a button on paper, and no bar prints half grown. */
+  [data-reveal] {
+    animation: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+  [data-bar-fill],
+  [data-number-final],
+  .animate-bar-grow,
+  .animate-fade-up,
+  .animate-line-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  /* Closed sections print open (PrintExpand does the same from script). */
+  details::details-content {
+    content-visibility: visible !important;
+    height: auto !important;
+    opacity: 1 !important;
+  }
+  [data-slot="frame-panel"],
+  [data-slot="disclosure"],
+  tr,
+  li {
+    break-inside: avoid;
+  }
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+  a {
+    text-decoration: none;
   }
 }
