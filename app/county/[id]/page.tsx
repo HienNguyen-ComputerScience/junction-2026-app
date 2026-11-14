@@ -259,6 +259,19 @@ function buildLimitations(county: County): LimitationItem[] {
     });
   }
 
+  // Cancer stage by county is not published; 5-year relative survival is (context only,
+  // Sotkanet 3627 bowel, 3625 breast). Latest year is 2024. No comparison wording on purpose.
+  const bowel = getValue(county.id, "3627", 2024);
+  const breast = getValue(county.id, "3625", 2024);
+  const bowelFinland = getValue("finland", "3627", 2024);
+  const breastFinland = getValue("finland", "3625", 2024);
+  if (bowel && breast && bowelFinland && breastFinland) {
+    items.push({
+      text: `In ${county.name}, 5-year relative survival was ${bowel.value}% for bowel cancer and ${breast.value}% for breast cancer (Finland ${bowelFinland.value}% and ${breastFinland.value}%), for patients diagnosed ${bowel.year - 9}-${bowel.year}. Cancer stage by county is not published, and survival mixes how early cancer is found with how well it is treated. Small counties vary from year to year.`,
+      sourceId: "sotkanet-3627",
+    });
+  }
+
   items.push({
     text: "GP recognition of possible cancer has no public indicator, so step 2 is grey for every county. No public county data shows it yet; one candidate would be the share of cancers first found through an emergency visit.",
   });
