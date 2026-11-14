@@ -16,7 +16,7 @@
     "unit": "%",
     "direction": "lower_is_worse",
     "stage": "referral",
-    "limitation": "Measures how fast the hospital starts assessing a referral, not when the patient sees a specialist. Not cancer-specific. No county-level value for East, Central and West Uusimaa or Vantaa and Kerava.",
+    "limitation": "Measures how fast the hospital starts assessing a referral, not when the patient sees a specialist. Not cancer-specific. Counted per hospital organisation: East, Central and West Uusimaa and Vantaa and Kerava have no value of their own, so their card shows the HUS-wide value, labelled as shared.",
     "source_id": "sotkanet-13"
   },
   {

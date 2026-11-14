@@ -8,7 +8,8 @@
 //    up to 3 from the focus stages in the same order.
 // 3. Within a stage, actions with a measured effect size come first, then the
 //    order of the evidence table (data/evidence.json). Nothing is filtered out.
-// 4. Stages without county data (referral in parts of Uusimaa) and GP
+// 4. Stages without county data (referral in parts of Uusimaa, where only a
+//    HUS-wide value exists) and GP
 //    recognition (no public data anywhere) are never recommended, but their
 //    actions are listed as "can't be measured here yet", not hidden.
 
@@ -98,7 +99,9 @@ export function bottleneckSentence(countyName: string, bottleneck: Bottleneck): 
   }
   for (const gap of noData) {
     parts.push(
-      `There is no county data for ${STAGE_PHRASES[gap.stage]}, so it can't be measured here yet.`,
+      gap.shared
+        ? `For ${STAGE_PHRASES[gap.stage]} there is only a ${gap.shared.name}-wide value, not one for this county, so it is not used to pick actions.`
+        : `There is no county data for ${STAGE_PHRASES[gap.stage]}, so it can't be measured here yet.`,
     );
   }
   parts.push(
@@ -154,7 +157,9 @@ export function otherActions(countyId: string, picked: Evidence[]): OtherGroup[]
       if (!gap) {
         unmeasured = "No public data in any county, so this can't be measured here yet.";
       } else if (gap.status === "no_data") {
-        unmeasured = "No county data on Sotkanet, so this can't be measured here yet.";
+        unmeasured = gap.shared
+          ? `Sotkanet has only a ${gap.shared.name}-wide value, not one for this county, so this can't be measured here yet.`
+          : "No county data on Sotkanet, so this can't be measured here yet.";
       }
       return {
         stage,

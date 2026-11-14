@@ -41,6 +41,11 @@ export type PathwayStep = {
     direction: string;
     /** The data's own sentence, shown when the area has no value. */
     note: string;
+    /**
+     * A wider value (the hospital group's) shown when the area has none of its own. Never the
+     * area's figure: the step keeps its "no public data" status and the grey, hatched bar.
+     */
+    shared?: { name: string; value: number };
   };
 };
 
@@ -77,6 +82,7 @@ export function buildPathwaySteps(countyId: string): PathwayStep[] {
         counts: COUNTS[stage],
         direction: DIRECTION[stage],
         note: gap.note,
+        shared: gap.shared && { name: gap.shared.name, value: gap.shared.value },
       },
     };
   });
@@ -135,7 +141,7 @@ function StepStatus({ step, children }: { step: PathwayStep; children?: ReactNod
   return (
     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-2">
       <StatusBadge status={step.status} size="xs">
-        {STATUS_LABEL[step.status]}
+        {step.measure?.shared && step.measure.value === null ? "No county figure" : STATUS_LABEL[step.status]}
       </StatusBadge>
       {step.measure && <SourceChip sourceId={step.measure.sourceId} />}
       {children}
@@ -215,6 +221,16 @@ function FullStep({ step, led }: { step: PathwayStep; led: boolean }) {
           </p>
           <p className="pt-1 type-caption text-pretty text-muted-foreground">{measure.counts}</p>
         </>
+      ) : measure?.shared ? (
+        <>
+          <p className={cn(SLOT, "pt-3")}>
+            <span className={cn(SLOT_FIGURE, "text-foreground")}>{formatPct(measure.shared.value)}</span>
+          </p>
+          <p className="pt-2 type-caption text-muted-foreground">{sharedLabel(measure.shared.name)}</p>
+          <p className="pt-1 type-caption text-pretty text-muted-foreground">
+            Finland <span className="figure">{formatPct(measure.finland)}</span>, {measure.direction}
+          </p>
+        </>
       ) : (
         <>
           <NoValue />
@@ -246,6 +262,9 @@ function FullStep({ step, led }: { step: PathwayStep; led: boolean }) {
   );
 }
 
+/** The label that always stands with a wider value shown in place of an area's own. */
+const sharedLabel = (name: string) => `${name}-wide value, not a county figure`;
+
 /**
  * The value slot of a step with no value: the statement sits on the baseline of the figures
  * beside it. The hidden figure is a strut of the same size, so the alignment is exact.
@@ -273,9 +292,13 @@ function CompactStep({ step, extra }: { step: PathwayStep; extra?: ReactNode }) 
         {measure && value !== null && (
           <span className={cn("numeral text-[1.375rem] leading-6", STATUS_FIGURE[status])}>{formatPct(value)}</span>
         )}
+        {measure && value === null && measure.shared && (
+          <span className="numeral text-[1.375rem] leading-6 text-foreground">{formatPct(measure.shared.value)}</span>
+        )}
       </div>
       <p className="pt-0.5 type-caption text-muted-foreground">
         {measure ? measure.counts : "No public statistic measures this step"}
+        {measure && value === null && measure.shared && <> · {sharedLabel(measure.shared.name)}</>}
       </p>
       <MeasureBar
         className="pt-2"

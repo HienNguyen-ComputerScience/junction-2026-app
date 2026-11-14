@@ -31,6 +31,7 @@ export function buildFallbackBrief(context: BriefContext): ModelBrief {
   const refFi = fact(`finland-13-${y}`);
   const refRank = fact(`${c}-13-${y}-rank`);
   const refAreas = fact(`13-${y}-areas`);
+  const husRef = fact(`hus-13-${y}`);
 
   const status = (stage: string) => context.stages.find((s) => s.stage === stage)?.status ?? "no_data";
   const gpStatus = status("gp_access");
@@ -95,6 +96,12 @@ export function buildFallbackBrief(context: BriefContext): ModelBrief {
       text: `GP to specialist (${label}): ${show(ref)}% of referrals to specialist care were processed within 3 days in ${y}, against ${show(refFi)}% for Finland, rank ${show(refRank)} of ${show(refAreas)} areas with data, counting from the slowest.${recognition}`,
       numbers: [ref.value, 3, y, refFi.value, refRank.value, refAreas.value],
       source_ids: [ref.source_id],
+    });
+  } else if (husRef && refFi) {
+    claims.push({
+      text: `GP to specialist: Sotkanet publishes no ${y} value for ${name} alone. At HUS, which handles its hospital referrals, ${show(husRef)}% of referrals were processed within 3 days in ${y}, against ${show(refFi)}% for Finland. That is a HUS-wide value, not a county figure.${recognition}`,
+      numbers: [y, husRef.value, 3, refFi.value],
+      source_ids: [husRef.source_id],
     });
   } else {
     claims.push({

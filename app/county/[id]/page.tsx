@@ -6,6 +6,7 @@ import { CountyBrief } from "@/components/brief/county-brief";
 import { CountyNews } from "@/components/exa/county-news";
 import { LimitationsBox, type LimitationItem } from "@/components/pathway/limitations-box";
 import { buildPathwaySteps, PathwaySteps, type PathwayStep } from "@/components/pathway/pathway-steps";
+import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { TrendStrip, type TrendStage } from "@/components/pathway/trend-strip";
 import { SourceChip } from "@/components/source-chip";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
@@ -20,7 +21,7 @@ import {
   FrameTitle,
 } from "@/components/ui/frame";
 import { getBottleneck } from "@/lib/act";
-import { counties, getCounty, getValue, LATEST_YEAR, type County, type Gap } from "@/lib/data";
+import { counties, gaps, getCounty, getValue, LATEST_YEAR, type County, type Gap } from "@/lib/data";
 import {
   formatPct,
   getIndicator,
@@ -123,6 +124,8 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
         </FrameFooter>
       </Frame>
 
+      <PathwayStrip countyId={county.id} />
+
       <CountyBrief countyId={county.id} />
       <CountyNews key={county.id} countyId={county.id} />
     </main>
@@ -209,10 +212,22 @@ function buildLimitations(county: County): LimitationItem[] {
   }
 
   items.push({
-    text: "GP recognition of possible cancer has no public indicator, so step 2 is grey for every county.",
+    text: "The GP wait covers public health centres only. Visits to occupational or private doctors are not in it. In a Finnish study of lymphoma patients, those who started in public primary care waited a median 127 days from symptoms to treatment, against 76 days for private or occupational care.",
+    sourceId: "kuitunen-2026",
   });
 
-  if (stageStatus(county.id, "referral") === "no_data") {
+  items.push({
+    text: "GP recognition of possible cancer has no public indicator, so step 2 is grey for every county. No public county data shows it yet; one candidate would be the share of cancers first found through an emergency visit.",
+  });
+
+  const shared = getStageGap(county.id, "referral")?.shared;
+  const husWide = gaps.find((gap) => gap.shared)?.shared;
+  if (shared) {
+    items.push({
+      text: `The referral step shows the ${shared.name}-wide value, not a figure for ${county.name}. ${shared.name} handles hospital referrals from Helsinki, East, Central and West Uusimaa, and Vantaa and Kerava, and THL publishes one number for all of them. So the step stays grey, and it is not used to rank or to pick actions. THL or ${shared.name} could publish it by the patient's home county. The link shows the ${shared.name} report we used to check that the number is ${shared.name}'s.`,
+      sourceId: shared.confirmed_by,
+    });
+  } else if (stageStatus(county.id, "referral") === "no_data") {
     items.push({
       text: `Sotkanet publishes no county-level referral data for ${county.name}, so its referral step is grey. We cannot say whether referrals here are fast or slow.`,
     });
@@ -223,6 +238,12 @@ function buildLimitations(county: County): LimitationItem[] {
     if (referralYears.length > 0 && referralYears.length < YEARS.length) {
       items.push({
         text: `${county.name} has referral values for ${referralYears.join(", ")} only, so the referral trend is incomplete.`,
+      });
+    }
+    if (county.id === "helsinki" && husWide) {
+      items.push({
+        text: `Helsinki's referral value covers the city's own specialist units only. Most hospital referrals from Helsinki go to ${husWide.name}, which processed ${formatPct(husWide.value)} within 3 days in ${LATEST_YEAR}.`,
+        sourceId: husWide.confirmed_by,
       });
     }
   }
