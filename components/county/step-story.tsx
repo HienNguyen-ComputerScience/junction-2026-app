@@ -41,7 +41,7 @@ export function StepsPicture({ steps, mainStage, year }: { steps: PlanStep[]; ma
                 </span>
                 {step.stage === mainStage ? <span className="rounded-full bg-forest-ink px-2.5 py-0.5 text-base font-semibold text-cream-paper">The main delay</span> : null}
               </p>
-              <StatusBadge status={step.status} className="h-auto max-w-full shrink items-baseline whitespace-normal leading-snug">
+              <StatusBadge status={step.status} className="h-auto max-w-full shrink items-baseline whitespace-normal leading-snug max-sm:rounded-lg">
                 {step.statusLabel}
               </StatusBadge>
             </div>
