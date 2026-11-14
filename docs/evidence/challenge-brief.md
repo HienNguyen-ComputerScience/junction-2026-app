@@ -31,4 +31,4 @@ Limits: Kuitunen and Tokola cover one cancer (DLBCL) with 160 patients from 7 Fi
 
 > "In Finland, lymphoma patients whose first stop was a public health centre waited a median 127 days from first symptom to treatment. Those who went private or through work: 76 days."
 
-Source chip: Kuitunen et al., Cancer Medicine 2026. It's the challenge speaker's own study, so judges will recognise it. It's now in `docs/pitch/demo-script.md`. The video scripts still use the Vedsted & Olesen 75–85% line: switch them only if the voice-over hasn't been recorded yet.
+Source chip: Kuitunen et al., Cancer Medicine 2026. It's the challenge speaker's own study, so judges will recognise it. It's now in `demo-script.md`, `video-script.md` and `video-shot-script.md`. The Vedsted & Olesen 75–85% line stays as a backup answer. Deck slide 2 (`docs/submission/deck-outline.md`) still uses the 75–85% line: that's nabeo11's call.
