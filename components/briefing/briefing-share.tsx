@@ -34,7 +34,7 @@ export function BriefingShare({
   };
 
   const options: ShareOption[] = [
-    { kind: "print", label: "Print the whole briefing", hint: "Four pages, every source named" },
+    { kind: "print", label: "Print the whole briefing", hint: "Every figure with its source" },
     ...(actionIds.length > 0
       ? ([
           { kind: "word", href: fileHref("docx"), hint: "The action plan, with blank lines for names, dates and cost" },
@@ -50,5 +50,5 @@ export function BriefingShare({
     },
   ];
 
-  return <SaveShare inline options={options} label={`Save or share the briefing for ${areaName}`} className="max-w-[30rem]" />;
+  return <SaveShare inline options={options} label={`Save or share the briefing for ${areaName}`} className="max-w-[44rem]" />;
 }

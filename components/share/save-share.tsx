@@ -38,7 +38,7 @@ const TRIGGER =
 
 /** One option: a full-width row with its icon, label and an optional one-line hint. */
 const OPTION =
-  "flex min-h-[3.25rem] w-full items-start gap-3 rounded-[14px] border border-input bg-cream-paper px-4 py-3 text-left text-base leading-6 text-forest-ink transition-colors hover:bg-keylime-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink";
+  "flex h-full min-h-[3.25rem] w-full items-start gap-3 rounded-[14px] border border-input bg-cream-paper px-4 py-3 text-left text-base leading-6 text-forest-ink transition-colors hover:bg-keylime-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink";
 
 const noSubscribe = () => () => {};
 
@@ -69,19 +69,22 @@ function OptionContent({ option }: { option: ShareOption }) {
 }
 
 /** The options as a list of real buttons and links. `done` runs after one is used. */
-function Options({ options, done, id, labelledBy, label }: {
+function Options({ options, done, id, labelledBy, label, columns = false }: {
   options: ShareOption[];
   done?: () => void;
   id?: string;
   labelledBy?: string;
   label?: string;
+  /** Two columns from 640px (the open, inline list). */
+  columns?: boolean;
 }) {
   const origin = useOrigin();
   const pathname = usePathname();
   // Closed after the click has started the download or the email, so the link is still in the page for it.
   const after = () => setTimeout(() => done?.(), 0);
   return (
-    <ul id={id} role="group" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : label} className="flex flex-col gap-2">
+    <div id={id} role="group" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : label}>
+      <ul className={cn("flex flex-col gap-2", columns && "sm:grid sm:grid-cols-2")}>
       {options.map((option) => (
         <li key={option.kind}>
           {option.kind === "print" ? (
@@ -105,8 +108,9 @@ function Options({ options, done, id, labelledBy, label }: {
             </a>
           )}
         </li>
-      ))}
-    </ul>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -170,7 +174,7 @@ export function SaveShare({
   if (inline) {
     return (
       <div data-slot="save-share" data-print="hide" className={cn("print:hidden", className)}>
-        <Options options={options} label={label} />
+        <Options options={options} label={label} columns />
       </div>
     );
   }
