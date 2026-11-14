@@ -69,7 +69,7 @@ export function AreaPicker({ areas, defaultId, totalAreas, previews }: Props) {
 
   return (
     <>
-      <section aria-label="Guided briefing" className="grid gap-3 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <section aria-label="Guided briefing" className="grid gap-3 lg:grid-cols-[minmax(0,11fr)_minmax(0,13fr)]">
         <FramePanel padding="none" className="flex flex-col gap-5 p-5 sm:p-7 lg:justify-center lg:gap-7 print:hidden">
           <div className="flex flex-col gap-2">
             <label htmlFor={selectId} className="type-heading text-forest-ink">
