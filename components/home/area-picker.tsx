@@ -107,7 +107,7 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, previ
         aria-label="Guided briefing"
         className="grid gap-3 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start"
       >
-        <FramePanel padding="none" className="flex flex-col gap-5 p-5 sm:p-7">
+        <FramePanel padding="none" className="flex flex-col gap-5 p-5 sm:p-7 print:hidden">
           <div className="flex flex-col gap-2">
             <label htmlFor={selectId} className="type-heading text-forest-ink">
               Choose your area
@@ -163,8 +163,8 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, previ
       </section>
 
       {/* Everything else, below a clear divider. */}
-      <section aria-labelledby="own-heading" className="mt-8 flex flex-col gap-4 sm:mt-12">
-        <div className="flex items-center gap-4 border-t border-forest-ink/25 pt-6">
+      <section aria-labelledby="own-heading" className="mt-8 flex flex-col gap-4 sm:mt-12 print:mt-4">
+        <div className="flex items-center gap-4 border-t border-forest-ink/25 pt-6 print:pt-3">
           <h2 id="own-heading" className="type-title text-forest-ink">
             Or look through the data yourself
           </h2>
@@ -225,7 +225,7 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, previ
           </FramePanel>
         </Reveal>
 
-        <Reveal index={1}>
+        <Reveal index={1} className="print:hidden">
           <nav aria-label="More pages" className="rounded-lg bg-keylime-wash px-5 py-2 sm:px-7">
             <ul className="flex flex-col divide-y divide-border [&>li]:py-1.5">
               <li>
