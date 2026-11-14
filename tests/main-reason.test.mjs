@@ -49,7 +49,7 @@ describe("main reason sentence", () => {
 
   test("trend wording follows the direction and the size of the change", () => {
     // Red but improved; red and unchanged; a rise under one point is not called worse.
-    assert.match(text("north-savo"), /5\.8 points above Finland, though better than in 2023 \(64\.6%\)\. The referral step is also worse than Finland\.$/);
+    assert.match(text("north-savo"), /5\.8 points above Finland, though better than in 2023 \(64\.6%\)\. Referrals are worse too\.$/);
     assert.match(text("central-ostrobothnia"), /5\.1 points below Finland, about the same as in 2023 \(71\.7%\)\.$/);
     assert.match(text("north-ostrobothnia"), /about the same as in 2023 \(63\.0%\)\.$/);
     // Not red, but the wait has grown.

@@ -49,8 +49,8 @@ const WHAT: Partial<Record<Stage, (share: string) => string>> = {
 };
 
 const ALSO_WORSE: Partial<Record<Stage, string>> = {
-  gp_access: "Getting to a GP is also worse than Finland.",
-  referral: "The referral step is also worse than Finland.",
+  gp_access: "The GP wait is worse too.",
+  referral: "Referrals are worse too.",
 };
 
 /**

@@ -82,7 +82,7 @@ export function AskBox() {
           <LiveMark result={data} />
         </FrameMeta>
         <FrameDescription>
-          Answered only from live Exa search results, with a numbered source for every sentence. Decision support,
+          Answered from live Exa search results, with a numbered source for every sentence. Decision support,
           not medical advice.
         </FrameDescription>
       </FrameHeader>
@@ -149,7 +149,9 @@ export function AskBox() {
           {reason && (
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[0.9375rem] leading-relaxed text-pretty text-foreground">
               <span>
-                {data?.county && <span className="font-medium">{data.county.name}. </span>}
+                <span className="block type-caption text-muted-foreground">
+                  Dashboard data{data?.county ? ` for ${data.county.name}` : ""}, not from the search
+                </span>
                 {reason.text}
               </span>
               {reason.sources.map((source) => (

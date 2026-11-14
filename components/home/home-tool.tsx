@@ -135,7 +135,7 @@ export function HomeTool({
           {finlandWait && bestWait && (
             <>
               : <span className="figure text-foreground">{formatPct(finlandWait.value)}</span> of non-urgent GP visits
-              in Finland come over 7 days after the ask; in the best area,{" "}
+              in Finland come over 7 days after the ask; best area{" "}
               <span className="figure text-foreground">{formatPct(bestWait.value)}</span>
             </>
           )}
