@@ -170,18 +170,20 @@ export function CardCarousel({
         <div className="ml-auto flex items-center gap-1.5">
           <Button
             variant="outline"
-            className="size-9 px-0"
+            className="size-9 px-0 aria-disabled:pointer-events-none aria-disabled:text-faint"
             aria-label={`Previous ${noun}`}
             disabled={view.atStart}
+            focusableWhenDisabled
             onClick={() => goTo(view.first - 1)}
           >
             <ChevronLeft aria-hidden strokeWidth={1.75} />
           </Button>
           <Button
             variant="outline"
-            className="size-9 px-0"
+            className="size-9 px-0 aria-disabled:pointer-events-none aria-disabled:text-faint"
             aria-label={`Next ${noun}`}
             disabled={view.atEnd}
+            focusableWhenDisabled
             onClick={() => goTo(view.first + 1)}
           >
             <ChevronRight aria-hidden strokeWidth={1.75} />
@@ -202,6 +204,7 @@ export function CardCarousel({
             role="group"
             aria-roledescription="slide"
             aria-label={`${i + 1} of ${total}`}
+            inert={i < view.first || i > view.last}
             className={cn(
               "flex min-w-0 shrink-0 grow-0 snap-start",
               layout === "single"
