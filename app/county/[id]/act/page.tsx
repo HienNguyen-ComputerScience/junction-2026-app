@@ -111,7 +111,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
                 {statement(county.name, bottleneck)}
               </h1>
             </Reveal>
-            <SaveShare options={shareOptions} className="sm:shrink-0 sm:items-end" />
+            <SaveShare options={shareOptions} align="end" className="sm:shrink-0 sm:items-end" />
           </div>
           {lead && leadValue !== null ? (
             <Reveal index={1} className="flex flex-col gap-2">

@@ -1,7 +1,8 @@
 "use client";
 
 import { ChevronDown, FileSpreadsheet, FileText, Mail, Printer } from "lucide-react";
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useId, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 import { cn } from "cn";
 
 /**
@@ -39,9 +40,19 @@ const TRIGGER =
 const OPTION =
   "flex min-h-[3.25rem] w-full items-start gap-3 rounded-[14px] border border-input bg-cream-paper px-4 py-3 text-left text-base leading-6 text-forest-ink transition-colors hover:bg-keylime-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink";
 
-function emailHref(option: Extract<ShareOption, { kind: "email" }>): string {
-  const link = `${window.location.origin}${option.path ?? window.location.pathname}`;
-  const body = `${option.intro}\n\n${link}\n\nEvery figure in it names its public source.`;
+const noSubscribe = () => () => {};
+
+/** The site's address ("https://…"), known only in the browser; "" while the page is drawn on the server. */
+function useOrigin(): string {
+  return useSyncExternalStore(noSubscribe, () => window.location.origin, () => "");
+}
+
+function emailHref(option: Extract<ShareOption, { kind: "email" }>, origin: string, pathname: string): string {
+  const body = `${option.intro}
+
+${origin}${option.path ?? pathname}
+
+Every figure in it names its public source.`;
   return `mailto:?subject=${encodeURIComponent(option.subject)}&body=${encodeURIComponent(body)}`;
 }
 
@@ -65,27 +76,33 @@ function Options({ options, done, id, labelledBy, label }: {
   labelledBy?: string;
   label?: string;
 }) {
+  const origin = useOrigin();
+  const pathname = usePathname();
+  // Closed after the click has started the download or the email, so the link is still in the page for it.
+  const after = () => setTimeout(() => done?.(), 0);
   return (
     <ul id={id} role="group" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : label} className="flex flex-col gap-2">
       {options.map((option) => (
         <li key={option.kind}>
-          {option.kind === "word" || option.kind === "excel" ? (
-            // Closed after the click has started the download, so the link is still in the page for it.
-            <a href={option.href} download className={OPTION} onClick={() => setTimeout(() => done?.(), 0)}>
-              <OptionContent option={option} />
-            </a>
-          ) : (
+          {option.kind === "print" ? (
             <button
               type="button"
               className={OPTION}
               onClick={() => {
                 done?.();
-                if (option.kind === "print") window.print();
-                else if (option.kind === "email") window.location.href = emailHref(option);
+                window.print();
               }}
             >
               <OptionContent option={option} />
             </button>
+          ) : option.kind === "email" ? (
+            <a href={emailHref(option, origin, pathname)} className={OPTION} onClick={after}>
+              <OptionContent option={option} />
+            </a>
+          ) : (
+            <a href={option.href} download className={OPTION} onClick={after}>
+              <OptionContent option={option} />
+            </a>
           )}
         </li>
       ))}
@@ -100,8 +117,8 @@ function Options({ options, done, id, labelledBy, label }: {
  * A disclosure, not an ARIA menu: the options are ordinary buttons and links in Tab order, which
  * is what a reader who is not fluent with web apps already knows. It opens on click (never on
  * hover), closes on Escape, on a click outside and when an option is used, and gives the
- * keyboard focus back to the button. The list sits in the page flow under the button, so it
- * cannot be clipped by a card or covered by a fixed bar on a phone. Hidden on paper.
+ * keyboard focus back to the button. On a phone the list sits in the page flow under the button,
+ * so it cannot be covered by a fixed bar; from 640px it floats over the page below. Hidden on paper.
  *
  * `inline`: the options are shown at once with no button, for a place whose whole job is
  * saving or sharing (the last step of the briefing).
@@ -109,11 +126,14 @@ function Options({ options, done, id, labelledBy, label }: {
 export function SaveShare({
   options,
   inline = false,
+  align = "start",
   label = "Save or share",
   className,
 }: {
   options: ShareOption[];
   inline?: boolean;
+  /** From 640px the list floats under the button, lined up with its start or its end edge. */
+  align?: "start" | "end";
   label?: string;
   className?: string;
 }) {
@@ -149,7 +169,7 @@ export function SaveShare({
 
   if (inline) {
     return (
-      <div data-print="hide" className={cn("print:hidden", className)}>
+      <div data-slot="save-share" data-print="hide" className={cn("print:hidden", className)}>
         <Options options={options} label={label} />
       </div>
     );
@@ -163,8 +183,9 @@ export function SaveShare({
   return (
     <div
       ref={wrapper}
+      data-slot="save-share"
       data-print="hide"
-      className={cn("flex w-full flex-col items-start gap-2 print:hidden sm:w-auto", className)}
+      className={cn("relative flex w-full flex-col items-start gap-2 print:hidden sm:w-auto", className)}
       onBlur={(event) => {
         // Tabbing out of the list closes it, without moving the focus back.
         if (open && !event.currentTarget.contains(event.relatedTarget as Node | null) && event.relatedTarget) setOpen(false);
@@ -183,7 +204,10 @@ export function SaveShare({
         <ChevronDown aria-hidden className={cn("size-5 shrink-0 transition-transform", open && "rotate-180")} strokeWidth={1.75} />
       </button>
       {open ? (
-        <div className="animate-fade-up w-full rounded-[14px] bg-mint-veil p-2 sm:w-[22rem]">
+        <div
+          // Its own stagger index: an --i inherited from a Reveal around the control would delay it.
+          style={{ "--i": 0 } as CSSProperties}
+          className={cn("animate-fade-up z-30 w-full rounded-[14px] bg-mint-veil p-2 sm:absolute sm:top-full sm:mt-2 sm:w-[22rem]", align === "end" ? "sm:right-0" : "sm:left-0")}>
           <Options options={options} done={close} id={panelId} labelledBy={triggerId} />
         </div>
       ) : (
