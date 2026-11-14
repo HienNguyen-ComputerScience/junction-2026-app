@@ -48,9 +48,9 @@ function bottleneckLede(bottleneck: Bottleneck): string {
   const { focus, anyRed } = bottleneck;
   if (focus.length === 0) return "No 2025 pathway data is published for this county.";
   const worst = STAGE_IN_SENTENCE[focus[0].stage];
-  if (!anyRed) return `No measured stage is worse than Finland. Closest to Finland's level: ${worst}.`;
+  if (!anyRed) return `No measured step is worse than Finland. Closest to Finland's level: ${worst}.`;
   if (focus.length === 1) return `The delay sits at ${worst}, which is worse than Finland.`;
-  return `${focus.length === 2 ? "Both" : "All"} measured stages are worse than Finland. Worst is ${worst}.`;
+  return `${focus.length === 2 ? "Both" : "All"} measured steps are worse than Finland. Worst is ${worst}.`;
 }
 
 export async function generateMetadata({ params }: PageProps<"/county/[id]/act">): Promise<Metadata> {
@@ -118,7 +118,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           </FrameTitle>
           {/* The selection rule in one line (the full rule is SELECTION_RULE in lib/act). */}
           <FrameMeta className="max-sm:col-span-2 max-sm:col-start-1 max-sm:row-start-2 max-sm:justify-start">
-            Worst stage first: one action per stage, then up to three in all
+            Worst step first: one action per step, then up to three in all
           </FrameMeta>
         </FrameHeader>
         <div className="flex flex-col gap-1.5">

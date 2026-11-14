@@ -17,7 +17,7 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-/** A plain text tag (stage, checked): the chip shape in the UI sans, so it never reads as a source. */
+/** A plain text tag (step, checked): the chip shape in the UI sans, so it never reads as a source. */
 const TAG =
   "inline-flex h-6 w-fit shrink-0 items-center rounded-sm border border-input px-2 text-[0.75rem] leading-none font-medium text-muted-foreground";
 
@@ -78,7 +78,7 @@ export function ActionCard({
           </span>
         )}
         <span className={`${TAG} gap-1`}>
-          <span>Stage:</span>
+          <span>Step:</span>
           <span>{STAGE_LABELS[action.stage]}</span>
         </span>
         <span className="flex basis-full sm:ml-auto sm:basis-auto">

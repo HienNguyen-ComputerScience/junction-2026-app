@@ -122,9 +122,10 @@ function ActionRow({
     <li className="grid gap-y-3 border-b border-border px-4 py-4 last:border-b-0 sm:px-6 lg:col-span-3 lg:grid-cols-subgrid lg:items-start">
       <div className="flex min-w-0 flex-col gap-1.5">
         <h4 className="type-heading text-pretty">{layout.action}</h4>
-        <p className="type-caption text-pretty text-muted-foreground">
-          <span className="font-medium">Who</span> · {layout.who}
-        </p>
+        <dl className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-3 type-caption text-muted-foreground">
+          <dt>Owner</dt>
+          <dd className="text-pretty">{layout.who}</dd>
+        </dl>
       </div>
       <div className="rounded-lg border border-input bg-muted px-4 py-3">
         <p className="type-caption font-medium text-muted-foreground">First step</p>

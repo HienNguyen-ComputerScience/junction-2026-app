@@ -81,7 +81,7 @@ export function WhatIfPanel({
           {lead}
           {amount !== null && (
             <span className="mt-1 flex items-baseline gap-x-2">
-              <span className="numeral shrink-0 text-[2rem] leading-none text-foreground">
+              <span className="numeral shrink-0 text-[1.5rem] leading-none text-foreground">
                 {formatAmount(amount)}
               </span>
               <span>
@@ -108,7 +108,7 @@ export function WhatIfPanel({
         </h3>
         <SourceChip sourceId={sourceId} year={year} />
       </FramePanelLabel>
-      <div className="flex flex-1 flex-col gap-2 px-4 py-3 sm:px-5">
+      <div className="flex flex-1 flex-col gap-2 px-4 py-2.5 sm:px-5">
         {body}
         <p className="mt-auto pt-1 type-caption text-muted-foreground">
           Arithmetic on the published shares, not a forecast of any single action.

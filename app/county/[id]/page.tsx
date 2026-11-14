@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -62,6 +63,10 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const lateReferrals = getValue(county.id, REFERRAL_LATE_ID);
   const lateReferralsFinland = getNationalValue(REFERRAL_LATE_ID);
   const keyGap = keyFigureGap(county);
+  const verdict = getVerdict(county.id);
+  // The lead may state the hospital group's referral figure (Sotkanet 13): its source stands in the chip row.
+  const hus = gaps.find((gap) => gap.shared)?.shared;
+  const leadHusChip = hus && verdict.includes(formatPct(hus.value)) ? <SourceChip sourceId="sotkanet-13" year={LATEST_YEAR} /> : null;
 
   return (
     <main className="page-container flex flex-col gap-6 pt-4 sm:pt-6">
@@ -81,9 +86,13 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             <h1 className="type-page lg:text-[2.75rem] lg:leading-[1.1]">{county.name}</h1>
           </div>
           <p className="max-w-[40rem] type-lede lg:max-w-[36rem] lg:text-[1.375rem] lg:leading-8">
-            {getVerdict(county.id)}
+            {verdict}
           </p>
-          {keyGap && <KeyFigure gap={keyGap} />}
+          {keyGap ? (
+            <KeyFigure gap={keyGap} extraChip={leadHusChip} />
+          ) : (
+            leadHusChip
+          )}
           <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
             What to do about it
             <ArrowRight aria-hidden data-icon="inline-end" />
@@ -101,10 +110,8 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           </FrameTitle>
         </FrameHeader>
         <div className="flex flex-col gap-1.5">
-          {/* The key figure above is this step's value, so its slot here shows the gap instead:
-              one number, once per screen. */}
           <FramePanel padding="none">
-            <PathwaySteps steps={steps} density="full" ledStage={keyGap?.stage} />
+            <PathwaySteps steps={steps} density="full" />
           </FramePanel>
           <TrendStrip stages={buildTrendStages(county, steps)} areaName={county.name} />
         </div>
@@ -163,7 +170,7 @@ function keyFigureGap(county: County): Gap | null {
 }
 
 /** The first screen's one key number: the figure, its status and source, and what it counts. */
-function KeyFigure({ gap }: { gap: Gap }) {
+function KeyFigure({ gap, extraChip }: { gap: Gap; extraChip?: ReactNode }) {
   if (gap.value === null) return null;
   return (
     <div className="flex flex-col gap-2">
@@ -176,6 +183,7 @@ function KeyFigure({ gap }: { gap: Gap }) {
             {STATUS_LABEL[gap.status]}
           </StatusBadge>
           <SourceChip sourceId={gap.source_id} year={gap.year} />
+          {extraChip}
         </div>
       </div>
       <p className="text-sm text-pretty text-muted-foreground">

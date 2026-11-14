@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { AreaPicker, type PickerArea } from "@/components/home/area-picker";
+import { LeadFigure } from "@/components/home/lead-figure";
 import { TopAction } from "@/components/home/top-action";
 import { WhatIfPanel } from "@/components/home/what-if-panel";
 import type { FinlandMapArea } from "@/components/map/finland-map";
@@ -56,6 +57,7 @@ export function HomeTool({ rows, unranked }: { rows: RankingRow[]; unranked: Cou
   const steps: Record<string, ReactNode> = {};
   const whatIfs: Record<string, ReactNode> = {};
   const actions: Record<string, ReactNode> = {};
+  const leads: Record<string, ReactNode> = {};
 
   for (const county of all) {
     const bottleneck = getBottleneck(county.id);
@@ -66,6 +68,7 @@ export function HomeTool({ rows, unranked }: { rows: RankingRow[]; unranked: Cou
 
     const gap = bottleneck.focus[0];
     if (gap) {
+      leads[county.id] = <LeadFigure gap={gap} />;
       const better = betterFor(gap.indicator_id);
       whatIfs[county.id] = (
         <WhatIfPanel
@@ -116,6 +119,7 @@ export function HomeTool({ rows, unranked }: { rows: RankingRow[]; unranked: Cou
       year={LATEST_YEAR}
       totalAreas={all.length}
       steps={steps}
+      leads={leads}
       whatIfs={whatIfs}
       actions={actions}
       mapChip={<SourceChip sourceId={rows[0]?.gpWait.source_id ?? `sotkanet-${GP_WAIT_ID}`} year={LATEST_YEAR} />}
