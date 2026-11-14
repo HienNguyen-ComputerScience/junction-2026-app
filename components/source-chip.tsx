@@ -30,7 +30,7 @@ export function SourceChip({
       rel="noopener noreferrer"
       title={source.name}
       aria-label={`${label}: ${source.name} (opens in a new tab)`}
-      className="group/chip inline-flex shrink-0 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+      className="group/chip relative inline-flex shrink-0 rounded-full outline-none after:absolute after:-inset-x-0.5 after:-inset-y-1.5 after:content-[''] focus-visible:ring-3 focus-visible:ring-ring/50"
     >
       <Badge
         variant="outline"

@@ -49,7 +49,7 @@ export function RankingList({
     <div className="flex flex-col">
       {/* Column header, desktop: sticky so chips and the Finland label stay in view while scrolling. */}
       <div
-        className={`${ROW_GRID} sticky top-0 z-10 hidden rounded-t-panel border-b border-border/80 bg-card px-5 pt-4 pb-0 type-micro font-medium text-muted-foreground lg:grid`}
+        className={`${ROW_GRID} sticky top-0 z-10 hidden rounded-t-panel border-b border-border/80 bg-card px-5 pt-3 pb-0 type-micro font-medium text-muted-foreground after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:h-5 after:bg-linear-to-b after:from-card after:to-transparent after:content-[''] lg:grid`}
       >
         <span className="pb-3">#</span>
         <span className="pb-3">

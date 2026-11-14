@@ -42,16 +42,16 @@ export default function CountyRankingPage() {
   const redCount = rows.filter((row) => row.gpStatus === "red").length;
 
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-3 pt-4 sm:gap-8 sm:px-6 sm:pt-8">
+    <main className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 pt-4 sm:gap-7 sm:px-6 sm:pt-6">
       {/* Hero: the single message, on the one dark surface of the page. */}
       <Frame tone="inverse" aria-labelledby="home-title" className="p-1.5 sm:p-2">
-        <div className="grid gap-6 px-3.5 pt-5 pb-2 sm:px-6 sm:pt-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-center lg:gap-12 lg:px-8 lg:py-8">
+        <div className="grid gap-6 px-3.5 pt-5 pb-2 sm:px-6 sm:pt-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-center lg:gap-12 lg:px-8 lg:py-7">
           <div className="flex flex-col gap-5">
             <p className="flex items-center gap-2 type-caption font-medium text-brand-ink">
               <span aria-hidden className="hidden h-px w-6 bg-brand-ink/60 sm:block" />
               The first step towards early cancer care: getting in to see a GP
             </p>
-            <h1 id="home-title" className="type-display max-w-[14ch] text-foreground">
+            <h1 id="home-title" className="type-display max-w-[18ch] text-foreground">
               In Finland, where you live decides how fast you get to see a GP.
             </h1>
             <p className="max-w-[36rem] text-[0.9375rem] leading-relaxed text-pretty text-muted-foreground sm:type-lede">
@@ -67,12 +67,12 @@ export default function CountyRankingPage() {
 
           <FramePanel padding="none" className="overflow-hidden">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3 sm:px-5">
-              <h2 className="type-micro font-medium text-muted-foreground">
+              <h2 className="font-sans type-micro font-medium text-muted-foreground">
                 Non-urgent GP visits waiting over 7 days, {LATEST_YEAR}
               </h2>
               <SourceChip sourceId={worst.gpWait.source_id} year={LATEST_YEAR} />
             </div>
-            <ul className="flex flex-col gap-5 px-4 py-5 sm:px-5 sm:py-6">
+            <ul className="flex flex-col gap-4 px-4 py-5 sm:px-5">
               <CompareRow
                 name={worst.county.name}
                 value={worst.gpWait.value}
@@ -114,7 +114,7 @@ export default function CountyRankingPage() {
               {redCount} of {rows.length + unranked.length} worse than Finland
             </StatusBadge>
           </FrameMeta>
-          <FrameDescription>
+          <FrameDescription className="max-w-none">
             21 wellbeing services counties and the City of Helsinki. Pick an area to see where its
             delay sits: getting to a GP, or getting from the GP to a specialist.
           </FrameDescription>
@@ -183,7 +183,7 @@ function CompareRow({
         )}
       </div>
       <span
-        className={`numeral text-right ${emphasis ? "text-[2.75rem] sm:text-[3.75rem]" : "text-[2rem] sm:text-[2.5rem]"} ${status === "red" ? "text-status-red-ink" : status === "amber" ? "text-status-amber-ink" : "text-foreground"}`}
+        className={`numeral text-right ${emphasis ? "text-[2.75rem] sm:text-[3.5rem]" : "text-[2rem] sm:text-[2.375rem]"} ${status === "red" ? "text-status-red-ink" : status === "amber" ? "text-status-amber-ink" : "text-foreground"}`}
       >
         {formatPct(value)}
       </span>

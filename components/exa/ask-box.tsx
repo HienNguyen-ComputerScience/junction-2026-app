@@ -101,7 +101,12 @@ export function AskBox() {
             className="h-11 w-full min-w-0 bg-transparent text-[0.9375rem] outline-none placeholder:text-muted-foreground/80 disabled:opacity-60"
           />
         </div>
-        <Button type="submit" size="lg" className="h-11 px-5" disabled={loading || question.trim().length < 3}>
+        <Button
+          type="submit"
+          size="lg"
+          className={`h-11 px-5 ${loading ? "" : "disabled:opacity-90"}`}
+          disabled={loading || question.trim().length < 3}
+        >
           {loading ? "Searching…" : "Ask"}
           {!loading && <ArrowUp aria-hidden data-icon="inline-end" />}
         </Button>

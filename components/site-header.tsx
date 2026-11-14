@@ -26,20 +26,20 @@ export function SiteHeader() {
   return (
     <header className="border-b border-border/80 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-2.5 px-4 py-2.5 sm:h-16 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-0">
-        <Link
-          href="/"
-          className="flex w-fit items-center gap-2.5 rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          <LogoMark />
-          <span className="flex items-baseline gap-3">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="flex w-fit items-center gap-2.5 rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            <LogoMark />
             <span className="font-display text-[1.1875rem] font-semibold tracking-[-0.025em]">
               FirstLine
             </span>
-            <span className="hidden border-l border-border pl-3 text-[0.8125rem] text-muted-foreground lg:inline">
-              Where early cancer care breaks down, county by county
-            </span>
-          </span>
-        </Link>
+          </Link>
+          <p className="hidden border-l border-border pl-3 text-[0.8125rem] text-muted-foreground lg:block">
+            Where early cancer care breaks down, county by county
+          </p>
+        </div>
         <Suspense fallback={<NavLinks pathname={null} />}>
           <MainNav />
         </Suspense>
