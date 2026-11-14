@@ -132,7 +132,7 @@ export function AskPanel() {
               aria-busy={loading}
               placeholder="e.g. Is GP access improving in Kainuu?"
               autoComplete="off"
-              className="h-13 w-full min-w-0 flex-1 rounded-lg border border-input bg-cream-paper px-4 text-base text-foreground transition-[border-color,box-shadow] outline-none placeholder:text-faint focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25 read-only:opacity-70"
+              className="h-13 w-full min-w-0 rounded-lg sm:flex-1 border border-input bg-cream-paper px-4 text-base text-foreground transition-[border-color,box-shadow] outline-none placeholder:text-faint focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25 read-only:opacity-70"
             />
             <Button type="submit" size="lg" className="h-13 px-6" aria-disabled={loading}>
               {loading ? "Searching…" : "Ask"}
@@ -143,9 +143,9 @@ export function AskPanel() {
 
         {!open && (
           <div className="flex flex-col gap-3">
-            <h2 id="ask-examples" className="text-base font-semibold text-forest-ink">
+            <p id="ask-examples" className="text-base font-semibold text-forest-ink">
               Or start with an example
-            </h2>
+            </p>
             <ul aria-labelledby="ask-examples" className="flex flex-col items-start gap-2">
               {EXAMPLES.map((ex) => (
                 <li key={ex.query} className="max-w-full">

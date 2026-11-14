@@ -33,8 +33,8 @@ export default function AskPage() {
           <p className="type-eyebrow">Ask the evidence</p>
           <h1 className="type-page text-balance">Ask a question about health care in Finland.</h1>
           <p className="type-lede max-w-[44rem] text-pretty text-foreground">
-            You get recent web sources and a short answer written from them by AI. If you name an area, you also get
-            our dashboard figure for it. Web results are new and not checked by us.
+            You get recent web sources and a short answer written from them by AI. Web results are new and not checked
+            by us.
           </p>
         </Reveal>
       </header>
@@ -50,9 +50,7 @@ export default function AskPage() {
         <AskPanel />
       </Reveal>
 
-      <Reveal index={2}>
-        <NewsPanel />
-      </Reveal>
+      <NewsPanel />
     </main>
   );
 }
