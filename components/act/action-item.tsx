@@ -8,16 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { plainTitle } from "@/lib/action-title";
 import type { Evidence } from "@/lib/data";
 
-/** A small label inside an opened section. `printOnly` stands in for the button's words on paper, where the button is hidden. */
-function Label({ children, printOnly = false }: { children: ReactNode; printOnly?: boolean }) {
+/** One part of the opened details: a small label and its text. */
+function Part({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <p className={`text-sm font-semibold text-forest-ink ${printOnly ? "hidden print:block" : ""}`}>{children}</p>
+    <div className="flex flex-col gap-1.5">
+      <p className="text-sm font-semibold text-forest-ink">{label}</p>
+      {children}
+    </div>
   );
-}
-
-/** The opened content of one "Show …" button: a cream block under the button. */
-function Opened({ children }: { children: ReactNode }) {
-  return <div className="flex flex-col gap-3 rounded-lg bg-cream-paper px-5 py-4 print:px-0 print:py-1">{children}</div>;
 }
 
 const TEXT = "text-base leading-relaxed text-pretty text-foreground";
@@ -28,10 +26,11 @@ const isNice = (action: Evidence) => action.source_id.startsWith("ev-nice");
 
 /**
  * One recommended action on the act page: a card that reveals in order as it scrolls in (number
- * and title, the owner and step pills, the one-line why, the source chip), with everything else
- * behind plainly labelled buttons that open in place. Print opens all of them.
+ * and title, owner pill and, where the actions span several steps, the step pill; the one-line
+ * why; the source chip). Everything else is behind one "Show details" button that opens in place,
+ * and is always open on paper.
  */
-export function ActionItem({ action, index }: { action: Evidence; index: number }) {
+export function ActionItem({ action, index, showStep }: { action: Evidence; index: number; showStep: boolean }) {
   const copy = actionCopy(action);
   const stat = action.effect_size ? plainStat(action.effect_size) : null;
   const qualifier = stat && action.effect_size ? figureQualifier(action.effect_size) : null;
@@ -54,7 +53,7 @@ export function ActionItem({ action, index }: { action: Evidence; index: number 
 
       <Reveal index={1} className="flex flex-wrap gap-2">
         <span className={PILL}>Owner: {copy.owner}</span>
-        <span className={PILL}>Fixes: {lowerFirst(STEP_SHORT[action.stage])}</span>
+        {showStep ? <span className={PILL}>Fixes: {lowerFirst(STEP_SHORT[action.stage])}</span> : null}
       </Reveal>
 
       <Reveal as="p" index={2} className="text-lg leading-snug text-pretty text-foreground">
@@ -65,62 +64,47 @@ export function ActionItem({ action, index }: { action: Evidence; index: number 
         <SourceChip sourceId={action.source_id} />
       </Reveal>
 
-      <Reveal index={4} className="flex flex-col gap-1 border-t border-forest-ink/15 pt-3 print:gap-3 print:border-0">
-        <Disclosure tone="quiet" label="the first step">
-          <Opened>
-            <Label printOnly>First step</Label>
-            <p className={`${TEXT} font-semibold`}>{action.first_step}</p>
-          </Opened>
-        </Disclosure>
-
-        <Disclosure tone="quiet" label="the full description">
-          <Opened>
-            <Label printOnly>Full description</Label>
-            <p className={`${TEXT} font-semibold`}>{plainTitle(action.action)}</p>
-            <p className={TEXT}>{action.detail}</p>
-            <p className={TEXT}>
-              <span className="font-semibold">Who implements it: </span>
-              {action.who_implements}
-            </p>
-          </Opened>
-        </Disclosure>
-
-        <Disclosure
-          tone="quiet"
-          show="Show where it was done and what happened"
-          hide="Hide where it was done and what happened"
-        >
-          <Opened>
-            <Label>Where it was done</Label>
-            <p className={TEXT}>{action.precedent}</p>
-            <Label>What happened there</Label>
-            {stat ? (
-              <div className="flex flex-col gap-1">
-                <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p>
-                <p className="text-base text-pretty text-muted-foreground first-letter:uppercase">
-                  {qualifier ?? "A study result, not a forecast for this county."}
-                </p>
-              </div>
-            ) : null}
-            <p className={`${TEXT} tabular-nums`}>{action.effect_text}</p>
-            {action.effect_size ? (
-              <p className={TEXT}>Figure as the study states it: {statisticLine(action.effect_size)}</p>
-            ) : null}
-            {isNice(action) ? null : (
-              <p className={`${TEXT} border-l-2 border-forest-ink/30 pl-3`}>{action.quote_or_page}</p>
-            )}
-            <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-              {action.verified ? <Badge variant="checked">Source checked</Badge> : null}
-              <SourceChip sourceId={action.source_id} />
-            </span>
-          </Opened>
-        </Disclosure>
-
-        <Disclosure tone="quiet" label="what it will not fix" hide="Hide what it will not fix">
-          <Opened>
-            <Label printOnly>What it will not fix or prove</Label>
-            <p className={TEXT}>{action.limitations}</p>
-          </Opened>
+      <Reveal index={4}>
+        <Disclosure tone="quiet" label="details">
+          <div className="flex flex-col gap-5 rounded-lg bg-cream-paper px-5 py-5 sm:px-6 print:px-0 print:py-1">
+            <Part label="First step">
+              <p className={`${TEXT} font-semibold`}>{action.first_step}</p>
+            </Part>
+            <Part label="The action in full">
+              <p className={TEXT}>
+                {plainTitle(action.action)}. {action.detail}
+              </p>
+              <p className={TEXT}>
+                <span className="font-semibold">Who implements it: </span>
+                {action.who_implements}
+              </p>
+            </Part>
+            <Part label="Where it was done and what happened">
+              <p className={TEXT}>{action.precedent}</p>
+              {stat ? (
+                <div className="flex flex-col gap-1 pt-1">
+                  <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p>
+                  <p className="text-base text-pretty text-muted-foreground first-letter:uppercase">
+                    {qualifier ?? "A study result, not a forecast for this county."}
+                  </p>
+                </div>
+              ) : null}
+              <p className={`${TEXT} tabular-nums`}>{action.effect_text}</p>
+              {action.effect_size ? (
+                <p className={TEXT}>Figure as the study states it: {statisticLine(action.effect_size)}</p>
+              ) : null}
+              {isNice(action) ? null : (
+                <p className={`${TEXT} border-l-2 border-forest-ink/30 pl-3`}>{action.quote_or_page}</p>
+              )}
+              <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-1">
+                {action.verified ? <Badge variant="checked">Source checked</Badge> : null}
+                <SourceChip sourceId={action.source_id} />
+              </span>
+            </Part>
+            <Part label="What it will not fix or prove">
+              <p className={TEXT}>{action.limitations}</p>
+            </Part>
+          </div>
         </Disclosure>
       </Reveal>
     </article>

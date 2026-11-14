@@ -6,7 +6,6 @@ import { notFound } from "next/navigation";
 import { ActionSummary } from "@/components/act/action-card";
 import { lowerFirst, STEP_SHORT } from "@/components/act/action-copy";
 import { ActionItem } from "@/components/act/action-item";
-import { ActionStory, type StoryStep } from "@/components/act/action-story";
 import { ReferralRoutes } from "@/components/act/referral-routes";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
 import { AnimatedNumber, Disclosure, Reveal } from "@/components/motion";
@@ -15,10 +14,9 @@ import { BackLink } from "@/components/ui/back-link";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { buttonVariants } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { TextLink } from "@/components/ui/text-link";
 import { SELECTION_RULE, STAGE_LABELS, getBottleneck, otherActions, pickActions, type Bottleneck } from "@/lib/act";
 import { plainTitle } from "@/lib/action-title";
-import { counties, getCounty, getGaps, type Evidence, type Gap, type Stage } from "@/lib/data";
+import { counties, getCounty, type Evidence } from "@/lib/data";
 import { MOTION_LOUD_CLASS } from "@/lib/motion";
 import { STATUS_LABEL, formatPct, getIndicator } from "@/lib/ranking";
 
@@ -42,35 +40,11 @@ const FIGURE_CAPTION: Record<string, string> = {
   "13": "of referrals handled within 3 days",
 };
 
-const PATHWAY: Stage[] = ["gp_access", "gp_recognition", "referral"];
-
 /** The page's one statement: the area's main delay, in at most 12 words. */
 function statement(name: string, { focus, anyRed }: Bottleneck): string {
   if (focus.length === 0) return `${name}: no published pathway figures`;
   if (!anyRed) return `${name}: no measured step worse than Finland`;
   return `${name}'s ${focus.length > 1 ? "worst " : ""}delay: ${lowerFirst(STEP_SHORT[focus[0].stage])}`;
-}
-
-/** The three steps of the pathway picture, each with its status in words. */
-function storySteps(countyId: string, bottleneck: Bottleneck): StoryStep[] {
-  const gaps = getGaps(countyId);
-  const main = bottleneck.anyRed ? bottleneck.focus[0]?.stage : undefined;
-  return PATHWAY.map((stage) => {
-    const gap: Gap | undefined = gaps.find((g) => g.stage === stage);
-    const label = STEP_SHORT[stage];
-    if (!gap) return { stage, label, status: "no_data", statusText: "No public data", main: false };
-    const statusText =
-      gap.status === "red"
-        ? stage === main
-          ? "Worse than Finland: the main delay"
-          : "Worse than Finland"
-        : gap.status === "amber"
-          ? "Not worse than Finland"
-          : gap.shared
-            ? `Only a ${gap.shared.name}-wide figure`
-            : "No figure for this area";
-    return { stage, label, status: gap.status, statusText, main: stage === main };
-  });
 }
 
 /** Why these actions and no others: the selection rule, the unmeasured steps, and what the figure covers. */
@@ -104,6 +78,8 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   const planHref = `/county/${county.id}/plan?actions=${recommended.map((action) => action.id).join(",")}`;
   const lead = bottleneck.focus[0];
   const leadValue = lead?.value ?? null;
+  // The step pill only says something when the actions work on more than one step; otherwise the H1 already names it.
+  const showStep = new Set(recommended.map((action) => action.stage)).size > 1;
 
   const planButton = (
     <Link href={planHref} className={`${buttonVariants({ size: "lg" })} h-auto max-w-full whitespace-normal`}>
@@ -156,21 +132,19 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
         ) : null}
       </section>
 
-      {/* 2. The actions, one card each, beside the pathway they work on. */}
+      {/* 2. The actions, one card each. */}
       {recommended.length > 0 ? (
         <section aria-labelledby="actions-title" className="mt-[18vh]">
           <h2 id="actions-title" className="sr-only">
             Recommended actions for {county.name}
           </h2>
-          <ActionStory steps={storySteps(county.id, bottleneck)}>
-            <ol className="flex flex-col gap-16 md:gap-[28vh]">
-              {recommended.map((action, index) => (
-                <li key={action.id} data-story-stage={action.stage} data-story-index={index + 1} className="print-flow">
-                  <ActionItem action={action} index={index + 1} />
-                </li>
-              ))}
-            </ol>
-          </ActionStory>
+          <ol className="flex max-w-3xl flex-col gap-16 md:gap-[28vh]">
+            {recommended.map((action, index) => (
+              <li key={action.id} className="print-flow">
+                <ActionItem action={action} index={index + 1} showStep={showStep} />
+              </li>
+            ))}
+          </ol>
           <Reveal className="mt-16 md:mt-[18vh]">
             <div data-print="hide">{planButton}</div>
           </Reveal>
@@ -245,16 +219,8 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
         ) : null}
       </section>
 
-      <nav aria-label="Page" className="mt-12 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+      <nav aria-label="Page" className="mt-12">
         <BackLink href={`/county/${county.id}`}>Back to {county.name}</BackLink>
-        <span className="flex flex-wrap gap-x-6 gap-y-2">
-          <TextLink kind="nav" href="/ask" className="text-base">
-            Ask the evidence
-          </TextLink>
-          <TextLink kind="nav" href="/sources" className="text-base">
-            Sources and limitations
-          </TextLink>
-        </span>
       </nav>
     </main>
   );
