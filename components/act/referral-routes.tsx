@@ -17,7 +17,7 @@ import {
 const ROUTES: { urgency: Urgency; label: string }[] = [
   { urgency: "urgent", label: "Fast track" },
   { urgency: "vague", label: "Vague-symptoms work-up" },
-  { urgency: "prompt", label: "See a GP soon" },
+  { urgency: "prompt", label: "GP check within two weeks" },
   { urgency: "safety_net", label: "Safety-net and recheck" },
 ];
 
@@ -36,9 +36,9 @@ const STUDY_NAME: Record<string, string> = {
   "ev-pmc-pmc7462853": "England: diagnostic centres, 2020",
 };
 
-/** The first sentence of a tier's gpAction. */
-function firstSentence(text: string): string {
-  return text.split(/(?<=\.)\s/)[0];
+/** The first `count` sentences of a tier's gpAction. */
+function leadingSentences(text: string, count: number): string {
+  return text.split(/(?<=\.)\s/).slice(0, count).join(" ");
 }
 
 /** One chip per guideline family: every NICE NG12 page is the one NICE NG12 link, every Käypä hoito page the one Käypä hoito link. */
@@ -83,7 +83,7 @@ function LinkChips({ links }: { links: GuidelineLink[] }) {
             target="_blank"
             rel="noopener noreferrer"
             title={link.label}
-            aria-label={`${link.label} (opens in a new tab)`}
+            aria-label={`${chipName(link)}: ${link.label} (opens in a new tab)`}
             className="inline-flex h-6 items-center gap-1 rounded-sm border border-input px-1.5 text-[0.8125rem] font-medium text-brand-ink outline-none hover:bg-background/60 focus-visible:ring-3 focus-visible:ring-ring/50 max-sm:h-9"
           >
             {chipName(link)}
@@ -138,7 +138,7 @@ export function ReferralRoutes() {
                   ))
                 ) : (
                   <span className="type-caption text-muted-foreground">
-                    Concerns that match no category
+                    Concerns that fit no other route
                   </span>
                 )}
               </div>
@@ -146,10 +146,15 @@ export function ReferralRoutes() {
                 <span className="type-note mr-2 text-muted-foreground">
                   GP does
                 </span>
-                {firstSentence(tier.gpAction)}
+                {leadingSentences(tier.gpAction, urgency === "prompt" ? 2 : 1)}
               </p>
               <Disclosure
-                summary={`Evidence (${links.length})`}
+                summary={
+                  <>
+                    Evidence ({links.length})
+                    <span className="sr-only"> for {label}</span>
+                  </>
+                }
                 summaryClassName="min-h-7"
               >
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pt-1 pb-1">

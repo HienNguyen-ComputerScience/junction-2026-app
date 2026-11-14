@@ -86,7 +86,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
             id: action.id,
             label: plainTitle(action.action),
             node: (
-              <ActionCard action={action} index={index + 1}>
+              <ActionCard action={action} index={index + 1} showIndex={false}>
                 <EvidenceFinder actionId={action.id} actionTitle={action.action} />
               </ActionCard>
             ),
@@ -176,7 +176,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
             The four referral routes a county needs
           </FrameTitle>
           <FrameDescription>
-            Decision support, not diagnosis. What each route is for, and the guideline or precedent behind it.
+            Does your county have a written route for each? Decision support, not diagnosis.
           </FrameDescription>
         </FrameHeader>
         <FramePanel padding="lg">

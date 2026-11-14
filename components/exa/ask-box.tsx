@@ -83,7 +83,7 @@ export function AskBox() {
           Ask the evidence
         </FrameTitle>
         {/* Only once there are live results to mark; before that the page's one mark is the news'. */}
-        {data && (
+        {data && !data.offTopic && (
           <FrameMeta>
             <LiveMark result={data} />
           </FrameMeta>
@@ -112,10 +112,11 @@ export function AskBox() {
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             maxLength={MAX_QUESTION}
-            disabled={loading}
+            readOnly={loading}
+            aria-busy={loading}
             placeholder="e.g. Is GP access improving in Kainuu?"
             autoComplete="off"
-            className="h-11 w-full min-w-0 bg-transparent text-[0.9375rem] outline-none placeholder:text-faint disabled:opacity-60"
+            className="h-11 w-full min-w-0 bg-transparent text-[0.9375rem] outline-none placeholder:text-faint read-only:opacity-60"
           />
         </div>
         <Button
@@ -164,7 +165,7 @@ export function AskBox() {
                 <span className="block type-caption text-muted-foreground">
                   Dashboard data{data?.county ? ` for ${data.county.name}` : ""}, not from the search
                 </span>
-                {reason.text}
+                {reason.text.replace(/^Main reason: /, "")}
               </span>
               {reason.sources.map((source) => (
                 <a

@@ -11,7 +11,7 @@ A wellbeing services county director (or a GP in that county). Judges are market
 ## Core flow (3 screens max)
 1. **County ranking:** counties ranked by GP wait (Sotkanet 6411) and referral processing (13 / 5033). Every number has a source chip (source, year).
 2. **County pathway:** for one county, whether the delay sits at getting to a GP or at GP → specialist, as stage cards (red / amber / grey = no public data). The limitations box is always visible.
-3. **Act:** 2–3 recommended actions for that county's bottleneck, each with an owner, a first step, a precedent (Denmark's fast-track pathways, UK Rapid Diagnostic Centres, nurse triage) and a source. Includes "The four referral routes a county needs": a static panel for the director showing the fast-track, vague-symptoms, see-a-GP-soon and safety-net routes, the concerns each covers, and the guideline or precedent behind each (decision support, not diagnosis). FirstLine is a tool for county administrators, not patients or GPs, so it has no symptom input.
+3. **Act:** 2–3 recommended actions for that county's bottleneck, each with an owner, a first step, a precedent (Denmark's fast-track pathways, UK Rapid Diagnostic Centres, nurse triage) and a source. Includes "The four referral routes a county needs": a static panel for the director showing the fast-track, vague-symptoms, GP-check-within-two-weeks and safety-net routes, the concerns each covers, and the guideline or precedent behind each (decision support, not diagnosis). FirstLine is a tool for county administrators, not patients or GPs, so it has no symptom input.
 
 ## Data model / API contracts
 - Static JSON snapshot committed under `data/`: `sources`, `indicators`, `values` (county × indicator × year), `gaps`, `evidence`. Every row has a `source_id`; rows without one are not committed. The demo works if Sotkanet or the LLM is down.
@@ -27,7 +27,7 @@ A wellbeing services county director (or a GP in that county). Judges are market
   - **Evidence finder:** under each action, an Exa search of research papers and Nordic reports, with Contents text so Claude can write a cited card. Shown as "found live — unverified", next to Luan's checked table.
   - **Judge question box:** a free-text question answered only from Exa results, with links and a clean "nothing found".
   - Server-side only (`EXA_API_KEY` in `.env.local`, never in client code). Cache results for the demo; must degrade gracefully if Exa is down.
-  - Credits: $50 per participant, code `EXA50JUNCTION` at dashboard.exa.ai/billing.
+  - Credits: $50 per participant; ask the team lead for the code.
 
 ## Research notes (with source links)
 - THL Sotkanet: https://sotkanet.fi (6411 GP visits waiting > 7 days: 2025 range Päijät-Häme 32.7% → Vantaa–Kerava 85.4%, Finland 54.7%).

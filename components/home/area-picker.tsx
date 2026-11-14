@@ -131,7 +131,7 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, leads
           <div className="flex flex-col gap-6 p-6 sm:p-8 sm:pb-6">
             <div className="flex flex-col gap-4" aria-live="polite">
               <p className="type-caption font-medium text-muted-foreground">
-                {area.name}, {year}: the slowest step
+                {area.name}, {year}
               </p>
               {leads[area.id] ?? null}
               <h2 className="type-heading text-pretty text-foreground">{area.verdict}</h2>
@@ -156,7 +156,7 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, leads
       {/* The map: last on a phone, under the picker from lg. */}
       <FramePanel padding="none" className="flex flex-col max-lg:order-last lg:col-start-1 lg:row-start-2">
         <FramePanelLabel className="flex-col items-start gap-0">
-          <span>Worst step against Finland</span>
+          <span>Red: any step worse than Finland</span>
           <span className="pt-0.5 text-[0.75rem] leading-4 font-normal text-muted-foreground">
             Click an area on the map
           </span>

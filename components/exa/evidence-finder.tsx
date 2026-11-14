@@ -64,6 +64,9 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
         {showResults && (
           <div className="flex flex-col gap-3 rounded-lg border border-dashed border-input bg-muted/40 p-4">
             <LiveMark result={data} />
+            {data?.freshness === "stale-cache" && data.message && (
+              <p className="text-sm text-muted-foreground">{data.message}</p>
+            )}
             <div className="border-t border-border pt-3">
               {loading && <LoadingRows label="Searching for more evidence with Exa" rows={2} />}
               {data && data.items.length === 0 && (

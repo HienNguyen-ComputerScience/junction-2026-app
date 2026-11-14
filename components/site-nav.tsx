@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useSyncExternalStore } from "react";
 
 type NavItem = {
   key: string;
@@ -37,16 +38,21 @@ function countyOf(pathname: string | null): string | null {
 export function NavLinks({
   pathname,
   areaParam = null,
+  lastArea = null,
   defaultArea,
   areaIds,
 }: {
   pathname: string | null;
   areaParam?: string | null;
+  /** The last area viewed this session, already validated; used before `defaultArea`. */
+  lastArea?: string | null;
   defaultArea: string;
   areaIds: string[];
 }) {
   const fromUrl = pathname === "/" && areaParam && areaIds.includes(areaParam) ? areaParam : null;
-  const actionsArea = countyOf(pathname) ?? fromUrl ?? defaultArea;
+  // Home always shows an area (its ?area=, else the default), so the remembered one is not used there.
+  const remembered = pathname === "/" ? null : lastArea;
+  const actionsArea = countyOf(pathname) ?? fromUrl ?? remembered ?? defaultArea;
   const hrefs: Record<string, string> = {
     areas: "/",
     actions: `/county/${actionsArea}/act`,
@@ -82,7 +88,49 @@ export function NavLinks({
   );
 }
 
+const LAST_AREA_KEY = "firstline:last-area";
+const LAST_AREA_EVENT = "firstline:last-area-change";
+
+function subscribeLastArea(onChange: () => void) {
+  window.addEventListener(LAST_AREA_EVENT, onChange);
+  return () => window.removeEventListener(LAST_AREA_EVENT, onChange);
+}
+
+function readLastArea(): string | null {
+  try {
+    return window.sessionStorage.getItem(LAST_AREA_KEY);
+  } catch {
+    return null;
+  }
+}
+
 export function MainNav({ defaultArea, areaIds }: { defaultArea: string; areaIds: string[] }) {
   const areaParam = useSearchParams().get("area");
-  return <NavLinks pathname={usePathname()} areaParam={areaParam} defaultArea={defaultArea} areaIds={areaIds} />;
+  const pathname = usePathname();
+  // Server and first client render see null (the default area); the stored value arrives after hydration.
+  const stored = useSyncExternalStore(subscribeLastArea, readLastArea, () => null);
+  const lastArea = stored && areaIds.includes(stored) ? stored : null;
+
+  const seen =
+    countyOf(pathname) ?? (pathname === "/" && areaParam ? areaParam : null);
+  useEffect(() => {
+    if (!seen || !areaIds.includes(seen)) return;
+    try {
+      if (window.sessionStorage.getItem(LAST_AREA_KEY) === seen) return;
+      window.sessionStorage.setItem(LAST_AREA_KEY, seen);
+      window.dispatchEvent(new Event(LAST_AREA_EVENT));
+    } catch {
+      // Storage unavailable: the nav falls back to the default area.
+    }
+  }, [seen, areaIds]);
+
+  return (
+    <NavLinks
+      pathname={pathname}
+      areaParam={areaParam}
+      lastArea={lastArea}
+      defaultArea={defaultArea}
+      areaIds={areaIds}
+    />
+  );
 }
