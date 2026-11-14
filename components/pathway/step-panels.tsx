@@ -1,6 +1,6 @@
 import { cn } from "cn";
 
-import { StepMark, type PathwayStep } from "@/components/pathway/pathway-steps";
+import { STEP2_NOTE, STEP2_SOURCE, StepMark, type PathwayStep } from "@/components/pathway/pathway-steps";
 import type { StepTab } from "@/components/pathway/step-tabs";
 import { TrendStrip, type TrendStage } from "@/components/pathway/trend-strip";
 import { gapWords, HUS_FULL } from "@/components/pathway/wording";
@@ -99,12 +99,13 @@ function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) 
     return (
       <div className="flex flex-col gap-1">
         <p className="text-sm font-medium text-foreground">No public data</p>
-        <p className="text-sm text-muted-foreground">
-          Not measured anywhere in Finland. Use the{" "}
-          <TextLink kind="nav" inline href={`/county/${countyId}/act#red-flags`}>
-            red-flag helper
+        <p className="text-sm text-pretty text-muted-foreground">{STEP2_NOTE}</p>
+        <span className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1">
+          <SourceChip sourceId={STEP2_SOURCE} />
+          <TextLink kind="nav" inline href={`/county/${countyId}/act#red-flags`} className="text-sm">
+            Red-flag helper
           </TextLink>
-        </p>
+        </span>
       </div>
     );
   }
