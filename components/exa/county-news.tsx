@@ -36,6 +36,7 @@ export function CountyNews({ countyId }: { countyId: string }) {
 
   const data = state.kind === "done" ? state.data : null;
   const unavailable = state.kind === "error" || data?.freshness === "unavailable";
+  const freshness = unavailable ? STATUS_LABEL.unavailable : data ? STATUS_LABEL[data.freshness] : null;
 
   return (
     <Frame aria-labelledby="county-news-title">
@@ -43,11 +44,12 @@ export function CountyNews({ countyId }: { countyId: string }) {
         <FrameTitle id="county-news-title" className="type-title">
           Local news, last 12 months
         </FrameTitle>
-        <div className="col-span-2 flex flex-wrap items-center gap-2 pt-1">
-          <Badge variant="secondary">Found live — unverified</Badge>
-          <span className="type-note text-muted-foreground">via Exa</span>
-          {data && !unavailable && <Badge variant="secondary">{STATUS_LABEL[data.freshness]}</Badge>}
-          {unavailable && <Badge variant="secondary">{STATUS_LABEL.unavailable}</Badge>}
+        {/* One provenance tag; the freshness is plain text after it, not another pill. */}
+        <div className="col-span-2 flex flex-wrap items-center gap-x-2 gap-y-1 pt-1">
+          <Badge variant="unverified">Found live — unverified</Badge>
+          <span className="type-note text-muted-foreground">
+            via Exa{freshness && ` · ${freshness.toLowerCase()}`}
+          </span>
         </div>
         <FrameDescription>
           Finnish news and county pages about access to a doctor. Not checked by the team.

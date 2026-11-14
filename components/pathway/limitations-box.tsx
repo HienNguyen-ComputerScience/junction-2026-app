@@ -41,7 +41,7 @@ export function LimitationsBox({
             </span>
           }
         >
-          <ul className="flex flex-col gap-2.5 border-t border-frame-border px-3.5 pt-3 pb-4">
+          <ul className="flex flex-col gap-3 border-t border-frame-border px-3.5 pt-3 pb-4">
             {items.map((item) => (
               <Limitation key={item.text} item={item} />
             ))}
@@ -65,7 +65,7 @@ export function LimitationsBox({
       <h2 id="limitations-heading" className="font-sans text-[0.9375rem] leading-snug font-semibold tracking-normal">
         {TITLE}
       </h2>
-      <ul className="flex flex-col gap-2.5">
+      <ul className="flex flex-col gap-3">
         {first.map((item) => (
           <Limitation key={item.text} item={item} />
         ))}
@@ -82,7 +82,7 @@ export function LimitationsBox({
           }
           className="-my-1.5"
         >
-          <ul className="flex flex-col gap-2.5 pt-1 pb-2">
+          <ul className="flex flex-col gap-3 pt-1 pb-2">
             {rest.map((item) => (
               <Limitation key={item.text} item={item} />
             ))}
@@ -93,28 +93,30 @@ export function LimitationsBox({
   );
 }
 
+const BODY = "text-[0.8125rem] leading-[1.6] text-pretty text-muted-foreground";
+
 function Limitation({ item }: { item: LimitationItem }) {
-  // Indicator items read "Short name: limitation". Set the name apart; the words stay the same.
+  // Indicator items read "Short name: limitation". The name becomes the item's first line with
+  // its source at the right end, the limitation sits under it; the words stay the same.
   const split = item.sourceId ? item.text.indexOf(": ") : -1;
+  if (split <= 0) {
+    return (
+      <li className="flex flex-col gap-1">
+        <p className={BODY}>{item.text}</p>
+        {item.sourceId && <SourceChip sourceId={item.sourceId} />}
+      </li>
+    );
+  }
   return (
-    <li className="grid grid-cols-[0.5rem_minmax(0,1fr)] gap-x-2 type-caption text-pretty">
-      <span aria-hidden className="mt-2 size-1 bg-foreground/50" />
-      <span>
-        {split > 0 ? (
-          <>
-            <span className="font-semibold">{item.text.slice(0, split + 1)}</span>
-            {item.text.slice(split + 1)}
-          </>
-        ) : (
-          item.text
-        )}
-        {item.sourceId && (
-          <>
-            {" "}
-            <SourceChip sourceId={item.sourceId} />
-          </>
-        )}
-      </span>
+    <li className="flex flex-col gap-1">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-[0.8125rem] leading-5 font-semibold text-foreground">
+          {item.text.slice(0, split)}
+          <span className="sr-only">:</span>
+        </p>
+        {item.sourceId && <SourceChip sourceId={item.sourceId} />}
+      </div>
+      <p className={BODY}>{item.text.slice(split + 2)}</p>
     </li>
   );
 }

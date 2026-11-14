@@ -8,7 +8,6 @@ import { Disclosure } from "@/components/ui/disclosure";
 import {
   Frame,
   FrameDescription,
-  FrameFooter,
   FrameHeader,
   FramePanel,
   FrameTitle,
@@ -70,6 +69,23 @@ function layoutOf(text: string): Layout {
   return { kind: "plain" };
 }
 
+/**
+ * A data sentence with its percentages and point gaps set in the figure face, as on the act
+ * page, so every data number uses the same numerals. The words, and counts like "2-3 health
+ * stations", stay in the text face. Presentation only: the text is unchanged.
+ */
+function withFigures(text: string): ReactNode {
+  return text.split(/([+−-]?\d+(?:\.\d+)?(?:%| pts\b))/).map((part, i) =>
+    i % 2 === 1 ? (
+      <span key={i} className="figure">
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
+
 const ROW = "grid gap-x-6 px-4 py-4 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:px-6 md:grid-cols-[8.5rem_minmax(0,1fr)_auto]";
 const DT = "type-caption text-muted-foreground sm:col-start-1 sm:pt-px";
 const DD = "max-w-[44rem] text-sm leading-relaxed text-pretty sm:col-start-2";
@@ -103,10 +119,10 @@ function ClaimRow({ claim, chips }: { claim: BriefClaim; chips: Record<string, R
             {layout.label}
             {layout.status && <span className="type-micro text-faint">{layout.status}</span>}
           </dt>
-          <dd className={DD}>{layout.body}</dd>
+          <dd className={DD}>{withFigures(layout.body)}</dd>
         </dl>
       ) : (
-        <p className={DD}>{claim.text}</p>
+        <p className={DD}>{withFigures(claim.text)}</p>
       )}
       {sources}
     </li>
@@ -157,13 +173,41 @@ export function CountyBriefClient({
 
   return (
     <Frame aria-labelledby="brief-heading">
-      <FrameHeader>
-        <FrameTitle id="brief-heading" className="type-title">
-          Brief for the county director
-        </FrameTitle>
-        <FrameDescription>
-          Where the pathway breaks in {countyName}, in plain language. Every number comes from the data snapshot.
-        </FrameDescription>
+      {/* The AI brief is the section's main action, so it sits in the header row with the line
+          that says what it does (and, while it runs or fails, what is happening). */}
+      <FrameHeader className="items-start gap-y-4 max-md:grid-cols-1">
+        <div className="col-start-1 flex min-w-0 flex-col gap-1">
+          <FrameTitle id="brief-heading" className="type-title">
+            Brief for the county director
+          </FrameTitle>
+          <FrameDescription>
+            Where the pathway breaks in {countyName}, in plain language. Every number comes from the data snapshot.
+          </FrameDescription>
+        </div>
+        <div className="flex flex-col items-start gap-2 md:col-start-2 md:row-start-1 md:items-end">
+          <Button onClick={writeAiBrief} disabled={status === "loading"}>
+            {status === "loading" ? "Writing…" : triedAi ? "Write AI brief again" : "Write AI brief"}
+          </Button>
+          {status === "idle" && !triedAi && (
+            <span className="max-w-[19rem] type-note text-muted-foreground md:text-right">
+              Claude rewrites the brief; a checker drops any claim it cannot trace to the snapshot.
+            </span>
+          )}
+          {status === "loading" && (
+            <span role="status" className="max-w-[19rem] type-note text-muted-foreground md:text-right">
+              Claude is writing; the checker then drops any claim it can&apos;t trace to the snapshot.
+            </span>
+          )}
+        </div>
+        {(status === "limited" || status === "error") && (
+          <p
+            role="alert"
+            className="rounded-lg border border-input bg-muted px-3 py-2 type-caption font-medium text-foreground md:col-span-2"
+          >
+            {status === "limited" ? TOO_MANY : "Could not reach the brief service."} The precomputed brief is still
+            shown.
+          </p>
+        )}
       </FrameHeader>
 
       <FramePanel padding="none">
@@ -173,7 +217,7 @@ export function CountyBriefClient({
         >
           <div className="flex flex-col gap-3 px-4 pt-4 pb-5 sm:px-6 sm:pt-5">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-              <Badge variant={brief.mode === "ai" ? "brand" : "secondary"}>
+              <Badge variant="checked">
                 {brief.mode === "ai" && brief.headline_precomputed ? AI_PRECOMPUTED_HEADLINE_LABEL : MODE_LABEL[brief.mode]}
               </Badge>
               {brief.mode === "ai" && brief.model && <span className="type-note text-muted-foreground">{brief.model}</span>}
@@ -193,7 +237,7 @@ export function CountyBriefClient({
             {triedAi && brief.mode === "fallback" && brief.reason && (
               <p className="type-caption text-muted-foreground">AI brief not used: {brief.reason}</p>
             )}
-            <p className="max-w-[44rem] text-[1.0625rem] leading-relaxed font-medium text-pretty">{brief.headline}</p>
+            <p className="max-w-[44rem] text-[1.0625rem] leading-relaxed font-medium text-pretty">{withFigures(brief.headline)}</p>
             {foldedSources.length > 0 && (
               <p className="flex flex-wrap items-center gap-1.5">
                 <span className="mr-0.5 type-note text-muted-foreground">Numbers from</span>
@@ -213,8 +257,7 @@ export function CountyBriefClient({
               summary={
                 <>
                   <span className="group-open/disc:hidden">
-                    Show the numbers behind this brief{" "}
-                    <span className="font-normal text-muted-foreground tabular-nums">({folded.length})</span>
+                    Show the {folded.length} {folded.length === 1 ? "number" : "numbers"} behind this brief
                   </span>
                   <span className="hidden group-open/disc:inline">Hide the numbers behind this brief</span>
                 </>
@@ -235,31 +278,6 @@ export function CountyBriefClient({
           </ul>
         </div>
       </FramePanel>
-
-      <FrameFooter className="flex flex-col items-start gap-3 pt-2 sm:flex-row sm:items-center">
-        <Button onClick={writeAiBrief} disabled={status === "loading"} variant="outline">
-          {status === "loading" ? "Writing…" : triedAi ? "Write AI brief again" : "Write AI brief"}
-        </Button>
-        {status === "idle" && !triedAi && (
-          <span className="type-caption">
-            Claude rewrites the brief; a checker drops any claim it cannot trace to the snapshot.
-          </span>
-        )}
-        {status === "loading" && (
-          <span role="status" className="type-caption">
-            Claude is writing; the checker then drops any claim it can&apos;t trace to the snapshot.
-          </span>
-        )}
-        {(status === "limited" || status === "error") && (
-          <span
-            role="alert"
-            className="rounded-lg border border-input bg-muted px-3 py-2 type-caption font-medium text-foreground"
-          >
-            {status === "limited" ? TOO_MANY : "Could not reach the brief service."} The precomputed brief is still
-            shown.
-          </span>
-        )}
-      </FrameFooter>
     </Frame>
   );
 }

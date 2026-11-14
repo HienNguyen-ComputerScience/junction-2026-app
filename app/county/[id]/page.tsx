@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { CountyBrief } from "@/components/brief/county-brief";
 import { CountyNews } from "@/components/exa/county-news";
 import { LimitationsBox, type LimitationItem } from "@/components/pathway/limitations-box";
-import { StageCard, StepRail, type StageCardProps } from "@/components/pathway/stage-card";
+import { StageCard, StepRail, TrendStrip, type StageCardProps } from "@/components/pathway/stage-card";
 import { SourceChip } from "@/components/source-chip";
 import { BackLink } from "@/components/ui/back-link";
 import { BarKey } from "@/components/ui/measure-bar";
@@ -17,6 +17,7 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
+import { STAGE_LABELS } from "@/lib/act";
 import { counties, getCounty, getValue, LATEST_YEAR, type County } from "@/lib/data";
 import {
   formatPct,
@@ -54,7 +55,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
       {/* Desktop: title and verdict on the left, the limitations box beside them, so both are
           on the first screen. Below lg the limitations are a one-line disclosure right under
           the main action instead (the two are never displayed at the same width). */}
-      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_30rem] lg:items-start lg:gap-10">
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_33rem] lg:items-start lg:gap-8">
         <header className="flex flex-col items-start gap-4 lg:gap-5">
           <BackLink href="/">Back to ranking</BackLink>
           <div className="flex flex-col gap-2">
@@ -85,11 +86,11 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           </FrameTitle>
         </FrameHeader>
         <FramePanel padding="none">
-          <ol className="grid grid-cols-1 p-4 sm:p-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] lg:px-0 lg:pt-5 lg:pb-7">
+          <ol className="grid grid-cols-1 p-4 sm:p-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] lg:px-0 lg:pt-4 lg:pb-6">
             {stages.map((stage, index) => (
               <li
                 key={stage.title}
-                className="grid grid-cols-[1.75rem_minmax(0,1fr)] gap-x-3 lg:row-span-6 lg:grid-cols-1 lg:grid-rows-subgrid"
+                className="grid grid-cols-[1.75rem_minmax(0,1fr)] gap-x-3 lg:row-span-5 lg:grid-cols-1 lg:grid-rows-subgrid"
               >
                 <StepRail
                   step={stage.step}
@@ -98,22 +99,39 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
                   last={index === stages.length - 1}
                 />
                 <div
-                  className={`min-w-0 lg:row-span-5 lg:grid lg:grid-rows-subgrid lg:px-6 ${index === stages.length - 1 ? "" : "max-lg:pb-10"}`}
+                  className={`min-w-0 lg:row-span-4 lg:grid lg:grid-rows-subgrid lg:px-6 ${index === stages.length - 1 ? "" : "max-lg:pb-10"}`}
                 >
                   <StageCard {...stage} />
                 </div>
               </li>
             ))}
           </ol>
+          <TrendStrip stages={stages} areaName={county.name} />
         </FramePanel>
         <FrameFooter className="flex flex-col gap-3">
           <BarKey />
           <p className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-            <span>
-              Context, not used for colour: referrals unprocessed after 21 days in {LATEST_YEAR},{" "}
-              {lateReferrals ? `${lateReferrals.value}% here` : "no public data here"}
-              {lateReferralsFinland ? ` (Finland ${lateReferralsFinland.value}%)` : ""}
+            <span>Context, not used for colour: referrals unprocessed after 21 days in {LATEST_YEAR}</span>
+            <span aria-hidden className="text-faint">
+              ·
             </span>
+            {lateReferrals ? (
+              <span>
+                <span className="figure text-foreground">{lateReferrals.value}%</span> here
+              </span>
+            ) : (
+              <span>no public data here</span>
+            )}
+            {lateReferralsFinland && (
+              <>
+                <span aria-hidden className="text-faint">
+                  ·
+                </span>
+                <span>
+                  Finland <span className="figure text-foreground">{lateReferralsFinland.value}%</span>
+                </span>
+              </>
+            )}
             <SourceChip
               sourceId={lateReferrals?.source_id ?? lateReferralsFinland?.source_id ?? "sotkanet-5033"}
               year={LATEST_YEAR}
@@ -135,7 +153,8 @@ function buildStages(county: County): StageCardProps[] {
   return [
     {
       step: 1,
-      title: "Getting to a GP",
+      // Step names come from lib/act, so the county and act pages say the same thing.
+      title: STAGE_LABELS.gp_access,
       status: stageStatus(county.id, "gp_access"),
       measure: gpGap && {
         value: gpGap.value,
@@ -152,14 +171,14 @@ function buildStages(county: County): StageCardProps[] {
     },
     {
       step: 2,
-      title: "GP recognises warning signs",
+      title: STAGE_LABELS.gp_recognition,
       status: "no_data",
       emptyText:
         "No public statistic shows how often GPs spot possible cancer at the first visit, in any county. Nobody can see how this step performs. That blind spot is itself a finding.",
     },
     {
       step: 3,
-      title: "GP to specialist referral",
+      title: STAGE_LABELS.referral,
       status: stageStatus(county.id, "referral"),
       measure: referralGap && {
         value: referralGap.value,
