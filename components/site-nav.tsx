@@ -17,9 +17,17 @@ const ITEMS: NavItem[] = [
     key: "areas",
     label: "Areas",
     short: "Areas",
-    match: (p) => p === "/" || p.startsWith("/compare") || (p.startsWith("/county") && !p.endsWith("/act")),
+    match: (p) =>
+      p === "/" || p.startsWith("/compare") || (p.startsWith("/county") && !p.endsWith("/act") && !p.endsWith("/plan")),
   },
-  { key: "actions", label: "Actions", short: "Actions", match: (p) => p.startsWith("/county") && p.endsWith("/act") },
+  {
+    key: "actions",
+    label: "Actions",
+    short: "Actions",
+    match: (p) => p.startsWith("/county") && (p.endsWith("/act") || p.endsWith("/plan")),
+  },
+  // The page is built on the insights branch; the label is a placeholder until it proposes one.
+  { key: "insights", label: "Where access is hardest", short: "Access", match: (p) => p.startsWith("/insights") },
   { key: "ask", label: "Ask the evidence", short: "Ask", match: (p) => p.startsWith("/ask") },
   { key: "sources", label: "Sources & limitations", short: "Sources", match: (p) => p.startsWith("/sources") },
 ];
@@ -30,10 +38,12 @@ function countyOf(pathname: string | null): string | null {
 }
 
 /**
- * Presentational nav: plain text links, the current page marked with an accent underline.
+ * Presentational nav: a bar of plain text links under the header, the current page marked with a
+ * mint pill and bold text.
  * `pathname` null renders no active state (prerender fallback). "Actions" goes to the act page
  * of the area in view: the home page's ?area=, the county page's own area, else `defaultArea`
- * (the area that leads the ranking). Phones get short labels so the header stays one 56px row.
+ * (the area that leads the ranking). Phones get short labels and the bar may wrap to a second line:
+ * every destination stays a visible word, never a menu icon.
  */
 export function NavLinks({
   pathname,
@@ -56,12 +66,13 @@ export function NavLinks({
   const hrefs: Record<string, string> = {
     areas: "/",
     actions: `/county/${actionsArea}/act`,
+    insights: "/insights",
     ask: "/ask",
     sources: "/sources",
   };
   return (
-    <nav aria-label="Main" className="shrink-0">
-      <ul className="-mr-2 flex items-center gap-0.5 sm:-mr-2.5 sm:gap-2">
+    <nav aria-label="Main" className="page-container">
+      <ul className="-mx-2 flex flex-wrap items-center gap-x-0.5 gap-y-1 py-1.5 sm:-mx-3 sm:gap-x-1.5">
         {ITEMS.map((item) => {
           const active = pathname !== null && item.match(pathname);
           return (
