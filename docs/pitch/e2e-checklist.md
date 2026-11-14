@@ -6,22 +6,22 @@ Setup: fresh `main`, `npm install`, `npm run typecheck && npm run lint && npm ru
 
 | # | Do this | You should see | Pass | Fail |
 |---|---|---|---|---|
-| 1 | Open `/` (county ranking). | 22 areas (21 wellbeing services counties + Helsinki), no "Finland" row in the list. Every number has a source chip. Hover or tap a chip: it names the indicator and year ("THL Sotkanet 6411, 2025"). | [ ] | [ ] |
+| 1 | Open `/` (home). | Preset to Vantaa and Kerava: map, verdict, Recommended action 1 with First step, what-if line (30.7 fewer of every 100). Below, "Compare all 22 areas": 21 wellbeing services counties + Helsinki, no "Finland" row. Every number has a source chip. Hover or tap a chip: it names the indicator and year ("THL Sotkanet 6411, 2025"). | [ ] | [ ] |
 | 2 | Find Vantaa–Kerava and Päijät-Häme in the ranking. | Vantaa–Kerava **85.4 %**, Päijät-Häme **32.7 %** for GP wait over 7 days, year 2025. If either number differs, stop: the snapshot or the copy is wrong. | [ ] | [ ] |
 | 3 | Read any sentence that mentions the 85 % figure (ranking, county page, pitch). | It says "non-urgent GP visits / appointments", never "85 % of people" and never "cancer patients". | [ ] | [ ] |
-| 4 | Click Vantaa–Kerava. | `/county/vantaa-kerava`: stage cards for getting to a GP and GP → specialist. GP access is **red**; referral is **grey** with "no public data" (same for East, Central and West Uusimaa). | [ ] | [ ] |
-| 5 | Open `/county/paijat-hame`. | GP access and referral both **amber** (at or better than Finland's level, still a wait). | [ ] | [ ] |
+| 4 | Click Vantaa–Kerava. | `/county/vantaa-kerava`: three step cards. GP access is **red** ("Worse than Finland's level"); step 2 is grey "No public data"; referral shows **74.1%**, "No county figure", "HUS-wide value, not a county figure" (same for East, Central and West Uusimaa). The 8-step pathway strip sits below with the 127 vs 76 line. | [ ] | [ ] |
+| 5 | Open `/county/paijat-hame`. | GP access and referral both slate grey-blue, "At or better than Finland's level". | [ ] | [ ] |
 | 6 | On any county page, without scrolling or clicking anything. | The limitations box is already visible and says 6411 covers all non-urgent GP appointments, not only possible cancer. | [ ] | [ ] |
 | 7 | Click "Recommended actions" on Vantaa–Kerava. | `/county/vantaa-kerava/act`: 2–3 actions for the county's bottleneck (GP access). Each card shows owner, first step, precedent and a source link that opens the real source. The ids come from `evidence.json` (e.g. `ev-gp-continuity`, `ev-gp-nurse-first-contact`). | [ ] | [ ] |
 | 8 | Open the Denmark fast-track card (`ev-ref-denmark-cpp`) on a county with a referral bottleneck. | "−17 days median time to diagnosis", the quote, and the link. This is the number said aloud in the pitch. | [ ] | [ ] |
 | 9 | Red-flag helper: type "weight loss, tiredness". | The vague-symptoms (non-specific) route appears. The text "decision support, not diagnosis" is on screen. NICE NG12 is **linked**, not quoted at length (short quote at most). | [ ] | [ ] |
 | 10 | Turn Wi-Fi off (or DevTools → Network → Offline), reload `/`, a county page and its act page. | All three still render with the same numbers. The Exa panels show a clean "nothing found / offline" message, not an error. | [ ] | [ ] |
-| 11 | Turn the network back on; look at any Exa panel (county news, evidence finder, judge question box). | Every live result is labelled **"found live — unverified"** and sits apart from the checked evidence cards. Ask the judge question box something off-topic: a clean "nothing found". | [ ] | [ ] |
+| 11 | Turn the network back on; look at any Exa panel (county news, evidence finder, judge question box). | Every live result is labelled **"found live — unverified"** and sits apart from the checked evidence cards. Ask the judge question box something off-topic: a clean "nothing found" (or "The checker removed N sentences…" if every sentence failed the check), never an invented answer. | [ ] | [ ] |
 | 12 | DevTools → device toolbar → 375 px wide (iPhone SE). Walk `/` → county → act. | No horizontal scroll, chips and cards wrap, buttons are tappable, limitations box still visible. | [ ] | [ ] |
-| 13 | Open `/sources` (when PR #10 is in). | The three indicators with year, scope and a link to the THL definition; the Exa and red-flag caveats. | [ ] | [ ] |
+| 13 | Open `/sources`. | Six indicators with year, scope and a link to the Sotkanet definition; publishers THL and the Finnish Cancer Registry (screening). "Other sources cited on county pages" lists the HUS 2024 report and Kuitunen 2026. The Exa and red-flag caveats. | [ ] | [ ] |
 | 14 | Open `/county/does-not-exist`. | A 404 page, not a crash. | [ ] | [ ] |
 
-Video-only extras: browser zoom 100 %, no bookmarks bar, light theme, window at 1920×1080, close other tabs.
+Video-only extras: browser zoom 100 %, no bookmarks bar, window at 1920×1080, close other tabs. The app is dark-only since PR #85.
 
 ## Run log
 

@@ -36,6 +36,7 @@ Have ready before you start:
 
 Words used in this list:
 - **Source chip**: the small label on a number, such as "Sotkanet 6411, 2025". It should be a link that opens the real source.
+- **Status labels** on each step: red "Worse than Finland's level", slate grey-blue "At or better than Finland's level", grey "No public data". There is no green and no amber (updated 14 Nov, PRs #85 and #96).
 - **Grey stage**: a card that says there is no public data. It is on purpose.
 - **Fallback**: the plain backup text the app shows when something it depends on is down.
 - **Reload**: press the browser refresh button (Cmd+R).
@@ -61,16 +62,16 @@ Route names below come from the README: `/`, `/county/[id]`, `/county/[id]/act`.
 
 | # | Do this | You should see | OK |
 |---|---|---|---|
-| 1 | Open the live URL. Do not click anything. | The county ranking loads in under 5 seconds. No blank page, no error text. It lists Finland's 21 wellbeing services counties plus Helsinki (22 areas). Finland itself is not a row in the list. | [ ] |
-| 2 | Look at the two ends of the ranking by GP wait. | Vantaa and Kerava is at the worst end, **85.4%**. Päijät-Häme is at the best end, **32.7%**. Each number has a source chip showing source and year (for example "Sotkanet 6411, 2025"). | [ ] |
+| 1 | Open the live URL. Do not click anything. | The home page loads in under 5 seconds, preset to Vantaa and Kerava: a map of Finland, the verdict ("The delay sits at getting to a GP"), Recommended action 1 with its First step, and a what-if line ("30.7 fewer of every 100 non-urgent GP visits"). No blank page, no error text. Scroll to "Compare all 22 areas": 21 wellbeing services counties plus Helsinki. Finland itself is not a row. | [ ] |
+| 2 | In "Compare all 22 areas", look at the two ends of the ranking by GP wait. | Vantaa and Kerava is at the worst end, **85.4%**. Päijät-Häme is at the best end, **32.7%**. Each number has a source chip showing source and year (for example "Sotkanet 6411, 2025"). | [ ] |
 | 3 | Hover (laptop) or tap (phone) one source chip. Then click it. | It names the indicator and year. Clicking opens the real source page in a new tab. Close that tab. | [ ] |
 | 4 | Read the sentence about the 85% number anywhere on the screen. | It says "non-urgent GP **visits**" and never "85% of people". It never says "cancer patients wait". | [ ] |
-| 5 | Click **Vantaa and Kerava**. | The county page opens (`/county/vantaa-kerava`). There are stage cards. "Getting to a GP" is **red**. "GP to specialist" is **grey** with "no public data". | [ ] |
+| 5 | Click **Vantaa and Kerava** in the ranking (or "Full pathway for Vantaa and Kerava" at the top). | The county page opens (`/county/vantaa-kerava`). Three step cards. "Getting to a GP" is **red**, "Worse than Finland's level". "GP recognises warning signs" is **grey**, "No public data". "GP to specialist referral" shows **74.1%** with the badge "No county figure" and the text "HUS-wide value, not a county figure". | [ ] |
 | 6 | Without scrolling or clicking, look for the limitations box. | It is already visible. It says the GP wait number covers all non-urgent GP visits, not only possible cancer. | [ ] |
 | 7 | Click the button to the actions (the Act screen, `/county/vantaa-kerava/act`). | 2 to 3 actions. Each has an owner, a first step, a precedent (a place that already did it, for example Denmark) and a source link. | [ ] |
 | 8 | Open one action card. Click its source link. | The card shows the quote and a link. The link opens a real page. | [ ] |
 | 9 | In the red-flag helper, type: `weight loss, tiredness` and submit. **[confirm route/name once built]** | A result appears with a "vague symptoms" route. A notice says "decision support, not diagnosis". It links to the guideline. It does not copy long guideline text. | [ ] |
-| 10 | Go back to the ranking with the browser Back button, or click the logo. Open **Päijät-Häme**. | Page opens (`/county/paijat-hame`). Both stages are **amber**. The limitations box is visible. | [ ] |
+| 10 | Go back with the browser Back button, or click the logo. Open **Päijät-Häme**. | Page opens (`/county/paijat-hame`). Both measured steps are slate grey-blue, "At or better than Finland's level". The limitations box is visible. | [ ] |
 | 11 | Open the county news box on the county page. **[confirm route/name once built]** | Either news items with links, or a clean message like "Live search unavailable". Never a blank box or an error code. | [ ] |
 | 12 | Do steps 1 to 9 again on your phone, on mobile data. | Same content. Nothing is cut off. You do not have to scroll sideways. | [ ] |
 
@@ -82,7 +83,11 @@ Golden path result: pass / fail. Time taken: ______. Who ran it, which network: 
 
 One action, one result. Tick when it passes. If it fails, fill the bug template in section 7.
 
-### Screen 1: County ranking (`/`)
+### Screen 1: Home and county ranking (`/`)
+
+- [ ] The page opens preset to Vantaa and Kerava. Pick another area on the map or in "Choose an area": the verdict, the top action and the what-if line change, and the address gets `?area=<id>`.
+- [ ] The what-if line for Vantaa and Kerava says 30.7 fewer of every 100 at Finland's level (54.7%), and says it is arithmetic, not a forecast.
+- [ ] "Getting worse fastest, 2023–2025" lists 5 areas, South Ostrobothnia first (41.7 pts worse since 2023).
 
 - [ ] Open `/`. You see 22 areas (21 counties plus Helsinki). Finland as a country is not listed as a row.
 - [ ] Find Päijät-Häme. GP wait shows **32.7%**, year 2025.
@@ -101,14 +106,15 @@ One action, one result. Tick when it passes. If it fails, fill the bug template 
 ### Screen 2: County pathway (`/county/[id]`)
 
 - [ ] Open `/county/vantaa-kerava`. "Getting to a GP" is red (85.4%).
-- [ ] On that same page, "GP to specialist" is **grey** and says there is no public data. The same grey should show for Central Uusimaa, East Uusimaa and West Uusimaa (`/county/central-uusimaa`, `/county/east-uusimaa`, `/county/west-uusimaa`).
-- [ ] Open `/county/paijat-hame`. Both stages are amber. **[confirm colours once built; this comes from `data/gaps.json`]**
+- [ ] On that same page, "GP to specialist referral" shows the HUS-wide value 74.1%, badge "No county figure", labelled "HUS-wide value, not a county figure". The same shows for Central Uusimaa, East Uusimaa and West Uusimaa (`/county/central-uusimaa`, `/county/east-uusimaa`, `/county/west-uusimaa`). Their status, rank and actions do not use it.
+- [ ] Open `/county/paijat-hame`. Both measured steps are "At or better than Finland's level" (slate grey-blue).
 - [ ] Open `/county/helsinki`. GP access shows 75.9%.
 - [ ] Open `/county/kainuu`. GP access shows 38.4%.
 - [ ] On each county page the limitations box is visible without scrolling or clicking.
 - [ ] The limitations box says that the GP wait number covers all non-urgent GP visits, not only cancer.
 - [ ] Every number on the page has a source chip with year, and the chip link opens.
-- [ ] Each stage card says in plain words why it is red, amber or grey. A colour alone is not enough, so check the card also has a text label (people who cannot tell red from amber need it).
+- [ ] Each step card says its status in words ("Worse than Finland's level", "At or better than Finland's level", "No public data", "No county figure"). A colour alone is not enough.
+- [ ] Below the step cards, "Where these steps sit on the way to treatment" shows the 8-step pathway, steps 3 to 5 marked, and the Kuitunen 127 vs 76 days line with its source chip.
 - [ ] Type a bad address: `/county/does-not-exist`. You see a normal "not found" page, not a crash.
 - [ ] County names with letters like ä work: `/county/paijat-hame` loads with the heading "Päijät-Häme".
 - [ ] The wording rule holds: "visits", never "people".
@@ -121,7 +127,7 @@ One action, one result. Tick when it passes. If it fails, fill the bug template 
 - [ ] Each source link opens a real page.
 - [ ] The Denmark fast-track card shows "17 days" (median time to diagnosis) and a quote with a link. This is the number said aloud in the pitch. It shows on `/county/south-ostrobothnia/act` (confirmed in test run 3b) and on `/county/kainuu/act`, the two counties with a red referral stage. It does not show on Vantaa-Kerava, which carries the named-GP card (Norway, 25% lower odds).
 - [ ] Repeat on a county with a different bottleneck, for example `/county/kainuu/act`. The actions change to fit (referral, not GP access).
-- [ ] Open a county that has grey (no data) referral stage. The actions page still works and does not claim a number it does not have.
+- [ ] Open `/county/vantaa-kerava/act` (no referral figure of its own). The actions page still works, shows GP-access actions, and does not treat the HUS-wide value as the county's.
 - [ ] Every number on the page has a source chip.
 - [ ] The text says "decision support", and nowhere says the app makes a diagnosis.
 - [ ] Any sentence using the 6411 numbers says "visits", never "people".
@@ -270,9 +276,9 @@ If you are not sure, tag Phương. He is the team lead.
 Run on the laptop you will present from, on the venue network, right before the judges. About 3 minutes.
 
 1. [ ] The live URL opens in under 5 seconds. Bookmark or tab is ready.
-2. [ ] Ranking shows Vantaa and Kerava **85.4%** and Päijät-Häme **32.7%**, with source chips.
+2. [ ] Home opens on Vantaa and Kerava; the ranking below shows Vantaa and Kerava **85.4%** and Päijät-Häme **32.7%**, with source chips.
 3. [ ] One source chip click opens the real source page.
-4. [ ] `/county/vantaa-kerava`: red GP stage, **grey** referral stage, limitations box visible.
+4. [ ] `/county/vantaa-kerava`: red GP step, grey "No public data" step 2, referral step 74.1% "No county figure" (HUS-wide), limitations box visible.
 5. [ ] `/county/vantaa-kerava/act`: 2 to 3 actions, each with owner, first step, precedent and source.
 6. [ ] Red-flag helper: `weight loss, tiredness` gives the vague-symptoms route and the "decision support, not diagnosis" notice.
 7. [ ] Search the pages for "85% of people". It is nowhere. The wording is "non-urgent GP visits".

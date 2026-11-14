@@ -86,6 +86,36 @@ const INDICATORS = [
     limitation:
       "Share of women invited to cervical screening who attended. Tests taken outside the programme (private or occupational care) are not counted. Latest year is 2024. Listed on this page as context only: not shown on county pages and not used for ranking or stage status.",
   },
+  // First contact outside the public queue (challenge deck slide 5: public,
+  // occupational and private care run side by side). Context only (stage null).
+  // direction is required by the type but unused for context rows.
+  {
+    indicator_id: "2371",
+    short_name: "Occupational-health doctor visits",
+    unit: "per 1,000",
+    direction: "lower_is_worse",
+    stage: null,
+    limitation:
+      "Doctor visits in occupational health care per 1,000 residents aged 15-64 (working age). Counts visits, not people, and leaves out people over 64, who are most cancer patients. These visits are outside the public queue that the GP wait (6411) measures. Context only: one line on county pages, not used for ranking, status or actions.",
+  },
+  {
+    indicator_id: "293",
+    short_name: "Public primary-care doctor visits",
+    unit: "per 1,000",
+    direction: "lower_is_worse",
+    stage: null,
+    limitation:
+      "Doctor visits in public primary care per 1,000 residents aged 15-64, shown next to the occupational figure for comparison. Includes maternity, student and mental-health visits. Counts visits, not people. Context only: not used for ranking, status or actions.",
+  },
+  {
+    indicator_id: "692",
+    short_name: "Private doctor visits reimbursed by Kela",
+    unit: "%",
+    direction: "lower_is_worse",
+    stage: null,
+    limitation:
+      "Share of residents who got a Kela reimbursement for a private doctor visit in the year, any specialty, not only GPs. Visits with no reimbursement claim are not counted. Listed on this page as context only: not shown on county pages and not used for ranking or stage status.",
+  },
 ];
 
 // Values the spec and pitch quote. The build fails if Sotkanet disagrees.

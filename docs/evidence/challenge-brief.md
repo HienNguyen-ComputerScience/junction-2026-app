@@ -37,7 +37,7 @@ Source chip: Kuitunen et al., Cancer Medicine 2026. It's the challenge speaker's
 
 - County page: the slide-10 pathway as an 8-step strip, steps 3–5 marked, with the 127 vs 76 line and a source chip to the paper. The limitations box says 6411 covers public health centres only.
 - Data gap filled: East, Central and West Uusimaa and Vantaa–Kerava had a blank referral card. It now shows the **HUS-wide** value (74.1% of referrals processed within 3 days in 2025; Finland 76.8%), labelled "not a county figure". Source: Sotkanet 13, the HUS row. We checked it is HUS against HUS's own 2024 report: 246,244 referrals processed in 0–3 days, the same count as Sotkanet ([HUS, 31.12.2024, table 3](https://www.hus.fi/sites/default/files/2025-01/hoitoa-odottavat-potilaat-erikoisaloittain-2024-joulukuu.pdf)). The card stays grey and is not used to pick actions.
-- Still open, no public source found: whether GPs spot warning signs (step 4); cancer stage at diagnosis by county (the Cancer Registry has stage for under half of cases); share of first contacts through occupational or private care by county. 6411 is still not cancer-specific, and 5033 is still too flat to use.
+- Still open, no public source found: whether GPs spot warning signs (step 4); cancer stage at diagnosis by county (the Cancer Registry has stage for under half of cases). 6411 is still not cancer-specific, and 5033 is still too flat to use.
 
 ## Data added from the deck
 
@@ -50,3 +50,15 @@ Slide 9 says screening participation is lower in some groups, and slide 10's pat
 | 3620 | Cervical cancer screening, women | North Karelia 68.0 | South Ostrobothnia and South Savo 82.3 (tied) | 73.4 |
 
 Limits: this is attendance among people who were **invited**, not coverage of everyone. Breast and cervical count women only. The three programmes invite different age bands, so don't compare one programme with another. It is context, not ranked: it doesn't change a county's rank, stage colour or recommended action. The latest year is 2024, one year behind the GP and referral numbers.
+
+## Occupational and private first contact (added 14 Nov)
+
+Slide 5 says public, occupational and private care run side by side. There is no public count of *first contacts* by route per county, but THL publishes visit rates for all 22 areas, 2023–2025. In the app as **context only**: one line in each county's limitations box, and listed on `/sources`. Not ranked, no status, no actions.
+
+| Sotkanet id | Measure | Finland 2025 | Example |
+|---|---|---|---|
+| 2371 | Occupational-health doctor visits per 1,000 residents aged 15–64 (THL) | 2,049 | Vantaa and Kerava 2,137 |
+| 293 | Public primary-care doctor visits per 1,000 residents aged 15–64 (THL) | 756 | Vantaa and Kerava 687 |
+| 692 | Residents reimbursed by Kela for a private doctor visit, % (Kela; `/sources` only) | 26.9 | Vantaa and Kerava 25.4 |
+
+Limits: visits, not people; ages 15–64 only, so it leaves out most cancer patients (over 64); 293 includes maternity, student and mental-health visits; 692 covers all specialties. Still open: GP recognition of warning signs, and cancer stage by county.
