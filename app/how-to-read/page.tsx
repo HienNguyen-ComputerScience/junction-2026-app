@@ -5,7 +5,6 @@ import { cn } from "cn";
 
 import "./how-to-read.css";
 import { GradeGlyph } from "@/components/insights/confidence-badge";
-import { StarterDownload } from "@/components/insights/starter-dataset";
 import {
   AnimatedNumber,
   Chunk,
@@ -667,7 +666,9 @@ export default function HowToReadPage() {
             meaning="Counts only: no names, identity codes or details about a patient."
           >
             <div className="flex flex-col items-start gap-6">
-              <StarterDownload />
+              <ForwardLink href="/insights#starter-dataset">
+                Get the recording template
+              </ForwardLink>
               <Disclosure
                 show="Show the counts to record"
                 hide="Hide the counts to record"
