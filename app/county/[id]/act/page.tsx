@@ -147,8 +147,8 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
 
         {/* 2. The actions, one card each. */}
         {recommended.length > 0 ? (
-          <section aria-labelledby="actions-title" className="mt-12 sm:mt-16">
-            <h2 id="actions-title" className="type-page mb-8 text-forest-ink">
+          <section aria-labelledby="actions-title" className="mt-8">
+            <h2 id="actions-title" className="type-title mb-5 text-forest-ink">
               Recommended actions for {county.name}
             </h2>
             <ol className="flex max-w-3xl flex-col gap-16 md:gap-[12vh]">
