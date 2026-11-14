@@ -138,7 +138,7 @@ export function ReferralRoutes() {
                   ))
                 ) : (
                   <span className="type-caption text-muted-foreground">
-                    Concerns that match no category
+                    Concerns that fit no other route
                   </span>
                 )}
               </div>
