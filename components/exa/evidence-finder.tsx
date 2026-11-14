@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isItemsResponse, STATUS_LABEL, TOO_MANY, type ItemsResponse } from "./types";
+import { isItemsResponse, statusText, TOO_MANY, type ItemsResponse } from "./types";
 
 type State =
   | { kind: "idle" }
@@ -62,7 +62,7 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
             <span className="text-xs text-muted-foreground">via Exa</span>
           </>
         )}
-        {data && !unavailable && <Badge variant="outline">{STATUS_LABEL[data.freshness]}</Badge>}
+        {data && !unavailable && <Badge variant="outline">{statusText(data)}</Badge>}
       </div>
       <div id={panelId}>
         {state.kind === "loading" && <LoadingRows label="Searching for more evidence with Exa" rows={2} />}
