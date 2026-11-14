@@ -305,13 +305,13 @@ function GroupDivider({
           {/* Below lg the chips carry a muted label outside the chip: the column header that
               names them is not on a phone. */}
           <span className="flex shrink-0 items-center gap-2 lg:col-start-4 lg:justify-end lg:pt-4 lg:pb-2">
-            <span className="type-micro text-muted-foreground lg:hidden">GP wait</span>
+            <span className="w-[4.25rem] type-micro text-muted-foreground lg:hidden">GP wait</span>
             <span className="flex shrink-0">
               <SourceChip sourceId={gpWaitSourceId} year={LATEST_YEAR} />
             </span>
           </span>
           <span className={`flex shrink-0 items-center gap-2 lg:pt-4 lg:pb-2 ${REFERRAL_COL}`}>
-            <span className="type-micro text-muted-foreground lg:hidden">Referrals</span>
+            <span className="w-[4.25rem] type-micro text-muted-foreground lg:hidden">Referrals</span>
             <SourceChip sourceId={referralSourceId} year={LATEST_YEAR} />
           </span>
         </div>
@@ -401,10 +401,10 @@ function RankingRowLink({
       {/* Second line: the change since FIRST_YEAR and the gap to Finland. One flex line below lg,
           two cells of the grid on desktop. */}
       <span className="col-span-2 col-start-1 row-start-2 flex items-center justify-between gap-x-3 pt-0.5 lg:contents">
-        <span className="flex h-5 items-center lg:col-start-2 lg:row-start-2 lg:pb-1.5">
+        <span className="flex h-5 items-center lg:col-start-2 lg:row-start-2 lg:h-[1.625rem] lg:items-start">
           <ChangeSince change={row.gpWaitChange} />
         </span>
-        <span className="flex h-5 items-center justify-end lg:col-start-4 lg:row-start-2 lg:pb-1.5">
+        <span className="flex h-5 items-center justify-end lg:col-start-4 lg:row-start-2 lg:h-[1.625rem] lg:items-start">
           <StatusBadge status={row.gpStatus} size="xs" variant="quiet" className="h-4">
             <span>
               <span className="sr-only">{STATUS_LABEL[row.gpStatus]}: </span>

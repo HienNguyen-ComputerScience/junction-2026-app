@@ -19,7 +19,7 @@
 - The surface steps are small, so hairlines carry the edges: `border-frame-border` (8%), `border-border` (9%), `border-input` (10%), all the text colour at low opacity. No shadows.
 - Text, three roles, all AA on every surface (the lowest pair, `text-faint` on `bg-accent`, is 5.6:1): `text-foreground` `#eaebed`, `text-muted-foreground` `#abaeb2`, `text-faint` `#999c9f` (placeholders, axis ticks, rank numbers, row chevrons). Never lighter than `text-faint`.
 - **Accent**: one colour, a cold glacier cyan, `brand` `#67cfe3` (`oklch(0.8 0.1 212)`, 11:1 on the page). It is used for exactly five things: the logo mark's bars, the active nav underline, the primary button fill (`bg-primary`, with `text-primary-foreground` `#050506` on it), text links (`text-brand-ink` `#89ddee`; any `<a class="underline">` without a colour of its own gets it) and the focus ring (`ring-ring`). Nothing else: no accent headings, icons, borders, chips or chart marks. It is blue-leaning so it can never read as "green = good".
-- Primary button, disabled: the same solid accent fill at 45% opacity, so it is still the primary action, only not available yet. Never a tinted or outlined stand-in.
+- Primary button, disabled: a neutral raised surface, hairline and faint text. Clearly inactive, never a dim accent. `Button variant="outline-accent"`: accent text and hairline, no fill, for secondary but important actions.
 - Status (data only): `status-red` `#e34f4c` (worse than Finland), `status-amber` `#eaaf49` (at or better than Finland's level), `status-grey` `#727577` (no public data, hatched). Each has `-soft`, `-border`, `-ink`; text uses `-ink` (`#f88985`, `#f0c77c`). `status-amber-bar` `#bd985d` is the amber of a bar fill. Text on a filled red or amber mark is `text-background`. Notes, banners, results and errors are neutral (`bg-muted`, `border-input`, `text-foreground`).
 - `bg-track`: the empty part of a bar (text colour at 12%).
 - Radius: `rounded-frame` 20px (outer) → `rounded-panel` 14px (inner, frame padding is 6px; `rounded-xl` resolves to the same 14px) → `rounded-lg` 10px (buttons, inputs, inner blocks) → `rounded-sm` 6px (chips, badges). `rounded-full` only for the step and action number dots. Nothing else is a pill.
@@ -27,16 +27,16 @@
 
 **Dark by default, with no `.dark` class.** `:root` holds the dark tokens and sets `color-scheme: dark`; `app/layout.tsx` exports the matching `viewport` (theme colour `#050506` and colour scheme). `@custom-variant dark (&:is(.dark *))` stays in `globals.css` on purpose: it keeps every `dark:` class inert. Do not remove it, do not add a `dark` class, and do not write `dark:` variants.
 
-**Type** (Bricolage Grotesque for headlines, Geist for text, Geist Mono for every data number and for source chips; weights 600 or below)
+**Type** (Bricolage Grotesque for headlines, Geist for text and numbers, Geist Mono for source chips; weights 600 or below)
 - `type-display` home h1 · `type-page` page h1 · `type-title` section title (22px semibold): every frame header, and `FrameTitle` applies it by default · `type-heading` item title inside a section (17px): an action, a step, a result tier. An item title never uses `type-title`: the section must outrank what it holds. An `h1` or `h2` without a `type-*` class still gets the system's weight and tracking.
 - `type-lede` (17px) · body `text-sm`/`text-[0.9375rem]` · `type-caption` (13px) · `type-micro` (12px)
 - `type-legend`: 13px, one step above muted, for legend labels (`BarKey` sets it itself).
 - `type-note`: 12px text face, for notes on a chart or a card ("via Exa", "No indicator, so nothing to draw", dates, model names). Pair with `text-muted-foreground`.
-- **Numbers: every data number on every screen is Geist Mono, tabular.** Two utilities, nothing else:
-  - `numeral` for key figures, with a size: `numeral text-[3.5rem]` (20px to 80px; the tracking tightens with the size). Colour it with `STATUS_FIGURE[status]` (red ink only when worse than Finland).
-  - `figure` for a number at text size: table values, deltas, trend values, axis numbers, the "54.7%" of "Finland 54.7%". It sets the face only; size, weight and colour come from where it sits. Wrap the number with its unit and nothing else: `<span className="figure">+30.7 pts</span> vs Finland`.
-  - Both use `--font-numeral`: Geist Mono with a narrow decimal point (a one-glyph face, "FirstLine Point", defined in `globals.css` and listed in front of Geist Mono), so "85.4%" has no typewriter hole at the point and columns still align. Use these utilities for numbers, not `font-mono`.
-  - Words stay in the sans: prose (including figures inside a running sentence, like the home lede), labels and captions. `type-mark` (11px mono) remains for source chips and bare axis numerals (0%, 100%, years).
+- **Numbers: one face, Geist with tabular figures, plain zero.** (Geist Mono only has a slashed zero.) Two utilities:
+  - `numeral` for standalone key figures, with a size: `numeral text-[3.5rem]` (20px to 80px; the tracking tightens with the size). Colour it with `STATUS_FIGURE[status]` (red ink only when worse than Finland).
+  - `figure` for a number inside a line of text: table values, deltas, axis labels, the "54.7%" of "Finland 54.7%". It sets the face only (sans, tabular); size, weight and colour come from where it sits. Wrap the number with its unit and nothing else: `<span className="figure">+30.7 pts</span> vs Finland`.
+  - Source chips and nothing else stay mono (`type-mark`, `--font-chip`).
+  - Words stay in the sans: prose (including figures inside a running sentence, like the home lede), labels and captions. `type-mark` (11px mono) is for source chips.
 - Sentence case everywhere; short labels end without a period.
 - Gaps to Finland are written "+30.7 pts vs Finland" / "−21.9 pts vs Finland": one decimal, a true minus sign, computed for display from the two figures shown (`gapToFinland` in `components/ranking/ranking-list.tsx`).
 
