@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -115,7 +116,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           </div>
           {lead && leadValue !== null ? (
             <Reveal index={1} className="flex flex-col gap-2">
-              <p className="numeral text-[4rem] leading-none text-forest-ink sm:text-[5rem]">
+              <p className={cn("numeral text-[4rem] leading-none sm:text-[5rem]", bottleneck.anyRed ? "text-status-red-ink" : "text-forest-ink")}>
                 <AnimatedNumber value={leadValue} final={formatPct(leadValue)} decimals={1} level="loud" />
               </p>
               <p className="text-lg text-foreground">{FIGURE_CAPTION[lead.indicator_id] ?? getIndicator(lead.indicator_id)?.short_name}</p>
