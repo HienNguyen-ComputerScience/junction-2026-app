@@ -103,7 +103,7 @@ The two checkers are described separately, as the code has them. The brief check
 
 ## Motion
 
-Everything is the shared set at the loud level (`motion-loud` on the root): `Chunk` reveals its statement, figure, sentence, then source and caveat as each enters view. `AnimatedNumber` counts every figure to its exact value. `ScrollStory` picks out picture parts as its text blocks cross the middle of the screen. The only CSS of the page's own is the hatching of an empty slot, the scroll padding under the sticky bar, and reduced-motion and print overrides. No wheel or touch handlers, no scroll-snap, no parallax, nothing on hover only.
+Everything is the shared set at the loud level (`motion-loud` on the root): `Chunk` reveals its statement, figure, sentence, then source and caveat as each enters view. `AnimatedNumber` counts every figure to its exact value. `ScrollStory` picks out picture parts as its text blocks cross the middle of the screen. The shared `FocusGroup` wraps every topic: the chunk nearest the middle of the screen stays at full strength, the others fade slightly (opacity 0.8, never hidden). To keep focus items from nesting, the two story topics are split into a statement chunk, the story and its "Show …" button as siblings. The sticky sources link and the page title sit outside the group and never fade. The only CSS of the page's own is the hatching of an empty slot, the scroll padding under the sticky bar, and reduced-motion and print overrides. No wheel or touch handlers, no scroll-snap, no parallax, nothing on hover only.
 
 ## What I checked, and how
 
@@ -117,6 +117,7 @@ The Playwright MCP was not used; `playwright-core` drove the bundled Chromium ag
 - **Phone 390×844:** no sideways scroll, no element past the edge, both pictures static above their text (`screenshots/phone-390-full.png`).
 - **Keyboard only:** 72 Tab stops through the page, each with a visible focus ring and none hidden under the sticky bar. Enter on an "On this page" link lands the topic just under the bar.
 - **Print:** both pictures unstuck and final, every `<details>` open, the sticky bar hidden (`screenshots/print.pdf`, `screenshots/print-media-full.png`).
+- **Focus effect (`FocusGroup`), 1366×768 and 390×844:** 15 focus items, none nested. Scrolling through three topics, one item is in focus and 14 fade; story text blocks take focus in turn ("It counts visits, not people." → "It counts every non-urgent visit…"). The sticky sources link and both pictures stay at full strength. Opening a "Show …" in a faded chunk, or tabbing to a control in one, brings it back to full strength. Reduced motion, no JavaScript and print: nothing fades (`screenshots/focus-effect-1366x768.png`).
 - **Template download:** `firstline-cancer-pathway-starter-template.xlsx`, a valid zip (starts with PK).
 
 ## What still falls short
