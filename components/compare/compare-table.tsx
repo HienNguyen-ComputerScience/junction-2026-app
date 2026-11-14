@@ -131,8 +131,8 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
         Sorted: {current}
       </p>
 
-      <table className="stack-table w-full border-collapse">
-        <caption className="sr-only">All areas, {current.toLowerCase()}. Press a column heading to sort by it.</caption>
+      <table className="stack-table w-full border-collapse print:hidden">
+        <caption className="sr-only">All areas. Order: {current}. Press a column heading to sort by it.</caption>
         <thead>
           <tr className="border-b border-border">
             <Heading sort={sort} onSort={setSort} className="w-12">Rank</Heading>
@@ -163,9 +163,9 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
               </td>
               <td data-label="GP visits waiting over 7 days, 2025" className="px-3 py-3.5 align-top">
                 <div className="flex flex-col gap-2">
-                  <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="flex flex-col items-start gap-1">
                     <span className={cn("figure text-xl", row.gpStatus === "red" ? "text-status-red-ink" : "text-foreground")}>{pct(row.gp)}</span>
-                    <StatusBadge status={row.gpStatus} variant="quiet" className="shrink whitespace-normal">
+                    <StatusBadge status={row.gpStatus} variant="quiet" className="h-auto shrink items-baseline whitespace-normal leading-snug">
                       {STATUS_WORDS[row.gpStatus]}
                     </StatusBadge>
                   </span>
@@ -191,9 +191,9 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
                 <div className="flex flex-col gap-1">
                   {row.referral !== null ? (
                     <>
-                      <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                      <span className="flex flex-col items-start gap-1">
                         <span className="figure text-base">{pct(row.referral)}</span>
-                        <StatusBadge status={row.referralCityOnly ? "no_data" : row.referralStatus} variant="quiet" className="shrink whitespace-normal">
+                        <StatusBadge status={row.referralCityOnly ? "no_data" : row.referralStatus} variant="quiet" className="h-auto shrink items-baseline whitespace-normal leading-snug">
                           {row.referralCityOnly ? "City units only" : STATUS_WORDS[row.referralStatus]}
                         </StatusBadge>
                       </span>
@@ -217,6 +217,105 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
           ))}
         </tbody>
       </table>
+      <PrintTable rows={sorted} finland={finland} finlandReferral={finlandReferral} order={current} />
     </div>
+  );
+}
+
+const SHORT_STATUS = { red: "Worse", amber: "At or better", no_data: "No data" } as const;
+
+/**
+ * The table as it goes on paper: one landscape A4 page, one line per area, figures right-aligned,
+ * no bars or panels. Same rows, same order as on screen; status still in words.
+ */
+function PrintTable({
+  rows,
+  finland,
+  finlandReferral,
+  order,
+}: {
+  rows: CompareRow[];
+  finland: number;
+  finlandReferral: number;
+  order: string;
+}) {
+  const th = "border-b-2 border-forest-ink px-1.5 pb-1 text-left align-bottom font-semibold whitespace-nowrap";
+  const td = "border-b border-border-mist px-1.5 py-[2.5pt] align-top";
+  const num = "text-right tabular-nums whitespace-nowrap";
+  return (
+    <table className="hidden w-full border-collapse text-[8.5pt] leading-snug text-charcoal print:table">
+      <caption className="pb-1.5 text-left text-[8.5pt] text-muted-foreground">
+        All {rows.length} areas. Order: {order}. Status compares each area with Finland, not with a clinical standard.
+      </caption>
+      <thead>
+        <tr>
+          <th className={th}>Rank</th>
+          <th className={th}>Area</th>
+          <th className={cn(th, "text-right")}>
+            GP visits waiting
+            <br />
+            over 7 days, 2025
+          </th>
+          <th className={th}>
+            Status vs Finland
+            <br />({pct(finland)})
+          </th>
+          <th className={cn(th, "text-right")}>
+            Points
+            <br />
+            vs Finland
+          </th>
+          <th className={cn(th, "text-right")}>2023</th>
+          <th className={th}>
+            Change
+            <br />
+            since 2023
+          </th>
+          <th className={th}>Read with care</th>
+          <th className={cn(th, "text-right")}>
+            Referrals within
+            <br />3 days, 2025
+          </th>
+          <th className={th}>
+            Referral status
+            <br />
+            (Finland {pct(finlandReferral)})
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => (
+          <tr key={row.id}>
+            <td className={cn(td, num)}>{row.rank}</td>
+            <td className={cn(td, "font-semibold whitespace-nowrap")}>{row.name}</td>
+            <td className={cn(td, num, row.gpStatus === "red" && "font-semibold text-status-red-ink")}>{pct(row.gp)}</td>
+            <td className={cn(td, "whitespace-nowrap")}>
+              <StatusBadge status={row.gpStatus} variant="quiet" className="h-auto text-[8.5pt] leading-snug text-charcoal">
+                {SHORT_STATUS[row.gpStatus]}
+              </StatusBadge>
+            </td>
+            <td className={cn(td, num)}>
+              {row.gpVsFinland > 0 ? "+" : row.gpVsFinland < 0 ? "−" : ""}
+              {Math.abs(row.gpVsFinland).toFixed(1)}
+            </td>
+            <td className={cn(td, num)}>{row.gpFirst !== null ? pct(row.gpFirst) : "–"}</td>
+            <td className={cn(td, "whitespace-nowrap")}>{changeText(row.gpChange) ?? "No 2023 figure"}</td>
+            <td className={cn(td, "whitespace-nowrap")}>{row.recording ?? ""}</td>
+            <td className={cn(td, num)}>
+              {row.referral !== null ? pct(row.referral) : row.referralShared ? `(${pct(row.referralShared.value)})` : "–"}
+            </td>
+            <td className={cn(td, "whitespace-nowrap")}>
+              {row.referralCityOnly
+                ? "City units only"
+                : row.referralShared
+                  ? "HUS-wide value only"
+                  : row.referral !== null
+                    ? SHORT_STATUS[row.referralStatus]
+                    : "No public data"}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

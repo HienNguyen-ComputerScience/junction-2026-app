@@ -121,8 +121,8 @@ function StepTitle({ step, compact = false }: { step: PathwayStep; compact?: boo
       <StepMark step={step.step} status={step.status} className={compact ? undefined : "size-7 text-[0.8125rem]"} />
       <h3
         className={cn(
-          "min-w-0 font-heading font-semibold tracking-normal text-pretty",
-          compact ? "text-[0.9375rem] leading-6" : "text-base leading-7",
+          "min-w-0 font-sans font-semibold tracking-normal text-pretty text-forest-ink",
+          compact ? "text-base leading-6" : "text-[1.0625rem] leading-7",
         )}
       >
         <span className="sr-only">Step {step.step}: </span>
