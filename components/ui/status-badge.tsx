@@ -24,7 +24,7 @@ const CHIP: Record<GapStatus, string> = {
 };
 
 /**
- * Status chip: a dot plus a text label, so status never relies on colour alone.
+ * Status chip: a small square mark plus a text label, so status never relies on colour alone.
  * Always pass the label text (e.g. STATUS_LABEL[status] from lib/ranking).
  */
 export function StatusBadge({
@@ -37,15 +37,15 @@ export function StatusBadge({
 }: React.ComponentProps<"span"> & {
   status: GapStatus;
   size?: "xs" | "sm" | "md";
-  /** chip: tinted pill. plain: dot + coloured text only, for dense lists. */
-  variant?: "chip" | "plain";
+  /** chip: tinted tag. plain: mark + coloured text. quiet: mark + muted text, for dense lists. */
+  variant?: "chip" | "plain" | "quiet";
 }) {
   return (
     <span
       data-slot="status-badge"
       data-status={status}
       className={cn(
-        "inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full font-medium whitespace-nowrap",
+        "inline-flex w-fit shrink-0 items-center gap-1.5 rounded-sm font-medium whitespace-nowrap",
         size === "xs" && "h-5 text-[0.6875rem]",
         size === "sm" && "h-6 text-[0.75rem]",
         size === "md" && "h-7 text-[0.8125rem]",
@@ -56,6 +56,7 @@ export function StatusBadge({
           CHIP[status],
         ],
         variant === "plain" && STATUS_INK[status],
+        variant === "quiet" && "font-normal text-muted-foreground",
         className,
       )}
       {...props}
@@ -63,7 +64,7 @@ export function StatusBadge({
       <span
         aria-hidden
         className={cn(
-          "size-1.5 shrink-0 rounded-full",
+          "size-1.5 shrink-0 rounded-[1.5px]",
           size === "md" && "size-2",
           STATUS_FILL[status],
         )}

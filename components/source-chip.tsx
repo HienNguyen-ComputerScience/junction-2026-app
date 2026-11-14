@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { getSource, type Source } from "@/lib/data";
@@ -11,6 +11,10 @@ export function sourceLabel(source: Source): string {
   return `Source: ${source.publisher}`;
 }
 
+/**
+ * Source reference: a small mono tag that links to the source. Sits next to, or in the same
+ * block as, every number. 24px tall on desktop, 28px on phones, with a larger hit area.
+ */
 export function SourceChip({
   sourceId,
   year,
@@ -30,15 +34,10 @@ export function SourceChip({
       rel="noopener noreferrer"
       title={source.name}
       aria-label={`${label}: ${source.name} (opens in a new tab)`}
-      className="group/chip relative inline-flex shrink-0 rounded-full outline-none after:absolute after:-inset-x-0.5 after:-inset-y-1.5 after:content-[''] focus-visible:ring-3 focus-visible:ring-ring/50"
+      className="group/chip relative inline-flex h-7 w-fit max-w-full min-w-0 items-center gap-1 rounded-sm border border-border bg-card px-2 align-middle type-mark whitespace-nowrap text-muted-foreground transition-colors outline-none after:absolute after:-inset-x-0.5 after:-inset-y-2 after:content-[''] hover:border-brand/40 hover:text-brand-ink focus-visible:ring-3 focus-visible:ring-ring/50 sm:h-6"
     >
-      <Badge
-        variant="outline"
-        className="gap-1.5 tabular-nums text-foreground/85 group-hover/chip:border-brand/40 group-hover/chip:text-brand-ink"
-      >
-        {label}
-        <ExternalLink aria-hidden className="size-3 opacity-60 group-hover/chip:opacity-100" />
-      </Badge>
+      <span className="truncate">{label}</span>
+      <ArrowUpRight aria-hidden className="size-3 shrink-0 opacity-70 group-hover/chip:opacity-100" />
     </a>
   );
 }

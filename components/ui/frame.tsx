@@ -32,8 +32,7 @@ function Frame({
       data-tone={tone}
       className={cn(
         "group/frame flex flex-col rounded-frame border border-frame-border bg-frame p-1.5 text-foreground",
-        tone === "inverse" &&
-          "dark border-transparent bg-background shadow-[0_24px_48px_-24px_oklch(0.2_0.06_266/0.55)]",
+        tone === "inverse" && "dark border-transparent bg-background",
         className,
       )}
       {...props}
@@ -46,7 +45,7 @@ function FrameHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="frame-header"
       className={cn(
-        "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 px-3 pt-2.5 pb-3 sm:px-4",
+        "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 px-3 pt-3 pb-3 sm:px-4",
         className,
       )}
       {...props}
@@ -97,7 +96,7 @@ const PANEL_PADDING = {
   none: "",
   sm: "p-3 sm:p-4",
   md: "p-4 sm:p-5",
-  lg: "p-5 sm:p-7",
+  lg: "p-5 sm:p-6",
 } as const;
 
 function FramePanel({
@@ -109,7 +108,7 @@ function FramePanel({
     <div
       data-slot="frame-panel"
       className={cn(
-        "rounded-panel border border-border/80 bg-card text-card-foreground shadow-[0_1px_2px_oklch(0.2_0.03_262/0.05),0_4px_12px_-6px_oklch(0.2_0.03_262/0.06)]",
+        "rounded-panel border border-border/80 bg-card text-card-foreground shadow-[0_1px_2px_oklch(0.2_0.02_260/0.05)]",
         "group-data-[tone=inverse]/frame:border-white/8 group-data-[tone=inverse]/frame:shadow-none",
         PANEL_PADDING[padding],
         className,
