@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { ActionCard, ActionSummary, plainTitle, shortTitle } from "@/components/act/action-card";
+import { ActionCard, ActionSummary, plainTitle } from "@/components/act/action-card";
 import { RedFlagHelper } from "@/components/act/red-flag-helper";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
 import { WhatIfForArea } from "@/components/home/what-if-panel";
@@ -85,7 +85,6 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           items={recommended.map((action, index) => ({
             id: action.id,
             label: plainTitle(action.action),
-            shortLabel: shortTitle(action.action) ?? undefined,
             node: (
               <ActionCard action={action} index={index + 1}>
                 <EvidenceFinder actionId={action.id} actionTitle={action.action} />
