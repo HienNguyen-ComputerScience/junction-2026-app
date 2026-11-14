@@ -39,7 +39,7 @@ export function ActionItem({ action, index, showStep }: { action: Evidence; inde
       data-focus-item
       id={`action-${index}`}
       aria-labelledby={`action-${index}-title`}
-      className="flex w-full min-w-0 scroll-mt-28 flex-col gap-4 rounded-lg bg-mint-veil px-5 py-7 sm:px-10 sm:py-9"
+      className="flex w-full min-w-0 scroll-mt-28 flex-col gap-4 rounded-lg bg-mint-veil px-7 py-8 sm:px-10 sm:py-10"
     >
       {/* Three stagger steps, not five: the whole card is in place about 0.75s after it scrolls in. */}
       <Reveal index={0} className="flex items-baseline gap-5">
