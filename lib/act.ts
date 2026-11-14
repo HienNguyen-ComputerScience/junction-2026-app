@@ -30,6 +30,7 @@ import {
   type Stage,
 } from "@/lib/data";
 import { formatPct } from "@/lib/ranking";
+import { statusLabel } from "@/lib/status-label";
 
 export const STAGE_LABELS: Record<Stage, string> = {
   gp_access: "Getting to a GP",
@@ -86,7 +87,14 @@ export function bottleneckLede(bottleneck: Bottleneck): string {
   const worst = STAGE_PHRASES[focus[0].stage];
   const against = (gap: Gap) => `against ${formatPct(gap.national_value)} across Finland as a whole`;
   if (!anyRed) return `No measured step is slower than Finland overall. Closest: ${worst}, ${against(focus[0])}.`;
-  if (focus.length === 1) return `The delay sits at ${worst}, ${against(focus[0])}.`;
+  if (focus.length === 1) {
+    const [gap] = focus;
+    if (gap.value === null) return `The delay sits at ${worst}, ${against(gap)}.`;
+    // The direction comes from the per-step status label, so the vocabulary stays in one place.
+    const label = statusLabel("red", gap.stage);
+    const direction = `${label.startsWith("Longer") ? "a " : ""}${label.charAt(0).toLowerCase()}${label.slice(1)}`;
+    return `The delay sits at ${worst}: ${formatPct(gap.value)} here, ${direction} (${formatPct(gap.national_value)}).`;
+  }
   return `${focus.length === 2 ? "Both" : "All"} measured steps are slower than Finland overall. Worst is ${worst}, ${against(focus[0])}.`;
 }
 
