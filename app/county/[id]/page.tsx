@@ -153,8 +153,8 @@ function buildStages(county: County): StageCardProps[] {
   return [
     {
       step: 1,
-      // Step names come from lib/act, so the county and act pages say the same thing.
-      title: STAGE_LABELS.gp_access,
+      // Steps 2 and 3 take their names from lib/act; step 1 keeps the label the test checklist quotes.
+      title: "Getting to a GP",
       status: stageStatus(county.id, "gp_access"),
       measure: gpGap && {
         value: gpGap.value,
