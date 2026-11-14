@@ -30,11 +30,14 @@ export function SourceChip({
       rel="noopener noreferrer"
       title={source.name}
       aria-label={`${label}: ${source.name} (opens in a new tab)`}
-      className="inline-flex"
+      className="group/chip inline-flex shrink-0 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
     >
-      <Badge variant="outline" className="hover:bg-muted">
+      <Badge
+        variant="outline"
+        className="gap-1.5 tabular-nums text-foreground/85 group-hover/chip:border-brand/40 group-hover/chip:text-brand-ink"
+      >
         {label}
-        <ExternalLink aria-hidden className="size-3" />
+        <ExternalLink aria-hidden className="size-3 opacity-60 group-hover/chip:opacity-100" />
       </Badge>
     </a>
   );
