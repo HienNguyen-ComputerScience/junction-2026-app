@@ -85,7 +85,7 @@ Body copy is 16px: `text-sm` and `text-base` are both 16px on this branch. Do no
 - `page-container`: the one page width. Card padding 28–42px, never under 21px.
 - Primary button: `<Button>` (`components/ui/button.tsx`): Forest Ink fill, cream text; `size="lg"` for the one main action on a screen; `variant="outline"` for secondary. Put a trailing arrow icon on a primary button that moves forward: `<ArrowRight data-icon="inline-end" />`.
 - Pill: `<Badge variant="outline">`, or `rounded-full bg-cream-paper px-3.5 py-2 text-forest-ink`.
-- Source chip: `<SourceChip sourceId="…" year={2025} />` (`components/source-chip.tsx`). Every number shows one.
+- Source chip: `<SourceChip sourceId="…" year={2025} />` (`components/source-chip.tsx`). Every number shows one. Chip text is 16px (the body floor), 32px tall; a long label truncates with an ellipsis and the full title is in the tooltip and `aria-label`.
 
 ## 2. Motion (`lib/motion.ts`, `components/motion/`)
 
@@ -193,11 +193,17 @@ One pathway step as a card, the same on the county page and in the plan: `<StepU
 
 - On paper, `[data-slot=frame-panel]`, `[data-slot=card]`, `[data-slot=stat-unit]` and the tinted surfaces print white with a thin grey rule; status colours keep their colour.
 - `print-wide` on a page's `<main>` prints the whole page on landscape A4 (Chromium lays a document out at one width, so put it on `<main>`, not on one section).
+- On paper `.type-display` prints at 26pt and `.type-lede` at 11pt, site-wide; `.type-eyebrow` keeps with what follows.
+- `print-flow` lets a tall list item (a whole card) break across pages; without it, `li` is kept whole.
+- Screen-only tools go `print:hidden` (live news, AI rewrite, live evidence search).
+- `print-bare` on a panel that only frames a paper table prints it with no box.
 - A table that is too wide for paper gets a paper twin: the screen table `print:hidden`, a plain `hidden print:table` next to it (see `PrintTable` in `components/compare/compare-table.tsx`).
 
 ### Link that looks like a button
 
 `buttonVariants({ variant, size, className })` returns merged classes (it runs `cn`), so `<Link className={buttonVariants({ variant: "outline" })}>` gets the outline border. Two variants only: `default` (primary, one per view) and `outline`.
+
+The large link-button that moves forward (52px tall, 14px corners, 21px side padding, 17px text): `buttonVariants({ size: "lg" })` with a trailing arrow placed as the last child, `<ArrowRight aria-hidden data-icon="inline-end" className="size-5" />` (the `data-icon` trims the right padding). `variant: "outline"` gives the cream version with a Forest Ink edge. Use this instead of local class strings.
 
 ### Tables on a phone
 
