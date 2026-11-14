@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
 import {
   Frame,
   FrameDescription,
@@ -13,7 +14,7 @@ import {
   FrameTitle,
 } from "@/components/ui/frame";
 import { TOO_MANY } from "@/components/exa/types";
-import type { BriefResponse } from "@/lib/brief/types";
+import type { BriefClaim, BriefResponse } from "@/lib/brief/types";
 
 type Status = "idle" | "loading" | "error" | "limited";
 
@@ -28,6 +29,86 @@ function isBriefResponse(v: unknown): v is BriefResponse {
   if (typeof v !== "object" || v === null) return false;
   const r = v as Record<string, unknown>;
   return (r.mode === "ai" || r.mode === "fallback") && typeof r.headline === "string" && Array.isArray(r.claims);
+}
+
+/**
+ * How a claim is laid out. Presentation only: the text is never changed. A claim is split on
+ * its known inline labels only when the pieces join back to exactly the original text;
+ * anything else renders whole.
+ */
+type Layout =
+  | { kind: "action"; action: string; who: string; firstStep: string }
+  | { kind: "labelled"; label: string; status?: string; body: string }
+  | { kind: "plain" };
+
+const ACTION = "Recommended action: ";
+const WHO = ". Who: ";
+const FIRST_STEP = ". First step: ";
+
+function layoutOf(text: string): Layout {
+  if (text.startsWith(ACTION)) {
+    const who = text.indexOf(WHO, ACTION.length);
+    const first = who === -1 ? -1 : text.indexOf(FIRST_STEP, who + WHO.length);
+    if (who !== -1 && first !== -1) {
+      // Each part keeps its own full stop.
+      const action = text.slice(ACTION.length, who + 1);
+      const whoText = text.slice(who + WHO.length, first + 1);
+      const firstStep = text.slice(first + FIRST_STEP.length);
+      if (action && whoText && firstStep && `${ACTION}${action} Who: ${whoText} First step: ${firstStep}` === text) {
+        return { kind: "action", action, who: whoText, firstStep };
+      }
+    }
+  }
+  // "Short label (status): body", e.g. "The trend: ..." or "Getting a GP appointment (worse than Finland): ...".
+  const match = /^([A-Z][^:().\d]{2,40}?)(?: \(([^)]+)\))?: ([\s\S]+)$/.exec(text);
+  if (match) {
+    const [, label, status, body] = match;
+    if (`${label}${status ? ` (${status})` : ""}: ${body}` === text) return { kind: "labelled", label, status, body };
+  }
+  return { kind: "plain" };
+}
+
+const ROW = "grid gap-x-6 px-4 py-4 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:px-6 md:grid-cols-[8.5rem_minmax(0,1fr)_auto]";
+const DT = "type-caption text-muted-foreground sm:col-start-1 sm:pt-px";
+const DD = "max-w-[44rem] text-sm leading-relaxed text-pretty sm:col-start-2";
+
+function ClaimRow({ claim, chips }: { claim: BriefClaim; chips: Record<string, ReactNode> }) {
+  const layout = layoutOf(claim.text);
+  const sources = (
+    <span className={`flex min-w-0 flex-wrap content-start items-start gap-1.5 pt-2.5 sm:col-start-2 md:col-start-3 md:row-start-1 md:justify-end md:pt-0 ${layout.kind === "action" ? "md:row-span-3" : ""}`}>
+      {claim.source_ids.map((id) => (
+        <span key={id} className="flex max-w-full min-w-0">
+          {chips[id] ?? <Badge variant="outline">source missing</Badge>}
+        </span>
+      ))}
+    </span>
+  );
+
+  return (
+    <li className={`${ROW} gap-y-1 border-b border-border/80 last:border-b-0`}>
+      {layout.kind === "action" ? (
+        <dl className="contents">
+          <dt className={DT}>Recommended action</dt>
+          <dd className={`${DD} font-medium`}>{layout.action}</dd>
+          <dt className={`${DT} max-sm:pt-2`}>Who</dt>
+          <dd className={DD}>{layout.who}</dd>
+          <dt className={`${DT} max-sm:pt-2`}>First step</dt>
+          <dd className={DD}>{layout.firstStep}</dd>
+        </dl>
+      ) : layout.kind === "labelled" ? (
+        <dl className="contents">
+          <dt className={`${DT} flex flex-col`}>
+            {layout.label}
+            {layout.status && <span className="type-micro text-faint">{layout.status}</span>}
+          </dt>
+          <dd className={DD}>{layout.body}</dd>
+        </dl>
+      ) : (
+        <p className={DD}>{claim.text}</p>
+      )}
+      {sources}
+    </li>
+  );
 }
 
 export function CountyBriefClient({
@@ -63,6 +144,15 @@ export function CountyBriefClient({
 
   const triedAi = brief !== initial;
 
+  // The numbers rows lead and the recommended actions follow. When the brief has that shape,
+  // the numbers (already shown in the pathway above) fold behind a disclosure and the actions
+  // stay in view. Order never changes; any other shape shows every row.
+  const firstAction = brief.claims.findIndex((claim) => layoutOf(claim.text).kind === "action");
+  const folded = firstAction > 0 ? brief.claims.slice(0, firstAction) : [];
+  const shown = folded.length > 0 ? brief.claims.slice(firstAction) : brief.claims;
+  // The folded rows' sources stay on screen next to the headline, which repeats their numbers.
+  const foldedSources = [...new Set(folded.flatMap((claim) => claim.source_ids))];
+
   return (
     <Frame aria-labelledby="brief-heading">
       <FrameHeader>
@@ -75,58 +165,76 @@ export function CountyBriefClient({
       </FrameHeader>
 
       <FramePanel padding="none">
-        <div className="flex flex-col gap-3 px-4 pt-4 pb-5 sm:px-6 sm:pt-5">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-            <Badge variant={brief.mode === "ai" ? "brand" : "secondary"}>
-              {brief.mode === "ai" && brief.headline_precomputed ? AI_PRECOMPUTED_HEADLINE_LABEL : MODE_LABEL[brief.mode]}
-            </Badge>
-            {brief.mode === "ai" && brief.model && <span className="type-mark text-muted-foreground">{brief.model}</span>}
-            {brief.mode === "ai" && brief.headline_precomputed && (
-              <span className="type-micro text-muted-foreground">
-                The AI headline failed the snapshot check, so the precomputed headline is shown.
-              </span>
-            )}
-            {triedAi && (
-              <span className="type-micro text-muted-foreground">
-                {brief.dropped_count === 0
-                  ? "The checker dropped no claims."
-                  : `The checker dropped ${brief.dropped_count} claim${brief.dropped_count === 1 ? "" : "s"} it could not trace to the snapshot.`}
-              </span>
-            )}
-          </div>
-          {triedAi && brief.mode === "fallback" && brief.reason && (
-            <p className="text-sm text-muted-foreground">AI brief not used: {brief.reason}</p>
-          )}
-        </div>
-
         <div
           aria-busy={status === "loading"}
           className={`transition-opacity duration-150 ${status === "loading" ? "opacity-50" : ""}`}
         >
-          <p className="max-w-[46rem] px-4 pb-5 font-display text-[1.25rem] leading-[1.3] font-medium tracking-[-0.015em] text-pretty sm:px-6 sm:text-[1.375rem]">
-            {brief.headline}
-          </p>
-          <ul className="border-t border-border/80">
-            {brief.claims.map((claim, i) => (
-              <li
-                key={`${i}-${claim.text.slice(0, 24)}`}
-                className="grid gap-x-8 gap-y-2 border-b border-border/80 px-4 py-3.5 last:border-b-0 sm:px-6 md:grid-cols-[minmax(0,1fr)_17rem]"
-              >
-                <span className="max-w-[46rem] text-sm leading-relaxed text-pretty">{claim.text}</span>
-                <span className="flex min-w-0 flex-wrap content-start items-start gap-1.5 md:justify-end">
-                  {claim.source_ids.map((id) => (
-                    <span key={id} className="flex min-w-0 max-w-full">
-                      {chips[id] ?? <Badge variant="outline">source missing</Badge>}
-                    </span>
-                  ))}
+          <div className="flex flex-col gap-3 px-4 pt-4 pb-5 sm:px-6 sm:pt-5">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+              <Badge variant={brief.mode === "ai" ? "brand" : "secondary"}>
+                {brief.mode === "ai" && brief.headline_precomputed ? AI_PRECOMPUTED_HEADLINE_LABEL : MODE_LABEL[brief.mode]}
+              </Badge>
+              {brief.mode === "ai" && brief.model && <span className="type-note text-muted-foreground">{brief.model}</span>}
+              {brief.mode === "ai" && brief.headline_precomputed && (
+                <span className="type-micro text-muted-foreground">
+                  The AI headline failed the snapshot check, so the precomputed headline is shown.
                 </span>
-              </li>
+              )}
+              {triedAi && (
+                <span className="type-micro text-muted-foreground">
+                  {brief.dropped_count === 0
+                    ? "The checker dropped no claims."
+                    : `The checker dropped ${brief.dropped_count} claim${brief.dropped_count === 1 ? "" : "s"} it could not trace to the snapshot.`}
+                </span>
+              )}
+            </div>
+            {triedAi && brief.mode === "fallback" && brief.reason && (
+              <p className="type-caption text-muted-foreground">AI brief not used: {brief.reason}</p>
+            )}
+            <p className="max-w-[44rem] text-[1.0625rem] leading-relaxed font-medium text-pretty">{brief.headline}</p>
+            {foldedSources.length > 0 && (
+              <p className="flex flex-wrap items-center gap-1.5">
+                <span className="mr-0.5 type-note text-muted-foreground">Numbers from</span>
+                {foldedSources.map((id) => (
+                  <span key={id} className="flex max-w-full min-w-0">
+                    {chips[id] ?? <Badge variant="outline">source missing</Badge>}
+                  </span>
+                ))}
+              </p>
+            )}
+          </div>
+
+          {folded.length > 0 && (
+            <Disclosure
+              className="border-t border-border/80"
+              summaryClassName="min-h-11 w-full px-4 sm:px-6"
+              summary={
+                <>
+                  <span className="group-open/disc:hidden">
+                    Show the numbers behind this brief{" "}
+                    <span className="font-normal text-muted-foreground tabular-nums">({folded.length})</span>
+                  </span>
+                  <span className="hidden group-open/disc:inline">Hide the numbers behind this brief</span>
+                </>
+              }
+            >
+              <ul className="border-t border-border/80 bg-card">
+                {folded.map((claim, i) => (
+                  <ClaimRow key={`${i}-${claim.text.slice(0, 24)}`} claim={claim} chips={chips} />
+                ))}
+              </ul>
+            </Disclosure>
+          )}
+
+          <ul className="border-t border-border/80">
+            {shown.map((claim, i) => (
+              <ClaimRow key={`${i}-${claim.text.slice(0, 24)}`} claim={claim} chips={chips} />
             ))}
           </ul>
         </div>
       </FramePanel>
 
-      <FrameFooter className="flex flex-wrap items-center gap-3 pt-2">
+      <FrameFooter className="flex flex-col items-start gap-3 pt-2 sm:flex-row sm:items-center">
         <Button onClick={writeAiBrief} disabled={status === "loading"} variant="outline">
           {status === "loading" ? "Writing…" : triedAi ? "Write AI brief again" : "Write AI brief"}
         </Button>
@@ -140,14 +248,13 @@ export function CountyBriefClient({
             Claude is writing; the checker then drops any claim it can&apos;t trace to the snapshot.
           </span>
         )}
-        {status === "limited" && (
-          <span role="alert" className="type-caption font-medium text-foreground">
-            {TOO_MANY} The precomputed brief is still shown.
-          </span>
-        )}
-        {status === "error" && (
-          <span role="alert" className="type-caption font-medium text-foreground">
-            Could not reach the brief service. The precomputed brief is still shown.
+        {(status === "limited" || status === "error") && (
+          <span
+            role="alert"
+            className="rounded-lg border border-input bg-muted px-3 py-2 type-caption font-medium text-foreground"
+          >
+            {status === "limited" ? TOO_MANY : "Could not reach the brief service."} The precomputed brief is still
+            shown.
           </span>
         )}
       </FrameFooter>

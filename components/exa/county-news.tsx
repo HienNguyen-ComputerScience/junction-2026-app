@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Frame, FrameDescription, FrameHeader, FramePanel, FrameTitle } from "@/components/ui/frame";
 
 import { LoadingRows, ResultList, Unavailable } from "./result-list";
@@ -10,10 +11,14 @@ import { isItemsResponse, STATUS_LABEL, type ItemsResponse } from "./types";
 
 type State = { kind: "loading" } | { kind: "done"; data: ItemsResponse } | { kind: "error" };
 
+/** Rows shown before "Show more". */
+const FIRST_ROWS = 4;
+
 // Loads on mount: the route answers in about a second (fast search, cached for a while),
 // so a "Search live" button would only add a click to the demo.
 export function CountyNews({ countyId }: { countyId: string }) {
   const [state, setState] = useState<State>({ kind: "loading" });
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const ctrl = new AbortController();
@@ -40,7 +45,7 @@ export function CountyNews({ countyId }: { countyId: string }) {
         </FrameTitle>
         <div className="col-span-2 flex flex-wrap items-center gap-2 pt-1">
           <Badge variant="secondary">Found live — unverified</Badge>
-          <span className="type-mark text-muted-foreground">via Exa</span>
+          <span className="type-note text-muted-foreground">via Exa</span>
           {data && !unavailable && <Badge variant="outline">{STATUS_LABEL[data.freshness]}</Badge>}
           {unavailable && <Badge variant="outline">{STATUS_LABEL.unavailable}</Badge>}
         </div>
@@ -48,13 +53,24 @@ export function CountyNews({ countyId }: { countyId: string }) {
           Finnish news and county pages about access to a doctor. Not checked by the team.
         </FrameDescription>
       </FrameHeader>
-      <FramePanel padding="none" className="min-h-40 px-4 py-4 sm:px-6 sm:py-5">
+      <FramePanel padding="none" className="px-4 py-4 sm:px-6 sm:py-5">
         {state.kind === "loading" && <LoadingRows label="Searching local news with Exa" />}
         {unavailable && <Unavailable />}
         {data && !unavailable && data.items.length === 0 && (
           <p className="text-sm text-muted-foreground">No news found for this county in the last 12 months.</p>
         )}
-        {data && !unavailable && data.items.length > 0 && <ResultList items={data.items} />}
+        {data && !unavailable && data.items.length > 0 && (
+          <div className="flex flex-col gap-4">
+            <ResultList items={expanded ? data.items : data.items.slice(0, FIRST_ROWS)} />
+            {data.items.length > FIRST_ROWS && (
+              <div className="border-t border-border/80 pt-4">
+                <Button variant="outline" size="sm" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
+                  {expanded ? "Show fewer" : `Show ${data.items.length - FIRST_ROWS} more`}
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
       </FramePanel>
     </Frame>
   );

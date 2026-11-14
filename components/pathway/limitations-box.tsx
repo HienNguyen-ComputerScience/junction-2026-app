@@ -8,20 +8,49 @@ export type LimitationItem = {
   sourceId?: string;
 };
 
+const TITLE = "Limitations: read before acting on these numbers";
+
 /**
- * The caveats travel with the numbers: the box and its first items are always visible, and
- * the remaining items open in place. No wording is cut, and nothing is clipped.
+ * The caveats travel with the numbers. No wording is cut, and nothing is clipped.
+ *  - "box": the title and the first items always visible, the rest open in place.
+ *  - "disclosure": one line that opens to every item, for narrow screens where the box would
+ *    sit far below the first screen. The page shows one or the other at a given width, never
+ *    both, so screen readers meet the content once.
  */
 export function LimitationsBox({
   items,
   visibleCount = 3,
+  variant = "box",
   className = "",
 }: {
   items: LimitationItem[];
-  /** How many items show before the "show more" disclosure. */
+  /** How many items show before the "show more" disclosure ("box" only). */
   visibleCount?: number;
+  variant?: "box" | "disclosure";
   className?: string;
 }) {
+  if (variant === "disclosure") {
+    return (
+      <aside aria-label="Limitations" className={className}>
+        <Disclosure
+          className="rounded-panel border border-frame-border bg-frame"
+          summaryClassName="min-h-11 w-full gap-1.5 px-3.5 py-2.5 type-micro font-medium hover:no-underline"
+          summary={
+            <span>
+              {TITLE} <span className="font-normal text-muted-foreground tabular-nums">({items.length})</span>
+            </span>
+          }
+        >
+          <ul className="flex flex-col gap-2.5 border-t border-frame-border px-3.5 pt-3 pb-4">
+            {items.map((item) => (
+              <Limitation key={item.text} item={item} />
+            ))}
+          </ul>
+        </Disclosure>
+      </aside>
+    );
+  }
+
   const first = items.slice(0, visibleCount);
   const rest = items.slice(visibleCount);
 
@@ -34,7 +63,7 @@ export function LimitationsBox({
       )}
     >
       <h2 id="limitations-heading" className="font-sans text-[0.9375rem] leading-snug font-semibold tracking-normal">
-        Limitations: read before acting on these numbers
+        {TITLE}
       </h2>
       <ul className="flex flex-col gap-2.5">
         {first.map((item) => (

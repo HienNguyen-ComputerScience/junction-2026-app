@@ -14,7 +14,6 @@ import {
   Frame,
   FrameFooter,
   FrameHeader,
-  FrameMeta,
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
@@ -53,14 +52,16 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   return (
     <main className="page-container flex flex-col gap-6 pt-4 sm:gap-8 sm:pt-6">
       {/* Desktop: title and verdict on the left, the limitations box beside them, so both are
-          on the first screen. Phones: the box moves below the pathway so the key number
-          comes first (the wrapper is display: contents there, and `order` places the box). */}
-      <div className="contents lg:grid lg:grid-cols-[minmax(0,1fr)_30rem] lg:items-start lg:gap-10">
+          on the first screen. Below lg the limitations are a one-line disclosure right under
+          the main action instead (the two are never displayed at the same width). */}
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_30rem] lg:items-start lg:gap-10">
         <header className="flex flex-col items-start gap-4 lg:gap-5">
           <BackLink href="/">Back to ranking</BackLink>
           <div className="flex flex-col gap-2">
-            <p className="type-caption text-muted-foreground">
-              Path to early cancer care · {county.name_fi}
+            <p className="type-caption text-balance text-muted-foreground">
+              Path to early cancer care
+              <span className="max-sm:hidden"> · </span>
+              <span className="max-sm:block">{county.name_fi}</span>
             </p>
             <h1 className="type-page">{county.name}</h1>
           </div>
@@ -71,9 +72,10 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             What to do about it
             <ArrowRight aria-hidden data-icon="inline-end" />
           </Link>
+          <LimitationsBox items={limitations} variant="disclosure" className="mt-2 w-full lg:hidden" />
         </header>
 
-        <LimitationsBox items={limitations} className="max-lg:order-1" />
+        <LimitationsBox items={limitations} className="max-lg:hidden" />
       </div>
 
       <Frame aria-labelledby="pathway-heading">
@@ -81,17 +83,13 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           <FrameTitle id="pathway-heading" className="type-title">
             The first steps, compared with Finland ({LATEST_YEAR})
           </FrameTitle>
-          <FrameMeta className="hidden sm:flex">
-            <span aria-hidden className="h-3.5 w-0.5 bg-foreground" />
-            Line on each bar: Finland&apos;s value
-          </FrameMeta>
         </FrameHeader>
         <FramePanel padding="none">
-          <ol className="grid grid-cols-1 p-4 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)] md:px-0 md:py-6">
+          <ol className="grid grid-cols-1 p-4 sm:p-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] lg:px-0 lg:pt-5 lg:pb-7">
             {stages.map((stage, index) => (
               <li
                 key={stage.title}
-                className="grid grid-cols-[1.75rem_minmax(0,1fr)] gap-x-3 md:flex md:flex-col md:gap-4"
+                className="grid grid-cols-[1.75rem_minmax(0,1fr)] gap-x-3 lg:row-span-6 lg:grid-cols-1 lg:grid-rows-subgrid"
               >
                 <StepRail
                   step={stage.step}
@@ -99,21 +97,22 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
                   first={index === 0}
                   last={index === stages.length - 1}
                 />
-                <div className={`md:flex-1 md:px-6 ${index === stages.length - 1 ? "" : "max-md:pb-8"}`}>
+                <div
+                  className={`min-w-0 lg:row-span-5 lg:grid lg:grid-rows-subgrid lg:px-6 ${index === stages.length - 1 ? "" : "max-lg:pb-10"}`}
+                >
                   <StageCard {...stage} />
                 </div>
               </li>
             ))}
           </ol>
         </FramePanel>
-        <FrameFooter className="flex flex-col gap-2">
+        <FrameFooter className="flex flex-col gap-3">
           <BarKey />
           <p className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
             <span>
-              Context: referrals left unprocessed for more than 21 days in {LATEST_YEAR}:{" "}
-              {lateReferrals ? `${lateReferrals.value}%` : "no public data"}
-              {lateReferralsFinland ? ` (Finland ${lateReferralsFinland.value}%)` : ""}. Too small
-              everywhere to tell counties apart, so it does not set any colour.
+              Context, not used for colour: referrals unprocessed after 21 days in {LATEST_YEAR},{" "}
+              {lateReferrals ? `${lateReferrals.value}% here` : "no public data here"}
+              {lateReferralsFinland ? ` (Finland ${lateReferralsFinland.value}%)` : ""}
             </span>
             <SourceChip
               sourceId={lateReferrals?.source_id ?? lateReferralsFinland?.source_id ?? "sotkanet-5033"}
@@ -123,10 +122,8 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
         </FrameFooter>
       </Frame>
 
-      <div className="contents max-lg:*:order-2">
-        <CountyBrief countyId={county.id} />
-        <CountyNews key={county.id} countyId={county.id} />
-      </div>
+      <CountyBrief countyId={county.id} />
+      <CountyNews key={county.id} countyId={county.id} />
     </main>
   );
 }
