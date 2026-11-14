@@ -60,7 +60,7 @@ const gaps: { title: string; text: string }[] = [
     text: "GP recognition of warning signs and choice of tests are not quantified here. Missing evidence stays “no public data,” not a low-risk score.",
   },
   {
-    title: "Uusimaa and Kerava show a shared HUS value",
+    title: "Four Uusimaa areas share one HUS value",
     text: "The snapshot has no county-level referral-processing value (indicator 13) for East, Central or West Uusimaa, or Vantaa and Kerava. HUS handles their hospital referrals, so the app shows the HUS-wide value instead, labelled as shared. It is not used for their status, ranking or recommended actions.",
   },
   {
