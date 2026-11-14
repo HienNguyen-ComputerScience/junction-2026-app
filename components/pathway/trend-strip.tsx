@@ -163,7 +163,7 @@ function TrendRow({ stage }: { stage: TrendStage }) {
                   <span className="numeral text-[2.25rem] leading-none text-foreground">
                     {Math.abs(change).toFixed(1)}
                   </span>
-                  <span className="text-sm text-muted-foreground">pts {word}</span>
+                  <span className="text-sm text-muted-foreground">points {word}</span>
                 </>
               )}
             </dd>

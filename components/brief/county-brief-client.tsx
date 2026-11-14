@@ -285,7 +285,7 @@ export function CountyBriefClient({
         </div>
         <div className="md:col-start-2 md:row-start-1">
           <Button variant="outline" onClick={writeAiBrief} disabled={status === "loading"}>
-            {status === "loading" ? "Writing…" : triedAi ? "Rewrite with AI again" : "Rewrite with AI (checked against the figures)"}
+            {status === "loading" ? "Writing…" : triedAi ? "Rewrite again" : "Rewrite"}
           </Button>
         </div>
         {(status === "limited" || status === "error") && (

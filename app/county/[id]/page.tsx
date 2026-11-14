@@ -14,6 +14,7 @@ import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import { BackLink } from "@/components/ui/back-link";
 import { BarKey } from "@/components/ui/measure-bar";
 import { buttonVariants } from "@/components/ui/button";
+import { TextLink } from "@/components/ui/text-link";
 import {
   Frame,
   FrameDescription,
@@ -74,16 +75,26 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const husText = hus ? formatPct(hus.value) : null;
   const husChip = <SourceChip sourceId="sotkanet-13" year={LATEST_YEAR} />;
   const chipAfter = (sentence: string) => (husText && sentence.includes(husText) ? husChip : null);
+  // The hospital group's short name is explained where the page first uses it (display only:
+  // the verdict's own words stay as lib/ writes them).
+  const firstHus = [leadSentence, ...restSentences].findIndex((sentence) => /\bHUS\b/.test(sentence));
+  const glossAt = (sentence: string, index: number) =>
+    index === firstHus ? sentence.replace(/\bHUS\b/, "HUS (Helsinki University Hospital region)") : sentence;
 
   return (
     <main className="page-container flex flex-col gap-10 pt-4 sm:gap-14 sm:pt-6">
-      {/* Desktop: title, verdict and the key figure on the left, the limitations box (quieter)
-          beside them, so both are on the first screen. Below lg the limitations are a one-line
-          disclosure right under the main action instead (the two are never displayed at the
-          same width). */}
+      {/* The whole pathway first, as one small line with this area's break lit; then, on
+          desktop, title, verdict and the key figure on the left and the limitations box
+          (quieter) beside them, so both are on the first screen. Below lg the limitations are a
+          one-line disclosure right under the main action instead (the two are never displayed
+          at the same width). */}
+      <div className="flex flex-col gap-4">
+      <BackLink href="/">Back to all areas</BackLink>
+      <FramePanel padding="none" className="px-4 py-3 sm:px-6">
+        <PathwayStrip countyId={county.id} size="sm" />
+      </FramePanel>
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_29rem] lg:items-start lg:gap-12">
-        <header className="flex flex-col items-start gap-4">
-          <BackLink href="/">Back to all areas</BackLink>
+        <header className="flex flex-col items-start gap-4 lg:pt-2">
           <div className="flex flex-col gap-2">
             <p className="type-caption text-balance text-muted-foreground">
               Path to early cancer care
@@ -95,7 +106,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           {keyGap && <KeyFigure gap={keyGap} />}
           <div className="flex max-w-[36rem] flex-col gap-2">
             <p className="type-lede text-foreground lg:text-[1.25rem] lg:leading-7">
-              {leadSentence}
+              {glossAt(leadSentence, 0)}
               {chipAfter(leadSentence) && <span className="ml-2 inline-flex align-middle">{husChip}</span>}
             </p>
             {restSentences.length > 0 && (
@@ -103,7 +114,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
                 {restSentences.map((sentence, i) => (
                   <span key={i}>
                     {i > 0 && " "}
-                    {sentence}
+                    {glossAt(sentence, i + 1)}
                     {chipAfter(sentence) && <span className="ml-2 inline-flex align-middle">{husChip}</span>}
                   </span>
                 ))}
@@ -119,17 +130,30 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
 
         <LimitationsBox items={limitations} className="max-lg:hidden" />
       </div>
+      </div>
 
       <Frame aria-labelledby="pathway-heading">
         <FrameHeader>
           <FrameTitle id="pathway-heading" className="type-title">
             The first steps, compared with Finland ({LATEST_YEAR})
           </FrameTitle>
-          <FrameDescription>Gaps to Finland are in percentage points (pts).</FrameDescription>
+          <FrameDescription>Gaps to Finland are in percentage points.</FrameDescription>
         </FrameHeader>
         <div className="flex flex-col gap-1.5">
           <FramePanel padding="none">
-            <PathwaySteps steps={steps} density="full" />
+            <PathwaySteps
+              steps={steps}
+              density="full"
+              renderExtra={(step) =>
+                step.stage === "gp_access" ? (
+                  <FirstContactGap />
+                ) : step.stage === "gp_recognition" ? (
+                  <TextLink kind="nav" href={`/county/${county.id}/act#red-flags`} className="type-caption">
+                    Use the red-flag helper
+                  </TextLink>
+                ) : null
+              }
+            />
           </FramePanel>
           <TrendStrip
             stages={buildTrendStages(county, steps)}
@@ -165,11 +189,37 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
         </div>
       </Frame>
 
-      <PathwayStrip countyId={county.id} />
-
       <CountyBrief countyId={county.id} />
       <CountyNews key={county.id} countyId={county.id} />
     </main>
+  );
+}
+
+/** Median days from first symptoms to treatment, lymphoma (Kuitunen et al.): first contact public vs private. */
+const DAYS_PUBLIC_FIRST = 127;
+const DAYS_PRIVATE_FIRST = 76;
+
+/**
+ * Why the first contact matters, in plain words under the wait step: the difference of the
+ * study's two medians, then the two medians and their source.
+ */
+function FirstContactGap() {
+  return (
+    <div className="flex flex-col gap-1 border-t border-border pt-3">
+      <p className="text-sm leading-snug text-pretty text-muted-foreground">
+        <span className="numeral text-[1.25rem] leading-none text-foreground">
+          {DAYS_PUBLIC_FIRST - DAYS_PRIVATE_FIRST} days
+        </span>{" "}
+        longer from first symptoms to treatment when the first contact is public, not private or occupational
+      </p>
+      <p className="flex flex-wrap items-center gap-x-2 gap-y-1 type-caption text-muted-foreground">
+        <span>
+          Lymphoma, median <span className="figure">{DAYS_PUBLIC_FIRST}</span> vs{" "}
+          <span className="figure">{DAYS_PRIVATE_FIRST}</span> days
+        </span>
+        <SourceChip sourceId="kuitunen-2026" />
+      </p>
+    </div>
   );
 }
 
@@ -246,13 +296,15 @@ function buildLimitations(county: County): LimitationItem[] {
     const indicator = getIndicator(indicatorId);
     if (indicator) {
       items.push({
-        text: `${indicator.short_name}: ${indicator.limitation}`,
+        title: indicator.short_name,
+        text: indicator.limitation,
         sourceId: indicator.source_id,
       });
     }
   }
 
   items.push({
+    title: "Public health centres only",
     text: "The GP wait covers public health centres only. Visits to occupational or private doctors are not in it. In a Finnish study of lymphoma patients, those who started in public primary care waited a median 127 days from symptoms to treatment, against 76 days for private or occupational care.",
     sourceId: "kuitunen-2026",
   });
@@ -265,6 +317,7 @@ function buildLimitations(county: County): LimitationItem[] {
   if (occupational && publicVisits && occupationalFinland && publicFinland) {
     const n = (value: number) => Math.round(value).toLocaleString("en-GB");
     items.push({
+      title: "Occupational visits skip the public queue",
       text: `Working-age people (15-64) in ${county.name} made ${n(occupational.value)} occupational-health doctor visits per 1,000 residents in ${occupational.year}, against ${n(publicVisits.value)} public primary-care doctor visits (Finland ${n(occupationalFinland.value)} and ${n(publicFinland.value)}). These are visits, not people. Occupational visits are outside the public queue the GP wait measures. People over 64, who are most cancer patients, are not in these numbers.`,
       sourceId: "sotkanet-2371",
     });
@@ -278,12 +331,14 @@ function buildLimitations(county: County): LimitationItem[] {
   const breastFinland = getValue("finland", "3625", 2024);
   if (bowel && breast && bowelFinland && breastFinland) {
     items.push({
+      title: "Survival is context, not a step",
       text: `In ${county.name}, 5-year relative survival was ${bowel.value}% for bowel cancer and ${breast.value}% for breast cancer (Finland ${bowelFinland.value}% and ${breastFinland.value}%), for patients diagnosed ${bowel.year - 9}-${bowel.year}. Cancer stage by county is not published, and survival mixes how early cancer is found with how well it is treated. Small counties vary from year to year.`,
       sourceId: "sotkanet-3627",
     });
   }
 
   items.push({
+    title: "Step 2 is not measured anywhere",
     text: "GP recognition of possible cancer has no public indicator, so step 2 is grey for every county. No public county data shows it yet; one candidate would be the share of cancers first found through an emergency visit.",
   });
 
@@ -291,11 +346,13 @@ function buildLimitations(county: County): LimitationItem[] {
   const husWide = gaps.find((gap) => gap.shared)?.shared;
   if (shared) {
     items.push({
+      title: `The referral figure is ${shared.name}-wide`,
       text: `The referral step shows the ${shared.name}-wide value, not a figure for ${county.name}. ${shared.name} handles hospital referrals from East, Central and West Uusimaa and Vantaa and Kerava, and THL publishes one ${shared.name}-wide number for them, not one per county. So the step stays grey, and it is not used to rank or to pick actions. THL or ${shared.name} could publish it by the patient's home county. The link shows the ${shared.name} report we used to check that the number is ${shared.name}'s.`,
       sourceId: shared.confirmed_by,
     });
   } else if (stageStatus(county.id, "referral") === "no_data") {
     items.push({
+      title: "No county referral data",
       text: `Sotkanet publishes no county-level referral data for ${county.name}, so its referral step is grey. We cannot say whether referrals here are fast or slow.`,
     });
   } else {
@@ -304,11 +361,13 @@ function buildLimitations(county: County): LimitationItem[] {
       .map((point) => point.year);
     if (referralYears.length > 0 && referralYears.length < YEARS.length) {
       items.push({
+        title: "Referral trend incomplete",
         text: `${county.name} has referral values for ${referralYears.join(", ")} only, so the referral trend is incomplete.`,
       });
     }
     if (county.id === "helsinki" && husWide) {
       items.push({
+        title: "Helsinki's referral figure: city units only",
         text: `Helsinki's referral value covers the city's own specialist units only. Most hospital referrals from Helsinki go to ${husWide.name}, which processed ${formatPct(husWide.value)} within 3 days in ${LATEST_YEAR}.`,
         sourceId: "sotkanet-13",
       });
@@ -317,6 +376,7 @@ function buildLimitations(county: County): LimitationItem[] {
 
   const nationalGpWait = getNationalValue(GP_WAIT_ID);
   items.push({
+    title: "Finland's level is itself a delay",
     text: `At or better than Finland's level does not mean good. Finland's level is itself a delay${
       nationalGpWait
         ? `: ${formatPct(nationalGpWait.value)} of non-urgent GP visits nationally come more than a week after the need for care was assessed`
@@ -324,6 +384,7 @@ function buildLimitations(county: County): LimitationItem[] {
     }.`,
   });
   items.push({
+    title: "Colours compare with Finland, not a target",
     text: `Colours compare this area's ${LATEST_YEAR} value with Finland's ${LATEST_YEAR} value on the same indicator. They are not a target or a clinical standard.`,
   });
 

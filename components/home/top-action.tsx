@@ -10,9 +10,9 @@ import type { Evidence } from "@/lib/data";
  */
 export function TopAction({ action, keepLevel = false }: { action: Evidence; keepLevel?: boolean }) {
   return (
-    // The hero card's second row, under a hairline: the action and its owner on the left, the
+    // The first row of the "what to do first" card: the action and its owner on the left, the
     // First step box and the evidence source on the right.
-    <div className="grid gap-x-8 gap-y-4 border-t border-border px-5 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-start">
+    <div className="grid gap-x-8 gap-y-4 px-5 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-start">
       <div className="flex flex-col gap-2.5">
         <h3 className="font-sans type-caption font-medium text-muted-foreground">
           {keepLevel ? "Action to keep this level" : "Recommended action 1"}

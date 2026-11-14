@@ -6,6 +6,7 @@ import { RedFlagHelper } from "@/components/act/red-flag-helper";
 import { AskBox } from "@/components/exa/ask-box";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
 import { buildPathwaySteps, PathwaySteps } from "@/components/pathway/pathway-steps";
+import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { BackLink } from "@/components/ui/back-link";
 import { Disclosure } from "@/components/ui/disclosure";
 import {
@@ -21,7 +22,6 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { TextLink } from "@/components/ui/text-link";
 import {
   STAGE_LABELS,
-  bottleneckLede,
   getBottleneck,
   otherActions,
   pickActions,
@@ -57,39 +57,40 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
 
   return (
     <main className="page-container flex flex-col gap-8 pt-4 sm:pt-6">
+      {/* The page's one key sits beside the title, over the bars it names. */}
       <header className="flex flex-col items-start gap-2">
         <div className="flex flex-wrap items-center gap-x-6">
           <BackLink href="/">Back to all areas</BackLink>
           <BackLink href={`/county/${county.id}`}>Back to {county.name}</BackLink>
         </div>
-        <div className="flex flex-col gap-2">
-          <p className="type-caption text-balance text-muted-foreground">
-            Path to early cancer care
-            <span className="max-sm:hidden"> · </span>
-            <span className="max-sm:block">{county.name_fi}</span>
-          </p>
+        <div className="flex w-full flex-wrap items-end justify-between gap-x-6 gap-y-2">
           <h1 className="type-page">{county.name}: what to do next</h1>
+          <BarKey items={["finland", "short"]} className="sm:pb-1.5" />
         </div>
       </header>
 
-      {/* The compact step strip: where the delay sits, in one short row, so the first action
-          is on the first screen. The full detail of each step is on the county page. */}
-      <Frame aria-labelledby="where-heading">
-        <FrameHeader className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-          <FrameTitle id="where-heading" className="type-title">
-            {bottleneck.anyRed ? "Where the delay sits" : "Where the pathway stands"} ({LATEST_YEAR})
-          </FrameTitle>
-          <p className="text-sm text-pretty text-foreground">{bottleneckLede(bottleneck)}</p>
-          <BarKey items={["finland", "short"]} className="sm:ml-auto" />
-        </FrameHeader>
+      {/* The whole pathway as one small line with the break lit (the section's title over its
+          label), then the compact step strip: where the delay sits, in short rows, so the first
+          action is on the first screen. The full detail of each step is on the county page. */}
+      <Frame aria-labelledby="where-heading" className="-mt-2">
         <FramePanel padding="none">
+          <PathwayStrip
+            countyId={county.id}
+            size="sm"
+            heading={
+              <h2 id="where-heading" className="font-sans type-caption font-medium text-muted-foreground">
+                {bottleneck.anyRed ? "Where the delay sits" : "Where the pathway stands"} ({LATEST_YEAR})
+              </h2>
+            }
+            className="border-b border-border px-4 py-3 sm:px-6"
+          />
           <PathwaySteps
             steps={buildPathwaySteps(county.id)}
             density="compact"
             renderExtra={(step) =>
               step.stage === "gp_recognition" ? (
                 <TextLink kind="jump" href="#red-flags" className="type-caption sm:min-h-6">
-                  Red-flag helper
+                  Use the red-flag helper
                 </TextLink>
               ) : null
             }

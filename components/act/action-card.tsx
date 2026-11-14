@@ -47,13 +47,13 @@ function SourceMarks({ action }: { action: Evidence }) {
 /** The step to take first: the one emphasised block on a card. */
 export function FirstStep({ children, compact = false }: { children: ReactNode; compact?: boolean }) {
   return (
-    <div className="rounded-r-lg border-l-[3px] border-brand bg-muted px-4 py-3">
+    <div className="rounded-r-lg border-l-[3px] border-brand bg-muted px-4 py-2.5">
       <p className="type-caption font-medium text-muted-foreground">First step</p>
       <p
         className={
           compact
             ? "mt-1 text-sm leading-relaxed font-medium text-pretty text-foreground"
-            : "mt-1 text-base leading-[1.5] font-medium text-pretty text-foreground"
+            : "mt-0.5 text-[0.9375rem] leading-[1.5] font-medium text-pretty text-foreground"
         }
       >
         {children}
@@ -142,34 +142,38 @@ export function ActionCard({
         </span>
       </div>
 
-      <div className="mt-3 grid gap-x-10 gap-y-4 @3xl:grid-cols-2">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <h3 className="font-heading text-[1.625rem] leading-[1.2] font-semibold tracking-[-0.01em] text-pretty">
-              {plainTitle(action.action)}
-            </h3>
-          </div>
+      {/* Collapsed, a card is the title, the First step and the owner on the left, the evidence
+          on the right: about 300px. What the action involves opens with the evidence details. */}
+      <div className="mt-2.5 grid gap-x-10 gap-y-4 @3xl:grid-cols-2">
+        <div className="flex flex-col gap-3">
+          <h3 className="font-heading text-[1.5rem] leading-[1.2] font-semibold tracking-[-0.01em] text-pretty">
+            {plainTitle(action.action)}
+          </h3>
           <FirstStep>{action.first_step}</FirstStep>
-          <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
           <dl>
             <Field label="Owner">{action.who_implements}</Field>
           </dl>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-1">
             <p className="type-caption font-medium text-muted-foreground">Evidence</p>
-            {stat ? <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p> : null}
+            {stat ? <p className="numeral text-[1.375rem] leading-tight text-foreground">{stat}</p> : null}
             <p className="text-sm leading-relaxed text-pretty text-foreground tabular-nums">{action.effect_text}</p>
           </div>
           <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-muted-foreground">
             <span className="font-medium">Precedent: </span>
             {action.precedent}
           </p>
-          {/* One stack with one left edge: the one disclosure, then the secondary action. */}
-          <div className="flex flex-col items-start">
-            <Disclosure summary="Evidence details">
+          {/* One row: the one disclosure, then the secondary action beside it. Opened, the
+              disclosure takes the full width and the action moves under it, on the same edge. */}
+          <div className="flex flex-wrap items-start gap-x-5 gap-y-1">
+            <Disclosure summary="Evidence details" className="open:basis-full">
               <div className="flex flex-col gap-3 pb-2 pl-[1.375rem]">
+                <div className="flex flex-col gap-1">
+                  <p className="type-caption font-medium text-muted-foreground">What it involves</p>
+                  <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
+                </div>
                 {action.precedent.length > PRECEDENT_LONG ? (
                   <div className="flex flex-col gap-1">
                     <p className="type-caption font-medium text-muted-foreground">Full precedent</p>
@@ -198,7 +202,7 @@ export function ActionCard({
                 </div>
               </div>
             </Disclosure>
-            {children ? <div className="w-full pt-2">{children}</div> : null}
+            {children ? <div className="flex-1">{children}</div> : null}
           </div>
         </div>
       </div>

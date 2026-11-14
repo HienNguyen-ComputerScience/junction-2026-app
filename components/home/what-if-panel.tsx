@@ -1,4 +1,5 @@
-import type { CSSProperties, ReactNode } from "react";
+import { cn } from "cn";
+import type { ReactNode } from "react";
 
 import { SourceChip } from "@/components/source-chip";
 import { FramePanel } from "@/components/ui/frame";
@@ -31,6 +32,7 @@ const clamp = (n: number) => Math.min(100, Math.max(0, n));
  */
 export function WhatIfPanel({
   areaName,
+  bare = false,
   stage,
   better,
   value,
@@ -41,6 +43,8 @@ export function WhatIfPanel({
   result,
 }: {
   areaName: string;
+  /** A row inside another panel (the home "what to do first" card) instead of a panel of its own. */
+  bare?: boolean;
   stage: Stage;
   better: Better;
   /** The area's own share (null when nothing is published). */
@@ -105,13 +109,8 @@ export function WhatIfPanel({
     );
   }
 
-  return (
-    // Wide: the heading, what the bar counts, the caption and the source on the left, the bar on
-    // the right. No title strip: the small heading leads the left column.
-    <FramePanel
-      padding="none"
-      className="grid h-full gap-x-10 gap-y-4 px-5 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-center"
-    >
+  const body = (
+    <>
       <div className="flex flex-col gap-2">
         <h3 className="font-sans type-caption font-medium text-muted-foreground">What if: {STAGE_LABELS[stage]}</h3>
         {intro}
@@ -121,22 +120,53 @@ export function WhatIfPanel({
         </p>
       </div>
       {chart}
+    </>
+  );
+
+  // The sentence and its caption on top, the bar across the full width under them, so its marks
+  // have room to be labelled on one line.
+  const layout = "flex flex-col gap-5 px-5 py-5 sm:px-6";
+  return bare ? (
+    <div className={layout}>{body}</div>
+  ) : (
+    <FramePanel padding="none" className={layout}>
+      {body}
     </FramePanel>
   );
 }
 
+/** One label under the bar: where its mark is (0-100) and its text. */
+type MarkLabel = { key: string; x: number; text: string; figure?: string; dotted?: boolean };
+
+/** Assumed width of the bar on a desktop row, for spacing the labels without measuring them. */
+const BAR_PX = 680;
+/** About one character of 12px Geist, in px. */
+const CHAR_PX = 6.6;
+
 /**
- * Where a label over a span of the bar sits, without measuring it: centred on the span when the
- * span is in the middle of the track (the box reaches the nearer end, as FinlandAxis does),
- * otherwise starting at the span's left end or ending at its right end, so it never runs past
- * the bar.
+ * Places the labels of the marks on one line: each centred on its mark, kept inside the bar,
+ * then pushed apart left to right and pulled back from the right end, so none overlaps. Widths
+ * are estimated from the text length against BAR_PX; returns each label's left edge in %.
  */
-function labelOver(lo: number, hi: number): CSSProperties {
-  const centre = (lo + hi) / 2;
-  if (centre < 30) return { left: `${lo}%`, right: 0, justifyContent: "flex-start" };
-  if (centre > 70) return { left: 0, right: `${100 - hi}%`, justifyContent: "flex-end" };
-  const reach = Math.min(centre, 100 - centre);
-  return { left: `${centre - reach}%`, right: `${100 - centre - reach}%`, justifyContent: "center" };
+function placeOnOneLine(labels: { x: number; chars: number }[]): number[] {
+  const gap = (12 / BAR_PX) * 100;
+  const items = labels
+    .map((label, index) => {
+      const w = ((label.chars * CHAR_PX + 14) / BAR_PX) * 100;
+      return { index, w, left: Math.min(Math.max(label.x - w / 2, 0), 100 - w) };
+    })
+    .sort((a, b) => a.left + a.w / 2 - (b.left + b.w / 2));
+  for (let i = 1; i < items.length; i++) {
+    items[i].left = Math.max(items[i].left, items[i - 1].left + items[i - 1].w + gap);
+  }
+  const last = items[items.length - 1];
+  if (last && last.left + last.w > 100) last.left = 100 - last.w;
+  for (let i = items.length - 2; i >= 0; i--) {
+    items[i].left = Math.min(items[i].left, items[i + 1].left - gap - items[i].w);
+  }
+  const out: number[] = [];
+  for (const item of items) out[item.index] = Math.max(0, item.left);
+  return out;
 }
 
 function WhatIfBar({
@@ -161,15 +191,20 @@ function WhatIfBar({
   const bestX = best ? clamp(best.value) : null;
   const valueX = clamp(value);
 
+  const marks: MarkLabel[] = [
+    { key: "now", x: valueX, text: "Now" },
+    { key: "finland", x: clamp(finland), text: "Finland", figure: formatPct(finland) },
+    ...(best && bestX !== null
+      ? [{ key: "best", x: bestX, text: `Best: ${best.name}`, figure: formatPct(best.value), dotted: true }]
+      : []),
+  ];
+  const lefts = placeOnOneLine(
+    marks.map((mark) => ({ x: mark.x, chars: mark.text.length + (mark.figure ? mark.figure.length + 1 : 0) + (mark.dotted ? 2 : 0) })),
+  );
+
   return (
-    <figure className="flex flex-col gap-1.5">
-      {/* Every mark is named on the bar, in 12px: the area's end above, Finland and the best area below. */}
-      <div aria-hidden className="relative h-5 type-note text-muted-foreground">
-        <span className="absolute inset-y-0 flex items-center whitespace-nowrap" style={labelOver(valueX, valueX)}>
-          Now <span className="ml-1 figure text-foreground">{formatPct(value)}</span>
-        </span>
-      </div>
-      <div aria-hidden className="relative h-4 rounded-[2px] bg-track">
+    <figure className="flex flex-col gap-1">
+      <div aria-hidden className="relative mt-2 h-4 rounded-[2px] bg-track">
         {/* The bracket: a dimension line over exactly the span the amount counts. */}
         {lo !== null && hi !== null && amount !== null && (
           <span
@@ -186,27 +221,37 @@ function WhatIfBar({
           />
         )}
       </div>
-      <div aria-hidden className="relative h-4 type-note text-muted-foreground">
-        <span
-          className="absolute inset-y-0 flex font-medium whitespace-nowrap"
-          style={labelOver(clamp(finland), clamp(finland))}
-        >
-          Finland <span className="ml-1 figure text-foreground">{formatPct(finland)}</span>
-        </span>
-      </div>
-      {best && bestX !== null && (
-        <div aria-hidden className="relative h-4 type-note text-muted-foreground">
+      {/* Desktop: every mark is named under the bar, on one baseline, each with a short tick up
+          to its mark. */}
+      <div aria-hidden className="relative h-8 type-note text-muted-foreground max-sm:hidden">
+        {marks.map((mark) => (
+          <span key={mark.key} className="absolute top-0 h-2 w-px bg-foreground/50" style={{ left: `${mark.x}%` }} />
+        ))}
+        {marks.map((mark, i) => (
           <span
-            className="absolute inset-y-0 flex items-center gap-1.5 whitespace-nowrap"
-            style={bestX < 50 ? { left: `${bestX}%`, marginLeft: -1 } : { right: `${100 - bestX}%`, marginRight: -1 }}
+            key={mark.key}
+            className={cn(
+              "absolute top-3 flex items-baseline gap-1 whitespace-nowrap",
+              mark.key === "finland" && "font-medium",
+            )}
+            style={{ left: `${lefts[i]}%` }}
           >
-            <span className="h-3 w-0 border-l-2 border-dotted border-foreground/80" />
-            <span>
-              Best: {best.name} <span className="figure text-foreground">{formatPct(best.value)}</span>
-            </span>
+            {mark.dotted && <span className="h-2.5 w-0 self-center border-l-2 border-dotted border-foreground/80" />}
+            <span>{mark.text}</span>
+            {mark.figure && <span className="figure text-foreground">{mark.figure}</span>}
           </span>
-        </div>
-      )}
+        ))}
+      </div>
+      {/* Phone: the bar is too short for one line; the labels stack under it. */}
+      <div aria-hidden className="flex flex-col gap-1 pt-1 type-note text-muted-foreground sm:hidden">
+        {marks.map((mark) => (
+          <span key={mark.key} className="flex items-center gap-1.5">
+            {mark.dotted && <span className="h-3 w-0 border-l-2 border-dotted border-foreground/80" />}
+            <span>{mark.text}</span>
+            {mark.figure && <span className="figure text-foreground">{mark.figure}</span>}
+          </span>
+        ))}
+      </div>
       <figcaption className="sr-only">
         {amount !== null && `${amount} ${word} of every 100. `}
         {best &&

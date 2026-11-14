@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { cn } from "cn";
 
-import { gapToFinland } from "@/components/ranking/ranking-list";
 import { SourceChip } from "@/components/source-chip";
+import { betterFromDirection, GapPhrase } from "@/components/ui/gap-phrase";
 import { MeasureBar } from "@/components/ui/measure-bar";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import { STAGE_LABELS } from "@/lib/act";
@@ -174,14 +174,18 @@ export function PathwaySteps({
   );
 }
 
-/** What a step without any measure says (step 2: no public statistic exists). */
-const NO_STATISTIC = "No public statistic shows how often GPs spot possible cancer at the first visit.";
+/** What a step without any measure says (step 2: no public statistic exists, anywhere). */
+const NO_STATISTIC =
+  "Not measured anywhere in Finland: no public statistic shows how often GPs spot possible cancer at the first visit.";
 
 /** The same, in one short line for the compact strip. */
-const NO_STATISTIC_SHORT = "No public statistic measures this step";
+const NO_STATISTIC_SHORT = "Not measured anywhere in Finland";
 
 /** The label that always stands with a wider value shown in place of an area's own. */
 const sharedLabel = (name: string) => `${name}-wide value, not a county figure`;
+
+/** A hospital group's name, explained where the step cards first use it. */
+export const glossName = (name: string) => (name === "HUS" ? "HUS (Helsinki University Hospital region)" : name);
 
 /**
  * One step card, the same six parts in the same order at both densities (the steps share the
@@ -196,7 +200,15 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
   const shared = value === null ? measure?.shared : undefined;
   const shown = value ?? shared?.value ?? null;
   const description =
-    shown !== null && measure ? measure.counts : measure ? measure.note : compact ? NO_STATISTIC_SHORT : NO_STATISTIC;
+    shown !== null && measure
+      ? shared
+        ? `${measure.counts}, all of ${glossName(shared.name)}`
+        : measure.counts
+      : measure
+        ? measure.note
+        : compact
+          ? NO_STATISTIC_SHORT
+          : NO_STATISTIC;
   return (
     <li
       className={cn(
@@ -209,32 +221,30 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
     >
       <StepTitle step={step} compact={compact} />
 
-      <div className={cn("flex flex-wrap items-end gap-x-2.5 gap-y-1", compact ? "pt-1.5" : "min-h-[3.75rem] pt-3")}>
-        {shown !== null ? (
-          <span
-            className={cn(
-              "numeral leading-none",
-              compact ? "text-[1.75rem]" : "text-[2.25rem]",
-              value !== null ? STATUS_FIGURE[status] : "text-foreground",
-            )}
-          >
-            {formatPct(shown)}
-          </span>
-        ) : (
-          <span aria-hidden className="numeral text-[1.5rem] leading-none text-muted-foreground">
-            –
-          </span>
-        )}
+      {/* The value row: every step's figure (or its dash) starts at the row's top in the same
+          size, so the three figures share one baseline; the comparison in words sits beside it. */}
+      <div className={cn("flex items-baseline gap-x-2.5", compact ? "pt-1.5" : "pt-3")}>
+        <span
+          aria-hidden={shown === null ? true : undefined}
+          className={cn(
+            "numeral shrink-0 leading-none",
+            compact ? "text-[1.75rem]" : "text-[2.25rem]",
+            shown === null ? "text-muted-foreground" : value !== null ? STATUS_FIGURE[status] : "text-foreground",
+          )}
+        >
+          {shown !== null ? formatPct(shown) : "–"}
+        </span>
         {value !== null && measure && (
-          <span className="pb-px type-caption whitespace-nowrap text-muted-foreground">
-            <span className={cn("figure font-medium", STATUS_FIGURE[status])}>
-              {gapToFinland(value, measure.finland)}
-            </span>{" "}
-            vs Finland
-          </span>
+          <GapPhrase
+            value={value}
+            finland={measure.finland}
+            better={betterFromDirection(measure.direction)}
+            inkClassName={STATUS_FIGURE[status]}
+            className="min-w-0 type-caption text-pretty text-muted-foreground"
+          />
         )}
         {shared && (
-          <span className="pb-px type-caption text-pretty text-muted-foreground">{sharedLabel(shared.name)}</span>
+          <span className="min-w-0 type-caption text-pretty text-muted-foreground">{sharedLabel(shared.name)}</span>
         )}
       </div>
 

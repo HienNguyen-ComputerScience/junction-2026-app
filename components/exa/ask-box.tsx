@@ -67,6 +67,7 @@ export function AskBox() {
       });
   }
 
+  const ready = question.trim().length >= 3;
   const data = state.kind === "done" ? state.data : null;
   const unavailable = data?.freshness === "unavailable" || (state.kind === "error" && state.message === "");
   const answered = data?.answer && data.answer.sentences.length > 0;
@@ -110,16 +111,31 @@ export function AskBox() {
             className="h-11 w-full min-w-0 bg-transparent text-[0.9375rem] outline-none placeholder:text-faint disabled:opacity-60"
           />
         </div>
+        {/* Idle (nothing typed yet): a quiet outline button that says what it waits for and, if
+            pressed, puts the cursor in the box. Ready: the filled primary button. */}
         <Button
           type="submit"
           size="lg"
+          variant={ready || loading ? "default" : "outline"}
           className="h-11 px-5"
-          disabled={loading || question.trim().length < 3}
+          disabled={loading}
+          aria-describedby={ready ? undefined : "ask-box-idle"}
+          onClick={(event) => {
+            if (ready) return;
+            event.preventDefault();
+            document.getElementById("ask-box-input")?.focus();
+          }}
         >
           {loading ? "Searching…" : "Ask"}
           {!loading && <ArrowUp aria-hidden data-icon="inline-end" />}
         </Button>
       </form>
+
+      {!ready && !loading && (
+        <p id="ask-box-idle" className="-mt-3 type-caption text-muted-foreground">
+          Type a question of at least 3 characters, or try one below.
+        </p>
+      )}
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3" role="group" aria-label="Example questions">
         <span aria-hidden className="type-caption text-muted-foreground sm:pt-2">Try</span>

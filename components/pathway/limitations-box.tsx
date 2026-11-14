@@ -5,6 +5,8 @@ import { SourceChip } from "@/components/source-chip";
 import { Disclosure } from "@/components/ui/disclosure";
 
 export type LimitationItem = {
+  /** One short line that names the limitation, in bold; the full wording is `text`. */
+  title?: string;
   text: string;
   sourceId?: string;
 };
@@ -59,6 +61,7 @@ export function LimitationsBox({
       </aside>
     );
   }
+
 
   const first = items.slice(0, visibleCount);
   const rest = items.slice(visibleCount);
@@ -115,16 +118,21 @@ function withFigures(text: string): ReactNode {
   );
 }
 
-const BODY = "text-[0.8125rem] leading-[1.6] text-pretty text-muted-foreground";
+const BODY = "text-[0.8125rem] leading-[1.55] text-pretty text-muted-foreground";
 
+/**
+ * One limitation: a bold short line in the text colour (its source chip at the right end), and
+ * the full wording under it in the secondary grey. An item without a title keeps the old shape:
+ * "Short name: limitation" is split at the colon; any other text is the detail alone.
+ */
 function Limitation({ item }: { item: LimitationItem }) {
-  // Indicator items read "Short name: limitation". The name becomes the item's first line with
-  // its source at the right end, the limitation sits under it; the words stay the same.
-  const split = item.sourceId ? item.text.indexOf(": ") : -1;
-  if (split <= 0) {
+  const split = item.title ? -1 : item.sourceId ? item.text.indexOf(": ") : -1;
+  const title = item.title ?? (split > 0 ? item.text.slice(0, split) : null);
+  const detail = split > 0 ? item.text.slice(split + 2) : item.text;
+  if (!title) {
     return (
       <li className="flex flex-col gap-0.5">
-        <p className={BODY}>{withFigures(item.text)}</p>
+        <p className={BODY}>{withFigures(detail)}</p>
         {item.sourceId && <SourceChip sourceId={item.sourceId} />}
       </li>
     );
@@ -132,13 +140,13 @@ function Limitation({ item }: { item: LimitationItem }) {
   return (
     <li className="flex flex-col gap-0.5">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[0.8125rem] leading-5 font-medium text-foreground">
-          {item.text.slice(0, split)}
+        <p className="text-[0.8125rem] leading-5 font-semibold text-foreground">
+          {title}
           <span className="sr-only">:</span>
         </p>
         {item.sourceId && <SourceChip sourceId={item.sourceId} />}
       </div>
-      <p className={BODY}>{withFigures(item.text.slice(split + 2))}</p>
+      <p className={BODY}>{withFigures(detail)}</p>
     </li>
   );
 }

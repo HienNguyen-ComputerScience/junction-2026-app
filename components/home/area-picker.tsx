@@ -33,9 +33,10 @@ type Props = {
   year: number;
   totalAreas: number;
   /** Server-rendered parts, so no snapshot data is shipped to the browser. */
+  /** Per area: the three steps as the hero's chips. */
   steps: Record<string, ReactNode>;
-  /** Per area: the bottleneck step's focal figure (absent when it has no value). */
-  leads: Record<string, ReactNode>;
+  /** Per area: the whole pathway as one line, its break lit. */
+  lines: Record<string, ReactNode>;
   whatIfs: Record<string, ReactNode>;
   actions: Record<string, ReactNode>;
   mapChip: ReactNode;
@@ -61,7 +62,7 @@ export function AreaPicker({
   year,
   totalAreas,
   steps,
-  leads,
+  lines,
   whatIfs,
   actions,
   mapChip,
@@ -136,18 +137,21 @@ export function AreaPicker({
         </TextLink>
       </FramePanel>
 
-      {/* The answer for the selected area: the hero card (figure, verdict, the way to the actions,
-          and the top action as its second row), then the what-if, then the three steps. */}
+      {/* The answer for the selected area. The hero: the verdict, the three steps as chips, the
+          way to the actions, and under it the whole pathway as one line with its break lit. Then
+          one card for what to do first: the top action and the what-if. */}
       <div ref={answerRef} className="grid scroll-mt-4 content-start gap-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
         <FramePanel padding="none">
           <div className="flex flex-col gap-5 px-5 pt-5 pb-5 sm:px-6">
-            <div className="flex flex-col gap-3" aria-live="polite">
+            <div className="flex flex-col gap-1.5" aria-live="polite">
               <p className="type-caption font-medium text-muted-foreground">
                 {area.name}, {year}: {area.status === "red" ? "where the pathway breaks" : "where the pathway stands"}
               </p>
-              {leads[area.id] ?? null}
-              <h2 className="type-heading text-pretty text-foreground">{area.verdict}</h2>
+              <h2 className="font-heading text-[1.25rem] leading-snug font-semibold tracking-[-0.01em] text-pretty text-foreground sm:text-[1.375rem]">
+                {area.verdict}
+              </h2>
             </div>
+            {steps[area.id]}
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
               <Link href={`/county/${area.id}/act`} className={cn(buttonVariants({ size: "lg" }), "max-sm:w-full")}>
                 See all actions
@@ -158,25 +162,29 @@ export function AreaPicker({
               </TextLink>
             </div>
           </div>
-          {action}
+          <div className="flex flex-col gap-3 border-t border-border px-5 pt-4 pb-5 sm:px-6">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 className="font-sans type-caption font-medium text-foreground">From the first symptom to treatment</h3>
+              <p className="type-caption text-muted-foreground">
+                The eight steps of the Junction 2026 challenge talk (H. Kuitunen)
+              </p>
+            </div>
+            {lines[area.id]}
+          </div>
         </FramePanel>
 
-        {what}
-
-        <FramePanel padding="none">
-          <FramePanelLabel>
-            <h3 className="font-sans type-caption font-medium text-muted-foreground">
-              The three steps to a specialist ({year})
-            </h3>
-          </FramePanelLabel>
-          {steps[area.id]}
-        </FramePanel>
+        {(action || what) && (
+          <FramePanel padding="none" className="divide-y divide-border">
+            {action}
+            {what}
+          </FramePanel>
+        )}
       </div>
 
       {/* The map: last on a phone, under the picker from lg. */}
       <FramePanel padding="none" className="max-lg:order-last lg:col-start-1 lg:row-start-2">
         <FramePanelLabel>
-          <span>Worst measured step against Finland</span>
+          <span>Worst measured step against Finland ({year})</span>
           {mapChip}
         </FramePanelLabel>
         <div className="flex flex-col items-center gap-3 px-5 pt-4 pb-4 sm:px-6">

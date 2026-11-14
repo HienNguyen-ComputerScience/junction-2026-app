@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 
 import { SourceChip } from "@/components/source-chip";
+import { GapPhrase } from "@/components/ui/gap-phrase";
 import { BarFill, FinlandTick, withFigures } from "@/components/ui/measure-bar";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { LATEST_YEAR, type County, type GapStatus } from "@/lib/data";
@@ -22,6 +23,12 @@ type Props = {
   nationalReferral: number;
   gpWaitSourceId: string;
   referralSourceId: string;
+  /**
+   * "wait": longest GP wait first, in status groups (rows as given). "change": the rows as
+   * given, in one list without status groups, numbered by position; the change since
+   * FIRST_YEAR is the row's lead line.
+   */
+  view?: "wait" | "change";
 };
 
 // Desktop (lg): rank | area | bar | GP wait | referral (with the row's chevron at its end).
@@ -29,7 +36,7 @@ type Props = {
 // of a group. It is drawn through bar rows only: a group heading has no bar and no line.
 // Below lg: area (rank inline before the name) | value, then the change and gap line, the bar, and the referral line.
 const ROW_GRID =
-  "grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 lg:grid-cols-[2rem_minmax(0,12rem)_minmax(0,1fr)_10.5rem_15.5rem] lg:gap-x-5";
+  "grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 lg:grid-cols-[2rem_minmax(0,11.5rem)_minmax(0,1fr)_13.5rem_17rem] lg:gap-x-5";
 
 // The referral column is a second indicator, not a detail of the GP wait: a hairline with 24px
 // on each side separates the two, in the header, the group headings and every row alike.
@@ -46,23 +53,8 @@ const ROW_LINK =
 const ROW_DIVIDER =
   "before:absolute before:inset-x-2.5 before:top-0 before:h-px before:bg-foreground/[0.06] lg:before:inset-x-0";
 
-// Referral column: one short tag per state, so every cell has the same shape.
-const REFERRAL_TAG: Record<GapStatus, string> = {
-  red: "Slower than Finland",
-  amber: "At least as fast",
-  no_data: "No public data",
-};
-
-/**
- * The gap to Finland in percentage points, for display: the difference of the two one-decimal
- * figures shown on screen, with a real minus sign. "+" means a larger share than Finland.
- */
-export function gapToFinland(value: number, finland: number): string {
-  const diff = Number(value.toFixed(1)) - Number(finland.toFixed(1));
-  const abs = Math.abs(diff).toFixed(1);
-  if (abs === "0.0") return "0.0 pts";
-  return `${diff > 0 ? "+" : "−"}${abs} pts`;
-}
+// Referral column: the one status term per state, as everywhere else.
+const REFERRAL_TAG: Record<GapStatus, string> = STATUS_LABEL;
 
 export function RankingList({
   rows,
@@ -71,7 +63,9 @@ export function RankingList({
   nationalReferral,
   gpWaitSourceId,
   referralSourceId,
+  view = "wait",
 }: Props) {
+  const flat = view === "change";
   const finlandX: CSSProperties = { left: `${nationalGpWait}%` };
   const finlandLabel = `Finland ${formatPct(nationalGpWait)}`;
   const total = rows.length + unranked.length;
@@ -113,11 +107,14 @@ export function RankingList({
       <ol className="flex flex-col px-1.5 py-1.5 lg:px-0 lg:py-0">
         {rows.map((row, i) => {
           const prev = rows[i - 1];
-          const startsGroup = !prev || prev.gpStatus !== row.gpStatus;
+          const startsGroup = flat ? i === 0 : !prev || prev.gpStatus !== row.gpStatus;
           const groupSize = startsGroup ? countRun(rows, i) : 0;
           return (
             <li key={row.county.id}>
-              {startsGroup && (
+              {startsGroup && flat && (
+                <ChipsRow gpWaitSourceId={gpWaitSourceId} referralSourceId={referralSourceId} />
+              )}
+              {startsGroup && !flat && (
                 <GroupDivider
                   status={row.gpStatus}
                   count={groupSize}
@@ -130,6 +127,8 @@ export function RankingList({
               <RankingRowLink
                 row={row}
                 index={i}
+                position={flat ? i + 1 : row.rank}
+                leadChange={flat}
                 divider={!startsGroup}
                 nationalGpWait={nationalGpWait}
                 nationalReferral={nationalReferral}
@@ -316,6 +315,8 @@ function ReferralMiniBar({
 function RankingRowLink({
   row,
   index,
+  position,
+  leadChange,
   divider,
   nationalGpWait,
   nationalReferral,
@@ -323,6 +324,10 @@ function RankingRowLink({
 }: {
   row: RankingRow;
   index: number;
+  /** The number in the first column: the GP wait rank, or the place in the change list. */
+  position: number;
+  /** The change since FIRST_YEAR is what the list is sorted by: it reads in the text colour. */
+  leadChange: boolean;
   /** A hairline above the row: every row of a group except the first. */
   divider: boolean;
   nationalGpWait: number;
@@ -340,15 +345,15 @@ function RankingRowLink({
     >
       {/* Desktop: its own column. */}
       <span className="hidden figure text-[0.8125rem] leading-6 text-faint lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:flex lg:items-center">
-        <span className="sr-only">Rank </span>
-        {row.rank}
+        <span className="sr-only">{leadChange ? "Place " : "Rank "}</span>
+        {position}
       </span>
 
       <span className="col-start-1 row-start-1 flex min-w-0 items-baseline gap-2 pt-3 text-[0.9375rem] leading-6 font-semibold transition-colors group-hover:text-brand-ink group-focus-visible:text-brand-ink lg:col-start-2 lg:pt-1.5">
         {/* Phone: the rank is inline before the name, so the bar can use the full card width. */}
         <span className="shrink-0 figure text-[0.8125rem] font-normal text-faint lg:hidden">
-          <span className="sr-only">Rank </span>
-          {row.rank}
+          <span className="sr-only">{leadChange ? "Place " : "Rank "}</span>
+          {position}
         </span>
         <span className="truncate">{row.county.name}</span>
       </span>
@@ -364,15 +369,13 @@ function RankingRowLink({
           two cells of the grid on desktop. */}
       <span className="col-span-2 col-start-1 row-start-2 flex items-center justify-between gap-x-3 pt-0.5 lg:contents">
         <span className="flex h-5 min-w-0 items-center lg:col-start-2 lg:row-start-2 lg:h-[1.625rem] lg:items-start">
-          <ChangeSince change={row.gpWaitChange} />
+          <ChangeSince change={row.gpWaitChange} lead={leadChange} />
         </span>
         <span className="flex h-5 items-center justify-end lg:col-start-4 lg:row-start-2 lg:h-[1.625rem] lg:items-start">
           <StatusBadge status={row.gpStatus} variant="quiet">
             <span>
               <span className="sr-only">{STATUS_LABEL[row.gpStatus]}: </span>
-              <span className="figure">{gapToFinland(row.gpWait.value, nationalGpWait)}</span>
-              {/* On a phone the line above the list says what the gap is measured against. */}
-              <span className="max-lg:sr-only"> vs Finland</span>
+              <GapPhrase value={row.gpWait.value} finland={nationalGpWait} better="lower" />
             </span>
           </StatusBadge>
         </span>
@@ -436,10 +439,7 @@ function RankingRowLink({
                 REFERRAL_TAG[referralStatus]
               )}
               {referralStatus !== "no_data" && (
-                <span className="sr-only">
-                  {referralStatus === "amber" && !cityUnitsOnly ? " as Finland" : ""} (Finland{" "}
-                  {formatPct(nationalReferral)})
-                </span>
+                <span className="sr-only"> (Finland {formatPct(nationalReferral)})</span>
               )}
             </span>
           </StatusBadge>
@@ -453,22 +453,39 @@ function RankingRowLink({
 }
 
 /**
- * Change in percentage points since FIRST_YEAR, in words: "27.4 pts worse since 2023". No arrow
- * and no sign (a rising arrow reads as good news), and no colour: colour is for status.
+ * Change in percentage points since FIRST_YEAR, in words: "27.4 points worse since 2023". No
+ * arrow and no sign (a rising arrow reads as good news), and no colour: colour is for status.
+ * `lead`: the list is sorted by it, so it reads in the text colour.
  */
-function ChangeSince({ change }: { change: number | null }) {
+function ChangeSince({ change, lead = false }: { change: number | null; lead?: boolean }) {
   if (change === null) return null;
   const size = Math.abs(change).toFixed(1);
   return (
-    <span className="truncate type-caption text-muted-foreground">
+    <span className={`truncate type-caption ${lead ? "font-medium text-foreground" : "text-muted-foreground"}`}>
       {size === "0.0" ? (
         "No change"
       ) : (
         <>
-          <span className="figure">{size} pts</span> {change > 0 ? "worse" : "better"}
+          <span className="figure">{size}</span> {size === "1.0" ? "point" : "points"} {change > 0 ? "worse" : "better"}
         </>
       )}{" "}
       since {FIRST_YEAR}
     </span>
+  );
+}
+
+/** The flat list's one heading row: a source chip over each figure column, no status group. */
+function ChipsRow({ gpWaitSourceId, referralSourceId }: { gpWaitSourceId: string; referralSourceId: string }) {
+  return (
+    <div className={`${ROW_GRID} px-2.5 lg:px-5`}>
+      <div className="col-span-2 flex flex-wrap items-center gap-2 pt-3 pb-2 lg:contents">
+        <span className="flex shrink-0 lg:col-start-4 lg:justify-end lg:pt-4 lg:pb-2">
+          <SourceChip sourceId={gpWaitSourceId} year={LATEST_YEAR} />
+        </span>
+        <span className={`flex shrink-0 lg:pt-4 lg:pb-2 ${REFERRAL_COL}`}>
+          <SourceChip sourceId={referralSourceId} year={LATEST_YEAR} />
+        </span>
+      </div>
+    </div>
   );
 }

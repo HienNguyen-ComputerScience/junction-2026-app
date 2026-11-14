@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { Check, ListChecks, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Check, ShieldAlert } from "lucide-react";
 import { cn } from "cn";
 
 import { FramePanel, FramePanelLabel } from "@/components/ui/frame";
@@ -49,17 +49,26 @@ const SECTION = {
   links: "Check the detail in the guideline",
 } as const;
 
-/** Before any input: one calm panel saying what to do. The result rows appear with a result. */
+/**
+ * Before any input: one calm panel that points back to the inputs on its left and says what to
+ * type there. The result rows appear with a result, in this same place.
+ */
 function EmptyResult() {
   return (
     <FramePanel padding="none">
       <FramePanelLabel>
         <span>{SECTION.category}</span>
       </FramePanelLabel>
-      <div className="flex flex-col items-start gap-2 px-5 py-5 sm:px-6">
-        <ListChecks aria-hidden className="size-4 text-muted-foreground" strokeWidth={1.75} />
-        <p className="type-heading">No concern picked yet</p>
-        <p className="type-caption text-muted-foreground">Pick a concern on the left, or type a few words.</p>
+      <div className="flex items-start gap-3 px-5 py-5 sm:px-6">
+        <ArrowLeft aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground max-lg:rotate-90" strokeWidth={1.75} />
+        <div className="flex flex-col gap-1.5">
+          <p className="type-heading">No concern picked yet</p>
+          <p className="text-sm leading-relaxed text-pretty text-muted-foreground">
+            Type the warning sign in a few words, such as <span className="text-foreground">blood in stool</span>{" "}
+            or <span className="text-foreground">lump in the neck</span>, or tick a concern. The route to take
+            appears here.
+          </p>
+        </div>
       </div>
     </FramePanel>
   );
