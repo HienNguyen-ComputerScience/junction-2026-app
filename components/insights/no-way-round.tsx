@@ -93,7 +93,7 @@ export function NoWayRoundArea({ area, index = 0 }: { area: NwrArea; index?: num
   );
 }
 
-function TestsTable() {
+export function TestsTable() {
   const nameOf = new Map(noWayRound.areas.map((a) => [a.county_id, a.name]));
   return (
     <div className="flex flex-col gap-3">
@@ -140,7 +140,7 @@ function TestsTable() {
   );
 }
 
-function AreaTable() {
+export function AreaTable() {
   const tierWords: Record<NwrArea["tier"], string> = {
     every: "Every test",
     "main-only": "Main view, not every test",

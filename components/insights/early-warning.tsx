@@ -13,7 +13,7 @@ const DIRECTION: Record<string, string> = {
   "3620": "lower attendance is worse",
 };
 
-function Flag({ row }: { row: WarningRow }) {
+export function Flag({ row }: { row: WarningRow }) {
   if (!row.flag) return <span>No flag</span>;
   return (
     <span className="inline-flex items-center gap-1.5 font-semibold text-forest-ink">
@@ -27,7 +27,7 @@ function Flag({ row }: { row: WarningRow }) {
   );
 }
 
-function seriesText(row: WarningRow): string {
+export function seriesText(row: WarningRow): string {
   return row.series.map((p) => `${p.year}: ${p.value === null ? "no value" : formatValue(row.indicator_id, p.value)}`).join(", ");
 }
 

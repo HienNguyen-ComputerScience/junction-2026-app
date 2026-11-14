@@ -10,7 +10,7 @@ import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { buildStepTabs } from "@/components/pathway/step-panels";
 import { AreaLead, spellHus } from "@/components/county/area-lead";
 import { StepsPicture, StepStoryText } from "@/components/county/step-story";
-import { Disclosure, MoreCard, PrintButton, Reveal, ScrollStory } from "@/components/motion";
+import { Disclosure, FocusGroup, MoreCard, PrintButton, Reveal, ScrollStory } from "@/components/motion";
 import { HUS_FULL } from "@/components/pathway/wording";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { buttonVariants } from "@/components/ui/button";
@@ -66,6 +66,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
 
   return (
     <main className="page-container flex flex-col pt-4 sm:pt-6">
+      <FocusGroup>
       <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
 
       <AreaLead countyId={county.id}>
@@ -134,6 +135,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           },
         ]}
       />
+      </FocusGroup>
     </main>
   );
 }

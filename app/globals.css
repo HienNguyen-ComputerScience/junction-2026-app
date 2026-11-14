@@ -511,6 +511,25 @@ h2:not([class*="type-"], .font-sans) {
   }
 }
 
+/* FocusGroup (components/motion/focus-group.tsx). While the effect is on (set by script after
+   hydration, away from the page's top and bottom), items other than the one in focus step back.
+   The floor is measured, not guessed: at 0.8 every text/surface pair used in a chunk still passes
+   AA (charcoal on cream 8.3:1, red ink 5.4:1, muted text on keylime 4.5:1); 0.3 and 0.5 fail. */
+[data-focus-item] {
+  transition:
+    opacity 350ms var(--motion-ease),
+    transform 350ms var(--motion-ease);
+}
+[data-focus-group][data-focus-on] [data-focus-item]:not([data-focus="in"]):not(:focus-within):not(:has(details[open])) {
+  opacity: 0.85;
+}
+@media (min-width: 640px) {
+  [data-focus-group][data-focus-on] [data-focus-item]:not([data-focus="in"]):not(:focus-within):not(:has(details[open])) {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
 /* Disclosure (components/motion/disclosure.tsx): a native <details> that eases open where the
    browser can animate one, and simply opens elsewhere. */
 @supports (interpolate-size: allow-keywords) {
@@ -534,6 +553,15 @@ h2:not([class*="type-"], .font-sans) {
 
 /* Reduced motion: everything is simply there. A step a button has not shown yet stays hidden. */
 @media (prefers-reduced-motion: reduce) {
+  [data-focus-item] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  [data-story-step],
+  .scroll-story-step > * {
+    transition: none !important;
+  }
   [data-reveal],
   [data-bar-fill],
   [data-number-final],
@@ -585,6 +613,10 @@ h2:not([class*="type-"], .font-sans) {
     min-height: 0 !important;
     break-inside: avoid;
   }
+  [data-focus-item] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
   html,
   body {
     background: #fff !important;
@@ -613,6 +645,10 @@ h2:not([class*="type-"], .font-sans) {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+  /* A count caught mid-run must not print its moving digits over the final value. */
+  [data-slot="animated-number"] > [aria-hidden] {
+    display: none !important;
   }
   /* Closed sections print open (PrintExpand does the same from script). */
   details::details-content {
