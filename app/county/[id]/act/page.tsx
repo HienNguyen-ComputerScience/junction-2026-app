@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ActionCard, ActionSummary, plainTitle } from "@/components/act/action-card";
-import { RedFlagHelper } from "@/components/act/red-flag-helper";
+import { ReferralRoutes } from "@/components/act/referral-routes";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
 import { WhatIfForArea } from "@/components/home/what-if-panel";
 import { buildPathwaySteps, PathwaySteps } from "@/components/pathway/pathway-steps";
@@ -159,8 +159,8 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
             density="compact"
             renderExtra={(step) =>
               step.stage === "gp_recognition" ? (
-                <TextLink kind="jump" href="#red-flags" className="type-caption sm:min-h-6">
-                  Which referral route fits a concern?
+                <TextLink kind="jump" href="#referral-routes" className="type-caption sm:min-h-6">
+                  The four referral routes a county needs
                 </TextLink>
               ) : null
             }
@@ -170,17 +170,17 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
 
       <WhatIfForArea countyId={county.id} areaName={county.name} />
 
-      <Frame aria-labelledby="red-flags">
+      <Frame aria-labelledby="referral-routes">
         <FrameHeader>
-          <FrameTitle id="red-flags" className="type-title scroll-mt-24">
-            Which referral route fits a concern?
+          <FrameTitle id="referral-routes" className="type-title scroll-mt-24">
+            The four referral routes a county needs
           </FrameTitle>
           <FrameDescription>
-            For the &ldquo;GP recognises warning signs&rdquo; step: a concern in, the referral route out.
+            Decision support, not diagnosis. What each route is for, and the guideline or precedent behind it.
           </FrameDescription>
         </FrameHeader>
         <FramePanel padding="lg">
-          <RedFlagHelper />
+          <ReferralRoutes />
         </FramePanel>
       </Frame>
 

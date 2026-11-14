@@ -11,7 +11,7 @@ A wellbeing services county director (or a GP in that county). Judges are market
 ## Core flow (3 screens max)
 1. **County ranking:** counties ranked by GP wait (Sotkanet 6411) and referral processing (13 / 5033). Every number has a source chip (source, year).
 2. **County pathway:** for one county, whether the delay sits at getting to a GP or at GP → specialist, as stage cards (red / amber / grey = no public data). The limitations box is always visible.
-3. **Act:** 2–3 recommended actions for that county's bottleneck, each with an owner, a first step, a precedent (Denmark's fast-track pathways, UK Rapid Diagnostic Centres, nurse triage) and a source. Includes the red-flag helper: symptoms in, matching guideline warning signs and the fastest referral route out (decision support, not diagnosis).
+3. **Act:** 2–3 recommended actions for that county's bottleneck, each with an owner, a first step, a precedent (Denmark's fast-track pathways, UK Rapid Diagnostic Centres, nurse triage) and a source. Includes "The four referral routes a county needs": a static panel for the director showing the fast-track, vague-symptoms, see-a-GP-soon and safety-net routes, the concerns each covers, and the guideline or precedent behind each (decision support, not diagnosis). FirstLine is a tool for county administrators, not patients or GPs, so it has no symptom input.
 
 ## Data model / API contracts
 - Static JSON snapshot committed under `data/`: `sources`, `indicators`, `values` (county × indicator × year), `gaps`, `evidence`. Every row has a `source_id`; rows without one are not committed. The demo works if Sotkanet or the LLM is down.
@@ -37,7 +37,7 @@ A wellbeing services county director (or a GP in that county). Judges are market
 ## Non-goals (things we will NOT build this weekend)
 - Patient data of any kind.
 - Treatment access (bottleneck 4): the data is flat.
-- Diagnosis. The red-flag helper is decision support only.
+- Diagnosis, and any symptom checker or patient-facing input. The referral-routes panel describes routes a county should offer; it never judges an individual's symptoms.
 - Copying guideline text. NICE NG12 and Käypä hoito may not be reproduced in the app without permission: link and cite only.
 - Accounts, auth, a database (unless the lead decides otherwise).
 
