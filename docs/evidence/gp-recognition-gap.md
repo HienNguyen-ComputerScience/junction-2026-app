@@ -48,3 +48,15 @@ Using any of these as "GP recognises warning signs" would mislabel a county, whi
 - Cancer Registry bowel cancer report (news): https://www.verkkouutiset.fi/a/suolistosyopaan-sairastuneet-kayvat-useasti-laakarissa-ennen-diagnoosia/
 - ICBP emergency presentation study: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9046095/
 - HUS access to cancer treatment (403 when fetched): https://www.hus.fi/en/access-to-cancer-treatment
+
+## What Finland should measure (proposal, 14 Nov)
+
+The step experts call the bottleneck has no county data, so we show what to start measuring and who owns it. Both sources read in Europe PMC on 14 Nov:
+
+- **England records how every cancer was found.** Linking cancer registrations with hospital and waiting-time data, every cancer diagnosed in England in 2006–2008 was put into one of eight "Routes to Diagnosis". "Most cancers were diagnosed through one of Emergency Presentation (24%), TWW (26%) or GP Referral (21%)". "Patients presenting via Emergency routes have substantially lower 1-year relative survival." Elliss-Brookes et al., *Br J Cancer* 2012, [PMC3494426](https://pmc.ncbi.nlm.nih.gov/articles/PMC3494426/).
+- **England audits GP diagnostic work practice by practice.** The National Cancer Diagnosis Audit 2018 covered 53,252 patients in 1,868 practices and found "very large variation between practices in use of investigation". Akter et al., *BMJ Qual Saf* 2025, [PMC12171502](https://pmc.ncbi.nlm.nih.gov/articles/PMC12171502/).
+- **Finland has the same building blocks:** the Finnish Cancer Registry and THL's hospital care register (Hilmo). Linking them would give each wellbeing county its share of cancers found through an emergency visit.
+
+Proposed step-2 card (short, per booth feedback): "Not measured in Finland. England records how every cancer is found: 24% after an emergency visit, with much lower survival. Owner to start it here: THL and the Finnish Cancer Registry, by linking registry and hospital records."
+
+Not verified: whether England publishes the route shares by region today (the NHS Digital pages refuse automated reads). Say "England records it", not "England publishes it by region".
