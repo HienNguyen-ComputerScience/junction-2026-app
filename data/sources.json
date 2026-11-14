@@ -259,5 +259,23 @@
     "publisher": "THL (Finnish Institute for Health and Welfare), Sotkanet",
     "retrieved": "2026-11-14",
     "data_updated": null
+  },
+  {
+    "source_id": "thl-ohjaus-21-2016",
+    "kind": "evidence",
+    "name": "THL Ohjaus 21/2016: Hoitoonpääsyn seuranta syövän hoidossa. Määrittelyt ja ohjeistus (Sillanpää, Pylkkänen, Häkkinen), valid from 1 Jan 2017",
+    "url": "https://urn.fi/URN:ISBN:978-952-302-782-4",
+    "publisher": "THL",
+    "retrieved": "2026-11-14",
+    "data_updated": null
+  },
+  {
+    "source_id": "nhs-cancer-waiting-times",
+    "kind": "statistic",
+    "name": "NHS England: Cancer Waiting Times statistics (monthly, by area and hospital: 28-day Faster Diagnosis Standard, 31-day and 62-day standards)",
+    "url": "https://www.england.nhs.uk/statistics/statistical-work-areas/cancer-waiting-times/",
+    "publisher": "NHS England",
+    "retrieved": "2026-11-14",
+    "data_updated": null
   }
 ]

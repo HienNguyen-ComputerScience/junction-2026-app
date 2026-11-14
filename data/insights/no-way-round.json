@@ -1,0 +1,1336 @@
+{
+  "year": 2025,
+  "finland": {
+    "wait": 54.7,
+    "occupational": 2049,
+    "private": 26.9
+  },
+  "groups": [
+    {
+      "id": "long-few",
+      "label": "Long wait, few other routes",
+      "meaning": "GP wait longer than Finland's, and both occupational-health and private-doctor use lower than Finland's.",
+      "areas": [
+        "central-finland",
+        "north-karelia",
+        "north-ostrobothnia",
+        "north-savo",
+        "ostrobothnia",
+        "south-karelia",
+        "south-ostrobothnia",
+        "south-savo"
+      ]
+    },
+    {
+      "id": "long-some",
+      "label": "Long wait, other routes in use",
+      "meaning": "GP wait longer than Finland's, but occupational-health or private-doctor use at or above Finland's.",
+      "areas": [
+        "helsinki",
+        "kanta-hame",
+        "kymenlaakso",
+        "satakunta",
+        "southwest-finland",
+        "vantaa-kerava"
+      ]
+    },
+    {
+      "id": "short-few",
+      "label": "Shorter wait, few other routes",
+      "meaning": "GP wait at or below Finland's, and both other routes used less than in Finland.",
+      "areas": [
+        "central-ostrobothnia",
+        "kainuu",
+        "lapland",
+        "paijat-hame"
+      ]
+    },
+    {
+      "id": "short-some",
+      "label": "Shorter wait, other routes in use",
+      "meaning": "GP wait at or below Finland's, and at least one other route used as much as or more than in Finland.",
+      "areas": [
+        "central-uusimaa",
+        "east-uusimaa",
+        "pirkanmaa",
+        "west-uusimaa"
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "id": "main",
+      "year": 2025,
+      "reference": "finland",
+      "margin": 0,
+      "label": "2025, compared with Finland (the main view)",
+      "values": {
+        "wait": 54.7,
+        "occupational": 2049,
+        "private": 26.9
+      }
+    },
+    {
+      "id": "median",
+      "year": 2025,
+      "reference": "median",
+      "margin": 0,
+      "label": "2025, compared with the middle area of the 22 instead of Finland",
+      "values": {
+        "wait": 58.6,
+        "occupational": 1827,
+        "private": 25.5
+      }
+    },
+    {
+      "id": "margin5",
+      "year": 2025,
+      "reference": "finland",
+      "margin": 0.05,
+      "label": "2025, only counting areas more than 5% away from Finland's figure",
+      "values": {
+        "wait": 54.7,
+        "occupational": 2049,
+        "private": 26.9
+      }
+    },
+    {
+      "id": "margin10",
+      "year": 2025,
+      "reference": "finland",
+      "margin": 0.1,
+      "label": "2025, only counting areas more than 10% away from Finland's figure",
+      "values": {
+        "wait": 54.7,
+        "occupational": 2049,
+        "private": 26.9
+      }
+    },
+    {
+      "id": "y2024",
+      "year": 2024,
+      "reference": "finland",
+      "margin": 0,
+      "label": "2024 figures, compared with Finland",
+      "values": {
+        "wait": 43.4,
+        "occupational": 2060,
+        "private": 26.6
+      }
+    },
+    {
+      "id": "y2023",
+      "year": 2023,
+      "reference": "finland",
+      "margin": 0,
+      "label": "2023 figures, compared with Finland",
+      "values": {
+        "wait": 48.5,
+        "occupational": 2010,
+        "private": 26
+      }
+    }
+  ],
+  "counts": {
+    "areas": 22,
+    "wait_above_finland": 14,
+    "occupational_below_finland": 16,
+    "private_below_finland": 14,
+    "long_few_main": 8,
+    "long_few_every_test": 2
+  },
+  "robust_areas": [
+    "central-finland",
+    "south-savo"
+  ],
+  "areas": [
+    {
+      "county_id": "central-finland",
+      "name": "Central Finland",
+      "group": "long-few",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 73.5,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure fell 36% from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1580,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 23.5,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 18.8,
+      "occupational_minus_finland": -469,
+      "private_minus_finland": -3.4,
+      "tests": {
+        "main": true,
+        "median": true,
+        "margin5": true,
+        "margin10": true,
+        "y2024": true,
+        "y2023": true
+      },
+      "tests_in_group": 6,
+      "tier": "every"
+    },
+    {
+      "county_id": "central-ostrobothnia",
+      "name": "Central Ostrobothnia",
+      "group": "short-few",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 52.9,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure more than doubled from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1217,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 18.5,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": -1.8,
+      "occupational_minus_finland": -832,
+      "private_minus_finland": -8.4,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": true,
+        "y2023": true
+      },
+      "tests_in_group": 2,
+      "tier": "other-only"
+    },
+    {
+      "county_id": "central-uusimaa",
+      "name": "Central Uusimaa",
+      "group": "short-some",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 46.7,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 2189,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 31.1,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": -8,
+      "occupational_minus_finland": 140,
+      "private_minus_finland": 4.2,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 0,
+      "tier": "none"
+    },
+    {
+      "county_id": "east-uusimaa",
+      "name": "East Uusimaa",
+      "group": "short-some",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 51.8,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure rose 38% from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1926,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 31.1,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": -2.9,
+      "occupational_minus_finland": -123,
+      "private_minus_finland": 4.2,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 0,
+      "tier": "none"
+    },
+    {
+      "county_id": "helsinki",
+      "name": "Helsinki",
+      "group": "long-some",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 75.9,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 2290,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 28.7,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 21.2,
+      "occupational_minus_finland": 241,
+      "private_minus_finland": 1.8,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 0,
+      "tier": "none"
+    },
+    {
+      "county_id": "kainuu",
+      "name": "Kainuu",
+      "group": "short-few",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 38.4,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure more than doubled from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1658,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 21.3,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": -16.3,
+      "occupational_minus_finland": -391,
+      "private_minus_finland": -5.6,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 0,
+      "tier": "none"
+    },
+    {
+      "county_id": "kanta-hame",
+      "name": "Kanta-Häme",
+      "group": "long-some",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 65.6,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure fell 35% from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 2197,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 25.7,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 10.9,
+      "occupational_minus_finland": 148,
+      "private_minus_finland": -1.2,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 0,
+      "tier": "none"
+    },
+    {
+      "county_id": "kymenlaakso",
+      "name": "Kymenlaakso",
+      "group": "long-some",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 61.8,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure fell 23% from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 2029,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 27.8,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 7.1,
+      "occupational_minus_finland": -20,
+      "private_minus_finland": 0.9,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 0,
+      "tier": "none"
+    },
+    {
+      "county_id": "lapland",
+      "name": "Lapland",
+      "group": "short-few",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 48.6,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1685,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 23.2,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": -6.1,
+      "occupational_minus_finland": -364,
+      "private_minus_finland": -3.7,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 0,
+      "tier": "none"
+    },
+    {
+      "county_id": "north-karelia",
+      "name": "North Karelia",
+      "group": "long-few",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 59.3,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure fell 43% from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1523,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 25.5,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 4.6,
+      "occupational_minus_finland": -526,
+      "private_minus_finland": -1.4,
+      "tests": {
+        "main": true,
+        "median": false,
+        "margin5": true,
+        "margin10": false,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 2,
+      "tier": "main-only"
+    },
+    {
+      "county_id": "north-ostrobothnia",
+      "name": "North Ostrobothnia",
+      "group": "long-few",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 63.3,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure fell 21% from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1838,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 24.7,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 8.6,
+      "occupational_minus_finland": -211,
+      "private_minus_finland": -2.2,
+      "tests": {
+        "main": true,
+        "median": false,
+        "margin5": true,
+        "margin10": false,
+        "y2024": true,
+        "y2023": true
+      },
+      "tests_in_group": 4,
+      "tier": "main-only"
+    },
+    {
+      "county_id": "north-savo",
+      "name": "North Savo",
+      "group": "long-few",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 60.5,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1700,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 26.2,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 5.8,
+      "occupational_minus_finland": -349,
+      "private_minus_finland": -0.7,
+      "tests": {
+        "main": true,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": true,
+        "y2023": true
+      },
+      "tests_in_group": 3,
+      "tier": "main-only"
+    },
+    {
+      "county_id": "ostrobothnia",
+      "name": "Ostrobothnia",
+      "group": "long-few",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 56.7,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure fell 68% from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1219,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 20.1,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 2,
+      "occupational_minus_finland": -830,
+      "private_minus_finland": -6.8,
+      "tests": {
+        "main": true,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": true,
+        "y2023": false
+      },
+      "tests_in_group": 2,
+      "tier": "main-only"
+    },
+    {
+      "county_id": "paijat-hame",
+      "name": "Päijät-Häme",
+      "group": "short-few",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 32.7,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure rose 50% from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1829,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 25.3,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": -22,
+      "occupational_minus_finland": -220,
+      "private_minus_finland": -1.6,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": false,
+        "y2023": true
+      },
+      "tests_in_group": 1,
+      "tier": "other-only"
+    },
+    {
+      "county_id": "pirkanmaa",
+      "name": "Pirkanmaa",
+      "group": "short-some",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 45.8,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 2077,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 27.1,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": -8.9,
+      "occupational_minus_finland": 28,
+      "private_minus_finland": 0.2,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 0,
+      "tier": "none"
+    },
+    {
+      "county_id": "satakunta",
+      "name": "Satakunta",
+      "group": "long-some",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 56.6,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure fell 50% from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1825,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 32,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 1.9,
+      "occupational_minus_finland": -224,
+      "private_minus_finland": 5.1,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 0,
+      "tier": "none"
+    },
+    {
+      "county_id": "south-karelia",
+      "name": "South Karelia",
+      "group": "long-few",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 60.3,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1897,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 22.5,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 5.6,
+      "occupational_minus_finland": -152,
+      "private_minus_finland": -4.4,
+      "tests": {
+        "main": true,
+        "median": false,
+        "margin5": true,
+        "margin10": false,
+        "y2024": true,
+        "y2023": true
+      },
+      "tests_in_group": 4,
+      "tier": "main-only"
+    },
+    {
+      "county_id": "south-ostrobothnia",
+      "name": "South Ostrobothnia",
+      "group": "long-few",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 67.8,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure fell 48% from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1515,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 22.7,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 13.1,
+      "occupational_minus_finland": -534,
+      "private_minus_finland": -4.2,
+      "tests": {
+        "main": true,
+        "median": true,
+        "margin5": true,
+        "margin10": true,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 4,
+      "tier": "main-only"
+    },
+    {
+      "county_id": "south-savo",
+      "name": "South Savo",
+      "group": "long-few",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 69.7,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure fell 22% from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1694,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 22.3,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 15,
+      "occupational_minus_finland": -355,
+      "private_minus_finland": -4.6,
+      "tests": {
+        "main": true,
+        "median": true,
+        "margin5": true,
+        "margin10": true,
+        "y2024": true,
+        "y2023": true
+      },
+      "tests_in_group": 6,
+      "tier": "every"
+    },
+    {
+      "county_id": "southwest-finland",
+      "name": "Southwest Finland",
+      "group": "long-some",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 57.9,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure rose 55% from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 1783,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 31.7,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 3.2,
+      "occupational_minus_finland": -266,
+      "private_minus_finland": 4.8,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 0,
+      "tier": "none"
+    },
+    {
+      "county_id": "vantaa-kerava",
+      "name": "Vantaa and Kerava",
+      "group": "long-some",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 85.4,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read with care",
+          "reason": "THL reports visits missing from Vantaa's and Kerava's records (about 20% and 30% of visits in 2024)."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 2137,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "care",
+          "label": "Read with care",
+          "reason": "THL reports visits missing from Vantaa's and Kerava's records (about 20% and 30% of visits in 2024)."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 25.4,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": 30.7,
+      "occupational_minus_finland": 88,
+      "private_minus_finland": -1.5,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 0,
+      "tier": "none"
+    },
+    {
+      "county_id": "west-uusimaa",
+      "name": "West Uusimaa",
+      "group": "short-some",
+      "wait": {
+        "indicator_id": "6411",
+        "year": 2025,
+        "value": 40,
+        "finland": 54.7,
+        "source_id": "sotkanet-6411",
+        "grade": {
+          "level": "care",
+          "label": "Read the trend with care",
+          "reason": "The number of visits behind this figure rose 25% from 2024, so part of the change may be in what was recorded."
+        }
+      },
+      "occupational": {
+        "indicator_id": "2371",
+        "year": 2025,
+        "value": 2117,
+        "finland": 2049,
+        "source_id": "sotkanet-2371",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "private": {
+        "indicator_id": "692",
+        "year": 2025,
+        "value": 30.7,
+        "finland": 26.9,
+        "source_id": "sotkanet-692",
+        "grade": {
+          "level": "solid",
+          "label": "Solid",
+          "reason": "Published for this area and year; the count behind it is steady."
+        }
+      },
+      "wait_minus_finland": -14.7,
+      "occupational_minus_finland": 68,
+      "private_minus_finland": 3.8,
+      "tests": {
+        "main": false,
+        "median": false,
+        "margin5": false,
+        "margin10": false,
+        "y2024": false,
+        "y2023": false
+      },
+      "tests_in_group": 0,
+      "tier": "none"
+    }
+  ]
+}

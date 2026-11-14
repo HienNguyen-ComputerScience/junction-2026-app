@@ -1,0 +1,186 @@
+// The starter dataset: what a county can begin counting now so that, in six months, its own
+// cancer pathway can be measured. Aggregate counts only: one row per cancer group per quarter.
+// No dates of individual people, no names, no identity numbers, no free text about patients.
+//
+// Every field points at a row of data/data-gaps.json (the foundation's list of missing figures),
+// at a roadmap measure in data/roadmap.json where one exists, and at the Finnish definition or
+// the foreign publisher it follows. The check script asserts that each of those ids resolves.
+
+/** Day bands for the intervals. Only the 42-day line is a Finnish target; the others are bands. */
+export const BANDS = {
+  firstVisit: ["0–14 days", "15–28 days", "over 28 days"],
+  diagnosis: ["0–28 days", "29–42 days", "over 42 days"],
+  treatment: ["0–42 days (6 weeks)", "over 42 days"],
+};
+
+export const CANCER_GROUPS = [
+  "Breast (ICD-10 C50, D05.1)",
+  "Prostate (C61)",
+  "Bowel: colon and rectum (C18–C20)",
+  "Lung (C33–C34)",
+  "All other cancers",
+  "All cancers (total of the rows above)",
+];
+
+export const SECTIONS = [
+  {
+    id: "route",
+    title: "How each new cancer was first found",
+    why: "Finland does not publish how cancers are first found. A high share found at emergency visits points to people not getting through, or not being recognised, earlier.",
+    data_gap_id: "route-to-diagnosis",
+    measure_id: "3.2.1",
+    basis: null,
+    abroad: {
+      text: "England's National Disease Registration Service publishes, by area, the share of cancers first diagnosed after an emergency presentation.",
+      source_id: "ndrs-emergency-presentations",
+    },
+  },
+  {
+    id: "gp",
+    title: "Suspected cancer at the GP",
+    why: "The GP wait figure (Sotkanet 6411) covers every non-urgent visit. Marking the contacts where cancer is suspected lets the county see whether those people wait less.",
+    data_gap_id: "suspected-cancer-gp-wait",
+    measure_id: null,
+    basis: {
+      text: "Uses the same 7-day line as Sotkanet 6411 (visits more than 7 days after the need was assessed).",
+      source_id: "sotkanet-6411",
+    },
+    abroad: null,
+  },
+  {
+    id: "first-visit",
+    title: "From referral to the first specialist visit",
+    why: "Sotkanet 13 shows how fast the hospital processes a referral, not when the person is seen. THL's guide for monitoring access to cancer care names this interval: from the day the referral arrives to the first doctor visit.",
+    data_gap_id: "diagnostic-interval",
+    measure_id: "3.1.4",
+    basis: {
+      text: "THL Ohjaus 21/2016: time points are the referral's arrival in specialist care and the first doctor visit after it (or a care call that replaces it).",
+      source_id: "thl-ohjaus-21-2016",
+    },
+    abroad: null,
+  },
+  {
+    id: "diagnosis",
+    title: "From referral to diagnosis",
+    why: "Days to diagnosis is not published in Finland. Denmark measured this interval before and after its fast-track pathways; England publishes a 28-day standard for being told the diagnosis.",
+    data_gap_id: "diagnostic-interval",
+    measure_id: "3.1.4",
+    basis: null,
+    abroad: {
+      text: "NHS England publishes every month, by area and hospital, the share of people referred with suspected cancer who are told their diagnosis within 28 days. Denmark's study measured the same interval before and after fast-track pathways.",
+      source_id: "nhs-cancer-waiting-times",
+    },
+  },
+  {
+    id: "treatment",
+    title: "From referral to the first cancer treatment",
+    why: "This is the strategy's Goal 3 measure: patients reach care within the target times. Nothing is published by area yet; counting it now means the figure exists when the national target times are set.",
+    data_gap_id: "treatment-within-target",
+    measure_id: "3.1.2",
+    basis: {
+      text: "THL Ohjaus 21/2016 follows the time from the referral's arrival to the first cancer treatment, and quotes the national working group's maximum for suspected cancer: 6 weeks.",
+      source_id: "thl-ohjaus-21-2016",
+    },
+    abroad: {
+      text: "NHS England publishes every month, by area and hospital, the share of people starting cancer treatment within 62 days of an urgent referral.",
+      source_id: "nhs-cancer-waiting-times",
+    },
+  },
+  {
+    id: "stage",
+    title: "Stage at diagnosis (ask the Cancer Registry)",
+    why: "Stage by area is not published. The roadmap's target is that at least 70% of cancers are found at stages I–II by 2035. The county does not record this itself: it asks the Finnish Cancer Registry and enters the counts here.",
+    data_gap_id: "stage-by-area",
+    measure_id: "3.2.1",
+    basis: null,
+    abroad: null,
+  },
+];
+
+/** One field = one column of the template. `section` links to SECTIONS. */
+export const FIELDS = [
+  { id: "A1", section: "route", header: "New cancer diagnoses", count: "Number of new cancer diagnoses made in the quarter." },
+  { id: "A2", section: "route", header: "…first found after a GP or primary-care referral", count: "Of A1: those whose route began with a referral from a GP or other primary-care professional." },
+  { id: "A3", section: "route", header: "…first found through a screening programme", count: "Of A1: those found through a national screening programme (breast, cervical, bowel)." },
+  { id: "A4", section: "route", header: "…first found at an emergency visit", count: "Of A1: those whose route began with an emergency department visit or an emergency admission." },
+  { id: "A5", section: "route", header: "…other route or not known", count: "Of A1: all others. A2 + A3 + A4 + A5 = A1." },
+  { id: "B1", section: "gp", header: "Primary-care contacts marked 'cancer suspected'", count: "Number of primary-care contacts in the quarter where a professional marked cancer as suspected." },
+  { id: "B2", section: "gp", header: "…seen by a doctor within 7 days", count: "Of B1: those seen by a doctor within 7 days of the contact." },
+  { id: "C1", section: "first-visit", header: "First specialist visit within 14 days of referral", count: "Of the suspected-cancer referrals that had their first specialist doctor visit in this quarter: those seen within 0–14 days of the referral arriving." },
+  { id: "C2", section: "first-visit", header: "…within 15–28 days", count: "As C1, seen 15–28 days after the referral arrived." },
+  { id: "C3", section: "first-visit", header: "…after more than 28 days", count: "As C1, seen more than 28 days after the referral arrived." },
+  { id: "D1", section: "diagnosis", header: "Diagnosed within 28 days of referral", count: "Of the cancers diagnosed this quarter that began with a referral: those diagnosed 0–28 days after the referral arrived." },
+  { id: "D2", section: "diagnosis", header: "…within 29–42 days", count: "As D1, diagnosed 29–42 days after the referral arrived." },
+  { id: "D3", section: "diagnosis", header: "…after more than 42 days", count: "As D1, diagnosed more than 42 days after the referral arrived." },
+  { id: "E1", section: "treatment", header: "First treatment within 6 weeks of referral", count: "Of the patients whose first cancer treatment started this quarter: those who started within 42 days of the referral arriving." },
+  { id: "E2", section: "treatment", header: "…after more than 6 weeks", count: "As E1, started more than 42 days after the referral arrived." },
+  { id: "F1", section: "stage", header: "Stage I–II at diagnosis (from the Cancer Registry)", count: "Of A1, from the Finnish Cancer Registry when available: cancers at stage I or II." },
+  { id: "F2", section: "stage", header: "Stage III–IV", count: "As F1, stage III or IV." },
+  { id: "F3", section: "stage", header: "Stage not known", count: "As F1, stage not recorded or not applicable." },
+];
+
+/** What the county can compute from the counts. `formula` uses field ids only. */
+export const STARTER_INDICATORS = [
+  {
+    id: "I1",
+    name: "Share of new cancers first found at an emergency visit",
+    formula: "A4 ÷ A1 × 100",
+    compare_with: "England publishes this by area (National Disease Registration Service).",
+    source_id: "ndrs-emergency-presentations",
+    measure_id: "3.2.1",
+  },
+  {
+    id: "I2",
+    name: "Share of new cancers found through screening",
+    formula: "A3 ÷ A1 × 100",
+    compare_with: "Your own area over time; screening attendance itself is in Sotkanet 3621, 6103 and 3620.",
+    source_id: "sotkanet-3621",
+    measure_id: null,
+  },
+  {
+    id: "I3",
+    name: "Share of suspected-cancer GP contacts seen by a doctor within 7 days",
+    formula: "B2 ÷ B1 × 100",
+    compare_with: "The all-visit figure, Sotkanet 6411 (which counts the visits that took longer than 7 days).",
+    source_id: "sotkanet-6411",
+    measure_id: null,
+  },
+  {
+    id: "I4",
+    name: "Share of first specialist visits within 14 days of the referral",
+    formula: "C1 ÷ (C1 + C2 + C3) × 100",
+    compare_with: "Your own area over time. 14 days is a reporting band, not a Finnish target.",
+    source_id: "thl-ohjaus-21-2016",
+    measure_id: "3.1.4",
+  },
+  {
+    id: "I5",
+    name: "Share diagnosed within 28 days of the referral",
+    formula: "D1 ÷ (D1 + D2 + D3) × 100",
+    compare_with: "England's 28-day standard for being told the diagnosis (NHS England, monthly by area).",
+    source_id: "nhs-cancer-waiting-times",
+    measure_id: "3.1.4",
+  },
+  {
+    id: "I6",
+    name: "Share starting cancer treatment within 6 weeks of the referral",
+    formula: "E1 ÷ (E1 + E2) × 100",
+    compare_with: "Goal 3's measure, 'patients reach care within the target times'. Until FICAN sets the target times, 6 weeks is the maximum the national working group set for suspected cancer (quoted in THL Ohjaus 21/2016).",
+    source_id: "thl-ohjaus-21-2016",
+    measure_id: "3.1.2",
+  },
+  {
+    id: "I7",
+    name: "Share of cancers found at stage I–II",
+    formula: "F1 ÷ (F1 + F2) × 100 (cancers with stage not known left out; report how many)",
+    compare_with: "The roadmap's target: at least 70% at stages I–II by 2035.",
+    source_id: "ev-files-kansallinen-syopastrategia-toimeenpanon-tiekartta-2",
+    measure_id: "2.5.2",
+  },
+];
+
+export const PRIVACY = [
+  "This template holds counts only: one row per cancer group per quarter.",
+  "Do not add names, personal identity codes, dates of birth, addresses, individual dates or any free text about a patient.",
+  "Before you share a filled sheet outside your organisation, replace every count from 1 to 4 with \"<5\" (a common small-number rule; follow your own organisation's data protection guidance where it is stricter).",
+];
