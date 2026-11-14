@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isAskResponse, STATUS_LABEL, TOO_MANY, type AskResponse } from "./types";
+import { isAskResponse, statusText, TOO_MANY, type AskResponse } from "./types";
 
 const MAX_QUESTION = 300;
 
@@ -124,7 +124,7 @@ export function AskBox() {
           {data && data.freshness !== "unavailable" && (
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="outline">{STATUS_LABEL[data.freshness]}</Badge>
+                {statusText(data) !== null && <Badge variant="outline">{statusText(data)}</Badge>}
                 <span className="text-xs text-muted-foreground">Answered only from these Exa results.</span>
               </div>
 

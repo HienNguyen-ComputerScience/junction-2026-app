@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isItemsResponse, STATUS_LABEL, type ItemsResponse } from "./types";
+import { isItemsResponse, STATUS_LABEL, statusText, type ItemsResponse } from "./types";
 
 type State = { kind: "loading" } | { kind: "done"; data: ItemsResponse } | { kind: "error" };
 
@@ -40,7 +40,7 @@ export function NationalNews() {
           <CardTitle id="national-news-title">Finland, this month</CardTitle>
           <Badge variant="secondary">Found live — unverified</Badge>
           <span className="text-xs text-muted-foreground">via Exa</span>
-          {data && !unavailable && <Badge variant="outline">{STATUS_LABEL[data.freshness]}</Badge>}
+          {data && !unavailable && <Badge variant="outline">{statusText(data)}</Badge>}
           {unavailable && <Badge variant="outline">{STATUS_LABEL.unavailable}</Badge>}
         </div>
         <CardDescription>

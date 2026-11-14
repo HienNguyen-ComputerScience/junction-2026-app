@@ -8,6 +8,8 @@ export type ItemsResponse = {
   label?: string;
   freshness: Freshness;
   message?: string;
+  /** YYYY-MM-DD, sent on cached and stale-cache responses. */
+  retrievedAt?: string;
   items: Item[];
 };
 
@@ -18,6 +20,10 @@ export type AskResponse = {
   nothingFound: boolean;
   message?: string;
   freshness: Freshness;
+  /** YYYY-MM-DD, sent on cached and stale-cache responses. */
+  retrievedAt?: string;
+  /** True when the question gate refused it: no search ran, so no status badge. */
+  offTopic?: boolean;
 };
 
 /** Shown when a route answers HTTP 429. */
@@ -47,3 +53,21 @@ export const STATUS_LABEL: Record<Freshness, string> = {
   "stale-cache": "Cached (older)",
   unavailable: "Unavailable",
 };
+
+const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+
+function isDateOnly(v: unknown): v is string {
+  return typeof v === "string" && DATE_ONLY.test(v) && !Number.isNaN(Date.parse(`${v}T00:00:00Z`)) && new Date(`${v}T00:00:00Z`).toISOString().startsWith(v);
+}
+
+/**
+ * Text for the status badge: "Live", "Cached · saved 2026-11-14", "Cached (older) · saved ...".
+ * The saved date appears only on cached results and only if it is a real date.
+ * Returns null (show no badge) when the off-topic gate answered, because no search ran.
+ */
+export function statusText(r: { freshness: Freshness; retrievedAt?: string; offTopic?: boolean }): string | null {
+  if (r.offTopic === true) return null;
+  const label = STATUS_LABEL[r.freshness];
+  const cached = r.freshness === "cache" || r.freshness === "stale-cache";
+  return cached && isDateOnly(r.retrievedAt) ? `${label} · saved ${r.retrievedAt}` : label;
+}
