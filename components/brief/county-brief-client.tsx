@@ -5,9 +5,10 @@ import { useState, type ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
+import { TOO_MANY } from "@/components/exa/types";
 import type { BriefResponse } from "@/lib/brief/types";
 
-type Status = "idle" | "loading" | "error";
+type Status = "idle" | "loading" | "error" | "limited";
 
 const MODE_LABEL: Record<BriefResponse["mode"], string> = {
   ai: "AI-written, every number checked against the snapshot",
@@ -41,6 +42,10 @@ export function CountyBriefClient({
     try {
       const res = await fetch(`/api/brief?county=${encodeURIComponent(countyId)}`);
       const data: unknown = await res.json();
+      if (res.status === 429) {
+        setStatus("limited");
+        return;
+      }
       if (!res.ok || !isBriefResponse(data)) throw new Error("bad response");
       setBrief(data);
       setStatus("idle");
@@ -105,6 +110,11 @@ export function CountyBriefClient({
           {status === "loading" && (
             <span role="status" className="text-sm text-muted-foreground">
               Claude is writing; the checker then drops any claim it can&apos;t trace to the snapshot.
+            </span>
+          )}
+          {status === "limited" && (
+            <span role="alert" className="text-sm text-destructive">
+              {TOO_MANY} The precomputed brief is still shown.
             </span>
           )}
           {status === "error" && (

@@ -7,6 +7,8 @@ import { indicators, sources, values } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Sources & limitations | FirstLine" };
 
+const evidenceSources = sources.filter((source) => source.kind === "evidence");
+
 const sourceRows = indicators.map((indicator) => ({
   indicator,
   source: sources.find((source) => source.source_id === indicator.source_id),
@@ -58,6 +60,19 @@ export default function SourcesPage() {
       <section aria-labelledby="evidence" className="mt-12 space-y-3">
         <h2 id="evidence" className="text-2xl font-semibold">Actions and live evidence</h2>
         <p className="leading-relaxed text-muted-foreground">Recommended actions need a checked precedent and linked source. Checked precedents in the snapshot are distinct from Exa results, which are found live and unverified; a search result is not proof an intervention works in a Finnish county. The red-flag helper is decision support, not a diagnosis or substitute for local clinical guidance.</p>
+      </section>
+      <section aria-labelledby="evidence-sources" className="mt-12">
+        <h2 id="evidence-sources" className="text-2xl font-semibold">Evidence behind the recommended actions</h2>
+        <p className="mt-2 text-muted-foreground">Each recommended action cites one of these checked sources. They are listed as retrieved on the date shown; the publisher is the host of the link.</p>
+        <ul className="mt-5 grid gap-3">
+          {evidenceSources.map((source) => (
+            <li key={source.source_id} className="rounded-xl border bg-card p-4">
+              <a className="font-medium underline underline-offset-4 hover:text-muted-foreground" href={source.url} target="_blank" rel="noopener noreferrer">{source.name} ↗</a>
+              <p className="mt-1 text-sm text-muted-foreground">{source.publisher} · retrieved {source.retrieved}</p>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-5 leading-relaxed text-muted-foreground">Results labelled “Found live — unverified” come from Exa live search. They are not checked by the team.</p>
       </section>
       <div className="mt-10"><Link href="/" className={buttonVariants({ variant: "outline" })}>Back to county ranking</Link></div>
     </main>

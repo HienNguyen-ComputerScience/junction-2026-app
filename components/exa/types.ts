@@ -20,6 +20,9 @@ export type AskResponse = {
   freshness: Freshness;
 };
 
+/** Shown when a route answers HTTP 429. */
+export const TOO_MANY = "Too many requests. Wait a minute and try again.";
+
 const isObject = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null;
 
 const FRESHNESS: readonly string[] = ["live", "cache", "stale-cache", "unavailable"];

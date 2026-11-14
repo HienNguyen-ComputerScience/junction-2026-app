@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { generateBrief } from "@/lib/brief/generate";
+import { rateLimit } from "@/lib/exa/rate-limit";
 
 // GET /api/brief?county=vantaa-kerava[&mode=fallback]
 // A plain-language brief for one county. Claude writes it from the snapshot fact
@@ -10,6 +11,8 @@ import { generateBrief } from "@/lib/brief/generate";
 // mode=fallback forces the precomputed brief (demo / outage testing).
 
 export async function GET(request: NextRequest) {
+  const limited = rateLimit(request, "brief");
+  if (limited) return limited;
   const params = request.nextUrl.searchParams;
   const id = params.get("county") ?? "";
   const brief = await generateBrief(id, { forceFallback: params.get("mode") === "fallback" });
