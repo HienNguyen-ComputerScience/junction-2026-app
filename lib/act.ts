@@ -23,8 +23,10 @@ import {
   evidence,
   getGaps,
   indicators,
+  LATEST_YEAR,
   type Evidence,
   type Gap,
+  type GapStatus,
   type Stage,
 } from "@/lib/data";
 
@@ -60,6 +62,31 @@ const STAGE_PHRASES: Record<Stage, string> = {
   gp_recognition: "whether the GP recognises warning signs",
   referral: "the GP to specialist referral",
 };
+
+/**
+ * One status for an area: red when any measured step is worse than Finland, grey when no step
+ * is measured, otherwise at or better than Finland (amber). Steps with no county figure (the
+ * HUS-wide referral values) are not measured and never count. The home map's colour and the
+ * area card's verdict both come from this, so they cannot disagree.
+ */
+export function bottleneckStatus({ focus, anyRed }: Bottleneck): GapStatus {
+  if (focus.length === 0) return "no_data";
+  return anyRed ? "red" : "amber";
+}
+
+export function getAreaStatus(countyId: string): GapStatus {
+  return bottleneckStatus(getBottleneck(countyId));
+}
+
+/** The one-line answer for an area (the home card and the act page), in the same words everywhere. */
+export function bottleneckLede(bottleneck: Bottleneck): string {
+  const { focus, anyRed } = bottleneck;
+  if (focus.length === 0) return `No ${LATEST_YEAR} pathway data is published for this area.`;
+  const worst = STAGE_PHRASES[focus[0].stage];
+  if (!anyRed) return `No measured step is worse than Finland. Closest to Finland's level: ${worst}.`;
+  if (focus.length === 1) return `The delay sits at ${worst}, which is worse than Finland.`;
+  return `${focus.length === 2 ? "Both" : "All"} measured steps are worse than Finland. Worst is ${worst}.`;
+}
 
 /** One-paragraph summary of the bottleneck, built only from gaps.json notes. */
 export function bottleneckSentence(countyName: string, bottleneck: Bottleneck): string {

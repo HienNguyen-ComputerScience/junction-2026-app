@@ -1,3 +1,6 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
+
 import { AskBox } from "@/components/exa/ask-box";
 import { NationalNews } from "@/components/exa/national-news";
 import { EarlyWarning } from "@/components/home/early-warning";
@@ -12,7 +15,7 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
-import { LATEST_YEAR } from "@/lib/data";
+import { getCounty, LATEST_YEAR, type County } from "@/lib/data";
 import {
   formatPct,
   getNationalValue,
@@ -20,9 +23,36 @@ import {
   getUnrankedCounties,
   GP_WAIT_ID,
   REFERRAL_ID,
+  type RankingRow,
 } from "@/lib/ranking";
 
-export default function CountyRankingPage() {
+/** ?area= as a single id, or undefined. HomeTool ignores ids that are not one of the areas. */
+async function areaFrom(searchParams: PageProps<"/">["searchParams"]): Promise<string | undefined> {
+  const { area } = await searchParams;
+  return typeof area === "string" ? area : undefined;
+}
+
+// A shared link /?area=<id> names its area in the tab title. No (or an unknown) area keeps the
+// site title. Reading searchParams makes this request-time, so it streams with the tool below.
+export async function generateMetadata({ searchParams }: PageProps<"/">): Promise<Metadata> {
+  const county = getCounty((await areaFrom(searchParams)) ?? "");
+  return county ? { title: `${county.name} · FirstLine` } : {};
+}
+
+/** The tool for the area the URL names: the one part of the page that waits for the request. */
+async function Tool({
+  searchParams,
+  rows,
+  unranked,
+}: {
+  searchParams: PageProps<"/">["searchParams"];
+  rows: RankingRow[];
+  unranked: County[];
+}) {
+  return <HomeTool rows={rows} unranked={unranked} initialAreaId={await areaFrom(searchParams)} />;
+}
+
+export default function CountyRankingPage({ searchParams }: PageProps<"/">) {
   const rows = getRanking();
   const unranked = getUnrankedCounties();
   const nationalGpWait = getNationalValue(GP_WAIT_ID);
@@ -57,7 +87,20 @@ export default function CountyRankingPage() {
         </p>
       </header>
 
-      <HomeTool rows={rows} unranked={unranked} />
+      {/* The one request-time part: the server render of /?area=<id> already shows that area. The
+          rest of the page is prerendered. */}
+      <Suspense
+        fallback={
+          <div
+            aria-busy
+            className="min-h-[36rem] rounded-panel border border-border bg-card p-6 type-caption text-muted-foreground"
+          >
+            Loading the areas…
+          </div>
+        }
+      >
+        <Tool searchParams={searchParams} rows={rows} unranked={unranked} />
+      </Suspense>
       </div>
 
       <EarlyWarning

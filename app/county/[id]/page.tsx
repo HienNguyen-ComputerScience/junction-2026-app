@@ -49,7 +49,8 @@ export async function generateMetadata({ params }: PageProps<"/county/[id]">): P
   const { id } = await params;
   const county = getCounty(id);
   if (!county) return {};
-  return { title: `${county.name}: where care is delayed | FirstLine` };
+  const title = getBottleneck(county.id).anyRed ? "where care is delayed" : "where the pathway stands";
+  return { title: `${county.name}: ${title} | FirstLine` };
 }
 
 export default async function CountyPathwayPage({ params }: PageProps<"/county/[id]">) {
@@ -62,6 +63,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const lateReferrals = getValue(county.id, REFERRAL_LATE_ID);
   const lateReferralsFinland = getNationalValue(REFERRAL_LATE_ID);
   const keyGap = keyFigureGap(county);
+  const { anyRed } = getBottleneck(county.id);
   const verdict = getVerdict(county.id);
   // The lead may state the hospital group's referral figure (Sotkanet 13): its source stands in the chip row.
   const hus = gaps.find((gap) => gap.shared)?.shared;
@@ -109,7 +111,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             )}
           </div>
           <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
-            See all actions
+            {anyRed ? "See all actions" : "Actions to keep this level"}
             <ArrowRight aria-hidden data-icon="inline-end" />
           </Link>
           <LimitationsBox items={limitations} variant="disclosure" className="mt-2 w-full lg:hidden" />

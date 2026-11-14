@@ -21,12 +21,12 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { TextLink } from "@/components/ui/text-link";
 import {
   STAGE_LABELS,
+  bottleneckLede,
   getBottleneck,
   otherActions,
   pickActions,
-  type Bottleneck,
 } from "@/lib/act";
-import { counties, getCounty, LATEST_YEAR, type Evidence, type Stage } from "@/lib/data";
+import { counties, getCounty, LATEST_YEAR, type Evidence } from "@/lib/data";
 import { STATUS_LABEL } from "@/lib/ranking";
 
 // Counties are a fixed, known set, so a blocking route is fine here.
@@ -34,23 +34,6 @@ export const instant = false;
 
 export function generateStaticParams() {
   return counties.map((county) => ({ id: county.id }));
-}
-
-/** Stages as they read inside a sentence. */
-const STAGE_IN_SENTENCE: Record<Stage, string> = {
-  gp_access: "getting to a GP",
-  gp_recognition: "whether the GP recognises warning signs",
-  referral: "the GP to specialist referral",
-};
-
-/** The one-line answer beside the section title. */
-function bottleneckLede(bottleneck: Bottleneck): string {
-  const { focus, anyRed } = bottleneck;
-  if (focus.length === 0) return "No 2025 pathway data is published for this county.";
-  const worst = STAGE_IN_SENTENCE[focus[0].stage];
-  if (!anyRed) return `No measured step is worse than Finland. Closest to Finland's level: ${worst}.`;
-  if (focus.length === 1) return `The delay sits at ${worst}, which is worse than Finland.`;
-  return `${focus.length === 2 ? "Both" : "All"} measured steps are worse than Finland. Worst is ${worst}.`;
 }
 
 export async function generateMetadata({ params }: PageProps<"/county/[id]/act">): Promise<Metadata> {
@@ -94,7 +77,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
       <Frame aria-labelledby="where-heading">
         <FrameHeader className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
           <FrameTitle id="where-heading" className="type-title">
-            Where the delay sits ({LATEST_YEAR})
+            {bottleneck.anyRed ? "Where the delay sits" : "Where the pathway stands"} ({LATEST_YEAR})
           </FrameTitle>
           <p className="text-sm text-pretty text-foreground">{bottleneckLede(bottleneck)}</p>
           <BarKey items={["finland"]} className="sm:ml-auto" />
@@ -117,11 +100,13 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
       <Frame aria-labelledby="recommended">
         <FrameHeader>
           <FrameTitle id="recommended" className="type-title">
-            Recommended actions
+            {bottleneck.anyRed ? "Recommended actions" : "Actions to keep this level"}
           </FrameTitle>
           {/* The selection rule in one line (the full rule is SELECTION_RULE in lib/act). */}
           <FrameMeta className="max-sm:col-span-2 max-sm:col-start-1 max-sm:row-start-2 max-sm:justify-start">
-            Worst step first: one action per step, then up to three in all
+            {bottleneck.anyRed
+              ? "Worst step first: one action per step, then up to three in all"
+              : "Step closest to Finland's level first: up to three in all"}
           </FrameMeta>
         </FrameHeader>
         <div className="flex flex-col gap-3">
