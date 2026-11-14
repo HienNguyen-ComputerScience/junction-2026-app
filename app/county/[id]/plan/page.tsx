@@ -6,14 +6,14 @@ import type { ReactNode } from "react";
 import { Suspense } from "react";
 import { cn } from "cn";
 
-import { Disclosure, PrintButton, Reveal } from "@/components/motion";
+import { AreaLead } from "@/components/county/area-lead";
+import { CaveatNote, Disclosure, PrintButton, Reveal } from "@/components/motion";
 import { EmailPlanButton } from "@/components/plan/email-plan-button";
 import { StepUnit } from "@/components/stat/step-unit";
 import { SourceChip } from "@/components/source-chip";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { FramePanel } from "@/components/ui/frame";
-import { TextLink } from "@/components/ui/text-link";
 import { counties, getCounty } from "@/lib/data";
 import { TARGET_YEARS } from "@/lib/plan";
 import { targetGoal, targetMilestones, targetPace } from "@/lib/plan-export";
@@ -44,17 +44,16 @@ function longDate(iso: string): string {
   return date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 }
 
-/** A section of the plan: a numbered serif title, then its content. */
-function Section({ id, number, title, intro, children }: { id: string; number: number; title: string; intro?: ReactNode; children: ReactNode }) {
+/** A part of the plan: a numbered serif title that rises in as it is reached, then its content. */
+function Section({ id, number, title, children }: { id: string; number: number; title: string; children: ReactNode }) {
   return (
-    <section aria-labelledby={id} className="flex flex-col gap-4 break-inside-auto">
-      <div className="flex flex-col gap-1.5">
+    <section aria-labelledby={id} className="flex flex-col gap-5 break-inside-auto">
+      <Reveal className="motion-loud flex flex-col gap-1.5">
         <p className="type-eyebrow">Part {number}</p>
-        <h2 id={id} className="type-title">
+        <h2 id={id} className="font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.5rem] print:text-[18pt]">
           {title}
         </h2>
-        {intro ? <div className="max-w-[68ch] text-base text-muted-foreground">{intro}</div> : null}
-      </div>
+      </Reveal>
       {children}
     </section>
   );
@@ -78,7 +77,7 @@ function Th({ children, className }: { children: ReactNode; className?: string }
 }
 
 /** Print, Word, Excel, email. Word and Excel are submit buttons of the plan's form, so they carry what was typed. */
-function Toolbar({ plan, exportPath, position }: { plan: Plan; exportPath: string; position: "top" | "bottom" }) {
+function Toolbar({ plan, exportPath }: { plan: Plan; exportPath: string }) {
   return (
     <div data-print="hide" className="flex flex-col gap-3">
       <div className="flex flex-wrap gap-2.5">
@@ -93,12 +92,7 @@ function Toolbar({ plan, exportPath, position }: { plan: Plan; exportPath: strin
         </Button>
         <EmailPlanButton countyName={plan.county.name} path={`/county/${plan.county.id}/plan`} />
       </div>
-      {position === "top" ? (
-        <p className="text-sm text-muted-foreground">
-          The print, the Word file, the Excel file and the email link all include what you type into the fields below. Nothing is
-          saved on FirstLine.
-        </p>
-      ) : null}
+      <p className="text-base text-muted-foreground">Each includes what you type below. Nothing is saved on FirstLine.</p>
     </div>
   );
 }
@@ -217,22 +211,12 @@ async function PlanBody({ id, searchParams }: { id: string; searchParams: PagePr
     <form action={pagePath} method="get" className="flex flex-col gap-16 sm:gap-20">
       {plan.input.actions.length > 0 ? <input type="hidden" name="actions" value={plan.input.actions.join(",")} /> : null}
 
-      <div className="flex flex-col gap-6">
-        <p className="text-base text-muted-foreground">
-          Drawn up {longDate(plan.date)} from published figures. Decision support for service planning, not medical advice. No
-          patient data.
-        </p>
-        <Toolbar plan={plan} exportPath={exportPath} position="top" />
+      <div className="flex flex-col gap-3">
+        <p className="type-eyebrow">Drawn up {longDate(plan.date)}</p>
+        <Toolbar plan={plan} exportPath={exportPath} />
       </div>
 
       <Section id="part-stands" number={1} title="Where the area stands">
-        <Reveal>
-          <p className="type-statement max-w-[40ch]">{plan.lede}</p>
-        </Reveal>
-        <Reveal index={1}>
-          <p className="max-w-[68ch] text-base">{plan.reason}</p>
-          {plan.reasonCaveat ? <p className="mt-2 max-w-[68ch] text-base text-muted-foreground">{plan.reasonCaveat}</p> : null}
-        </Reveal>
         <div className="grid gap-3 lg:grid-cols-3 print:grid-cols-3">
           {plan.steps.map((step, i) => (
             <StepUnit key={step.stage} step={step} index={i} />
@@ -240,12 +224,7 @@ async function PlanBody({ id, searchParams }: { id: string; searchParams: PagePr
         </div>
       </Section>
 
-      <Section
-        id="part-target"
-        number={2}
-        title="Target"
-        intro="Choose the level to aim for and the year to reach it by, then press Update the plan. The pace is arithmetic on the published shares: an even path from the latest figure to the level you choose. It is not a forecast and assumes no effect of any action."
-      >
+      <Section id="part-target" number={2} title="Target">
         <div data-print="hide" className="flex flex-col gap-4 rounded-lg bg-mint-veil p-5 sm:flex-row sm:items-end sm:p-6">
           <div className="flex flex-col gap-1.5 sm:w-80">
             <label htmlFor="target" className={LABEL}>
@@ -283,6 +262,10 @@ async function PlanBody({ id, searchParams }: { id: string; searchParams: PagePr
         <p className="text-base font-semibold text-forest-ink">
           {plan.targetLabel}, by the end of {plan.input.year}.
         </p>
+        <CaveatNote short="an even path, not a forecast">
+          The pace is arithmetic on the published shares: an even path from the latest figure to the level chosen. It assumes no
+          effect of any action.
+        </CaveatNote>
         {withTarget.length === 0 ? (
           <p className="text-base text-muted-foreground">No step has a figure of its own for this area, so no target can be set from published data.</p>
         ) : null}
@@ -318,33 +301,15 @@ async function PlanBody({ id, searchParams }: { id: string; searchParams: PagePr
         </FramePanel>
       </Section>
 
-      <Section
-        id="part-actions"
-        number={3}
-        title="Actions"
-        intro={
-          plan.input.actions.length > 0
-            ? "The actions chosen in the briefing, in the order chosen."
-            : "The recommended actions for this area, ordered by where the pathway breaks."
-        }
-      >
+      <Section id="part-actions" number={3} title="Actions">
         <div className="flex flex-col gap-4">
           {plan.actions.map((action, i) => (
             <ActionBlock key={action.id} action={action} index={i} />
           ))}
         </div>
-        <TextLink kind="nav" href={`/county/${plan.county.id}/act`} className="text-base" detail="(all the evidence-backed options)">
-          See every action for {plan.county.name}
-        </TextLink>
       </Section>
 
-      <Section
-        id="part-recording"
-        number={4}
-        title="What to start recording"
-        intro="These figures are not published for any area. Each line says what exists today and what the area can record itself from now on, so that the next review has its own numbers."
-      >
-        {/* Slot: the insights page's recording template (insights branch) is linked here after the merge. */}
+      <Section id="part-recording" number={4} title="What to start recording">
         <FramePanel padding="none" className="p-5 sm:p-7">
           <table className="stack-table w-full border-collapse">
             <thead>
@@ -394,7 +359,7 @@ async function PlanBody({ id, searchParams }: { id: string; searchParams: PagePr
         </FramePanel>
       </Section>
 
-      <Section id="part-sources" number={6} title="Sources" intro="Every figure and statement in this plan comes from one of these.">
+      <Section id="part-sources" number={6} title="Sources">
         <ul className="flex flex-col">
           {plan.sources.map((source) => (
             <li key={source.source_id} className="grid gap-1.5 border-t border-border py-3.5 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-6">
@@ -414,7 +379,7 @@ async function PlanBody({ id, searchParams }: { id: string; searchParams: PagePr
       </Section>
 
       <section aria-labelledby="part-decision" className="flex flex-col gap-4">
-        <h2 id="part-decision" className="type-title">
+        <h2 id="part-decision" className="font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.5rem] print:text-[18pt]">
           Decision
         </h2>
         <div className="grid gap-4 rounded-lg bg-mint-veil p-5 sm:grid-cols-2 sm:p-6">
@@ -431,15 +396,6 @@ async function PlanBody({ id, searchParams }: { id: string; searchParams: PagePr
             <input id="decided" name="decided" type="date" defaultValue={plan.input.decisionDate} className={FIELD} />
           </div>
         </div>
-        <div data-print="hide" className="flex flex-col gap-4 pt-4">
-          <div>
-            <Button type="submit" variant="outline">
-              <RefreshCw aria-hidden strokeWidth={1.75} data-icon="inline-start" />
-              Update the plan
-            </Button>
-          </div>
-          <Toolbar plan={plan} exportPath={exportPath} position="bottom" />
-        </div>
       </section>
     </form>
   );
@@ -452,8 +408,8 @@ export default async function CountyPlanPage({ params, searchParams }: PageProps
 
   return (
     <main className="page-container flex max-w-[1200px] flex-col gap-10 pt-6 pb-8 sm:pt-8">
-      <header className="flex flex-col items-start gap-3">
-        <div data-print="hide">
+      <header data-print="hide">
+        <div>
           <Breadcrumb
             items={[
               { label: "Areas", href: "/" },
@@ -463,13 +419,8 @@ export default async function CountyPlanPage({ params, searchParams }: PageProps
             ]}
           />
         </div>
-        <p className="type-eyebrow">Action plan for earlier cancer diagnosis</p>
-        <h1 className="type-display">{county.name}</h1>
-        <p className="type-lede max-w-[60ch] text-muted-foreground">
-          A plan to take to the board: where the area stands, the target, the actions with who does what first, what to start
-          recording, and every source. Print it, download it, or send it by email.
-        </p>
       </header>
+      <AreaLead countyId={county.id} eyebrow={`Action plan for earlier cancer diagnosis · ${county.name_fi}`} />
       <Suspense
         fallback={
           <p aria-busy className="rounded-lg bg-card p-8 text-base text-muted-foreground">

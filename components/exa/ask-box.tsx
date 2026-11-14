@@ -4,7 +4,7 @@ import { ArrowUp, ArrowUpRight, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Frame, FrameDescription, FrameHeader, FrameMeta, FramePanel, FrameTitle } from "@/components/ui/frame";
+import { Frame, FrameHeader, FrameMeta, FramePanel, FrameTitle } from "@/components/ui/frame";
 
 import { CloseButton, LiveMark, LoadingRows, ResultList, Unavailable } from "./result-list";
 import { isAskResponse, TOO_MANY, type AskResponse } from "./types";
@@ -84,7 +84,7 @@ export function AskBox() {
   return (
     <Frame id="ask" aria-labelledby="ask-heading" className="scroll-mt-4">
       <FrameHeader>
-        <FrameTitle id="ask-heading" className="type-title">
+        <FrameTitle as="h1" id="ask-heading" className="type-display">
           Ask the evidence
         </FrameTitle>
         {/* Only once there are live results to mark; before that the page's one mark is the news'. */}
@@ -93,10 +93,6 @@ export function AskBox() {
             <LiveMark result={data} />
           </FrameMeta>
         )}
-        <FrameDescription>
-          Answered from live Exa search results, with a numbered source for every sentence. Decision support,
-          not medical advice.
-        </FrameDescription>
       </FrameHeader>
       <FramePanel padding="lg" className="flex flex-col gap-5">
       <form
