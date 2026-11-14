@@ -4,6 +4,7 @@
 import "./exa-relevance-hooks.mjs";
 
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { registerHooks } from "node:module";
 import { describe, test } from "node:test";
 
@@ -21,6 +22,18 @@ registerHooks({
 
 const { getBottleneck, pickActions, relativeGap } = await import("../lib/act.ts");
 const { counties } = await import("../lib/data.ts");
+
+const { buildContextFromSnapshot } = await import("../lib/brief/facts.ts");
+
+const load = (name) => JSON.parse(readFileSync(new URL(`../data/${name}.json`, import.meta.url), "utf8"));
+const snapshot = {
+  areas: load("counties"),
+  indicators: load("indicators"),
+  values: load("values"),
+  gaps: load("gaps"),
+  evidence: load("evidence"),
+  sources: load("sources"),
+};
 
 const pickedIds = (countyId) => pickActions(getBottleneck(countyId)).map((row) => row.id);
 
@@ -62,4 +75,19 @@ describe("relativeGap", () => {
   test("no county value gives null", () => {
     assert.equal(relativeGap({ indicator_id: "13", value: null, national_value: 50 }), null);
   });
+});
+
+const briefAreas = counties.filter((county) => county.id !== "finland");
+
+describe(`brief and Act page recommend the same actions, all ${briefAreas.length} areas`, () => {
+  for (const { id } of briefAreas) {
+    test(id, () => {
+      const context = buildContextFromSnapshot(snapshot, id);
+      assert.ok(context, "no brief context");
+      assert.deepEqual(
+        context.actions.map((action) => action.id),
+        pickedIds(id),
+      );
+    });
+  }
 });
