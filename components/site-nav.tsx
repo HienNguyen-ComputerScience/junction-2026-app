@@ -22,7 +22,7 @@ const ITEMS: NavItem[] = [
     label: "Areas",
     short: "Areas",
     match: (p) =>
-      p === "/" || p.startsWith("/compare") || (p.startsWith("/county") && !p.endsWith("/act") && !p.endsWith("/plan")),
+      p.startsWith("/compare") || (p.startsWith("/county") && !p.endsWith("/act") && !p.endsWith("/plan")),
   },
   {
     key: "actions",
