@@ -1,4 +1,5 @@
 import { buildPathwaySteps, StepMark } from "@/components/pathway/pathway-steps";
+import { STAGE_LABELS } from "@/lib/act";
 import { SourceChip } from "@/components/source-chip";
 import { Frame, FrameHeader, FramePanel, FrameTitle } from "@/components/ui/frame";
 import { TextLink } from "@/components/ui/text-link";
@@ -121,13 +122,14 @@ export function PathwayStrip({ countyId }: { countyId: string }) {
                     </span>
                   )}
                   <span
+                    title={step.stage ? `Challenge talk wording: ${step.label}` : undefined}
                     className={cn(
                       "text-[0.8125rem] leading-snug text-pretty",
                       card ? "font-medium text-foreground" : "text-muted-foreground",
                     )}
                   >
                     {card && <span className="sr-only">FirstLine step {card.step}, </span>}
-                    {step.label}
+                    {step.stage ? STAGE_LABELS[step.stage] : step.label}
                   </span>
                   {card && step.stage && (
                     <span className="type-note text-muted-foreground">{stageTag(countyId, step.stage)}</span>

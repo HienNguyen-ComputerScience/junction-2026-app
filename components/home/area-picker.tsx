@@ -21,7 +21,7 @@ export type PickerArea = {
   verdict: string;
   /** The area's overall status: the one the map colours it by. */
   status: GapStatus;
-  /** Key of the area's first recommended action in `actions` (it also says whether the label keeps the level), or null. */
+  /** Key of the area's first recommended action in `actions`, or null. */
   actionId: string | null;
 };
 
@@ -35,7 +35,7 @@ type Props = {
   totalAreas: number;
   /** Per area: the bottleneck step's focal figure (absent when it has no value). Server-rendered. */
   leads: Record<string, ReactNode>;
-  /** Per area: the first recommended action, pre-rendered (title and First step). Keyed by PickerArea.actionId. */
+  /** Per area: the first recommended action, pre-rendered (title and First step), linking to it on the act page. Keyed by PickerArea.actionId (the area id). */
   actions: Record<string, ReactNode>;
   /** Per area: "The three steps" status row, pre-rendered. */
   steps: Record<string, ReactNode>;
@@ -126,10 +126,10 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, leads
           the card is as tall as the left column and its action block sits at the bottom. */}
       <div ref={answerRef} className="flex scroll-mt-4 flex-col lg:col-start-2 lg:row-span-2 lg:row-start-1">
         <FramePanel padding="none" className="flex flex-1 flex-col">
-          <div className="flex flex-col gap-6 p-6 sm:p-8">
+          <div className="flex flex-col gap-6 p-6 sm:p-8 sm:pb-6">
             <div className="flex flex-col gap-4" aria-live="polite">
               <p className="type-caption font-medium text-muted-foreground">
-                {area.name}, {year}: where the pathway breaks
+                {area.name}, {year}: the slowest step
               </p>
               {leads[area.id] ?? null}
               <h2 className="type-heading text-pretty text-foreground">{area.verdict}</h2>
@@ -165,7 +165,7 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, leads
             highlight={[area.id]}
             onSelect={(id) => choose(id, true)}
             label={`Map of Finland's ${totalAreas} areas, coloured by the worst of the measured steps against Finland's level`}
-            className="h-[16.25rem] lg:h-[13.5rem]"
+            className="h-[16.25rem] lg:h-[12.875rem]"
           />
         </div>
         <BarKey items={mapKey} className="px-5 pb-1 sm:px-6" />

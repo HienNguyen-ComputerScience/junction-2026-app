@@ -41,7 +41,11 @@ export function FirstStep({ children, compact = false }: { children: ReactNode; 
 }
 
 /** An action title without its trailing full stop (stripped at render; the data keeps its text). */
-export const plainTitle = (title: string) => title.replace(/\.+\s*$/, "");
+export const plainTitle = (title: string) =>
+  title
+    .replace(/\.+\s*$/, "")
+    // Omaolo is named with what it is at its first use, which is the title of its own action.
+    .replace("the national digital symptom assessment (Omaolo)", "Omaolo (the national online symptom checker)");
 
 type Effect = NonNullable<Evidence["effect_size"]>;
 
@@ -82,11 +86,13 @@ function statisticLine({ value, unit, metric }: Effect): string {
 }
 
 /**
- * Who or what the figure compares, taken only from the data's own `effect_size.metric`: where
- * it names a comparison ("... vs ..."), the metric is quoted as it stands. Nothing is inferred
- * from the other fields; null when the metric names no comparison.
+ * Who or what the figure compares. Preferred: the data's own short `effect_size.population`
+ * line (who was studied, where, against what), written only from the stored text. Otherwise,
+ * where the metric names a comparison ("... vs ..."), the metric is quoted as it stands.
+ * Nothing is inferred; null when neither exists.
  */
-export function figureQualifier({ metric }: Effect): string | null {
+export function figureQualifier({ metric, population }: Effect): string | null {
+  if (population) return population;
   return /\svs\s/.test(metric) ? `Measured as: ${metric}` : null;
 }
 
@@ -105,7 +111,7 @@ function EvidenceStat({ action, children }: { action: Evidence; children?: React
           {/* A figure with no stated comparison in the data is labelled as a study result. */}
           {qualifier ? null : <p className="text-[0.8125rem] leading-4 text-muted-foreground">Study finding:</p>}
           <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p>
-          {qualifier ? <p className="text-[0.8125rem] leading-snug text-pretty text-muted-foreground">{qualifier}</p> : null}
+          {qualifier ? <p className="text-[0.8125rem] leading-snug text-pretty text-muted-foreground first-letter:uppercase">{qualifier}</p> : null}
         </>
       ) : (
         <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-foreground tabular-nums">
@@ -138,7 +144,7 @@ export function ActionCard({
     <FramePanel
       padding="none"
       id={index !== undefined ? `action-${index}` : undefined}
-      className="@container scroll-mt-20 px-4 py-3.5 sm:px-6"
+      className="@container w-full min-w-0 scroll-mt-20 px-4 py-3.5 sm:px-6"
     >
       <div className="grid gap-x-10 gap-y-2.5 @3xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-3">

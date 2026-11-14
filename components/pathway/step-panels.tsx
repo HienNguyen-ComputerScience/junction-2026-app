@@ -39,22 +39,15 @@ const INDICATOR: Partial<Record<Stage, string>> = { gp_access: GP_WAIT_ID, refer
 export function buildStepTabs(countyId: string, steps: PathwayStep[]): StepTab[] {
   return steps.map((step) => {
     const empty = !step.measure || step.measure.value === null;
-    const why = WHY[step.stage];
+    const trendStage = trendFor(countyId, step);
     return {
       id: step.stage,
       tab: <TabFace step={step} />,
-      chip:
-        step.measure || (empty && why) ? (
-          <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            {step.measure ? <SourceChip sourceId={step.measure.sourceId} /> : null}
-            {empty && why ? (
-              <TextLink kind="jump" href={why} className="min-h-6 text-[0.8125rem]">
-                see why
-              </TextLink>
-            ) : null}
-          </span>
-        ) : undefined,
+      // Only a step with a figure has a chip under its tab; a step without one shows its status
+      // alone, and its source and "see why" are in its panel.
+      chip: step.measure && !empty ? <SourceChip sourceId={step.measure.sourceId} /> : undefined,
       panel: <StepPanel countyId={countyId} step={step} />,
+      aside: trendStage ? <TrendStrip stages={[trendStage]} areaName={countyId} /> : undefined,
     };
   });
 }
@@ -72,23 +65,46 @@ function TabFace({ step }: { step: PathwayStep }) {
           {step.title}
         </span>
       </span>
-      {value !== null ? (
-        <span className={cn("numeral text-[1.75rem] leading-none", STATUS_FIGURE[status])}>{formatPct(value)}</span>
-      ) : (
-        // No figure of the area's own: never a big number. The hospital group's value, when
-        // there is one, is a small muted line under the badge, not the step's number.
-        <span className="text-sm leading-none text-muted-foreground">No number</span>
+      {value !== null && (
+        // The selected tab's number is the page's focal point (44px); the others stay quiet.
+        <span
+          className={cn(
+            "numeral text-[1.75rem] leading-none group-aria-selected/tab:text-[2.75rem]",
+            STATUS_FIGURE[status],
+          )}
+        >
+          {formatPct(value)}
+        </span>
       )}
+      {/* A step with no figure of its own shows its status alone: no number, no wider value
+          (the hospital group's value is in the step's panel). */}
       <StatusBadge status={status} size="xs">
         {shared ? "No county figure" : STATUS_LABEL[status]}
       </StatusBadge>
-      {shared ? (
-        <span className="type-caption text-muted-foreground">
-          {shared.name}-wide: <span className="figure">{formatPct(shared.value)}</span>
-        </span>
-      ) : null}
     </>
   );
+}
+
+/** The step's trend card (the county page shows it beside the tabs), or null when it has under two years. */
+function trendFor(countyId: string, step: PathwayStep): TrendStage | null {
+  const { measure, status } = step;
+  const indicatorId = INDICATOR[step.stage];
+  if (!measure || measure.value === null || !indicatorId) return null;
+  const trend = getTrend(countyId, indicatorId).map(({ year, value: point }) => ({
+    year,
+    value: point?.value ?? null,
+  }));
+  if (trend.length < 2) return null;
+  return {
+    step: step.step,
+    title: step.title,
+    status,
+    sourceId: measure.sourceId,
+    year: measure.year,
+    direction: measure.direction,
+    trend,
+    nationalTrend: YEARS.map((year) => ({ year, value: getNationalValue(indicatorId, year)?.value ?? null })),
+  };
 }
 
 function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) {
@@ -103,7 +119,10 @@ function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) 
         <span className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1">
           <SourceChip sourceId={STEP2_SOURCE} />
           <TextLink kind="nav" inline href={`/county/${countyId}/act#red-flags`} className="text-sm">
-            Red-flag helper
+            Which referral route fits a concern?
+          </TextLink>
+          <TextLink kind="jump" href={WHY.gp_recognition ?? "#"} className="min-h-6 text-[0.8125rem]">
+            see why
           </TextLink>
         </span>
       </div>
@@ -116,20 +135,29 @@ function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) 
   if (value === null) {
     return (
       <div className="grid gap-x-8 gap-y-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-center">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1.5">
           {measure.shared ? (
             <>
-              <p className="text-sm text-pretty text-muted-foreground">
-                Referrals from here go to {measure.shared.name === "HUS" ? HUS_FULL : measure.shared.name}, which
-                publishes one figure for all its areas.
-              </p>
               <p className="text-sm font-medium text-foreground">
-                {measure.shared.name}-wide value, not a county figure
+                {measure.shared.name === "HUS" ? HUS_FULL : measure.shared.name} value:{" "}
+                <span className="figure">{formatPct(measure.shared.value)}</span>
+              </p>
+              <p className="text-sm text-pretty text-muted-foreground">
+                Referrals from here go to {measure.shared.name}, which publishes one figure for all its areas.{" "}
+                {measure.shared.name}-wide value, not a county figure.
               </p>
             </>
           ) : (
             <p className="text-sm text-pretty text-muted-foreground">{measure.note}</p>
           )}
+          <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <SourceChip sourceId={measure.sourceId} />
+            {WHY[step.stage] ? (
+              <TextLink kind="jump" href={WHY[step.stage] ?? "#"} className="min-h-6 text-[0.8125rem]">
+                see why
+              </TextLink>
+            ) : null}
+          </span>
         </div>
         {/* A shared figure is drawn as a plain neutral bar: the hatch means no public data only. */}
         <div className="flex flex-col gap-1.5">
@@ -145,24 +173,6 @@ function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) 
     );
   }
 
-  const indicatorId = INDICATOR[step.stage];
-  const trend = indicatorId
-    ? getTrend(countyId, indicatorId).map(({ year, value: point }) => ({ year, value: point?.value ?? null }))
-    : [];
-  const trendStage: TrendStage | null =
-    indicatorId && trend.length > 1
-      ? {
-          step: step.step,
-          title: step.title,
-          status,
-          sourceId: measure.sourceId,
-          year: measure.year,
-          direction: measure.direction,
-          trend,
-          nationalTrend: YEARS.map((year) => ({ year, value: getNationalValue(indicatorId, year)?.value ?? null })),
-        }
-      : null;
-
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-2.5">
@@ -172,7 +182,6 @@ function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) 
           <MeasureBar value={value} finland={measure.finland} finlandLabel={finlandLabel} status={status} />
         </div>
       </div>
-      {trendStage && <TrendStrip stages={[trendStage]} areaName={countyId} />}
       {step.stage === "referral" && <LateReferrals countyId={countyId} />}
     </div>
   );

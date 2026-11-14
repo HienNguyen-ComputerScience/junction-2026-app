@@ -6,6 +6,7 @@ import { FirstStep, plainTitle } from "@/components/act/action-card";
 import { OwnerRow } from "@/components/act/owner-row";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { CardCarousel } from "@/components/ui/card-carousel";
 import { Disclosure } from "@/components/ui/disclosure";
 import {
   Frame,
@@ -121,7 +122,7 @@ function ActionRow({
   sourceIds: string[];
 }) {
   return (
-    <li className="grid gap-x-8 gap-y-3 border-b border-border px-5 py-4 last:border-b-0 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
+    <div className="grid w-full min-w-0 gap-x-8 gap-y-3 rounded-lg border border-border px-4 py-4 sm:px-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
       <div className="flex min-w-0 flex-col gap-1.5">
         <div className="flex items-start justify-between gap-x-4">
           <h4 className="type-heading min-w-0 text-pretty">{plainTitle(layout.action)}</h4>
@@ -132,7 +133,7 @@ function ActionRow({
         <OwnerRow owner={layout.who} />
       </div>
       <FirstStep compact>{layout.firstStep}</FirstStep>
-    </li>
+    </div>
   );
 }
 
@@ -206,16 +207,18 @@ function Claims({
                 See the evidence and limitations
               </TextLink>
             </FramePanelLabel>
-                        <ul>
-              {segment.items.map(({ claim, layout }, i) => (
-                <ActionRow
-                  key={`${i}-${claim.text.slice(0, 24)}`}
-                  layout={layout}
-                  chips={chips}
-                  sourceIds={claim.source_ids}
-                />
-              ))}
-            </ul>
+            <div className="px-5 py-4 sm:px-6">
+              <CardCarousel
+                label="Recommended actions in the brief"
+                noun="action"
+                showSteps
+                items={segment.items.map(({ claim, layout }, i) => ({
+                  id: `${i}-${claim.text.slice(0, 24)}`,
+                  label: plainTitle(layout.action),
+                  node: <ActionRow layout={layout} chips={chips} sourceIds={claim.source_ids} />,
+                }))}
+              />
+            </div>
           </section>
         ),
       )}

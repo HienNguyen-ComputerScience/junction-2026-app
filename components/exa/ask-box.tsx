@@ -82,9 +82,12 @@ export function AskBox() {
         <FrameTitle id="ask-heading" className="type-title">
           Ask the evidence
         </FrameTitle>
-        <FrameMeta>
-          <LiveMark result={data} />
-        </FrameMeta>
+        {/* Only once there are live results to mark; before that the page's one mark is the news'. */}
+        {data && (
+          <FrameMeta>
+            <LiveMark result={data} />
+          </FrameMeta>
+        )}
         <FrameDescription>
           Answered from live Exa search results, with a numbered source for every sentence. Decision support,
           not medical advice.

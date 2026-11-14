@@ -1,3 +1,4 @@
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -42,11 +43,11 @@ export function HomeTool({
   for (const county of all) {
     const bottleneck = getBottleneck(county.id);
     const top = pickActions(bottleneck)[0] ?? null;
-    // One node per action and per label: an area with a break reads "Recommended action 1", one
-    // without reads as keeping its level.
-    const actionId = top ? `${top.id}:${bottleneck.anyRed}` : null;
+    // One node per area (it links to that area's act page): an area with a break reads
+    // "Recommended action 1", one without reads as keeping its level.
+    const actionId = top ? county.id : null;
     if (top && actionId && !actions[actionId]) {
-      actions[actionId] = <TopAction action={top} keepLevel={!bottleneck.anyRed} />;
+      actions[actionId] = <TopAction action={top} keepLevel={!bottleneck.anyRed} href={`/county/${county.id}/act#action-1`} />;
     }
     steps[county.id] = <ThreeSteps countyId={county.id} />;
 
@@ -110,26 +111,36 @@ export function HomeTool({
 
 /**
  * "The three steps" under the hero buttons: each step's short name and its status as a text
- * label (no numbers), each linking to the area's pathway page.
+ * label (no numbers). Each is a link (a border and a chevron, a lighter surface on hover) to
+ * that step's tab on the area's pathway page (?step=1, 2 or 3).
  */
 function ThreeSteps({ countyId }: { countyId: string }) {
   return (
     <div className="flex flex-col gap-2">
       <p className="type-caption font-medium text-muted-foreground">The three steps</p>
-      <ol className="grid gap-x-4 gap-y-3 sm:grid-cols-3">
+      <ol className="grid gap-2 sm:grid-cols-3">
         {buildPathwaySteps(countyId).map((step) => (
           <li key={step.stage} className="min-w-0">
             <Link
-              href={`/county/${countyId}`}
-              className="group flex flex-col items-start gap-1.5 rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              href={`/county/${countyId}?step=${step.step}`}
+              title={`See step ${step.step}`}
+              aria-label={`See step ${step.step}: ${step.title}, ${step.measure?.shared && step.measure.value === null ? "No county figure" : STATUS_LABEL[step.status]}`}
+              className="group flex h-full items-start justify-between gap-2 rounded-lg border border-border bg-muted px-3.5 py-3 transition-colors outline-none hover:border-foreground/40 hover:bg-accent focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             >
-              <span className="text-sm leading-snug font-medium text-foreground group-hover:underline group-hover:underline-offset-4">
-                <span className="sr-only">Step {step.step}: </span>
-                {step.title}
+              <span className="flex min-w-0 flex-col items-start gap-1.5">
+                <span className="text-sm leading-snug font-medium text-foreground">
+                  <span className="sr-only">Step {step.step}: </span>
+                  {step.title}
+                </span>
+                <StatusBadge status={step.status} size="xs">
+                  {step.measure?.shared && step.measure.value === null ? "No county figure" : STATUS_LABEL[step.status]}
+                </StatusBadge>
               </span>
-              <StatusBadge status={step.status} size="xs">
-                {step.measure?.shared && step.measure.value === null ? "No county figure" : STATUS_LABEL[step.status]}
-              </StatusBadge>
+              <ChevronRight
+                aria-hidden
+                strokeWidth={1.75}
+                className="mt-0.5 size-4 shrink-0 text-faint transition-colors group-hover:text-foreground group-focus-visible:text-foreground"
+              />
             </Link>
           </li>
         ))}
