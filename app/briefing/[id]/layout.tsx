@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import "../briefing.css";
 import { BriefingPrint } from "@/components/briefing/print-document";
 import { BriefingShell } from "@/components/briefing/shell";
-import { StepBoard } from "@/components/briefing/step-board";
 import { StepChange } from "@/components/briefing/step-change";
 import { StepDo } from "@/components/briefing/step-do";
 import { StepMeans } from "@/components/briefing/step-means";
+import { StepShare } from "@/components/briefing/step-share";
 import { StepStand } from "@/components/briefing/step-stand";
 import { StepWhere } from "@/components/briefing/step-where";
 import { buildBriefing } from "@/lib/briefing/model";
@@ -34,7 +34,7 @@ export default async function BriefingAreaLayout({ params, children }: LayoutPro
           means: <StepMeans briefing={briefing} />,
           do: <StepDo briefing={briefing} />,
           change: <StepChange briefing={briefing} />,
-          board: <StepBoard briefing={briefing} />,
+          share: <StepShare briefing={briefing} />,
         }}
       >
         {children}
