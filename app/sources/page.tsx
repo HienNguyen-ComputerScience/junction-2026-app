@@ -244,7 +244,7 @@ export default function SourcesPage() {
               ? `All were retrieved on ${evidenceRetrieved}; the publisher is the host of the link.`
               : "They are listed as retrieved on the date shown; the publisher is the host of the link."}
           </FrameDescription>
-          <FrameDescription>Recommended actions need a checked precedent and linked source. Checked precedents in the snapshot are distinct from Exa results, which are found live and unverified; a search result is not proof an intervention works in a Finnish county. The red-flag helper is decision support, not a diagnosis or substitute for local clinical guidance.</FrameDescription>
+          <FrameDescription>Recommended actions need a checked precedent and linked source. Checked precedents in the snapshot are distinct from Exa results, which are found live and unverified; a search result is not proof an intervention works in a Finnish county. The referral-routes panel describes routes a county should offer. It is decision support, not a diagnosis or substitute for local clinical guidance.</FrameDescription>
           <FrameDescription>Results labelled “Found live — unverified” come from Exa live search. They are not checked by the team.</FrameDescription>
         </FrameHeader>
         <ul className="grid gap-1.5 md:grid-cols-2">
