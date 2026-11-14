@@ -1,3 +1,4 @@
+import { AnimatedNumber } from "@/components/motion/animated-number";
 import { SourceChip } from "@/components/source-chip";
 import { withFigures } from "@/components/ui/measure-bar";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
@@ -22,7 +23,7 @@ export function LeadFigure({ gap }: { gap: Gap }) {
     <div className="flex flex-col gap-1.5">
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
         <p className={`numeral text-[3.5rem] leading-[0.95] sm:text-[4.75rem] ${STATUS_FIGURE[gap.status]}`}>
-          {formatPct(gap.value)}
+          <AnimatedNumber value={gap.value} final={formatPct(gap.value)} />
         </p>
         <div className="flex flex-col items-start gap-1.5">
           <StatusBadge status={gap.status} size="md">
