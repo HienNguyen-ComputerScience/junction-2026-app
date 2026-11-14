@@ -143,6 +143,44 @@ export function PathwayStrip({
     </div>
   );
 
+  // One row under the labels, at both sizes: each of FirstLine's steps says its status in
+  // words; the patient's and the hospital's steps say once, over a bracket, that they are not
+  // measured. (Screen readers get the same words in each node's label.)
+  const statusRow = (
+    <div aria-hidden className={cn("grid grid-cols-8", lg ? "-mt-1.5 max-md:hidden" : "-mt-1 max-sm:hidden")}>
+      {GROUPS.map((group) =>
+        group.group === "county" ? (
+          STEPS.slice(group.from - 1, group.from - 1 + group.span).map((step) => {
+            const card = cardOf(step.stage);
+            return (
+              <span
+                key={step.label}
+                className={cn(
+                  "px-1 text-center type-note text-pretty",
+                  card?.status === "red" ? "text-status-red-ink" : "text-muted-foreground",
+                )}
+              >
+                {card ? statusWords(card) : null}
+              </span>
+            );
+          })
+        ) : (
+          <span
+            key={group.group}
+            className="relative flex justify-center pt-2"
+            style={{ gridColumn: `${group.from} / span ${group.span}` }}
+          >
+            <span
+              className="absolute top-0 h-1.5 border-x border-b border-foreground/20"
+              style={{ left: `${50 / group.span}%`, right: `${50 / group.span}%` }}
+            />
+            <span className="type-note whitespace-nowrap text-muted-foreground">{group.label}</span>
+          </span>
+        ),
+      )}
+    </div>
+  );
+
   if (!lg) {
     return (
       <figure
@@ -153,7 +191,10 @@ export function PathwayStrip({
           {heading}
           {label}
         </figcaption>
-        {line}
+        <div className="flex flex-col gap-1.5">
+          {line}
+          {statusRow}
+        </div>
       </figure>
     );
   }
@@ -178,40 +219,7 @@ export function PathwayStrip({
         )}
       </figcaption>
       {line}
-      {/* One row under the labels: each of FirstLine's steps says its status in words; the
-          patient's and the hospital's steps say once, over a bracket, that they are not measured. */}
-      <div aria-hidden className="-mt-1.5 grid grid-cols-8 max-md:hidden">
-        {GROUPS.map((group) =>
-          group.group === "county" ? (
-            STEPS.slice(group.from - 1, group.from - 1 + group.span).map((step) => {
-              const card = cardOf(step.stage);
-              return (
-                <span
-                  key={step.label}
-                  className={cn(
-                    "px-1 text-center type-note text-pretty",
-                    card?.status === "red" ? "text-status-red-ink" : "text-muted-foreground",
-                  )}
-                >
-                  {card ? statusWords(card) : null}
-                </span>
-              );
-            })
-          ) : (
-            <span
-              key={group.group}
-              className="relative flex justify-center pt-2"
-              style={{ gridColumn: `${group.from} / span ${group.span}` }}
-            >
-              <span
-                className="absolute top-0 h-1.5 border-x border-b border-foreground/20"
-                style={{ left: `${50 / group.span}%`, right: `${50 / group.span}%` }}
-              />
-              <span className="type-note whitespace-nowrap text-muted-foreground">{group.label}</span>
-            </span>
-          ),
-        )}
-      </div>
+      {statusRow}
     </figure>
   );
 }
