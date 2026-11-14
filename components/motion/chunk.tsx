@@ -54,6 +54,7 @@ export function Chunk({
     <section
       id={id}
       data-slot="chunk"
+      data-focus-item=""
       className={cn(
         "motion-loud flex flex-col justify-center gap-5 print:min-h-0 print:gap-3 print:py-4",
         lead ? "pt-4 pb-12 sm:pt-8 sm:pb-16" : "py-16 sm:py-24 lg:min-h-[70vh]",

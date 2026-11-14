@@ -5,7 +5,7 @@ import { CompareTable } from "@/components/compare/compare-table";
 import { EarlyWarning } from "@/components/home/early-warning";
 import { CompareBars } from "@/components/compare/compare-story";
 import { StoryFact } from "@/components/compare/story-fact";
-import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, MoreCard, PrintButton, Reveal, ScrollStory } from "@/components/motion";
+import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, FocusGroup, MoreCard, PrintButton, Reveal, ScrollStory } from "@/components/motion";
 import { SourceChip } from "@/components/source-chip";
 import { buttonVariants } from "@/components/ui/button";
 import { FramePanel } from "@/components/ui/frame";
@@ -31,6 +31,7 @@ export default function ComparePage() {
 
   return (
     <main className="page-container print-wide flex max-w-[1200px] flex-col pt-6 sm:pt-8 print:pt-0">
+      <FocusGroup>
       <Chunk
         lead
         as="h1"
@@ -174,6 +175,7 @@ export default function ComparePage() {
           },
         ]}
       />
+      </FocusGroup>
     </main>
   );
 }
