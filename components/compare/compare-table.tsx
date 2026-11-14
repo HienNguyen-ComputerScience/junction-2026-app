@@ -64,14 +64,12 @@ className?: string;
       aria-sort={active ? (ascending ? "ascending" : "descending") : undefined}
       className={cn("px-3 pb-3 text-left align-bottom text-sm font-semibold text-muted-foreground first:pl-0 last:pr-0", className)}
     >
-      {/* Paper gets plain text: Chromium leaves buttons out of the header row it repeats on each page. */}
-      {keyName ? <span className="hidden print:inline">{children}</span> : null}
       {keyName ? (
         <button
           type="button"
           onClick={() => onSort(keyName)}
           className={cn(
-            "print:hidden inline-flex min-h-9 items-center gap-1.5 rounded-sm text-left underline decoration-forest-ink/30 underline-offset-4 outline-none hover:text-forest-ink hover:decoration-forest-ink focus-visible:ring-3 focus-visible:ring-ring/50",
+            "inline-flex min-h-9 items-center gap-1.5 rounded-sm text-left underline decoration-forest-ink/30 underline-offset-4 outline-none hover:text-forest-ink hover:decoration-forest-ink focus-visible:ring-3 focus-visible:ring-ring/50",
             active && "text-forest-ink",
           )}
         >
@@ -133,8 +131,8 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
         Sorted: {current}
       </p>
 
-      <table className="stack-table w-full border-collapse">
-        <caption className="sr-only">All areas, {current.toLowerCase()}. Press a column heading to sort by it.</caption>
+      <table className="stack-table w-full border-collapse print:hidden">
+        <caption className="sr-only">All areas. Order: {current}. Press a column heading to sort by it.</caption>
         <thead>
           <tr className="border-b border-border">
             <Heading sort={sort} onSort={setSort} className="w-12">Rank</Heading>
@@ -219,6 +217,105 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
           ))}
         </tbody>
       </table>
+      <PrintTable rows={sorted} finland={finland} finlandReferral={finlandReferral} order={current} />
     </div>
+  );
+}
+
+const SHORT_STATUS = { red: "Worse", amber: "At or better", no_data: "No data" } as const;
+
+/**
+ * The table as it goes on paper: one landscape A4 page, one line per area, figures right-aligned,
+ * no bars or panels. Same rows, same order as on screen; status still in words.
+ */
+function PrintTable({
+  rows,
+  finland,
+  finlandReferral,
+  order,
+}: {
+  rows: CompareRow[];
+  finland: number;
+  finlandReferral: number;
+  order: string;
+}) {
+  const th = "border-b-2 border-forest-ink px-1.5 pb-1 text-left align-bottom font-semibold whitespace-nowrap";
+  const td = "border-b border-border-mist px-1.5 py-[2.5pt] align-top";
+  const num = "text-right tabular-nums whitespace-nowrap";
+  return (
+    <table className="hidden w-full border-collapse text-[8.5pt] leading-snug text-charcoal print:table">
+      <caption className="pb-1.5 text-left text-[8.5pt] text-muted-foreground">
+        All {rows.length} areas. Order: {order}. Status compares each area with Finland, not with a clinical standard.
+      </caption>
+      <thead>
+        <tr>
+          <th className={th}>Rank</th>
+          <th className={th}>Area</th>
+          <th className={cn(th, "text-right")}>
+            GP visits waiting
+            <br />
+            over 7 days, 2025
+          </th>
+          <th className={th}>
+            Status vs Finland
+            <br />({pct(finland)})
+          </th>
+          <th className={cn(th, "text-right")}>
+            Points
+            <br />
+            vs Finland
+          </th>
+          <th className={cn(th, "text-right")}>2023</th>
+          <th className={th}>
+            Change
+            <br />
+            since 2023
+          </th>
+          <th className={th}>Read with care</th>
+          <th className={cn(th, "text-right")}>
+            Referrals within
+            <br />3 days, 2025
+          </th>
+          <th className={th}>
+            Referral status
+            <br />
+            (Finland {pct(finlandReferral)})
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => (
+          <tr key={row.id}>
+            <td className={cn(td, num)}>{row.rank}</td>
+            <td className={cn(td, "font-semibold whitespace-nowrap")}>{row.name}</td>
+            <td className={cn(td, num, row.gpStatus === "red" && "font-semibold text-status-red-ink")}>{pct(row.gp)}</td>
+            <td className={cn(td, "whitespace-nowrap")}>
+              <StatusBadge status={row.gpStatus} variant="quiet" className="h-auto text-[8.5pt] leading-snug text-charcoal">
+                {SHORT_STATUS[row.gpStatus]}
+              </StatusBadge>
+            </td>
+            <td className={cn(td, num)}>
+              {row.gpVsFinland > 0 ? "+" : row.gpVsFinland < 0 ? "−" : ""}
+              {Math.abs(row.gpVsFinland).toFixed(1)}
+            </td>
+            <td className={cn(td, num)}>{row.gpFirst !== null ? pct(row.gpFirst) : "–"}</td>
+            <td className={cn(td, "whitespace-nowrap")}>{changeText(row.gpChange) ?? "No 2023 figure"}</td>
+            <td className={cn(td, "whitespace-nowrap")}>{row.recording ?? ""}</td>
+            <td className={cn(td, num)}>
+              {row.referral !== null ? pct(row.referral) : row.referralShared ? `(${pct(row.referralShared.value)})` : "–"}
+            </td>
+            <td className={cn(td, "whitespace-nowrap")}>
+              {row.referralCityOnly
+                ? "City units only"
+                : row.referralShared
+                  ? "HUS-wide value only"
+                  : row.referral !== null
+                    ? SHORT_STATUS[row.referralStatus]
+                    : "No public data"}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

@@ -29,7 +29,7 @@ export default function ComparePage() {
   const chip = { sourceId: lead.gpSourceId, year: LATEST_YEAR };
 
   return (
-    <main className="page-container flex max-w-[1200px] flex-col gap-16 pt-6 sm:gap-20 sm:pt-8">
+    <main className="page-container print-wide flex max-w-[1200px] flex-col gap-16 pt-6 sm:gap-20 sm:pt-8 print:gap-8 print:pt-0">
       <header className="flex flex-col items-start gap-4">
         <p className="type-eyebrow">All {lead.total} areas</p>
         <h1 className="type-display">Compare the areas</h1>
@@ -50,7 +50,7 @@ export default function ComparePage() {
         <h2 id="lead-heading" className="sr-only">
           The picture in four figures
         </h2>
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-2 print:grid-cols-4">
           <StatUnit
             eyebrow="Finland's level"
             value={lead.finlandGp}
@@ -121,18 +121,18 @@ export default function ComparePage() {
         </div>
       </section>
 
-      <section aria-labelledby="table-heading" className="flex flex-col gap-5">
+      <section aria-labelledby="table-heading" className="flex flex-col gap-5 print:break-before-page print:gap-2">
         <Reveal className="flex flex-col gap-2">
           <p className="type-eyebrow">The full table</p>
           <h2 id="table-heading" className="type-title">
             Every area, side by side
           </h2>
-          <p className="max-w-[68ch] text-base text-muted-foreground">
+          <p data-print="hide" className="max-w-[68ch] text-base text-muted-foreground">
             Ranked by the share of non-urgent GP visits waiting more than 7 days. Choose another order from the list or press a
             column heading. Press an area&apos;s name for its full pathway.
           </p>
         </Reveal>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 print:hidden">
           <BarKey items={["finland", "red", "amber"]} />
           <Disclosure label="what the referral labels mean" tone="quiet">
             <p className="max-w-[68ch] text-base">
@@ -143,16 +143,23 @@ export default function ComparePage() {
             </p>
           </Disclosure>
         </div>
-        <FramePanel padding="none" className="p-5 sm:p-7">
+        <FramePanel padding="none" className="p-5 sm:p-7 print:border-0 print:bg-transparent print:p-0">
           <CompareTable rows={rows} finland={lead.finlandGp} finlandReferral={lead.finlandReferral} />
         </FramePanel>
-        <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+        <p className="hidden text-[8.5pt] text-muted-foreground print:block">
+          HUS-wide: Central, East and West Uusimaa and Vantaa and Kerava have no referral figure of their own; HUS (the Helsinki
+          University Hospital group) publishes one value for all four, shown in brackets. City units only: the Helsinki figure
+          covers the city&apos;s own units; most Helsinki referrals go to HUS. Changes under 1 point read &ldquo;About the
+          same&rdquo;. Where recorded visits changed by more than 20%, part of a change may be how visits are recorded.
+        </p>
+        <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground print:text-[8.5pt]">
           Sources: <SourceChip sourceId={lead.gpSourceId} year={LATEST_YEAR} /> GP waits,{" "}
           <SourceChip sourceId={lead.referralSourceId} year={LATEST_YEAR} /> referrals.
         </p>
       </section>
 
-      <section aria-labelledby="worsening-heading" className="flex flex-col gap-5">
+      {/* Not on paper: the printed table already carries every area's change since 2023. */}
+      <section aria-labelledby="worsening-heading" className="flex flex-col gap-5 print:hidden">
         <Reveal className="flex flex-col gap-2">
           <p className="type-eyebrow">Early warning</p>
           <h2 id="worsening-heading" className="type-title scroll-mt-20">

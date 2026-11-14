@@ -537,6 +537,10 @@ h2:not([class*="type-"], .font-sans) {
     size: A4;
     margin: 15mm;
   }
+  @page wide {
+    size: A4 landscape;
+    margin: 12mm;
+  }
   html,
   body {
     background: #fff !important;
@@ -589,6 +593,24 @@ h2:not([class*="type-"], .font-sans) {
   a {
     text-decoration: none;
   }
+  /* Paper is white: tinted panels print as white boxes with a thin grey rule, so a panel that
+     breaks across pages reads as a document section, not a block of colour. Status colours stay. */
+  [data-slot="frame-panel"],
+  [data-slot="card"],
+  [data-slot="stat-unit"],
+  .bg-card,
+  .bg-frame,
+  .bg-muted,
+  .bg-keylime-wash,
+  .bg-mint-veil {
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+  [data-slot="frame-panel"],
+  [data-slot="card"],
+  [data-slot="stat-unit"] {
+    border: 0.75pt solid #d4d6d1 !important;
+  }
   /* A4 is narrower than a desktop screen: wide tables print smaller and tighter, and no column
      keeps a screen minimum width. */
   table.stack-table {
@@ -605,13 +627,28 @@ h2:not([class*="type-"], .font-sans) {
   table.stack-table thead button {
     text-decoration: none !important;
   }
+  /* A section marked print-wide prints on its own landscape A4 page(s): for tables a director
+     would print from Excel. */
+  .print-wide {
+    page: wide;
+  }
   /* Lead figures print compact, so four fit on one page. */
   [data-slot="stat-unit"] {
     padding: 14pt !important;
     gap: 6pt !important;
   }
   [data-slot="stat-unit"] .numeral {
-    font-size: 32pt !important;
+    font-size: 28pt !important;
+  }
+  [data-slot="stat-unit"] :is(.text-base, .text-sm) {
+    font-size: 9.5pt !important;
+  }
+  /* Paper is not a screen: the page title and lede print smaller. */
+  .type-display {
+    font-size: 26pt !important;
+  }
+  .type-lede {
+    font-size: 11pt !important;
   }
 }
 
