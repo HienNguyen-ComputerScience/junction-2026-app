@@ -16,7 +16,7 @@ import { BarKey } from "@/components/ui/measure-bar";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Frame,
-  FrameFooter,
+  FrameDescription,
   FrameHeader,
   FramePanel,
   FrameTitle,
@@ -123,35 +123,44 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           <FrameTitle id="pathway-heading" className="type-title">
             The first steps, compared with Finland ({LATEST_YEAR})
           </FrameTitle>
+          <FrameDescription>Gaps to Finland are in percentage points (pts).</FrameDescription>
         </FrameHeader>
         <div className="flex flex-col gap-1.5">
           <FramePanel padding="none">
             <PathwaySteps steps={steps} density="full" />
           </FramePanel>
-          <TrendStrip stages={buildTrendStages(county, steps)} areaName={county.name} />
+          <TrendStrip
+            stages={buildTrendStages(county, steps)}
+            areaName={county.name}
+            footer={
+              <>
+                <BarKey />
+                <p className="flex flex-wrap items-center gap-x-2 gap-y-1.5 type-caption text-muted-foreground">
+                  <span>
+                    <span className="font-medium text-foreground">Referrals waiting over 21 days</span> (context
+                    only):
+                  </span>
+                  {lateReferrals ? (
+                    <span>
+                      <span className="figure text-foreground">{lateReferrals.value}%</span> here
+                    </span>
+                  ) : (
+                    <span>no public data for this area</span>
+                  )}
+                  {lateReferralsFinland && (
+                    <span>
+                      · Finland <span className="figure text-foreground">{lateReferralsFinland.value}%</span>
+                    </span>
+                  )}
+                  <SourceChip
+                    sourceId={lateReferrals?.source_id ?? lateReferralsFinland?.source_id ?? "sotkanet-5033"}
+                    year={LATEST_YEAR}
+                  />
+                </p>
+              </>
+            }
+          />
         </div>
-        <FrameFooter className="flex flex-col gap-2.5">
-          <BarKey />
-          <p className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-            <span>Context only, not used for status: referrals still unprocessed after 21 days.</span>
-            {lateReferrals ? (
-              <span>
-                <span className="figure text-foreground">{lateReferrals.value}%</span> here
-              </span>
-            ) : (
-              <span>No public data here</span>
-            )}
-            {lateReferralsFinland && (
-              <span>
-                Finland <span className="figure text-foreground">{lateReferralsFinland.value}%</span>
-              </span>
-            )}
-            <SourceChip
-              sourceId={lateReferrals?.source_id ?? lateReferralsFinland?.source_id ?? "sotkanet-5033"}
-              year={LATEST_YEAR}
-            />
-          </p>
-        </FrameFooter>
       </Frame>
 
       <PathwayStrip countyId={county.id} />

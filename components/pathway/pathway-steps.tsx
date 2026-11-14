@@ -121,7 +121,8 @@ export function StepMark({
 
 function StepTitle({ step, compact = false }: { step: PathwayStep; compact?: boolean }) {
   return (
-    <div className="flex min-w-0 items-center gap-2.5">
+    // Top-aligned: the steps share subgrid rows, so a one-line and a two-line title take the same row height.
+    <div className="flex min-w-0 items-start gap-2.5">
       <StepMark step={step.step} status={step.status} className={compact ? undefined : "size-7 text-[0.8125rem]"} />
       <h3
         className={cn(
@@ -228,7 +229,8 @@ function FullStep({ step }: { step: PathwayStep }) {
           </p>
           <p className="pt-2 type-caption text-muted-foreground">{sharedLabel(measure.shared.name)}</p>
           <p className="pt-1 type-caption text-pretty text-muted-foreground">
-            Finland <span className="figure">{formatPct(measure.finland)}</span>, {measure.direction}
+            Finland <span className="figure">{formatPct(measure.finland)}</span>, {measure.direction}.{" "}
+            {sharedMeaning(measure.shared.name)}
           </p>
         </>
       ) : (
@@ -250,6 +252,9 @@ function FullStep({ step }: { step: PathwayStep }) {
 
 /** The label that always stands with a wider value shown in place of an area's own. */
 const sharedLabel = (name: string) => `${name}-wide value, not a county figure`;
+/** Said once per step that shows a wider value: what "HUS-wide" means. */
+const sharedMeaning = (name: string) =>
+  `${name}-wide: one shared figure for the hospital district (${name}) that serves these areas`;
 
 function CompactStep({ step, extra }: { step: PathwayStep; extra?: ReactNode }) {
   const { measure, status } = step;
@@ -267,7 +272,13 @@ function CompactStep({ step, extra }: { step: PathwayStep; extra?: ReactNode }) 
       </p>
       <p className="type-caption text-muted-foreground">
         {measure ? measure.counts : "No public statistic measures this step"}
-        {measure && value === null && measure.shared && <> · {sharedLabel(measure.shared.name)}</>}
+        {measure && value === null && measure.shared && (
+          <>
+            {" "}
+            · {sharedLabel(measure.shared.name)}
+            <span className="block pt-1">{sharedMeaning(measure.shared.name)}</span>
+          </>
+        )}
       </p>
       <MeasureBar
         className="pt-2"

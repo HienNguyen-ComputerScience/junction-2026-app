@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { MainNav, NavLinks } from "@/components/site-nav";
+import { counties } from "@/lib/data";
+import { getRanking } from "@/lib/ranking";
 
 /**
  * FirstLine mark: an F built from the product's own chart. The stem is the Finland line, in the
@@ -19,6 +21,8 @@ export function LogoMark({ className = "size-6" }: { className?: string }) {
 }
 
 export function SiteHeader() {
+  const areaIds = counties.map((county) => county.id);
+  const defaultArea = getRanking()[0]?.county.id ?? areaIds[0];
   return (
     <header className="border-b border-border bg-background">
       <div className="page-container flex h-14 items-center justify-between gap-4 sm:gap-6">
@@ -36,8 +40,8 @@ export function SiteHeader() {
             Where early cancer care breaks down, county by county
           </p>
         </div>
-        <Suspense fallback={<NavLinks pathname={null} />}>
-          <MainNav />
+        <Suspense fallback={<NavLinks pathname={null} defaultArea={defaultArea} areaIds={areaIds} />}>
+          <MainNav defaultArea={defaultArea} areaIds={areaIds} />
         </Suspense>
       </div>
     </header>

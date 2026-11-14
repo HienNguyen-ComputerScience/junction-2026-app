@@ -8,10 +8,10 @@ import type { GapStatus, Stage } from "@/lib/data";
 import { formatPct } from "@/lib/ranking";
 import { formatAmount, type Better, type WhatIf } from "@/lib/what-if";
 
-/** What one share counts, and which word an improvement takes. */
-const UNIT: Record<Better, { word: string; subject: string }> = {
-  lower: { word: "fewer", subject: "Non-urgent GP visits waiting over 7 days" },
-  higher: { word: "more", subject: "Referrals processed within 3 days" },
+/** Which word an improvement takes, and the headline's tail: what the 100 are and what happens to them. */
+const UNIT: Record<Better, { word: string; tail: string }> = {
+  lower: { word: "fewer", tail: "of every 100 non-urgent GP visits would wait over 7 days" },
+  higher: { word: "more", tail: "of every 100 referrals would be processed within 3 days" },
 };
 
 const STAGE_IN_SENTENCE: Record<Stage, string> = {
@@ -68,23 +68,28 @@ export function WhatIfPanel({
     // otherwise to the best area's level. The best area is a second mark either way.
     const target = toFinland !== null ? finland : (toBest?.value ?? null);
     const amount = toFinland ?? toBest?.amount ?? null;
-    const sentence =
+    const question =
       toFinland !== null ? (
-        <>
-          {unit.subject}: what if {areaName} reached Finland&apos;s level?
-        </>
+        <>If {areaName} reached Finland&apos;s level.</>
       ) : toBest ? (
         <>
-          {unit.subject}: {areaName} is at or better than Finland&apos;s level. What if it reached
-          the best area&apos;s?
+          {areaName} is at or better than Finland&apos;s level. If it reached the best area&apos;s level.
+        </>
+      ) : null;
+    intro =
+      amount !== null ? (
+        <>
+          <p className="type-heading text-pretty text-foreground">
+            <span className="numeral text-[1.5rem] leading-none">{formatAmount(amount)}</span> {unit.word} {unit.tail}
+          </p>
+          {question && <p className="type-caption text-muted-foreground">{question}</p>}
         </>
       ) : (
-        <>
-          {areaName} is already at or better than Finland&apos;s level, and has the best published
-          share of the areas with a figure.
-        </>
+        <p className="text-[0.9375rem] leading-relaxed text-pretty text-foreground">
+          {areaName} is already at or better than Finland&apos;s level, and has the best published share of the areas
+          with a figure.
+        </p>
       );
-    intro = <p className="text-[0.9375rem] leading-relaxed text-pretty text-foreground">{sentence}</p>;
     chart = (
       <>
         <WhatIfBar
@@ -92,10 +97,9 @@ export function WhatIfPanel({
           status={status}
           finland={finland}
           target={target}
-          amount={amount === null ? null : `${formatAmount(amount)}`}
+          amount={amount === null ? null : formatAmount(amount)}
           word={unit.word}
           best={toBest}
-          showBestAmount={toFinland !== null}
         />
       </>
     );
@@ -108,7 +112,7 @@ export function WhatIfPanel({
       padding="none"
       className="grid h-full gap-x-10 gap-y-4 px-5 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-center"
     >
-      <div className="flex flex-col gap-2.5">
+      <div className="flex flex-col gap-2">
         <h3 className="font-sans type-caption font-medium text-muted-foreground">What if: {STAGE_LABELS[stage]}</h3>
         {intro}
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1.5 type-caption text-muted-foreground">
@@ -143,7 +147,6 @@ function WhatIfBar({
   amount,
   word,
   best,
-  showBestAmount,
 }: {
   value: number;
   status: GapStatus;
@@ -152,29 +155,28 @@ function WhatIfBar({
   amount: string | null;
   word: string;
   best: { name: string; value: number; amount: number } | null;
-  showBestAmount: boolean;
 }) {
   const lo = target === null ? null : clamp(Math.min(value, target));
   const hi = target === null ? null : clamp(Math.max(value, target));
   const bestX = best ? clamp(best.value) : null;
+  const valueX = clamp(value);
 
   return (
     <figure className="flex flex-col gap-1.5">
-      {lo !== null && hi !== null && amount !== null && (
-        <div aria-hidden className="relative h-8">
-          <span className="absolute inset-x-0 top-0 flex whitespace-nowrap" style={labelOver(lo, hi)}>
-            <span className="text-[0.8125rem] leading-5 text-muted-foreground">
-              <span className="numeral text-[1.125rem] text-foreground">{amount}</span> {word} of every 100
-            </span>
-          </span>
-          {/* The bracket: a dimension line over exactly the span the amount counts. */}
+      {/* Every mark is named on the bar, in 12px: the area's end above, Finland and the best area below. */}
+      <div aria-hidden className="relative h-5 type-note text-muted-foreground">
+        <span className="absolute inset-y-0 flex items-center whitespace-nowrap" style={labelOver(valueX, valueX)}>
+          Now <span className="ml-1 figure text-foreground">{formatPct(value)}</span>
+        </span>
+      </div>
+      <div aria-hidden className="relative h-4 rounded-[2px] bg-track">
+        {/* The bracket: a dimension line over exactly the span the amount counts. */}
+        {lo !== null && hi !== null && amount !== null && (
           <span
-            className="absolute bottom-0 h-2 border-x border-t border-foreground/60"
+            className="absolute -top-2 h-1.5 border-x border-t border-foreground/60"
             style={{ left: `${lo}%`, width: `${hi - lo}%` }}
           />
-        </div>
-      )}
-      <div aria-hidden className="relative h-4 rounded-[2px] bg-track">
+        )}
         <BarFill value={value} finland={finland} status={status} />
         <FinlandTick finland={finland} />
         {bestX !== null && (
@@ -186,10 +188,10 @@ function WhatIfBar({
       </div>
       <div aria-hidden className="relative h-4 type-note text-muted-foreground">
         <span
-          className="absolute inset-y-0 flex font-medium whitespace-nowrap text-foreground"
+          className="absolute inset-y-0 flex font-medium whitespace-nowrap"
           style={labelOver(clamp(finland), clamp(finland))}
         >
-          Finland&apos;s level
+          Finland <span className="ml-1 figure text-foreground">{formatPct(finland)}</span>
         </span>
       </div>
       {best && bestX !== null && (
@@ -201,12 +203,6 @@ function WhatIfBar({
             <span className="h-3 w-0 border-l-2 border-dotted border-foreground/80" />
             <span>
               Best: {best.name} <span className="figure text-foreground">{formatPct(best.value)}</span>
-              {showBestAmount && (
-                <>
-                  {" "}
-                  · <span className="figure text-foreground">{formatAmount(best.amount)}</span> {word}
-                </>
-              )}
             </span>
           </span>
         </div>

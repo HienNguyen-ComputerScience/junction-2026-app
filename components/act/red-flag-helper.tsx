@@ -18,16 +18,25 @@ import {
   type GuidelineLink,
 } from "@/lib/red-flags";
 
+/** The guideline's name is the link; what comes after the first colon is muted detail beside it. */
+function splitLabel(label: string): { name: string; detail?: string } {
+  const cut = label.indexOf(": ");
+  return cut > 0 ? { name: label.slice(0, cut), detail: label.slice(cut + 2) } : { name: label };
+}
+
 function LinkList({ links, className }: { links: GuidelineLink[]; className?: string }) {
   return (
     <ul className={cn("flex flex-col gap-2 max-sm:gap-0.5", className)}>
-      {links.map((link) => (
-        <li key={link.url}>
-          <TextLink kind="external" href={link.url} inline className="max-sm:inline-block max-sm:py-1.5">
-            {link.label}
-          </TextLink>
-        </li>
-      ))}
+      {links.map((link) => {
+        const { name, detail } = splitLabel(link.label);
+        return (
+          <li key={link.url} className="text-pretty">
+            <TextLink kind="external" href={link.url} inline detail={detail} className="max-sm:py-1.5">
+              {name}
+            </TextLink>
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -114,9 +123,9 @@ export function RedFlagHelper() {
                   className={cn(
                     "flex min-h-10 cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors has-focus-visible:ring-3 has-focus-visible:ring-ring/50",
                     on
-                      ? "border-foreground/40 bg-muted"
+                      ? "border-brand bg-brand/10 font-medium"
                       : fromText
-                        ? "border-foreground/25 bg-muted"
+                        ? "border-brand/50 bg-brand/5"
                         : "border-input hover:bg-muted/60",
                   )}
                 >
@@ -132,9 +141,9 @@ export function RedFlagHelper() {
                     className={cn(
                       "flex size-4 shrink-0 items-center justify-center rounded-[4px] border transition-colors",
                       on
-                        ? "border-foreground bg-foreground text-background"
+                        ? "border-brand bg-brand text-background"
                         : fromText
-                          ? "border-foreground/60 text-foreground"
+                          ? "border-brand/60 text-foreground"
                           : "border-foreground/35 bg-background/40",
                     )}
                   >
@@ -176,8 +185,8 @@ export function RedFlagHelper() {
         </div>
       </div>
 
-      <div className="lg:col-start-2 lg:row-start-2">
-        <div aria-live="polite" className="h-full">
+      <div className="lg:sticky lg:top-24 lg:col-start-2 lg:row-start-2 lg:self-start">
+        <div aria-live="polite">
           {hasInput ? (
             <div className="flex flex-col gap-4 rounded-lg border border-input bg-muted p-4 sm:p-5">
               <div className="flex flex-col gap-1.5">

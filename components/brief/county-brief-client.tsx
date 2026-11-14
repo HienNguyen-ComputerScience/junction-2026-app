@@ -21,7 +21,7 @@ type Status = "idle" | "loading" | "error" | "limited";
 
 const MODE_LABEL: Record<BriefResponse["mode"], string> = {
   ai: "AI-written, every number checked against the snapshot",
-  fallback: "Precomputed from the snapshot",
+  fallback: "From the published figures",
 };
 
 const AI_PRECOMPUTED_HEADLINE_LABEL = "AI-written; headline precomputed";
@@ -286,7 +286,7 @@ export function CountyBriefClient({
         </div>
         <div className="md:col-start-2 md:row-start-1">
           <Button variant="outline" onClick={writeAiBrief} disabled={status === "loading"}>
-            {status === "loading" ? "Writing…" : triedAi ? "Write AI brief again" : "Write AI brief"}
+            {status === "loading" ? "Writing…" : triedAi ? "Rewrite with AI again" : "Rewrite with AI (checked against the figures)"}
           </Button>
         </div>
         {(status === "limited" || status === "error") && (

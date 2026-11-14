@@ -6,7 +6,7 @@ import { statusText, type Freshness, type Item } from "./types";
 
 /**
  * Where live content comes from, in one pattern everywhere: the "Found live — unverified" tag,
- * then "via Exa · live" or "via Exa · cached · saved 2026-11-14" once a response says which.
+ * then "Live web search via Exa" or "Web search via Exa · cached · saved 2026-11-14" once a response says which.
  */
 export function LiveMark({
   result,
@@ -21,7 +21,7 @@ export function LiveMark({
     <span className={`flex flex-wrap items-center gap-x-2 gap-y-1 ${className ?? ""}`}>
       <Badge variant="unverified">Found live — unverified</Badge>
       <span className="type-caption font-normal text-muted-foreground">
-        via Exa{freshness ? ` · ${freshness.toLowerCase()}` : ""}
+        {freshness && freshness !== "Live" ? `Web search via Exa · ${freshness.toLowerCase()}` : "Live web search via Exa"}
       </span>
     </span>
   );

@@ -8,11 +8,24 @@ import { STAGE_LABELS } from "@/lib/act";
 import type { Evidence } from "@/lib/data";
 
 /** Label and value. Side by side when the card has room, stacked on a phone. */
-function Field({ label, children }: { label: string; children: ReactNode }) {
+function Field({
+  label,
+  children,
+  strong = false,
+}: {
+  label: string;
+  children: ReactNode;
+  /** The one line of a card that reads in the text colour (the evidence). */
+  strong?: boolean;
+}) {
   return (
-    <div className="grid gap-x-4 gap-y-1 @md:grid-cols-[6rem_minmax(0,1fr)]">
+    <div className="grid items-start gap-x-4 gap-y-1 @md:grid-cols-[6rem_minmax(0,1fr)]">
       <dt className="type-caption text-muted-foreground">{label}</dt>
-      <dd className="text-sm leading-relaxed text-pretty tabular-nums text-muted-foreground">{children}</dd>
+      <dd
+        className={`text-sm leading-relaxed text-pretty tabular-nums ${strong ? "text-foreground" : "text-muted-foreground"}`}
+      >
+        {children}
+      </dd>
     </div>
   );
 }
@@ -34,7 +47,7 @@ function SourceMarks({ action }: { action: Evidence }) {
 /** The step to take first: the one emphasised block on a card. */
 export function FirstStep({ children, compact = false }: { children: ReactNode; compact?: boolean }) {
   return (
-    <div className="rounded-lg border border-input bg-muted px-4 py-3">
+    <div className="rounded-r-lg border-l-[3px] border-brand bg-muted px-4 py-3">
       <p className="type-caption font-medium text-muted-foreground">First step</p>
       <p
         className={
@@ -45,6 +58,21 @@ export function FirstStep({ children, compact = false }: { children: ReactNode; 
       >
         {children}
       </p>
+    </div>
+  );
+}
+
+/** The evidence's one measured figure, when the data has it: "−17" "days", "97.6%", "0.75" "odds ratio". */
+function EvidenceStat({ effect }: { effect: NonNullable<Evidence["effect_size"]> }) {
+  const value = effect.value < 0 ? `−${Math.abs(effect.value)}` : String(effect.value);
+  const percent = effect.unit === "%";
+  return (
+    <div className="flex flex-col gap-1 @md:pl-[7rem]">
+      <p className="numeral text-[1.75rem] leading-none text-foreground">
+        {value}
+        {percent ? "%" : <span className="ml-1.5 text-sm font-normal text-muted-foreground">{effect.unit}</span>}
+      </p>
+      <p className="type-caption text-pretty text-muted-foreground">{effect.metric}</p>
     </div>
   );
 }
@@ -101,25 +129,30 @@ export function ActionCard({
         </div>
 
         <div className="flex flex-col gap-3 @3xl:pt-1">
+          {action.effect_size ? <EvidenceStat effect={action.effect_size} /> : null}
           <dl className="flex flex-col gap-3">
-            <Field label="Precedent">
-              {action.precedent}
+            <Field label="Evidence" strong>
+              {action.effect_text}
             </Field>
-            <Field label="Evidence">{action.effect_text}</Field>
           </dl>
           {/* One stack with one left edge, under the evidence text: the two disclosures, then
               the secondary action. */}
           <div className="flex flex-col items-start @md:pl-[7rem]">
+            <Disclosure summary="Precedent">
+              <p className="pb-2 pl-[1.375rem] text-sm leading-relaxed text-pretty text-muted-foreground">
+                {action.precedent}
+              </p>
+            </Disclosure>
             {/* NICE content may not be reproduced outside the UK: link only, never the quote. */}
             {action.source_id.startsWith("ev-nice") ? null : (
               <Disclosure summary="Quote and page in the source">
-                <p className="mb-2 border-l-2 border-border pl-3 type-caption text-muted-foreground">
+                <p className="mb-2 ml-[1.375rem] border-l-2 border-border pl-3 type-caption text-muted-foreground">
                   {action.quote_or_page}
                 </p>
               </Disclosure>
             )}
             <Disclosure summary="Limitations">
-              <p className="pb-2 text-sm leading-relaxed text-pretty text-muted-foreground">
+              <p className="pb-2 pl-[1.375rem] text-sm leading-relaxed text-pretty text-muted-foreground">
                 {action.limitations}
               </p>
             </Disclosure>
