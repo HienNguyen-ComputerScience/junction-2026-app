@@ -59,11 +59,11 @@ export function LimitationsBox({
     <aside
       aria-labelledby="limitations-heading"
       className={cn(
-        "flex flex-col gap-2.5 rounded-panel border border-frame-border bg-frame px-4 pt-4 pb-2.5 sm:px-5",
+        "flex flex-col gap-2.5 rounded-panel border border-frame-border px-4 pt-3.5 pb-2 sm:px-5",
         className,
       )}
     >
-      <h2 id="limitations-heading" className="font-sans text-[0.9375rem] leading-snug font-semibold tracking-normal">
+      <h2 id="limitations-heading" className="font-sans text-[0.8125rem] leading-snug font-medium tracking-normal">
         {TITLE}
       </h2>
       <ul className="flex flex-col gap-2.5">
@@ -124,7 +124,7 @@ function Limitation({ item }: { item: LimitationItem }) {
   return (
     <li className="flex flex-col gap-0.5">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[0.8125rem] leading-5 font-semibold text-foreground">
+        <p className="text-[0.8125rem] leading-5 font-medium text-foreground">
           {item.text.slice(0, split)}
           <span className="sr-only">:</span>
         </p>

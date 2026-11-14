@@ -1,5 +1,7 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { useState, type ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -88,12 +90,72 @@ function withFigures(text: string): ReactNode {
 
 const ROW = "grid gap-x-6 px-4 py-4 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:px-6 md:grid-cols-[8.5rem_minmax(0,1fr)_auto]";
 const DT = "type-caption text-muted-foreground sm:col-start-1 sm:pt-px";
-const DD = "max-w-[44rem] text-sm leading-relaxed text-pretty sm:col-start-2";
+const DD = "max-w-[51rem] text-sm leading-relaxed text-pretty sm:col-start-2";
 
-function ClaimRow({ claim, chips }: { claim: BriefClaim; chips: Record<string, ReactNode> }) {
+/**
+ * A recommended action, laid out like the act page's action card: the action as its title, the
+ * first step in the same nested box, who owns it as a quiet line, the source chip, and a link
+ * to the evidence and limitations on the act page. The text is the claim's own, unchanged.
+ */
+function ActionRow({
+  countyId,
+  layout,
+  chips,
+  sourceIds,
+}: {
+  countyId: string;
+  layout: Extract<Layout, { kind: "action" }>;
+  chips: Record<string, ReactNode>;
+  sourceIds: string[];
+}) {
+  return (
+    <li className="flex flex-col gap-3.5 border-b border-border/80 px-4 py-5 last:border-b-0 sm:px-6">
+      <div className="flex flex-col gap-1">
+        <p className="type-caption text-muted-foreground">Recommended action</p>
+        <h3 className="type-heading max-w-[51rem] text-pretty">{layout.action}</h3>
+      </div>
+      <div className="max-w-[51rem] rounded-lg border border-input bg-muted px-4 py-3.5">
+        <p className="type-caption font-medium text-muted-foreground">First step</p>
+        <p className="mt-1 text-sm leading-relaxed font-medium text-pretty text-foreground">{layout.firstStep}</p>
+      </div>
+      <p className="max-w-[51rem] type-caption text-pretty text-muted-foreground">
+        <span className="font-medium">Who</span> · {layout.who}
+      </p>
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
+        <span className="flex min-w-0 flex-wrap items-center gap-1.5">
+          {sourceIds.map((id) => (
+            <span key={id} className="flex max-w-full min-w-0">
+              {chips[id] ?? <Badge variant="outline">source missing</Badge>}
+            </span>
+          ))}
+        </span>
+        <Link
+          href={`/county/${countyId}/act`}
+          className="inline-flex h-9 items-center gap-1.5 rounded-sm text-sm font-medium text-brand-ink underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
+          See the evidence and limitations
+          <ArrowRight aria-hidden strokeWidth={1.75} className="size-4" />
+        </Link>
+      </div>
+    </li>
+  );
+}
+
+function ClaimRow({
+  claim,
+  chips,
+  countyId,
+}: {
+  claim: BriefClaim;
+  chips: Record<string, ReactNode>;
+  countyId: string;
+}) {
   const layout = layoutOf(claim.text);
+  if (layout.kind === "action") {
+    return <ActionRow countyId={countyId} layout={layout} chips={chips} sourceIds={claim.source_ids} />;
+  }
   const sources = (
-    <span className={`flex min-w-0 flex-wrap content-start items-start gap-1.5 pt-2.5 sm:col-start-2 md:col-start-3 md:row-start-1 md:justify-end md:pt-0 ${layout.kind === "action" ? "md:row-span-3" : ""}`}>
+    <span className="flex min-w-0 flex-wrap content-start items-start gap-1.5 pt-2.5 sm:col-start-2 md:col-start-3 md:row-start-1 md:justify-end md:pt-0">
       {claim.source_ids.map((id) => (
         <span key={id} className="flex max-w-full min-w-0">
           {chips[id] ?? <Badge variant="outline">source missing</Badge>}
@@ -104,16 +166,7 @@ function ClaimRow({ claim, chips }: { claim: BriefClaim; chips: Record<string, R
 
   return (
     <li className={`${ROW} gap-y-1 border-b border-border/80 last:border-b-0`}>
-      {layout.kind === "action" ? (
-        <dl className="contents">
-          <dt className={DT}>Recommended action</dt>
-          <dd className={`${DD} font-medium`}>{layout.action}</dd>
-          <dt className={`${DT} max-sm:pt-2`}>Who</dt>
-          <dd className={DD}>{layout.who}</dd>
-          <dt className={`${DT} max-sm:pt-2`}>First step</dt>
-          <dd className={DD}>{layout.firstStep}</dd>
-        </dl>
-      ) : layout.kind === "labelled" ? (
+      {layout.kind === "labelled" ? (
         <dl className="contents">
           <dt className={`${DT} flex flex-col`}>
             {layout.label}
@@ -184,21 +237,21 @@ export function CountyBriefClient({
           <FrameDescription>
             Where the pathway breaks in {countyName}, in plain language. Every number comes from the data snapshot.
           </FrameDescription>
-        </div>
-        <div className="flex flex-col items-start gap-2 md:col-start-2 md:row-start-1 md:items-end">
-          <Button onClick={writeAiBrief} disabled={status === "loading"}>
-            {status === "loading" ? "Writing…" : triedAi ? "Write AI brief again" : "Write AI brief"}
-          </Button>
           {status === "idle" && !triedAi && (
-            <span className="max-w-[19rem] type-note text-muted-foreground md:text-right">
+            <p className="type-note text-muted-foreground">
               Claude rewrites the brief; a checker drops any claim it cannot trace to the snapshot.
-            </span>
+            </p>
           )}
           {status === "loading" && (
-            <span role="status" className="max-w-[19rem] type-note text-muted-foreground md:text-right">
+            <p role="status" className="type-note text-muted-foreground">
               Claude is writing; the checker then drops any claim it can&apos;t trace to the snapshot.
-            </span>
+            </p>
           )}
+        </div>
+        <div className="md:col-start-2 md:row-start-1">
+          <Button variant="outline-accent" onClick={writeAiBrief} disabled={status === "loading"}>
+            {status === "loading" ? "Writing…" : triedAi ? "Write AI brief again" : "Write AI brief"}
+          </Button>
         </div>
         {(status === "limited" || status === "error") && (
           <p
@@ -238,7 +291,7 @@ export function CountyBriefClient({
             {triedAi && brief.mode === "fallback" && brief.reason && (
               <p className="type-caption text-muted-foreground">AI brief not used: {brief.reason}</p>
             )}
-            <p className="max-w-[44rem] text-[1.0625rem] leading-relaxed font-medium text-pretty">{withFigures(brief.headline)}</p>
+            <p className="max-w-[51rem] text-[1.0625rem] leading-relaxed font-medium text-pretty">{withFigures(brief.headline)}</p>
             {foldedSources.length > 0 && (
               <p className="flex flex-wrap items-center gap-1.5">
                 <span className="mr-0.5 type-note text-muted-foreground">Numbers from</span>
@@ -266,7 +319,7 @@ export function CountyBriefClient({
             >
               <ul className="border-t border-border/80 bg-card">
                 {folded.map((claim, i) => (
-                  <ClaimRow key={`${i}-${claim.text.slice(0, 24)}`} claim={claim} chips={chips} />
+                  <ClaimRow key={`${i}-${claim.text.slice(0, 24)}`} claim={claim} chips={chips} countyId={countyId} />
                 ))}
               </ul>
             </Disclosure>
@@ -274,7 +327,7 @@ export function CountyBriefClient({
 
           <ul className="border-t border-border/80">
             {shown.map((claim, i) => (
-              <ClaimRow key={`${i}-${claim.text.slice(0, 24)}`} claim={claim} chips={chips} />
+              <ClaimRow key={`${i}-${claim.text.slice(0, 24)}`} claim={claim} chips={chips} countyId={countyId} />
             ))}
           </ul>
         </div>

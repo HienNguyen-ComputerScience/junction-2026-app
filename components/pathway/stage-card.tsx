@@ -1,4 +1,3 @@
-import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "cn";
 
@@ -6,6 +5,7 @@ import { SourceChip } from "@/components/source-chip";
 import { MeasureBar } from "@/components/ui/measure-bar";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import type { GapStatus } from "@/lib/data";
+import { gapToFinland } from "@/components/ranking/ranking-list";
 import { formatPct, STATUS_LABEL } from "@/lib/ranking";
 
 export type TrendPoint = { year: number; value: number | null };
@@ -23,6 +23,10 @@ export type StageCardProps = {
     sourceId: string;
     year: number;
     trend: TrendPoint[];
+    /** Finland's value for each year of the trend, where published (same indicator). */
+    nationalTrend?: TrendPoint[];
+    /** Which way is better: "lower is better", "higher is faster". */
+    direction?: string;
   };
   /** Shown instead of a measure when there is no public indicator. */
   emptyText?: string;
@@ -36,96 +40,120 @@ const NODE: Record<GapStatus, string> = {
 };
 
 /**
- * Rows every step card fills, in order: title, status row, key content, bar. From lg up the
- * cards sit side by side on a shared subgrid, so the same row lines up across all three. The
- * trends are not part of the cards: they share one strip under the steps (TrendStrip).
+ * Rows every step fills, in the act page's order: title, status and source, key figure, change
+ * against Finland, sentence, bar. From lg up the three steps sit in equal columns on a shared
+ * subgrid, so each row lines up across them. The trends are not part of the cards: they share
+ * one strip under the steps (TrendStrip).
  */
-export const STAGE_ROWS = 4;
+export const STAGE_ROWS = 6;
+
+/** The mark of a step: a numbered dot, coloured by status. Decorative; the title carries the number. */
+function StepMark({ step, status, className = "" }: { step: number; status: GapStatus; className?: string }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        "size-7 shrink-0 items-center justify-center rounded-full text-[0.8125rem] font-semibold tabular-nums",
+        NODE[status],
+        className,
+      )}
+    >
+      {step}
+    </span>
+  );
+}
 
 /**
- * The path itself: a numbered node per step, joined by one line. Horizontal from lg up,
- * a vertical rail down the left below that. Decorative; the step number is also in the heading.
+ * Below lg the steps stack and a vertical rail joins their marks. From lg up the marks sit in
+ * the step's own title row (StageCard) and the path is drawn there, so the rail is hidden.
  */
 export function StepRail({
   step,
   status,
-  first,
   last,
 }: {
   step: number;
   status: GapStatus;
-  first: boolean;
   last: boolean;
 }) {
   return (
-    <div aria-hidden className={`flex flex-col items-center lg:flex-row ${first ? "lg:pl-6" : ""}`}>
-      {!first && (
-        <span className="hidden w-6 items-center lg:flex">
-          <span className="h-px flex-1 bg-foreground/30" />
-          <ChevronRight className="-ml-2 size-3.5 shrink-0 text-foreground/45" strokeWidth={1.75} />
-        </span>
-      )}
-      <span
-        className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[0.8125rem] font-semibold tabular-nums ${NODE[status]}`}
-      >
-        {step}
-      </span>
-      {!last && <span className="w-px flex-1 bg-foreground/30 lg:h-px lg:w-auto" />}
+    <div aria-hidden className="flex flex-col items-center lg:hidden">
+      <StepMark step={step} status={status} className="flex" />
+      {!last && <span className="w-px flex-1 bg-foreground/30" />}
     </div>
   );
 }
 
 /**
- * One step of the pathway: status and source on one row, the key number and its bar against
- * Finland. Always renders the same four rows (see STAGE_ROWS), empty or not, so the three steps
- * share baselines.
+ * One step of the pathway, built like a column of the act page's stat strip: mark and title,
+ * status with its source chip beside it, the figure, the gap to Finland, the sentence, the
+ * bar. Always the same rows (STAGE_ROWS), empty or not, so the three steps share baselines.
+ * From lg up a thin line runs from the end of the title to the next step's mark.
  */
-export function StageCard({ step, title, status, measure, emptyText }: StageCardProps) {
+export function StageCard({ step, title, status, measure, emptyText, last = false }: StageCardProps & { last?: boolean }) {
+  const hasValue = measure !== undefined && measure.value !== null;
   return (
-    <article className="flex min-w-0 flex-col lg:row-span-4 lg:grid lg:grid-rows-subgrid">
-      <h3 className="type-heading lg:pt-2.5">
-        <span className="sr-only">Step {step}: </span>
-        {title}
-      </h3>
+    <article className="flex min-w-0 flex-col lg:row-span-6 lg:grid lg:grid-rows-subgrid">
+      <div className="flex items-start gap-3">
+        <StepMark step={step} status={status} className="hidden lg:flex" />
+        <h3 className="font-heading text-base leading-7 font-semibold tracking-normal text-pretty">
+          <span className="sr-only">Step {step}: </span>
+          {title}
+        </h3>
+        {!last && (
+          <span aria-hidden className="mt-3.5 mr-[-1.5rem] ml-1 hidden h-px min-w-3 flex-1 items-center bg-foreground/30 lg:flex" />
+        )}
+      </div>
 
-      {/* The source sits with the status, so it is on screen with the number it backs. On a
-          phone and in the three-column row the chip drops the year (the frame title carries it),
-          so even the long amber label and the chip fit on one line. */}
-      <div className="flex flex-wrap content-start items-center gap-2 pt-2">
-        <StatusBadge status={status}>{STATUS_LABEL[status]}</StatusBadge>
+      <div className="flex flex-wrap content-start items-center gap-x-2 gap-y-2 pt-3">
+        <StatusBadge status={status} size="xs">
+          {STATUS_LABEL[status]}
+        </StatusBadge>
+        {/* On a phone the year drops off so badge and chip share a line; the frame title says 2025. */}
         {measure && (
           <>
-            <span className="contents sm:max-lg:hidden">
+            <span className="contents sm:hidden">
               <SourceChip sourceId={measure.sourceId} />
             </span>
-            <span className="hidden sm:max-lg:contents">
+            <span className="hidden sm:contents">
               <SourceChip sourceId={measure.sourceId} year={measure.year} />
             </span>
           </>
         )}
       </div>
 
-      <div className="flex flex-col gap-2 pt-4 text-sm text-pretty">
-        {measure && measure.value !== null ? (
-          <>
-            <p className={`numeral text-[3.25rem] ${STATUS_FIGURE[status]}`}>
-              {formatPct(measure.value)}
-            </p>
-            <p className="max-w-[34ch]">{measure.caption}</p>
-          </>
-        ) : measure ? (
-          <>
-            <p>{withPercentFigures(measure.note)}</p>
-            <p className="text-muted-foreground">
-              Finland: <span className="figure">{formatPct(measure.nationalValue)}</span> {measure.caption}
-            </p>
-          </>
-        ) : (
-          <p>{emptyText}</p>
-        )}
-      </div>
+      {hasValue ? (
+        <>
+          <p className={cn("pt-5 numeral text-[2rem]", STATUS_FIGURE[status])}>{formatPct(measure.value ?? 0)}</p>
+          <p className="flex flex-wrap items-baseline gap-x-1.5 pt-2 type-note text-muted-foreground">
+            <span className={cn("figure font-medium", STATUS_FIGURE[status])}>
+              {gapToFinland(measure.value ?? 0, measure.nationalValue)}
+            </span>
+            <span>vs Finland{measure.direction ? `, ${measure.direction}` : null}</span>
+          </p>
+          <p className="pt-3 type-caption text-pretty text-muted-foreground">{measure.caption}</p>
+        </>
+      ) : measure ? (
+        <>
+          <p className="pt-5 text-[0.9375rem] leading-snug text-pretty text-muted-foreground lg:self-end">
+            {withPercentFigures(measure.note)}
+          </p>
+          <span aria-hidden className="max-lg:hidden" />
+          <p className="pt-3 type-caption text-pretty text-muted-foreground">
+            Finland: <span className="figure">{formatPct(measure.nationalValue)}</span> {measure.caption}
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="pt-5 text-[0.9375rem] leading-snug text-pretty text-muted-foreground lg:self-end">
+            No public data anywhere in Finland
+          </p>
+          <span aria-hidden className="max-lg:hidden" />
+          <p className="pt-3 type-caption text-pretty text-muted-foreground">{emptyText}</p>
+        </>
+      )}
 
-      <div className="flex flex-col gap-2 pt-4">
+      <div className="flex flex-col gap-2 pt-5 lg:self-end">
         <MeasureBar
           value={measure ? measure.value : null}
           finland={measure ? measure.nationalValue : null}
@@ -204,12 +232,14 @@ export function TrendStrip({ stages, areaName }: { stages: StageCardProps[]; are
   );
 }
 
-/** Bar fills of the trend: the latest year at full strength, earlier years tinted. */
+/** The one judged bar of a trend (the latest year), in its status colour. */
 const TREND_FILL: Record<GapStatus, string> = {
   red: "bg-status-red",
   amber: "bg-status-amber-bar",
   no_data: "bg-status-grey",
 };
+/** Earlier years are not judged against the latest Finland value: neutral grey. */
+const TREND_PAST_FILL = "bg-foreground/25";
 
 function TrendRow({ stage }: { stage: StageCardProps }) {
   const measure = stage.measure;
@@ -241,15 +271,7 @@ function TrendRow({ stage }: { stage: StageCardProps }) {
     <li className="grid gap-x-10 gap-y-5 py-5 first:pt-0 last:pb-0 lg:grid-cols-[20rem_minmax(0,1fr)]">
       <div className="flex flex-col gap-3">
         <p className="flex items-center gap-2 text-[0.9375rem] leading-snug font-semibold">
-          <span
-            aria-hidden
-            className={cn(
-              "flex size-5 shrink-0 items-center justify-center rounded-full text-[0.6875rem] tabular-nums",
-              NODE[stage.status],
-            )}
-          >
-            {stage.step}
-          </span>
+          <StepMark step={stage.step} status={stage.status} className="flex size-5 text-[0.6875rem]" />
           <span>
             <span className="sr-only">Step {stage.step}: </span>
             {stage.title}
@@ -279,9 +301,9 @@ function TrendRow({ stage }: { stage: StageCardProps }) {
 
       <TrendChart
         trend={measure.trend}
+        nationalTrend={measure.nationalTrend ?? []}
         latestIndex={latestIndex}
-        finland={finland}
-        finlandYear={measure.year}
+        latestYear={measure.year}
         sourceId={measure.sourceId}
         status={stage.status}
       />
@@ -291,102 +313,139 @@ function TrendRow({ stage }: { stage: StageCardProps }) {
 
 /**
  * Columns by year on a zero-based 0 to 100% scale, so 58.0 and 85.4 look as different as they
- * are. The latest year is the one highlighted bar, in its status colour; earlier years are the
- * same colour tinted. The Finland line crosses every column, labelled at its right end.
+ * are. Only the latest year is judged and drawn in its status colour; earlier years are neutral
+ * grey. Finland is drawn per year: a short white tick at that year's own Finland value on that
+ * year's bar, with a small label beside it (below the year on a phone). A year without a
+ * published Finland value has no tick, and the legend says so.
  */
 function TrendChart({
   trend,
+  nationalTrend,
   latestIndex,
-  finland,
-  finlandYear,
+  latestYear,
   sourceId,
   status,
 }: {
   trend: TrendPoint[];
+  nationalTrend: TrendPoint[];
   latestIndex: number;
-  finland: number;
-  finlandYear: number;
+  latestYear: number;
   sourceId: string;
   status: GapStatus;
 }) {
-  const f = Math.min(100, Math.max(0, finland));
-  // Value labels sit 6px above their bar. One that would straddle the Finland line moves just
-  // above it instead, so the line stays one unbroken line.
+  const clamp = (n: number) => Math.min(100, Math.max(0, n));
+  const finlandOf = (year: number) => nationalTrend.find((point) => point.year === year)?.value ?? null;
+  // Value labels sit 6px above their bar. One that would cover the Finland tick of its own
+  // column moves just above the tick instead.
   const PLOT = 128;
   const LABEL = 20;
-  const finlandPx = (f / 100) * PLOT;
-  const labelBottom = (value: number) => {
-    const bottom = (Math.min(100, Math.max(0, value)) / 100) * PLOT + 6;
-    return bottom < finlandPx + 3 && bottom + LABEL > finlandPx - 3 ? finlandPx + 5 : bottom;
+  const labelBottom = (value: number, finland: number | null) => {
+    const bottom = (clamp(value) / 100) * PLOT + 6;
+    if (finland === null) return bottom;
+    const tickPx = (clamp(finland) / 100) * PLOT;
+    return bottom < tickPx + 3 && bottom + LABEL > tickPx - 3 ? tickPx + 5 : bottom;
   };
+  const judged = trend[latestIndex]?.year === latestYear;
+  const shown = trend.filter((point) => point.value !== null);
+  const ticks = shown.filter((point) => finlandOf(point.year) !== null);
+  const colourText = judged
+    ? `${latestYear} is coloured by its status; earlier years are grey.`
+    : "All bars are grey.";
+  const tickText =
+    ticks.length === 0
+      ? "No Finland value is drawn for these years."
+      : ticks.length === shown.length
+        ? "The white tick on each bar is Finland's value in that same year."
+        : `The white tick is Finland's value in that same year, drawn only where it is published (${ticks
+            .map((point) => point.year)
+            .join(", ")}).`;
+
   return (
-    <figure className="flex min-w-0 flex-col gap-3 lg:max-w-[44rem]">
+    <figure className="flex min-w-0 flex-col gap-3">
       <figcaption className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
         <span className="type-note text-muted-foreground">Share by year, 0 to 100% scale</span>
         <SourceChip sourceId={sourceId} />
       </figcaption>
       <div aria-hidden className="flex flex-col gap-2 pt-6">
-        <div className="flex gap-3">
-          <div className="relative h-32 flex-1 border-b border-foreground/40">
-            <div className="absolute inset-0 flex gap-3 px-1 sm:gap-6 sm:px-3">
-              {trend.map((point, i) => (
+        <div className="relative h-32 border-b border-foreground/40">
+          <div className="absolute inset-0 flex gap-3 px-1 sm:gap-6 sm:px-3">
+            {trend.map((point, i) => {
+              const finland = finlandOf(point.year);
+              return (
                 <div key={point.year} className="relative flex h-full flex-1 items-end justify-center">
                   {point.value === null ? (
                     <span className="pb-1 type-note text-faint">No data</span>
                   ) : (
                     <>
-                      <span
-                        className={cn(
-                          "w-full max-w-24 rounded-t-[3px]",
-                          TREND_FILL[status],
-                          i !== latestIndex && "opacity-40",
+                      <div className="relative h-full w-full max-w-24">
+                        <span
+                          className={cn(
+                            "absolute inset-x-0 bottom-0 rounded-t-[3px]",
+                            judged && i === latestIndex ? TREND_FILL[status] : TREND_PAST_FILL,
+                          )}
+                          style={{ height: `${clamp(point.value)}%` }}
+                        />
+                        {finland !== null && (
+                          <>
+                            <span
+                              className="absolute -inset-x-1 h-0.5 bg-foreground"
+                              style={{ bottom: `calc(${clamp(finland)}% - 1px)` }}
+                            />
+                            <span
+                              className="absolute left-full ml-2.5 flex translate-y-1/2 flex-col whitespace-nowrap type-note leading-4 text-muted-foreground max-sm:hidden"
+                              style={{ bottom: `${clamp(finland)}%` }}
+                            >
+                              <span>Finland</span>
+                              <span className="figure text-foreground">{formatPct(finland)}</span>
+                            </span>
+                          </>
                         )}
-                        style={{ height: `${Math.min(100, Math.max(0, point.value))}%` }}
-                      />
+                      </div>
                       <span
                         className={cn(
                           "absolute z-10 bg-card px-1 figure text-[0.8125rem] leading-5",
                           i === latestIndex ? "font-semibold text-foreground" : "text-muted-foreground",
                         )}
-                        style={{ bottom: `${labelBottom(point.value)}px` }}
+                        style={{ bottom: `${labelBottom(point.value, finland)}px` }}
                       >
                         {formatPct(point.value)}
                       </span>
                     </>
                   )}
                 </div>
-              ))}
-            </div>
-            <span className="absolute inset-x-0 h-px bg-foreground" style={{ bottom: `${f}%` }} />
-          </div>
-          <div className="relative h-32 w-24 shrink-0">
-            <span
-              className="absolute left-0 flex translate-y-1/2 flex-col type-note"
-              style={{ bottom: `${f}%` }}
-            >
-              <span className="font-medium whitespace-nowrap text-foreground">
-                Finland <span className="figure">{formatPct(finland)}</span>
-              </span>
-              <span className="text-muted-foreground">in {finlandYear}</span>
-            </span>
+              );
+            })}
           </div>
         </div>
-        <div className="flex gap-3">
-          <div className="flex flex-1 gap-3 px-1 sm:gap-6 sm:px-3">
-            {trend.map((point) => (
-              <span key={point.year} className="flex-1 text-center type-mark text-faint">
-                {point.year}
+        <div className="flex gap-3 px-1 sm:gap-6 sm:px-3">
+          {trend.map((point) => {
+            const finland = finlandOf(point.year);
+            return (
+              <span key={point.year} className="flex flex-1 flex-col items-center text-center">
+                <span className="figure text-[0.8125rem] text-muted-foreground">{point.year}</span>
+                {finland !== null && point.value !== null && (
+                  <span className="type-note text-muted-foreground sm:hidden">
+                    Finland <span className="figure">{formatPct(finland)}</span>
+                  </span>
+                )}
               </span>
-            ))}
-          </div>
-          <div className="w-24 shrink-0" />
+            );
+          })}
         </div>
       </div>
+      <p className="type-note text-muted-foreground">
+        {colourText} {tickText}
+      </p>
       <p className="sr-only">
         {trend
-          .map((point) => `${point.year}: ${point.value === null ? "no data" : formatPct(point.value)}`)
-          .join(", ")}
-        . Finland {formatPct(finland)} in {finlandYear}.
+          .map((point) => {
+            const finland = finlandOf(point.year);
+            return `${point.year}: ${point.value === null ? "no data" : formatPct(point.value)}${
+              finland === null ? "" : `, Finland ${formatPct(finland)}`
+            }`;
+          })
+          .join("; ")}
+        .
       </p>
     </figure>
   );
