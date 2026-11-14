@@ -70,7 +70,7 @@ Project: junction-2026-app — Junction 2026 (TBD)
 ### Commands (use exactly these)
 - Install: `npm install`. Run it first if `node_modules` is missing; new worktrees start without it.
 - Dev: `npm run dev` (don't start it unless needed to verify; stop what you start). In parallel worktrees, use a free port: `npm run dev -- -p <3001+>`.
-- Verify before saying "done": `npm run typecheck && npm run lint && npm run build` (TBD until the app is scaffolded; add a `typecheck` script running `tsc --noEmit`).
+- Verify before saying "done": `npm test && npm run brief:check && npm run typecheck && npm run lint && npm run build`.
 
 ### Local files in worktrees
 - `.env.local` is gitignored. In a worktree, the SessionStart hook links it from the main checkout. If it's still missing, run `scripts/worktree-setup.sh`. Never create or edit it yourself.

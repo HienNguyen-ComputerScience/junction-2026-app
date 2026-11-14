@@ -25,6 +25,7 @@ The AI-written brief and live Exa search need `ANTHROPIC_API_KEY` and `EXA_API_K
 Next.js 16 (App Router, Cache Components), TypeScript, Tailwind CSS 4, shadcn/ui, hosted on Vercel. Data: a static JSON snapshot of THL Sotkanet, rebuilt by a script. Claude API (brief and Exa answers) and Exa search are called server-side only. No database, no patient data.
 
 ## How to run
+Needs Node.js 22.18 or later (the tests and `brief:check` load TypeScript files directly).
 ```bash
 npm install
 npm run dev                  # http://localhost:3000
@@ -41,8 +42,10 @@ On Windows, `npm run dev` (Turbopack) can crash on some machines. `npm run build
 Other scripts:
 - `npm run data:build`: refetch Sotkanet and rewrite `data/*.json` (fails if any `source_id` does not resolve).
 - `npm run brief:check`: checks that the brief validator drops untraceable claims and that the precomputed brief passes it for every area.
+- `npm test`: unit tests (red-flag matching, the question-box route, Exa relevance and caching).
+- `npm run exa:prewarm`: fills the Exa caches for the demo questions and county pages (needs `EXA_API_KEY`).
 
-Before saying "done": `npm run brief:check && npm run typecheck && npm run lint && npm run build`.
+Before saying "done": `npm test && npm run brief:check && npm run typecheck && npm run lint && npm run build`.
 
 ## License
 MIT, see [LICENSE](LICENSE).
