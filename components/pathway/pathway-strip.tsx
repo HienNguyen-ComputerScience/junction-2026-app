@@ -157,18 +157,18 @@ export function PathwayStrip({ countyId }: { countyId: string }) {
                   127 <span className="text-base text-muted-foreground">days</span>
                 </dd>
               </div>
-              <span aria-hidden className="pb-6 type-caption text-faint">
+              <div aria-hidden className="pb-6 type-caption text-faint">
                 vs
-              </span>
+              </div>
               <div className="flex flex-col">
                 <dt className="order-2 type-caption text-muted-foreground">Private or occupational</dt>
                 <dd className="numeral text-[1.75rem] leading-tight text-foreground">
                   76 <span className="text-base text-muted-foreground">days</span>
                 </dd>
               </div>
-              <span className="pb-1">
+              <div className="pb-1">
                 <SourceChip sourceId="kuitunen-2026" />
-              </span>
+              </div>
             </dl>
           </div>
           <p className="type-caption text-muted-foreground md:max-w-[22rem] md:text-right">
