@@ -19,7 +19,7 @@ function Part({ label, children }: { label: string; children: ReactNode }) {
 }
 
 const TEXT = "text-base leading-relaxed text-pretty text-foreground";
-const PILL = "inline-flex min-h-8 w-fit items-center rounded-full bg-cream-paper px-3.5 py-1 text-base text-forest-ink";
+const PILL = "inline-flex min-h-8 w-fit items-center rounded-full bg-border-mist px-3.5 py-1 text-base text-forest-ink";
 
 /** NICE content may not be reproduced outside the UK: its quote is never shown, only linked. */
 const isNice = (action: Evidence) => action.source_id.startsWith("ev-nice");
