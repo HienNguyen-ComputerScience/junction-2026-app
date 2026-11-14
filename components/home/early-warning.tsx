@@ -17,6 +17,7 @@ import {
   stageStatus,
   YEARS,
 } from "@/lib/ranking";
+import { getRecordingCaveat, RECORDING_CHANGE_ABOVE } from "@/lib/recording";
 import { formatAmount, worseningFastest } from "@/lib/what-if";
 
 const LAST_YEAR = YEARS[YEARS.length - 1];
@@ -50,6 +51,7 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
   );
   if (list.length === 0) return null;
   const finland = getNationalValue(GP_WAIT_ID)?.value ?? null;
+  const caveats = new Map(list.map((row) => [row.id, getRecordingCaveat(row.id)]));
 
   return (
       <FramePanel padding="none" className="pb-1">
@@ -75,8 +77,13 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
                   className={`group relative grid min-h-16 grid-cols-1 items-center gap-x-5 gap-y-1.5 py-3 pr-10 pl-4 transition-colors outline-none hover:bg-accent focus-visible:z-[1] focus-visible:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset sm:pl-5 lg:grid-cols-[11rem_14rem_minmax(0,1fr)_13.75rem] ${index > 0 ? "before:absolute before:inset-x-4 before:top-0 before:h-px before:bg-foreground/[0.06] sm:before:inset-x-5" : ""}`}
                 >
                   <span className="text-[0.9375rem] font-semibold text-foreground">{row.name}</span>
-                  <span className="text-[0.9375rem] leading-snug font-medium whitespace-nowrap text-foreground">
-                    <span className="figure">{formatAmount(row.change)}</span> points worse since {FIRST_YEAR}
+                  <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.9375rem] leading-snug font-medium whitespace-nowrap text-foreground">
+                      <span className="figure">{formatAmount(row.change)}</span> points worse since {FIRST_YEAR}
+                    </span>
+                    {caveats.get(row.id) && (
+                      <span className="type-note text-pretty text-muted-foreground">{caveats.get(row.id)?.tag}</span>
+                    )}
                   </span>
                   <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                     <span className="type-caption text-muted-foreground">
@@ -102,6 +109,14 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
             );
           })}
         </ol>
+        {[...caveats.values()].some(Boolean) && (
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-foreground/[0.06] px-4 pt-3 pb-2 type-caption text-muted-foreground sm:px-5">
+            <span>
+              Where recorded visits changed by more than {Math.round(RECORDING_CHANGE_ABOVE * 100)}%, part of the rise may be how visits are recorded.
+            </span>
+            <SourceChip sourceId={sourceId} />
+          </p>
+        )}
       </FramePanel>
   );
 }

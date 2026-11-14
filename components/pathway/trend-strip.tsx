@@ -4,8 +4,10 @@ import { cn } from "cn";
 import { StepMark } from "@/components/pathway/pathway-steps";
 import { SourceChip } from "@/components/source-chip";
 import { FramePanel, FramePanelLabel } from "@/components/ui/frame";
+import { RecordingNote } from "@/components/pathway/recording-note";
 import type { GapStatus } from "@/lib/data";
 import { formatPct } from "@/lib/ranking";
+import type { RecordingCaveat } from "@/lib/recording";
 
 export type TrendPoint = { year: number; value: number | null };
 
@@ -22,6 +24,8 @@ export type TrendStage = {
   trend: TrendPoint[];
   /** Finland's value for each year of the trend, where published (same indicator). */
   nationalTrend: TrendPoint[];
+  /** Set when the rise may be partly how visits are recorded (lib/recording). */
+  recordingCaveat?: RecordingCaveat | null;
 };
 
 /** Points with a value, in year order. */
@@ -158,6 +162,8 @@ function TrendRow({ stage }: { stage: TrendStage }) {
           </div>
         )}
       </div>
+
+      {stage.recordingCaveat && change > 0 && <RecordingNote caveat={stage.recordingCaveat} />}
 
       <TrendChart
         trend={stage.trend}

@@ -14,8 +14,14 @@ import {
   FrameTitle,
 } from "@/components/ui/frame";
 import { TextLink } from "@/components/ui/text-link";
-import { indicators, sources, values } from "@/lib/data";
+import { counties, indicators, sources, values } from "@/lib/data";
 import { GP_WAIT_ID, REFERRAL_ID } from "@/lib/ranking";
+import {
+  describeVisitChange,
+  getRecordedVisitChange,
+  isRecordingSensitive,
+  RECORDING_CHANGE_ABOVE,
+} from "@/lib/recording";
 
 export const metadata: Metadata = { title: "Sources & limitations | FirstLine" };
 
@@ -60,6 +66,8 @@ const sections = [
 /**
  * What each gap is about, in a few words, with its full sentence unchanged under it.
  */
+const flaggedAreas = counties.filter((county) => isRecordingSensitive(county.id)).length;
+const finlandVisitChange = getRecordedVisitChange("finland");
 const gaps: { title: string; text: string }[] = [
   {
     title: "No indicator follows a person's whole journey",
@@ -72,6 +80,10 @@ const gaps: { title: string; text: string }[] = [
   {
     title: "Warning signs and tests are not measured",
     text: "GP recognition of warning signs and choice of tests are not quantified here. Missing evidence stays “no public data,” not a low-risk score.",
+  },
+  {
+    title: "Recorded visits change from year to year",
+    text: `The GP wait (6411) is the share of recorded GP visits that waited over 7 days. We divide the published count by the share to get the number of recorded visits, and where that number changed by more than ${Math.round(RECORDING_CHANGE_ABOVE * 100)}% from 2023 to 2025 (${flaggedAreas} of ${counties.length} areas${finlandVisitChange === null ? "" : `; for Finland they ${describeVisitChange(finlandVisitChange)}`}), part of a rise in the share may be how visits are recorded, not how long visits waited. Those rises carry a caveat; the published shares and rankings are not changed.`,
   },
   {
     title: "Four Uusimaa areas share one HUS value",

@@ -7,6 +7,7 @@ import { LeadFigure } from "@/components/home/lead-figure";
 import { TopAction } from "@/components/home/top-action";
 import type { FinlandMapArea } from "@/components/map/finland-map";
 import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
+import { RecordingNote } from "@/components/pathway/recording-note";
 import { shortReason } from "@/components/pathway/wording";
 import { SourceChip } from "@/components/source-chip";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -37,6 +38,7 @@ export function HomeTool({
 
   const areas: PickerArea[] = [];
   const leads: Record<string, ReactNode> = {};
+  const notes: Record<string, ReactNode> = {};
   const actions: Record<string, ReactNode> = {};
   const steps: Record<string, ReactNode> = {};
 
@@ -54,6 +56,7 @@ export function HomeTool({
     // The figure and the sentence under it are about the same step (getMainReason).
     const reason = getMainReason(county.id);
     if (reason.gap) leads[county.id] = <LeadFigure gap={reason.gap} />;
+    if (reason.caveat) notes[county.id] = <RecordingNote caveat={reason.caveat} />;
 
     areas.push({
       id: county.id,
@@ -93,6 +96,7 @@ export function HomeTool({
       year={LATEST_YEAR}
       totalAreas={all.length}
       leads={leads}
+      notes={notes}
       actions={actions}
       steps={steps}
       mapKey={mapKey}

@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
   const scope = county
     ? {
         county: { id: county.id, name: county.name },
-        ...(reason && reason.kind !== "no_data" && { mainReason: { text: reason.text, sources: reasonLinks(reason) } }),
+        ...(reason && reason.kind !== "no_data" && { mainReason: { text: reason.caveat ? `${reason.text} ${reason.caveat.text}` : reason.text, sources: reasonLinks(reason) } }),
       }
     : {};
 

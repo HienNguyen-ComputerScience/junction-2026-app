@@ -35,6 +35,8 @@ type Props = {
   totalAreas: number;
   /** Per area: the bottleneck step's focal figure (absent when it has no value). Server-rendered. */
   leads: Record<string, ReactNode>;
+  /** One short line under an area's verdict (a recording caveat), where it has one. */
+  notes: Record<string, ReactNode>;
   /** Per area: the first recommended action, pre-rendered (title and First step), linking to it on the act page. Keyed by PickerArea.actionId (the area id). */
   actions: Record<string, ReactNode>;
   /** Per area: "The three steps" status row, pre-rendered. */
@@ -60,7 +62,7 @@ const noUrlArea = () => null;
  * Desktop: picker and map on the left, the answer hero on the right, both columns the same
  * height. Phone: the select, the answer, then the map.
  */
-export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, leads, actions, steps, mapChips, mapNote, mapKey }: Props) {
+export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, leads, notes, actions, steps, mapChips, mapNote, mapKey }: Props) {
   const selectId = useId();
   const answerRef = useRef<HTMLDivElement>(null);
   const urlArea = useSyncExternalStore(subscribe, readUrlArea, noUrlArea);
@@ -133,6 +135,7 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, leads
               </p>
               {leads[area.id] ?? null}
               <h2 className="type-heading text-pretty text-foreground">{area.verdict}</h2>
+              {notes[area.id] ?? null}
             </div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
               <Link href={`/county/${area.id}/act`} className={cn(buttonVariants({ size: "lg" }), "max-sm:w-full")}>
