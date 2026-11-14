@@ -1,14 +1,28 @@
+import type { CSSProperties } from "react";
+
 import { AskBox } from "@/components/exa/ask-box";
 import { RankingList } from "@/components/ranking/ranking-list";
 import { SourceChip } from "@/components/source-chip";
-import { LATEST_YEAR } from "@/lib/data";
 import {
+  Frame,
+  FrameDescription,
+  FrameFooter,
+  FrameHeader,
+  FrameMeta,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
+import { STATUS_FILL, StatusBadge } from "@/components/ui/status-badge";
+import { LATEST_YEAR, type GapStatus } from "@/lib/data";
+import {
+  FIRST_YEAR,
   formatPct,
   getNationalValue,
   getRanking,
   getUnrankedCounties,
   GP_WAIT_ID,
   REFERRAL_ID,
+  STATUS_LABEL,
 } from "@/lib/ranking";
 
 export default function CountyRankingPage() {
@@ -25,64 +39,166 @@ export default function CountyRankingPage() {
 
   const gap = worst.gpWait.value - best.gpWait.value;
   const ratio = worst.gpWait.value / best.gpWait.value;
+  const redCount = rows.filter((row) => row.gpStatus === "red").length;
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8">
-      <header className="flex flex-col gap-2">
-        <p className="text-sm font-medium text-muted-foreground">
-          The first step towards early cancer care: getting in to see a GP
-        </p>
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          In Finland, where you live decides how fast you get to see a GP.
-        </h1>
-      </header>
+    <main className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-3 pt-4 sm:gap-8 sm:px-6 sm:pt-8">
+      {/* Hero: the single message, on the one dark surface of the page. */}
+      <Frame tone="inverse" aria-labelledby="home-title" className="p-1.5 sm:p-2">
+        <div className="grid gap-6 px-3.5 pt-5 pb-2 sm:px-6 sm:pt-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-center lg:gap-12 lg:px-8 lg:py-8">
+          <div className="flex flex-col gap-5">
+            <p className="flex items-center gap-2 type-caption font-medium text-brand-ink">
+              <span aria-hidden className="h-px w-6 bg-brand-ink/60" />
+              The first step towards early cancer care: getting in to see a GP
+            </p>
+            <h1 id="home-title" className="type-display max-w-[14ch] text-foreground">
+              In Finland, where you live decides how fast you get to see a GP.
+            </h1>
+            <p className="type-lede max-w-[36rem] text-muted-foreground">
+              <strong className="font-semibold text-foreground">{formatPct(worst.gpWait.value)}</strong> of
+              non-urgent GP visits in {worst.county.name} come more than a week after the need for
+              care was assessed. In {best.county.name} it is{" "}
+              <strong className="font-semibold text-foreground">{formatPct(best.gpWait.value)}</strong>.
+              That is a{" "}
+              <strong className="font-semibold text-foreground">{gap.toFixed(1)} percentage point</strong>{" "}
+              gap, {ratio.toFixed(1)} times the share, within one country.
+            </p>
+          </div>
 
-      <section
-        aria-label="Key insight"
-        className="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950/40"
-      >
-        <p className="text-base sm:text-lg">
-          <strong>{formatPct(worst.gpWait.value)}</strong> of non-urgent GP
-          visits in {worst.county.name} come more than a week after people ask.
-          In {best.county.name} it is{" "}
-          <strong>{formatPct(best.gpWait.value)}</strong>. That is a{" "}
-          <strong>{gap.toFixed(1)} percentage point</strong> gap, {ratio.toFixed(1)}{" "}
-          times the share, within one country (Finland overall:{" "}
-          {formatPct(nationalGpWait.value)}).
-        </p>
-        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-          <span>Sotkanet indicator {GP_WAIT_ID}, {LATEST_YEAR}. Not cancer-specific: it covers all non-urgent GP visits.</span>
-          <SourceChip sourceId={worst.gpWait.source_id} year={LATEST_YEAR} />
+          <FramePanel padding="none" className="overflow-hidden">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3 sm:px-5">
+              <h2 className="type-micro font-medium text-muted-foreground">
+                Non-urgent GP visits waiting over 7 days, {LATEST_YEAR}
+              </h2>
+              <SourceChip sourceId={worst.gpWait.source_id} year={LATEST_YEAR} />
+            </div>
+            <ul className="flex flex-col gap-5 px-4 py-5 sm:px-5 sm:py-6">
+              <CompareRow
+                name={worst.county.name}
+                value={worst.gpWait.value}
+                status={worst.gpStatus}
+                finland={nationalGpWait.value}
+                index={0}
+                emphasis
+              />
+              <CompareRow
+                name="Finland overall"
+                value={nationalGpWait.value}
+                status={null}
+                finland={nationalGpWait.value}
+                index={1}
+              />
+              <CompareRow
+                name={best.county.name}
+                value={best.gpWait.value}
+                status={best.gpStatus}
+                finland={nationalGpWait.value}
+                index={2}
+              />
+            </ul>
+            <p className="border-t border-border px-4 py-3 type-micro text-muted-foreground sm:px-5">
+              Sotkanet indicator {GP_WAIT_ID}, {LATEST_YEAR}. Not cancer-specific: it covers all
+              non-urgent GP visits.
+            </p>
+          </FramePanel>
         </div>
-      </section>
+      </Frame>
 
-      <section aria-labelledby="ranking-heading" className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1">
-          <h2 id="ranking-heading" className="text-xl font-semibold">
+      <Frame aria-labelledby="ranking-heading">
+        <FrameHeader>
+          <FrameTitle id="ranking-heading" className="type-title">
             All {rows.length + unranked.length} areas, longest GP waits first
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            21 wellbeing services counties and the City of Helsinki. Pick an
-            area to see where its delay sits: getting to a GP, or getting from
-            the GP to a specialist.
-          </p>
-        </div>
-        <RankingList
-          rows={rows}
-          unranked={unranked}
-          nationalGpWait={nationalGpWait.value}
-          nationalReferral={nationalReferral.value}
-          gpWaitSourceId={nationalGpWait.source_id}
-          referralSourceId={nationalReferral.source_id}
-        />
-      </section>
+          </FrameTitle>
+          <FrameMeta className="hidden sm:flex">
+            <span className="tabular-nums">
+              {redCount} of {rows.length + unranked.length} worse than Finland
+            </span>
+          </FrameMeta>
+          <FrameDescription>
+            21 wellbeing services counties and the City of Helsinki. Pick an area to see where its
+            delay sits: getting to a GP, or getting from the GP to a specialist.
+          </FrameDescription>
+        </FrameHeader>
+        <FramePanel padding="none">
+          <RankingList
+            rows={rows}
+            unranked={unranked}
+            nationalGpWait={nationalGpWait.value}
+            nationalReferral={nationalReferral.value}
+            gpWaitSourceId={nationalGpWait.source_id}
+            referralSourceId={nationalReferral.source_id}
+          />
+        </FramePanel>
+        <FrameFooter className="max-w-4xl">
+          All values: Sotkanet, {LATEST_YEAR}, see chips above. Bars: share of non-urgent GP
+          (physician) visits in primary care that came more than 7 days after the need for care was
+          assessed (Sotkanet {GP_WAIT_ID}). Red: worse than Finland. Amber: at or better than
+          Finland&apos;s level, which is still a delay. Arrows: change in percentage points since{" "}
+          {FIRST_YEAR}. Referral column: Sotkanet {REFERRAL_ID}, higher is faster; Finland{" "}
+          {formatPct(nationalReferral.value)}.
+        </FrameFooter>
+      </Frame>
 
-      <section id="ask" aria-labelledby="ask-heading" className="flex scroll-mt-4 flex-col gap-3">
-        <h2 id="ask-heading" className="text-xl font-semibold">
-          Ask the evidence, answered live from Exa search results
-        </h2>
-        <AskBox />
-      </section>
+      <Frame id="ask" aria-labelledby="ask-heading" className="scroll-mt-4">
+        <FrameHeader>
+          <FrameTitle id="ask-heading" className="type-title">
+            Ask the evidence, answered live from Exa search results
+          </FrameTitle>
+        </FrameHeader>
+        <FramePanel padding="lg">
+          <AskBox />
+        </FramePanel>
+      </Frame>
     </main>
+  );
+}
+
+function CompareRow({
+  name,
+  value,
+  status,
+  finland,
+  index,
+  emphasis = false,
+}: {
+  name: string;
+  value: number;
+  /** null for the Finland reference row. */
+  status: GapStatus | null;
+  finland: number;
+  index: number;
+  emphasis?: boolean;
+}) {
+  return (
+    <li className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-4 gap-y-2.5">
+      <div className="flex min-w-0 flex-col gap-1.5">
+        <span className="truncate text-[0.9375rem] font-semibold">{name}</span>
+        {status ? (
+          <StatusBadge status={status} size="xs">
+            {STATUS_LABEL[status]}
+          </StatusBadge>
+        ) : (
+          <span className="flex h-5 items-center gap-1.5 text-[0.6875rem] font-medium text-muted-foreground">
+            <span aria-hidden className="h-3 w-0.5 rounded-full bg-foreground" />
+            National level, the line on every bar
+          </span>
+        )}
+      </div>
+      <span
+        className={`numeral text-right ${emphasis ? "text-[3.25rem] sm:text-[3.75rem]" : "text-[2.25rem] sm:text-[2.5rem]"} ${status === "red" ? "text-status-red-ink" : status === "amber" ? "text-status-amber-ink" : "text-foreground"}`}
+      >
+        {formatPct(value)}
+      </span>
+      <div aria-hidden className="relative col-span-2 h-2.5 rounded-full bg-white/8">
+        <div
+          className={`animate-bar-grow h-full rounded-full ${status ? STATUS_FILL[status] : "bg-foreground/85"}`}
+          style={{ width: `${value}%`, "--i": index * 6 } as CSSProperties}
+        />
+        <span
+          className="absolute -inset-y-1.5 w-0.5 -translate-x-1/2 rounded-full bg-foreground"
+          style={{ left: `${finland}%` }}
+        />
+      </div>
+    </li>
   );
 }

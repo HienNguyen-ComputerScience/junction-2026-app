@@ -1,10 +1,10 @@
 "use client";
 
+import { ArrowUp, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { LoadingRows, ResultList, Unavailable } from "./result-list";
 import { isAskResponse, STATUS_LABEL, TOO_MANY, type AskResponse } from "./types";
@@ -62,28 +62,32 @@ export function AskBox() {
   const answered = data?.answer && data.answer.sentences.length > 0;
 
   return (
-    <Card aria-labelledby="ask-box-title">
-      <CardHeader>
+    <div aria-labelledby="ask-box-title" role="group" className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <CardTitle id="ask-box-title">Ask a question</CardTitle>
+          <h3 id="ask-box-title" className="type-heading">
+            Ask a question
+          </h3>
           <Badge variant="secondary">Found live — unverified</Badge>
-          <span className="text-xs text-muted-foreground">via Exa</span>
+          <span className="type-micro text-muted-foreground">via Exa</span>
         </div>
-        <CardDescription>
+        <p className="max-w-2xl type-caption text-muted-foreground">
           Answered only from live Exa search results, with a numbered source for every sentence. Decision support, not medical advice.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <form
-          className="flex flex-col gap-2 sm:flex-row"
-          onSubmit={(e) => {
-            e.preventDefault();
-            ask(question);
-          }}
-        >
-          <label htmlFor="ask-box-input" className="sr-only">
-            Your question about health care access in Finland
-          </label>
+        </p>
+      </div>
+
+      <form
+        className="flex flex-col gap-2 rounded-2xl border border-input bg-card p-1.5 shadow-[0_1px_2px_oklch(0.2_0.03_262/0.05)] transition-[border-color,box-shadow] focus-within:border-ring focus-within:ring-4 focus-within:ring-ring/15 sm:flex-row sm:items-center"
+        onSubmit={(e) => {
+          e.preventDefault();
+          ask(question);
+        }}
+      >
+        <label htmlFor="ask-box-input" className="sr-only">
+          Your question about health care access in Finland
+        </label>
+        <div className="flex min-w-0 flex-1 items-center gap-2.5 pl-3">
+          <Search aria-hidden className="size-[1.125rem] shrink-0 text-muted-foreground" />
           <input
             id="ask-box-input"
             type="text"
@@ -93,14 +97,18 @@ export function AskBox() {
             disabled={loading}
             placeholder="e.g. Is GP access getting better in Kainuu this year?"
             autoComplete="off"
-            className="h-9 w-full min-w-0 rounded-lg border border-input bg-transparent px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60"
+            className="h-11 w-full min-w-0 bg-transparent text-[0.9375rem] outline-none placeholder:text-muted-foreground/80 disabled:opacity-60"
           />
-          <Button type="submit" disabled={loading || question.trim().length < 3}>
-            {loading ? "Searching…" : "Ask"}
-          </Button>
-        </form>
+        </div>
+        <Button type="submit" size="lg" className="h-11 px-5" disabled={loading || question.trim().length < 3}>
+          {loading ? "Searching…" : "Ask"}
+          {!loading && <ArrowUp aria-hidden data-icon="inline-end" />}
+        </Button>
+      </form>
 
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Example questions">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3" role="group" aria-label="Example questions">
+        <span aria-hidden className="pt-2 type-micro font-medium text-muted-foreground">Try</span>
+        <div className="flex flex-wrap gap-2">
           {EXAMPLES.map((ex) => (
             <button
               key={ex}
@@ -110,30 +118,31 @@ export function AskBox() {
                 setQuestion(ex);
                 ask(ex);
               }}
-              className="rounded-full border px-3 py-1 text-left text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60"
+              className="min-h-9 rounded-full border border-border bg-muted/60 px-3.5 py-1.5 text-left text-[0.8125rem] text-foreground/80 transition-colors outline-none hover:border-brand/30 hover:bg-brand-soft hover:text-brand-ink focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60"
             >
               {ex}
             </button>
           ))}
         </div>
+      </div>
 
-        <div className="min-h-24" aria-live="polite">
+      <div aria-live="polite" className="-mt-5 [&>*]:mt-5">
           {loading && <LoadingRows label="Searching and writing an answer from the results" rows={2} />}
           {state.kind === "error" && state.message !== "" && <p className="text-sm text-muted-foreground">{state.message}</p>}
           {unavailable && <Unavailable />}
           {data && data.freshness !== "unavailable" && (
-            <div className="space-y-4">
+            <div className="space-y-5 border-t border-border pt-5">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="outline">{STATUS_LABEL[data.freshness]}</Badge>
-                <span className="text-xs text-muted-foreground">Answered only from these Exa results.</span>
+                <span className="type-micro text-muted-foreground">Answered only from these Exa results.</span>
               </div>
 
               {answered && data.answer && (
-                <div className="space-y-2 rounded-lg border border-dashed bg-muted/30 p-3">
-                  <p className="text-xs text-muted-foreground">
+                <div className="space-y-2 rounded-xl border border-dashed border-input bg-muted/40 p-4">
+                  <p className="type-micro text-muted-foreground">
                     Not checked by the team. Written by AI from the live results below; read the sources before relying on it.
                   </p>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
+                  <p className="text-[0.9375rem] leading-relaxed text-foreground/85">
                     {data.answer.sentences.map((s, i) => (
                       <span key={i}>
                         {s.text}{" "}
@@ -143,7 +152,7 @@ export function AskBox() {
                               <a
                                 href={`#ask-src-${n}`}
                                 aria-label={`Source ${n}`}
-                                className="text-primary underline-offset-2 hover:underline"
+                                className="font-medium text-brand-ink underline-offset-2 hover:underline"
                               >
                                 [{n}]
                               </a>
@@ -159,7 +168,7 @@ export function AskBox() {
               )}
 
               {!answered && data.nothingFound && (
-                <p className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
+                <p className="rounded-xl border border-dashed border-input p-4 text-sm text-muted-foreground">
                   {data.message?.startsWith("Nothing found")
                     ? data.message
                     : `Nothing found. ${data.message || "The live results did not answer this question."}`}
@@ -171,15 +180,14 @@ export function AskBox() {
               )}
 
               {data.items.length > 0 && (
-                <div className="space-y-2">
-                  <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Sources</h3>
+                <div className="space-y-3">
+                  <h4 className="type-micro font-semibold text-muted-foreground">Sources</h4>
                   <ResultList items={data.items} numbered idPrefix="ask-src" />
                 </div>
               )}
             </div>
           )}
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
