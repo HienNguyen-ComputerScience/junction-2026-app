@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Search } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isItemsResponse, statusText, TOO_MANY, type ItemsResponse } from "./types";
+import { LiveMark, LoadingRows, ResultList, Unavailable } from "./result-list";
+import { isItemsResponse, TOO_MANY, type ItemsResponse } from "./types";
 
 type State =
   | { kind: "idle" }
@@ -38,48 +38,47 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
       });
   }
 
+  const loading = state.kind === "loading";
   const data = state.kind === "done" ? state.data : null;
   const limited = state.kind === "error" && state.limited;
   const unavailable = (state.kind === "error" && !state.limited) || data?.freshness === "unavailable";
+  const showResults = loading || (data !== null && !unavailable);
 
   return (
-    <section aria-label={`Live evidence search for: ${actionTitle}`} className="mt-3 space-y-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={run}
-          disabled={state.kind === "loading"}
-          aria-expanded={state.kind !== "idle"}
-          aria-controls={panelId}
-        >
-          {state.kind === "idle" ? "Find more evidence live" : state.kind === "loading" ? "Searching…" : "Search again"}
-        </Button>
-        {state.kind !== "idle" && (
-          <>
-            <Badge variant="secondary">Found live — unverified</Badge>
-            <span className="text-xs text-muted-foreground">via Exa</span>
-          </>
-        )}
-        {data && !unavailable && <Badge variant="outline">{statusText(data)}</Badge>}
-      </div>
-      <div id={panelId}>
-        {state.kind === "loading" && <LoadingRows label="Searching for more evidence with Exa" rows={2} />}
-        {limited && <p role="status" className="text-sm text-muted-foreground">{TOO_MANY}</p>}
-        {unavailable && <Unavailable />}
-        {data && !unavailable && (
-          <div className="space-y-3 rounded-lg border border-dashed bg-muted/30 p-3">
-            <p className="text-xs text-muted-foreground">
-              Not checked by the team, unlike this action&apos;s own source. Read before relying on it.
-            </p>
-            {data.items.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Nothing found.</p>
-            ) : (
-              <ResultList items={data.items} />
-            )}
+    <section aria-label={`Live evidence search for: ${actionTitle}`} className="flex w-full flex-col gap-2">
+      {/* A secondary action: the action's own checked source comes first. */}
+      <Button
+        type="button"
+        variant="outline"
+        onClick={run}
+        disabled={loading}
+        aria-expanded={state.kind !== "idle"}
+        aria-controls={panelId}
+        className="w-fit text-[0.8125rem]"
+      >
+        <Search aria-hidden strokeWidth={1.75} className="size-4" />
+        {state.kind === "idle" ? "Find more evidence live" : loading ? "Searching…" : "Search again"}
+      </Button>
+
+      <div id={panelId} className="empty:hidden">
+        {showResults && (
+          <div className="flex flex-col gap-3 rounded-lg border border-dashed border-input bg-muted/40 p-4">
+            <LiveMark result={data} />
+            <div className="border-t border-border pt-3">
+              {loading && <LoadingRows label="Searching for more evidence with Exa" rows={2} />}
+              {data && data.items.length === 0 && (
+                <p className="text-sm text-muted-foreground">Nothing found for this action.</p>
+              )}
+              {data && data.items.length > 0 && <ResultList items={data.items} />}
+            </div>
           </div>
         )}
+        {limited && (
+          <p role="status" className="rounded-lg border border-input bg-muted px-4 py-3 text-sm text-foreground">
+            {TOO_MANY}
+          </p>
+        )}
+        {unavailable && <Unavailable />}
       </div>
     </section>
   );

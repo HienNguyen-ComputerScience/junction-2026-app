@@ -21,5 +21,5 @@ export function CountyBrief({ countyId }: { countyId: string }) {
     context.sources.map((source) => [source.source_id, <SourceChip key={source.source_id} sourceId={source.source_id} />]),
   );
 
-  return <CountyBriefClient countyId={context.county.id} countyName={context.county.name} initial={initial} chips={chips} />;
+  return <CountyBriefClient countyId={context.county.id} initial={initial} chips={chips} />;
 }

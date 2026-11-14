@@ -64,4 +64,5 @@ MIT, see [LICENSE](LICENSE).
 - Repo created from the hackathon-agent-board template (https://github.com/azizu06/hackathon-agent-board): `tools/board`, `.claude/hooks/board-*.sh`, the issue template, and the base of `AGENTS.md`
 - Agent configuration (AGENTS.md project rules, hooks, `scripts/worktree-setup.sh`) prepared before the event
 - App scaffolded at the event with `create-next-app` 16.4.6 (App Router, TypeScript, Tailwind, ESLint) and `shadcn` 4.23 (`button`, `card`, `badge` in `components/ui/`, `lib/utils.ts`)
+- Map boundaries: Statistics Finland, wellbeing services counties 2025 (1:4 500 000), CC BY 4.0 (https://www.stat.fi/org/avoindata/paikkatietoaineistot_en.html), in `components/map/finland-paths.ts`
 - No app code predates the event: all screens, data scripts and components were written during Junction 2026.

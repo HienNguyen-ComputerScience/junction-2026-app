@@ -1,8 +1,21 @@
 import { AskBox } from "@/components/exa/ask-box";
 import { NationalNews } from "@/components/exa/national-news";
-import { RankingList } from "@/components/ranking/ranking-list";
+import { FinlandMap, type FinlandMapArea } from "@/components/map/finland-map";
+import { gapToFinland, RankingList } from "@/components/ranking/ranking-list";
 import { SourceChip } from "@/components/source-chip";
-import { LATEST_YEAR } from "@/lib/data";
+import {
+  Frame,
+  FrameDescription,
+  FrameFooter,
+  FrameHeader,
+  FramePanel,
+  FramePanelLabel,
+  FrameTitle,
+} from "@/components/ui/frame";
+import { BarKey, MeasureBar } from "@/components/ui/measure-bar";
+import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
+import { TextLink } from "@/components/ui/text-link";
+import { LATEST_YEAR, type GapStatus } from "@/lib/data";
 import {
   formatPct,
   getNationalValue,
@@ -10,6 +23,7 @@ import {
   getUnrankedCounties,
   GP_WAIT_ID,
   REFERRAL_ID,
+  STATUS_LABEL,
 } from "@/lib/ranking";
 
 export default function CountyRankingPage() {
@@ -26,68 +40,210 @@ export default function CountyRankingPage() {
 
   const gap = worst.gpWait.value - best.gpWait.value;
   const ratio = worst.gpWait.value / best.gpWait.value;
+  // The map's areas come from the same ranking the list below uses, linked the same way.
+  const mapAreas: FinlandMapArea[] = [
+    ...rows.map((row) => ({
+      id: row.county.id,
+      name: row.county.name,
+      href: `/county/${row.county.id}`,
+      status: row.gpStatus,
+      valueLabel: formatPct(row.gpWait.value),
+    })),
+    ...unranked.map((county) => ({
+      id: county.id,
+      name: county.name,
+      href: `/county/${county.id}`,
+      status: "no_data" as const,
+      valueLabel: null,
+    })),
+  ];
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8">
-      <header className="flex flex-col gap-2">
-        <p className="text-sm font-medium text-muted-foreground">
-          The first step towards early cancer care: getting in to see a GP
-        </p>
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          In Finland, where you live decides how fast you get to see a GP.
-        </h1>
-      </header>
-
+    <main className="page-container flex flex-col gap-6 pt-2 sm:pt-6">
+      {/* Hero: the single message. It leads by size and by its figures, on the same dark page as
+          everything else. The two columns share a top edge: the eyebrow starts where the card
+          does. */}
       <section
-        aria-label="Key insight"
-        className="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950/40"
+        aria-labelledby="home-title"
+        className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] lg:items-start lg:gap-10"
       >
-        <p className="text-base sm:text-lg">
-          <strong>{formatPct(worst.gpWait.value)}</strong> of non-urgent GP
-          visits in {worst.county.name} come more than a week after people ask.
-          In {best.county.name} it is{" "}
-          <strong>{formatPct(best.gpWait.value)}</strong>. That is a{" "}
-          <strong>{gap.toFixed(1)} percentage point</strong> gap, {ratio.toFixed(1)}{" "}
-          times the share, within one country (Finland overall:{" "}
-          {formatPct(nationalGpWait.value)}).
-        </p>
-        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-          <span>Sotkanet indicator {GP_WAIT_ID}, {LATEST_YEAR}. Not cancer-specific: it covers all non-urgent GP visits.</span>
-          <SourceChip sourceId={worst.gpWait.source_id} year={LATEST_YEAR} />
-        </div>
-      </section>
-
-      <section aria-labelledby="ranking-heading" className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1">
-          <h2 id="ranking-heading" className="text-xl font-semibold">
-            All {rows.length + unranked.length} areas, longest GP waits first
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            21 wellbeing services counties and the City of Helsinki. Pick an
-            area to see where its delay sits: getting to a GP, or getting from
-            the GP to a specialist.
+        <div className="flex flex-col">
+          <p className="flex items-center gap-2.5 text-sm leading-6 font-medium text-foreground sm:text-[0.9375rem]">
+            <span aria-hidden className="h-4 w-0.5 shrink-0 bg-foreground" />
+            First step to early cancer care: getting to a GP
           </p>
+          <h1
+            id="home-title"
+            className="mt-2 type-display max-w-[19ch] text-[1.75rem] text-foreground sm:mt-3 sm:text-[2.75rem] lg:text-[2.875rem]"
+          >
+            In Finland, where you live decides how fast you get to see a GP
+          </h1>
+          {/* Running text: the figures stay in the text face here, bolded. */}
+          <p className="mt-3 max-w-[35rem] text-[0.9375rem] leading-[1.55] text-pretty text-muted-foreground sm:mt-4 sm:type-lede">
+            <strong className="font-semibold text-foreground">{formatPct(worst.gpWait.value)}</strong> of
+            non-urgent GP visits in {worst.county.name} come more than a week after the need for
+            care was assessed. In {best.county.name} it is{" "}
+            <strong className="font-semibold text-foreground">{formatPct(best.gpWait.value)}</strong>.
+            That is a{" "}
+            <strong className="font-semibold text-foreground">{gap.toFixed(1)} percentage point</strong>{" "}
+            gap, {ratio.toFixed(1)} times the share, within one country.
+          </p>
+          {/* The source line sits directly under the paragraph whose figures it sources, at every width. */}
+          <p className="mt-2 max-w-[35rem] type-caption text-pretty text-muted-foreground sm:mt-3 sm:border-t sm:border-border sm:pt-3">
+            Sotkanet indicator {GP_WAIT_ID}, {LATEST_YEAR}. Not specific to cancer: it covers
+            all non-urgent GP visits.
+          </p>
+          {/* In-page anchor, not a route change. Phones have the list right under the card. */}
+          <TextLink kind="jump" href="#ranking" className="mt-2 text-sm max-sm:hidden">
+            See all {rows.length + unranked.length} areas
+          </TextLink>
         </div>
-        <RankingList
-          rows={rows}
-          unranked={unranked}
-          nationalGpWait={nationalGpWait.value}
-          nationalReferral={nationalReferral.value}
-          gpWaitSourceId={nationalGpWait.source_id}
-          referralSourceId={nationalReferral.source_id}
-        />
+
+        <Frame as="div">
+          <FramePanel padding="none">
+            <FramePanelLabel className="sm:px-5">
+              <h2 className="font-sans type-caption font-medium tracking-normal text-foreground">
+                Non-urgent GP visits waiting over 7 days
+              </h2>
+              <SourceChip sourceId={worst.gpWait.source_id} year={LATEST_YEAR} />
+            </FramePanelLabel>
+            <div className="grid sm:grid-cols-[auto_minmax(0,1fr)]">
+              {/* The map, with the worst and the best area named beside it at every width. */}
+              <div className="flex flex-col items-center justify-center gap-2 border-b border-border px-4 py-4 sm:items-start sm:border-r sm:border-b-0 sm:pr-2 sm:pl-5">
+                <FinlandMap
+                  areas={mapAreas}
+                  highlight={[worst.county.id, best.county.id]}
+                  className="h-[17.5rem] sm:h-[18.5rem]"
+                />
+                <p className="type-caption text-muted-foreground">Map: Statistics Finland, CC BY 4.0</p>
+              </div>
+              <ul className="flex flex-col justify-between gap-3 px-4 pt-3 pb-3 sm:gap-4 sm:pt-4 sm:pr-5 sm:pb-4 sm:pl-4">
+                <CompareRow
+                  name={worst.county.name}
+                  value={worst.gpWait.value}
+                  status={worst.gpStatus}
+                  finland={nationalGpWait.value}
+                  index={0}
+                  emphasis
+                />
+                <CompareRow
+                  name="Finland overall"
+                  value={nationalGpWait.value}
+                  status={null}
+                  finland={nationalGpWait.value}
+                  index={1}
+                />
+                <CompareRow
+                  name={best.county.name}
+                  value={best.gpWait.value}
+                  status={best.gpStatus}
+                  finland={nationalGpWait.value}
+                  index={2}
+                  axisLabel={`Finland ${formatPct(nationalGpWait.value)}`}
+                />
+              </ul>
+            </div>
+            {/* One key for the whole card: the map's areas and the bars use the same fills. */}
+            <BarKey items={["red", "amber"]} className="border-t border-border px-4 py-2.5 sm:px-5" />
+          </FramePanel>
+        </Frame>
       </section>
 
-      <section id="ask" aria-labelledby="ask-heading" className="flex scroll-mt-4 flex-col gap-3">
-        <h2 id="ask-heading" className="text-xl font-semibold">
-          Ask the evidence, answered live from Exa search results
-        </h2>
-        <AskBox />
-      </section>
+      <Frame id="ranking" aria-labelledby="ranking-heading" className="scroll-mt-4">
+        <FrameHeader>
+          <FrameTitle id="ranking-heading" className="type-title">
+            All {rows.length + unranked.length} areas, longest GP waits first
+          </FrameTitle>
+          <FrameDescription className="max-w-none">
+            21 wellbeing services counties and the City of Helsinki. Select an area to see where
+            its delay sits.
+          </FrameDescription>
+        </FrameHeader>
+        <FramePanel padding="none">
+          <RankingList
+            rows={rows}
+            unranked={unranked}
+            nationalGpWait={nationalGpWait.value}
+            nationalReferral={nationalReferral.value}
+            gpWaitSourceId={nationalGpWait.source_id}
+            referralSourceId={nationalReferral.source_id}
+          />
+        </FramePanel>
+        {/* No key here: each group names its colour, each row its gap, and the column header
+            the Finland line. The page has one key, in the card above. */}
+        <FrameFooter>
+          <p className="max-w-[52rem] text-pretty">
+            Waits are counted from the day the need for care was assessed, for GP (physician)
+            visits in primary care.
+            <span className="lg:hidden">
+              {" "}
+              Referrals: the share processed within 3 days (Sotkanet {REFERRAL_ID}). Higher is
+              faster; Finland {formatPct(nationalReferral.value)}.
+            </span>
+          </p>
+        </FrameFooter>
+      </Frame>
 
-      <section aria-label="National news" className="flex flex-col gap-3">
-        <NationalNews />
-      </section>
+      <AskBox />
+
+      <NationalNews />
     </main>
+  );
+}
+
+function CompareRow({
+  name,
+  value,
+  status,
+  finland,
+  index,
+  emphasis = false,
+  axisLabel,
+}: {
+  name: string;
+  value: number;
+  /** null for the Finland reference row. */
+  status: GapStatus | null;
+  finland: number;
+  index: number;
+  emphasis?: boolean;
+  /** Set on the last row: labels the Finland line on the axis under the bars. */
+  axisLabel?: string;
+}) {
+  // The name and the figure share a line, then the badge, then the bar.
+  return (
+    <li className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-3">
+      <span className="col-start-1 row-start-1 min-w-0 text-[0.9375rem] leading-snug font-semibold">
+        {name}
+      </span>
+      <div className="col-span-2 col-start-1 row-start-2 mt-1.5 flex min-w-0 flex-wrap items-center gap-2">
+        {status ? (
+          <StatusBadge status={status} size="xs">
+            {STATUS_LABEL[status]}
+          </StatusBadge>
+        ) : (
+          <span className="flex h-6 items-center gap-1.5 type-caption text-muted-foreground">
+            <span aria-hidden className="h-3 w-0.5 bg-foreground" />
+            Reference line on each bar
+          </span>
+        )}
+      </div>
+      {/* Only "worse than Finland" colours the figure; the calm rows stay in the text colour. */}
+      <span
+        className={`numeral col-start-2 row-start-1 text-right ${emphasis ? "text-[2.5rem] sm:text-[2.75rem]" : "text-[1.75rem] sm:text-[2.125rem]"} ${status ? STATUS_FIGURE[status] : "text-foreground"}`}
+      >
+        {formatPct(value)}
+      </span>
+      <MeasureBar
+        value={value}
+        finland={finland}
+        finlandLabel={axisLabel}
+        status={status}
+        index={index * 6}
+        size="lg"
+        gapLabel={status ? gapToFinland(value, finland) : undefined}
+        className="col-span-2 mt-2.5 sm:mt-3"
+      />
+    </li>
   );
 }

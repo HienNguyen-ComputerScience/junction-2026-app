@@ -1,15 +1,26 @@
-import { ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Fragment } from "react";
 
 import { CountyBrief } from "@/components/brief/county-brief";
 import { CountyNews } from "@/components/exa/county-news";
 import { LimitationsBox, type LimitationItem } from "@/components/pathway/limitations-box";
-import { StageCard, type StageCardProps } from "@/components/pathway/stage-card";
+import { buildPathwaySteps, PathwaySteps, type PathwayStep } from "@/components/pathway/pathway-steps";
+import { TrendStrip, type TrendStage } from "@/components/pathway/trend-strip";
 import { SourceChip } from "@/components/source-chip";
+import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
+import { BackLink } from "@/components/ui/back-link";
+import { BarKey } from "@/components/ui/measure-bar";
 import { buttonVariants } from "@/components/ui/button";
-import { counties, getCounty, getValue, LATEST_YEAR, type County } from "@/lib/data";
+import {
+  Frame,
+  FrameFooter,
+  FrameHeader,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
+import { getBottleneck } from "@/lib/act";
+import { counties, getCounty, getValue, LATEST_YEAR, type County, type Gap } from "@/lib/data";
 import {
   formatPct,
   getIndicator,
@@ -20,6 +31,7 @@ import {
   GP_WAIT_ID,
   REFERRAL_ID,
   REFERRAL_LATE_ID,
+  STATUS_LABEL,
   stageStatus,
   YEARS,
 } from "@/lib/ranking";
@@ -36,144 +48,151 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const county = getCounty(id);
   if (!county) notFound();
 
-  const stages = buildStages(county);
+  const steps = buildPathwaySteps(county.id);
   const limitations = buildLimitations(county);
   const lateReferrals = getValue(county.id, REFERRAL_LATE_ID);
   const lateReferralsFinland = getNationalValue(REFERRAL_LATE_ID);
+  const keyGap = keyFigureGap(county);
 
   return (
-    // Two columns on desktop: the limitations box sits in a sticky side column so it is
-    // visible without scrolling; on phones it comes straight after the verdict.
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-x-8">
-      <div className="flex flex-col gap-4 lg:col-start-1 lg:row-start-1">
-        <Link
-          href="/"
-          className={buttonVariants({ variant: "ghost", size: "sm", className: "w-fit" })}
-        >
-          <ArrowLeft aria-hidden />
-          Back to ranking
-        </Link>
-
-        <header className="flex flex-col gap-3">
-          <p className="text-sm font-medium text-muted-foreground">
-            Path to early cancer care · {county.name_fi}
+    <main className="page-container flex flex-col gap-6 pt-4 sm:pt-6">
+      {/* Desktop: title, verdict and the key figure on the left, the limitations box (quieter)
+          beside them, so both are on the first screen. Below lg the limitations are a one-line
+          disclosure right under the main action instead (the two are never displayed at the
+          same width). */}
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_29rem] lg:items-start lg:gap-12">
+        <header className="flex flex-col items-start gap-4">
+          <BackLink href="/">Back to ranking</BackLink>
+          <div className="flex flex-col gap-2">
+            <p className="type-caption text-balance text-muted-foreground">
+              Path to early cancer care
+              <span className="max-sm:hidden"> · </span>
+              <span className="max-sm:block">{county.name_fi}</span>
+            </p>
+            <h1 className="type-page lg:text-[2.75rem] lg:leading-[1.1]">{county.name}</h1>
+          </div>
+          <p className="max-w-[40rem] type-lede lg:max-w-[36rem] lg:text-[1.375rem] lg:leading-8">
+            {getVerdict(county.id)}
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{county.name}</h1>
-          <p className="max-w-3xl text-base sm:text-lg">{getVerdict(county.id)}</p>
-          <Link
-            href={`/county/${county.id}/act`}
-            className={buttonVariants({ size: "lg", className: "w-fit px-4 text-base" })}
-          >
+          {keyGap && <KeyFigure gap={keyGap} />}
+          <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
             What to do about it
             <ArrowRight aria-hidden data-icon="inline-end" />
           </Link>
+          <LimitationsBox items={limitations} variant="disclosure" className="mt-2 w-full lg:hidden" />
         </header>
+
+        <LimitationsBox items={limitations} className="max-lg:hidden" />
       </div>
 
-      <LimitationsBox
-        items={limitations}
-        className="lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto"
-      />
-
-      <div className="flex flex-col gap-8 lg:col-start-1 lg:row-start-2">
-        <section aria-labelledby="pathway-heading" className="flex flex-col gap-3">
-          <h2 id="pathway-heading" className="text-xl font-semibold">
+      <Frame aria-labelledby="pathway-heading">
+        <FrameHeader>
+          <FrameTitle id="pathway-heading" className="type-title">
             The first steps, compared with Finland ({LATEST_YEAR})
-          </h2>
-          <ol className="grid grid-cols-1 gap-2 md:grid-cols-[1fr_auto_1fr_auto_1fr] md:items-stretch">
-            {stages.map((stage, index) => (
-              <Fragment key={stage.title}>
-                {index > 0 && (
-                  <li aria-hidden className="flex items-center justify-center text-muted-foreground">
-                    <ArrowDown className="size-5 md:hidden" />
-                    <ArrowRight className="hidden size-5 md:block" />
-                  </li>
-                )}
-                <li>
-                  <StageCard {...stage} />
-                </li>
-              </Fragment>
-            ))}
-          </ol>
-          <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-            <span>
-              Context: referrals left unprocessed for more than 21 days in {LATEST_YEAR}:{" "}
-              {lateReferrals ? `${lateReferrals.value}%` : "no public data"}
-              {lateReferralsFinland ? ` (Finland ${lateReferralsFinland.value}%)` : ""}. Too
-              small everywhere to tell counties apart, so it does not set any colour.
-            </span>
+          </FrameTitle>
+        </FrameHeader>
+        <div className="flex flex-col gap-1.5">
+          {/* The key figure above is this step's value, so its slot here shows the gap instead:
+              one number, once per screen. */}
+          <FramePanel padding="none">
+            <PathwaySteps steps={steps} density="full" ledStage={keyGap?.stage} />
+          </FramePanel>
+          <TrendStrip stages={buildTrendStages(county, steps)} areaName={county.name} />
+        </div>
+        <FrameFooter className="flex flex-col gap-2.5">
+          <BarKey />
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <span>Context only, not used for status: referrals still unprocessed after 21 days.</span>
+            {lateReferrals ? (
+              <span>
+                <span className="figure text-foreground">{lateReferrals.value}%</span> here
+              </span>
+            ) : (
+              <span>No public data here</span>
+            )}
+            {lateReferralsFinland && (
+              <span>
+                Finland <span className="figure text-foreground">{lateReferralsFinland.value}%</span>
+              </span>
+            )}
             <SourceChip
               sourceId={lateReferrals?.source_id ?? lateReferralsFinland?.source_id ?? "sotkanet-5033"}
               year={LATEST_YEAR}
             />
           </p>
-        </section>
+        </FrameFooter>
+      </Frame>
 
-        <section aria-labelledby="brief-heading" className="flex flex-col gap-3">
-          <h2 id="brief-heading" className="text-xl font-semibold">
-            Brief for the county director
-          </h2>
-          <CountyBrief countyId={county.id} />
-        </section>
-
-        <section aria-labelledby="news-heading" className="flex flex-col gap-3">
-          <h2 id="news-heading" className="text-xl font-semibold">
-            Local news
-          </h2>
-          <CountyNews key={county.id} countyId={county.id} />
-        </section>
-      </div>
+      <CountyBrief countyId={county.id} />
+      <CountyNews key={county.id} countyId={county.id} />
     </main>
   );
 }
 
-function buildStages(county: County): StageCardProps[] {
-  const gpGap = getStageGap(county.id, "gp_access");
-  const referralGap = getStageGap(county.id, "referral");
+/** Finland's value for each year of the trend, from the same indicator (null where unpublished). */
+function nationalTrend(indicatorId: string) {
+  return YEARS.map((year) => ({ year, value: getNationalValue(indicatorId, year)?.value ?? null }));
+}
 
-  return [
-    {
-      step: 1,
-      title: "Getting to a GP",
-      status: stageStatus(county.id, "gp_access"),
-      measure: gpGap && {
-        value: gpGap.value,
-        nationalValue: gpGap.national_value,
-        caption: "of non-urgent GP visits came more than 7 days after people asked",
-        note: gpGap.note,
-        sourceId: gpGap.source_id,
-        year: gpGap.year,
-        trend: getTrend(county.id, GP_WAIT_ID).map(({ year, value }) => ({
-          year,
-          value: value?.value ?? null,
-        })),
+const KEY_CAPTION: Record<Gap["stage"], string> = {
+  gp_access: "of non-urgent GP visits waited more than 7 days",
+  referral: "of referrals were processed within 3 days (higher is faster)",
+  gp_recognition: "",
+};
+
+/**
+ * The stage the first screen leads with: the worst measured stage when one is worse than
+ * Finland, otherwise step 1 (getting to a GP) with its amber status.
+ */
+function keyFigureGap(county: County): Gap | null {
+  const { focus, anyRed } = getBottleneck(county.id);
+  const gp = getStageGap(county.id, "gp_access");
+  const gap = anyRed ? focus[0] : gp && gp.value !== null ? gp : focus[0];
+  return gap && gap.value !== null ? gap : null;
+}
+
+/** The first screen's one key number: the figure, its status and source, and what it counts. */
+function KeyFigure({ gap }: { gap: Gap }) {
+  if (gap.value === null) return null;
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <p className={`numeral text-[3.5rem] leading-none sm:text-[4rem] ${STATUS_FIGURE[gap.status]}`}>
+          {formatPct(gap.value)}
+        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <StatusBadge status={gap.status} size="md">
+            {STATUS_LABEL[gap.status]}
+          </StatusBadge>
+          <SourceChip sourceId={gap.source_id} year={gap.year} />
+        </div>
+      </div>
+      <p className="text-sm text-pretty text-muted-foreground">
+        {KEY_CAPTION[gap.stage]} · Finland <span className="figure">{formatPct(gap.national_value)}</span>
+      </p>
+    </div>
+  );
+}
+
+/** The trend of every step that has an indicator, for the panel under the steps. */
+function buildTrendStages(county: County, steps: PathwayStep[]): TrendStage[] {
+  const INDICATOR: Partial<Record<Gap["stage"], string>> = { gp_access: GP_WAIT_ID, referral: REFERRAL_ID };
+  return steps.flatMap((step) => {
+    const indicatorId = INDICATOR[step.stage];
+    if (!step.measure || !indicatorId) return [];
+    return [
+      {
+        step: step.step,
+        title: step.title,
+        status: step.status,
+        sourceId: step.measure.sourceId,
+        year: step.measure.year,
+        direction: step.measure.direction,
+        trend: getTrend(county.id, indicatorId).map(({ year, value }) => ({ year, value: value?.value ?? null })),
+        nationalTrend: nationalTrend(indicatorId),
       },
-    },
-    {
-      step: 2,
-      title: "GP recognises warning signs",
-      status: "no_data",
-      emptyText:
-        "No public statistic shows how often GPs spot possible cancer at the first visit, in any county. Nobody can see how this step performs. That blind spot is itself a finding.",
-    },
-    {
-      step: 3,
-      title: "GP → specialist referral",
-      status: stageStatus(county.id, "referral"),
-      measure: referralGap && {
-        value: referralGap.value,
-        nationalValue: referralGap.national_value,
-        caption: "of referrals were processed within 3 days (higher is faster)",
-        note: referralGap.note,
-        sourceId: referralGap.source_id,
-        year: referralGap.year,
-        trend: getTrend(county.id, REFERRAL_ID).map(({ year, value }) => ({
-          year,
-          value: value?.value ?? null,
-        })),
-      },
-    },
-  ];
+    ];
+  });
 }
 
 function buildLimitations(county: County): LimitationItem[] {
@@ -210,9 +229,9 @@ function buildLimitations(county: County): LimitationItem[] {
 
   const nationalGpWait = getNationalValue(GP_WAIT_ID);
   items.push({
-    text: `Amber does not mean good. It means at or better than Finland's level, and Finland's level is itself a delay${
+    text: `At or better than Finland's level does not mean good. Finland's level is itself a delay${
       nationalGpWait
-        ? `: ${formatPct(nationalGpWait.value)} of non-urgent GP visits nationally come more than a week after people ask`
+        ? `: ${formatPct(nationalGpWait.value)} of non-urgent GP visits nationally come more than a week after the need for care was assessed`
         : ""
     }.`,
   });

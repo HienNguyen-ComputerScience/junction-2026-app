@@ -1,39 +1,136 @@
+import type { ReactNode } from "react";
+import { cn } from "cn";
+
 import { SourceChip } from "@/components/source-chip";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export type LimitationItem = {
   text: string;
   sourceId?: string;
 };
 
-/** Always visible, never collapsible: the caveats travel with the numbers. */
+const TITLE = "Limitations: read before acting on these numbers";
+
+/**
+ * The caveats travel with the numbers. No wording is cut, and nothing is clipped.
+ *  - "box": the title and the first items always visible, the rest open in place.
+ *  - "disclosure": one line that opens to every item, for narrow screens where the box would
+ *    sit far below the first screen. The page shows one or the other at a given width, never
+ *    both, so screen readers meet the content once.
+ */
 export function LimitationsBox({
   items,
+  visibleCount = 3,
+  variant = "box",
   className = "",
 }: {
   items: LimitationItem[];
+  /** How many items show before the "show more" disclosure ("box" only). */
+  visibleCount?: number;
+  variant?: "box" | "disclosure";
   className?: string;
 }) {
+  if (variant === "disclosure") {
+    return (
+      <aside aria-label="Limitations" className={className}>
+        <Disclosure
+          className="rounded-panel border border-frame-border bg-frame"
+          summaryClassName="min-h-11 w-full gap-1.5 px-3.5 py-2.5 hover:no-underline"
+          summary={
+            <span>
+              {TITLE} <span className="font-normal text-muted-foreground tabular-nums">({items.length})</span>
+            </span>
+          }
+        >
+          <ul className="flex flex-col gap-3 border-t border-frame-border px-3.5 pt-3 pb-4">
+            {items.map((item) => (
+              <Limitation key={item.text} item={item} />
+            ))}
+          </ul>
+        </Disclosure>
+      </aside>
+    );
+  }
+
+  const first = items.slice(0, visibleCount);
+  const rest = items.slice(visibleCount);
+
   return (
-    <section
+    <aside
       aria-labelledby="limitations-heading"
-      className={`flex flex-col gap-3 rounded-xl border bg-muted/40 p-4 ${className}`}
+      className={cn(
+        "flex flex-col gap-2.5 rounded-panel border border-frame-border px-4 pt-3.5 pb-2 sm:px-5",
+        className,
+      )}
     >
-      <h2 id="limitations-heading" className="text-base font-semibold">
-        Limitations: read before acting on these numbers
+      <h2 id="limitations-heading" className="font-sans text-[0.8125rem] leading-snug font-medium tracking-normal">
+        {TITLE}
       </h2>
-      <ul className="flex list-disc flex-col gap-2 pl-5 text-sm">
-        {items.map((item) => (
-          <li key={item.text}>
-            {item.text}
-            {item.sourceId && (
-              <>
-                {" "}
-                <SourceChip sourceId={item.sourceId} />
-              </>
-            )}
-          </li>
+      <ul className="flex flex-col gap-2.5">
+        {first.map((item) => (
+          <Limitation key={item.text} item={item} />
         ))}
       </ul>
-    </section>
+      {rest.length > 0 && (
+        <Disclosure
+          summary={
+            <>
+              <span className="group-open/disc:hidden">
+                Show {rest.length} more {rest.length === 1 ? "limitation" : "limitations"}
+              </span>
+              <span className="hidden group-open/disc:inline">Show fewer</span>
+            </>
+          }
+          className="-mt-1"
+        >
+          <ul className="flex flex-col gap-2.5 pt-1 pb-2">
+            {rest.map((item) => (
+              <Limitation key={item.text} item={item} />
+            ))}
+          </ul>
+        </Disclosure>
+      )}
+    </aside>
+  );
+}
+
+/** Percentages (and ranges such as "0-3%") in the figure face, as everywhere else; words unchanged. */
+function withFigures(text: string): ReactNode {
+  return text.split(/(\d+(?:\.\d+)?(?:[-–]\d+(?:\.\d+)?)?%)/).map((part, i) =>
+    i % 2 === 1 ? (
+      <span key={i} className="figure">
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
+
+const BODY = "text-[0.8125rem] leading-[1.6] text-pretty text-muted-foreground";
+
+function Limitation({ item }: { item: LimitationItem }) {
+  // Indicator items read "Short name: limitation". The name becomes the item's first line with
+  // its source at the right end, the limitation sits under it; the words stay the same.
+  const split = item.sourceId ? item.text.indexOf(": ") : -1;
+  if (split <= 0) {
+    return (
+      <li className="flex flex-col gap-0.5">
+        <p className={BODY}>{withFigures(item.text)}</p>
+        {item.sourceId && <SourceChip sourceId={item.sourceId} />}
+      </li>
+    );
+  }
+  return (
+    <li className="flex flex-col gap-0.5">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-[0.8125rem] leading-5 font-medium text-foreground">
+          {item.text.slice(0, split)}
+          <span className="sr-only">:</span>
+        </p>
+        {item.sourceId && <SourceChip sourceId={item.sourceId} />}
+      </div>
+      <p className={BODY}>{withFigures(item.text.slice(split + 2))}</p>
+    </li>
   );
 }

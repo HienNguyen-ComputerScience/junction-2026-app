@@ -1,7 +1,10 @@
 "use client";
 
 import { useId, useState } from "react";
-import { ShieldAlert } from "lucide-react";
+import { Check, ShieldAlert } from "lucide-react";
+import { cn } from "cn";
+
+import { TextLink } from "@/components/ui/text-link";
 
 import {
   FINNISH_ROADMAP,
@@ -14,31 +17,65 @@ import {
   type GuidelineLink,
 } from "@/lib/red-flags";
 
-function LinkList({ links }: { links: GuidelineLink[] }) {
+function LinkList({ links, className }: { links: GuidelineLink[]; className?: string }) {
   return (
-    <ul className="flex flex-col gap-1">
+    <ul className={cn("flex flex-col gap-2 max-sm:gap-0.5", className)}>
       {links.map((link) => (
         <li key={link.url}>
-          <a
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2 hover:text-foreground"
-          >
+          <TextLink kind="external" href={link.url} inline className="max-sm:inline-block max-sm:py-1.5">
             {link.label}
-          </a>
+          </TextLink>
         </li>
       ))}
     </ul>
   );
 }
 
-const TIER_STYLES = {
-  urgent: "border-red-600/40 bg-red-50 dark:bg-red-950/30",
-  vague: "border-amber-600/40 bg-amber-50 dark:bg-amber-950/30",
-  prompt: "border-yellow-600/40 bg-yellow-50 dark:bg-yellow-950/30",
-  safety_net: "border-sky-600/40 bg-sky-50 dark:bg-sky-950/30",
+/** The labels of the result card's sections, shared by the result and its empty state. */
+const SECTION = {
+  category: "Warning-sign category",
+  speed: "How fast",
+  gp: "What the GP or clinic does",
+  links: "Check the detail in the guideline",
 } as const;
+
+/** What each section of the result will hold, in plain words, for the empty state. */
+const SECTION_HINT = {
+  speed: "How soon the person should see a GP, from urgent to a planned recheck",
+  gp: "The next step at the practice: the tests to run or the referral to make",
+  links: "The guideline pages to check the exact criteria, ages and tests against",
+} as const;
+
+/**
+ * Before any input: the result card's own sections, each with a line on what will appear there.
+ * Static text, no placeholder bars, so it never reads as a stuck loading state.
+ */
+function EmptyResult() {
+  return (
+    <div className="flex h-full flex-col justify-between gap-4 rounded-lg border border-dashed border-input p-4 sm:p-5">
+      <div className="flex flex-col gap-1.5">
+        <p aria-hidden className="type-caption text-muted-foreground">
+          {SECTION.category}
+        </p>
+        <p className="font-heading text-[1.125rem] leading-[1.35] font-semibold tracking-[-0.01em] text-pretty text-muted-foreground">
+          Pick a concern or type a few words to see the warning-sign category and the referral route
+        </p>
+      </div>
+      <dl className="flex flex-col gap-4 border-t border-border pt-4">
+        {(["speed", "gp"] as const).map((key) => (
+          <div key={key} className="flex flex-col gap-1">
+            <dt className="type-caption text-muted-foreground">{SECTION[key]}</dt>
+            <dd className="text-sm leading-relaxed text-pretty text-faint">{SECTION_HINT[key]}</dd>
+          </div>
+        ))}
+      </dl>
+      <dl className="flex flex-col gap-1 border-t border-border pt-4">
+        <dt className="type-caption text-muted-foreground">{SECTION.links}</dt>
+        <dd className="text-sm leading-relaxed text-pretty text-faint">{SECTION_HINT.links}</dd>
+      </dl>
+    </div>
+  );
+}
 
 export function RedFlagHelper() {
   const textId = useId();
@@ -65,102 +102,136 @@ export function RedFlagHelper() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div
-        role="note"
-        className="flex gap-3 rounded-lg border border-red-600/40 bg-red-50 p-3 text-sm dark:bg-red-950/30"
-      >
-        <ShieldAlert aria-hidden className="mt-0.5 size-5 shrink-0 text-red-700 dark:text-red-400" />
-        <div>
-          <p className="font-semibold">Decision support, not diagnosis. If in doubt, refer.</p>
-          <p>No patient data is stored or sent. Matching runs only in this browser.</p>
-        </div>
-      </div>
-
-      <fieldset className="flex flex-col gap-2">
-        <legend className="mb-2 text-sm font-medium">What is the concern? Pick any that fit.</legend>
-        <div className="flex flex-wrap gap-2">
-          {RED_FLAG_CATEGORIES.map((category) => {
-            const on = picked.includes(category.id);
-            return (
-              <label
-                key={category.id}
-                title={category.examples}
-                className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm transition-colors has-focus-visible:ring-2 has-focus-visible:ring-ring ${
-                  on ? "border-foreground bg-foreground text-background" : "hover:bg-muted"
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  className="sr-only"
-                  checked={on}
-                  onChange={() => toggle(category.id)}
-                />
-                {category.label}
-              </label>
-            );
-          })}
-        </div>
-      </fieldset>
-
-      <div className="flex flex-col gap-1">
-        <label htmlFor={textId} className="text-sm font-medium">
-          Or describe it in a few words (English or Finnish)
-        </label>
-        <input
-          id={textId}
-          type="text"
-          value={text}
-          onChange={(event) => setText(event.target.value)}
-          maxLength={300}
-          placeholder="e.g. weight loss, tiredness"
-          autoComplete="off"
-          className="h-9 rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        />
-      </div>
-
-      <div aria-live="polite">
-        {hasInput ? (
-          <div className={`flex flex-col gap-3 rounded-lg border p-4 text-sm ${TIER_STYLES[tier.urgency]}`}>
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                {matched.length > 0
-                  ? `Warning-sign category: ${matched.map((c) => c.label.toLowerCase()).join("; ")}`
-                  : "No category matched. That does not rule anything out."}
-              </p>
-              {matched.length === 0 ? (
-                <p className="mt-1 font-medium">
-                  If you are worried or it gets worse, contact a health professional now.
-                </p>
-              ) : null}
-              <p className="mt-1 text-base font-semibold">{tier.title}</p>
-            </div>
-            <p>
-              <span className="font-medium">How fast: </span>
-              {tier.speed}
-            </p>
-            <p>
-              <span className="font-medium">What the GP or clinic does: </span>
-              {tier.gpAction}
-            </p>
-            <div className="text-muted-foreground">
-              <p className="font-medium text-foreground">Check the detail in the guideline</p>
-              <LinkList links={links} />
-            </div>
-          </div>
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            Pick a category or type a few words to see the warning-sign category and the referral route.
+    // Desktop: the question on the left; the note and the route on the right, so the answer
+    // appears beside the input. Phone: the note first, then the question, then the route.
+    // Neutral surfaces: red and amber are reserved for data status.
+    <div className="grid gap-x-10 gap-y-5 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-4">
+      <div role="note" className="flex gap-3 rounded-lg border border-input px-4 py-3.5 lg:col-start-2 lg:row-start-1">
+        <ShieldAlert aria-hidden className="mt-0.5 size-4 shrink-0 text-foreground" strokeWidth={1.75} />
+        <div className="flex flex-col gap-0.5">
+          <p className="text-[0.9375rem] font-semibold">Decision support, not diagnosis. If in doubt, refer.</p>
+          <p className="type-caption text-muted-foreground">
+            No patient data is stored or sent. Matching runs only in this browser.
           </p>
-        )}
+        </div>
       </div>
 
-      <div className="text-xs text-muted-foreground">
-        <p>
-          Our own plain-language categories, not guideline text. UK guideline, Finnish criteria pending
-          (roadmap 2.5.2). Exact criteria, ages and tests are in the guidelines:
-        </p>
-        <LinkList links={[NICE_NG12, KAYPA_HOITO, FINNISH_ROADMAP]} />
+      <div className="flex flex-col gap-6 lg:col-start-1 lg:row-span-2 lg:row-start-1">
+        <fieldset className="@container flex flex-col">
+          <legend className="mb-3 text-sm font-medium">What is the concern? Pick any that fit.</legend>
+          {/* Equal toggle rows; two columns only where the longest label fits on one line. */}
+          <div className="grid gap-1.5 @[44rem]:grid-cols-2">
+            {RED_FLAG_CATEGORIES.map((category) => {
+              const on = picked.includes(category.id);
+              // Matched from the typed words: shown, but not ticked, so a click still toggles it.
+              const fromText = !on && typed.includes(category.id);
+              return (
+                <label
+                  key={category.id}
+                  title={category.examples}
+                  className={cn(
+                    "flex min-h-10 cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors has-focus-visible:ring-3 has-focus-visible:ring-ring/50",
+                    on
+                      ? "border-foreground/40 bg-muted"
+                      : fromText
+                        ? "border-foreground/25 bg-muted"
+                        : "border-input hover:bg-muted/60",
+                  )}
+                >
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={on}
+                    onChange={() => toggle(category.id)}
+                  />
+                  {/* The tick box carries the state, so it never rests on a surface step alone. */}
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "flex size-4 shrink-0 items-center justify-center rounded-[4px] border transition-colors",
+                      on
+                        ? "border-foreground bg-foreground text-background"
+                        : fromText
+                          ? "border-foreground/60 text-foreground"
+                          : "border-foreground/35 bg-background/40",
+                    )}
+                  >
+                    {(on || fromText) && <Check className="size-3" strokeWidth={2.5} />}
+                  </span>
+                  <span className="min-w-0 flex-1 text-pretty">{category.label}</span>
+                  {fromText && (
+                    <span className="shrink-0 type-caption text-muted-foreground">
+                      Matched<span className="sr-only"> by your description</span>
+                    </span>
+                  )}
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
+
+        <div className="flex flex-col gap-2">
+          <label htmlFor={textId} className="text-sm font-medium">
+            Or describe it in a few words (English or Finnish)
+          </label>
+          <input
+            id={textId}
+            type="text"
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+            maxLength={300}
+            placeholder="e.g. weight loss, tiredness"
+            autoComplete="off"
+            className="h-11 rounded-lg border border-input bg-muted px-3 text-[0.9375rem] transition-[border-color,box-shadow] outline-none placeholder:text-faint focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25"
+          />
+        </div>
+
+        <div className="flex flex-col gap-3 border-t border-border pt-4">
+          <p className="type-caption text-muted-foreground">
+            Our own plain-language categories, not guideline text. Exact criteria:
+          </p>
+          <LinkList links={[NICE_NG12, KAYPA_HOITO, FINNISH_ROADMAP]} className="type-caption" />
+        </div>
+      </div>
+
+      <div className="lg:col-start-2 lg:row-start-2">
+        <div aria-live="polite" className="h-full">
+          {hasInput ? (
+            <div className="flex flex-col gap-4 rounded-lg border border-input bg-muted p-4 sm:p-5">
+              <div className="flex flex-col gap-1.5">
+                <p className="type-caption text-muted-foreground">
+                  {matched.length > 0
+                    ? `${SECTION.category}: ${matched.map((c) => c.label.toLowerCase()).join("; ")}`
+                    : "No category matched. That does not rule anything out."}
+                </p>
+                {matched.length === 0 ? (
+                  <p className="text-sm font-medium">
+                    If you are worried or it gets worse, contact a health professional now.
+                  </p>
+                ) : null}
+                <p className="font-heading text-[1.125rem] leading-[1.35] font-semibold tracking-[-0.01em] text-pretty">
+                  {tier.title}
+                </p>
+              </div>
+              <dl className="flex flex-col gap-4 border-t border-border pt-4">
+                <div className="flex flex-col gap-1">
+                  <dt className="type-caption text-muted-foreground">{SECTION.speed}</dt>
+                  <dd className="text-sm leading-relaxed text-pretty">{tier.speed}</dd>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <dt className="type-caption text-muted-foreground">{SECTION.gp}</dt>
+                  <dd className="text-sm leading-relaxed text-pretty">{tier.gpAction}</dd>
+                </div>
+              </dl>
+              <div className="flex flex-col gap-2 border-t border-border pt-4">
+                <p className="type-caption text-muted-foreground">{SECTION.links}</p>
+                <LinkList links={links} className="text-sm" />
+              </div>
+            </div>
+          ) : (
+            <EmptyResult />
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SiteHeader } from "@/components/site-header";
+import { LogoMark, SiteHeader } from "@/components/site-header";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -13,23 +13,46 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Display face for headlines and big figures only; body copy stays in Geist.
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  axes: ["opsz"],
+});
+
 export const metadata: Metadata = {
   title: "FirstLine",
   description: "Where early cancer care breaks down, county by county in Finland.",
+};
+
+// Matches --background, so the browser chrome and form controls are dark too.
+export const viewport: Viewport = {
+  themeColor: "#050506",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-full flex-col">
         <SiteHeader />
         <div className="flex-1">{children}</div>
-        <footer className="border-t px-4 py-4 text-center text-sm text-muted-foreground">
-          Decision support for service planning. Not medical advice. No patient
-          data.
+        <footer className="mt-12 border-t border-border">
+          <div className="page-container flex flex-col gap-3 py-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2">
+              <LogoMark className="size-5" />
+              <span className="font-display text-[0.9375rem] leading-none font-[560] tracking-[-0.02em]">
+                FirstLine
+              </span>
+            </div>
+            <p className="type-caption text-muted-foreground">
+              Decision support for service planning. Not medical advice. No patient
+              data.
+            </p>
+          </div>
         </footer>
       </body>
     </html>

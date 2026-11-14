@@ -2,19 +2,21 @@
 
 import { useEffect, useState } from "react";
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Frame, FrameDescription, FrameHeader, FrameMeta, FramePanel, FrameTitle } from "@/components/ui/frame";
 
-import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isItemsResponse, STATUS_LABEL, statusText, type ItemsResponse } from "./types";
+import { LiveMark, LoadingRows, ResultList, Unavailable } from "./result-list";
+import { isItemsResponse, type ItemsResponse } from "./types";
 
 type State = { kind: "loading" } | { kind: "done"; data: ItemsResponse } | { kind: "error" };
 
-const MAX_ITEMS = 4;
+/** Rows shown before "Show more" (main showed at most 4 and no more). */
+const FIRST_ROWS = 4;
 
 // Compact national strip for the ranking page. Client-side fetch, so it never delays first render.
 export function NationalNews() {
   const [state, setState] = useState<State>({ kind: "loading" });
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const ctrl = new AbortController();
@@ -34,28 +36,38 @@ export function NationalNews() {
   const unavailable = state.kind === "error" || data?.freshness === "unavailable";
 
   return (
-    <Card aria-labelledby="national-news-title" className="min-h-48">
-      <CardHeader>
-        <div className="flex flex-wrap items-center gap-2">
-          <CardTitle id="national-news-title">Finland, this month</CardTitle>
-          <Badge variant="secondary">Found live — unverified</Badge>
-          <span className="text-xs text-muted-foreground">via Exa</span>
-          {data && !unavailable && <Badge variant="outline">{statusText(data)}</Badge>}
-          {unavailable && <Badge variant="outline">{STATUS_LABEL.unavailable}</Badge>}
-        </div>
-        <CardDescription>
-          Recent national news on the cancer care pathway. Not checked by the team.
+    <Frame aria-labelledby="national-news-title">
+      <FrameHeader>
+        <FrameTitle id="national-news-title" className="type-title">
+          Finland, this month
+        </FrameTitle>
+        <FrameMeta>
+          <LiveMark result={state.kind === "error" ? { freshness: "unavailable" } : data} />
+        </FrameMeta>
+        <FrameDescription>
+          Recent national news on the cancer care pathway.
           {data?.freshness === "stale-cache" && data.message ? ` ${data.message}` : ""}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </FrameDescription>
+      </FrameHeader>
+      <FramePanel padding="none" className="px-4 py-4 sm:px-6 sm:py-5">
         {state.kind === "loading" && <LoadingRows label="Searching national news with Exa" />}
         {unavailable && <Unavailable />}
         {data && !unavailable && data.items.length === 0 && (
           <p className="text-sm text-muted-foreground">No national news found this month.</p>
         )}
-        {data && !unavailable && data.items.length > 0 && <ResultList items={data.items.slice(0, MAX_ITEMS)} />}
-      </CardContent>
-    </Card>
+        {data && !unavailable && data.items.length > 0 && (
+          <div className="flex flex-col gap-4">
+            <ResultList items={expanded ? data.items : data.items.slice(0, FIRST_ROWS)} />
+            {data.items.length > FIRST_ROWS && (
+              <div className="border-t border-border/80 pt-4">
+                <Button variant="outline" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
+                  {expanded ? "Show fewer" : `Show ${data.items.length - FIRST_ROWS} more`}
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+      </FramePanel>
+    </Frame>
   );
 }

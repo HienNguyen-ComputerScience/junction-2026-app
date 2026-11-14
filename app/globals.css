@@ -2,6 +2,9 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* The theme is dark by default and has no `.dark` class anywhere. This line keeps every
+   `dark:` class (shadcn leftovers, app/sources) inert; without it Tailwind would switch them
+   on for viewers whose system is dark. Do not remove it and do not add a `dark` class. */
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -9,7 +12,33 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-bricolage);
+  --font-display: var(--font-bricolage);
+
+  /* FirstLine tokens: see components/ui/README.md */
+  --color-frame: var(--frame);
+  --color-frame-border: var(--frame-border);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-ink: var(--brand-ink);
+  --color-status-red: var(--status-red);
+  --color-status-red-soft: var(--status-red-soft);
+  --color-status-red-border: var(--status-red-border);
+  --color-status-red-ink: var(--status-red-ink);
+  --color-status-red-tint: var(--status-red-tint);
+  --color-status-amber: var(--status-amber);
+  --color-status-amber-soft: var(--status-amber-soft);
+  --color-status-amber-border: var(--status-amber-border);
+  --color-status-amber-ink: var(--status-amber-ink);
+  --color-status-amber-bar: var(--status-amber-bar);
+  --color-status-grey: var(--status-grey);
+  --color-status-grey-soft: var(--status-grey-soft);
+  --color-status-grey-border: var(--status-grey-border);
+  --color-status-grey-ink: var(--status-grey-ink);
+  --color-trend-down: var(--trend-down);
+  --color-faint: var(--faint);
+  --color-track: var(--track);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -46,85 +75,284 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-frame: 1.25rem;
+  --radius-panel: 0.875rem;
+
+  /* Raw amber classes (used by app/sources for a note) resolve to the neutral raised surface:
+     amber is a data status here, never a callout colour. */
+  --color-amber-50: var(--muted);
+  --color-amber-300: var(--input);
+  --color-amber-950: var(--foreground);
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
+  /* One dark theme, no toggle. Form controls and scrollbars follow it. */
+  color-scheme: dark;
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  /* The numeral face: Geist (sans) with tabular figures. Geist Mono has only a slashed zero and
+     no feature to change it, so figures that must read plainly at display size are set in the
+     sans. Source chips and bare axis numerals keep the mono (type-mark). */
+  --font-numeral: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-chip: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Surfaces, deepest to highest: near-black, neutral, only barely cool, so the page never
+     reads as blue. Three levels must read at a glance: page, frame, panel. Each is a clear
+     step above the last and edged with a hairline; depth never comes from shadows. */
+  --background: oklch(0.115 0.003 255); /* page    #050506 */
+  --frame: oklch(0.172 0.003 255); /*      frame   #0f1011 */
+  --card: oklch(0.215 0.004 255); /*       panel   #18191b */
+  --muted: oklch(0.25 0.004 255); /*       raised  #202123: inputs, chips, inner blocks */
+  --accent: oklch(0.29 0.004 255); /*      raised, hovered #292b2d: also the hover of a row on a panel */
+  --popover: var(--muted);
+  --secondary: var(--muted);
+
+  /* Three text roles, all AA on every surface above. */
+  --foreground: oklch(0.94 0.003 255); /*       primary   #eaebed, also the Finland line */
+  --muted-foreground: oklch(0.75 0.006 255); /* secondary #abaeb2 */
+  --faint: oklch(0.69 0.006 255); /*            muted     #999c9f: placeholders, axis ticks */
+  --card-foreground: var(--foreground);
+  --popover-foreground: var(--foreground);
+  --secondary-foreground: var(--foreground);
+  --accent-foreground: var(--foreground);
+
+  /* Hairlines: the text colour at 10 to 14%, so every surface step also has an edge. */
+  --frame-border: oklch(0.94 0.003 255 / 10%);
+  --border: oklch(0.94 0.003 255 / 12%);
+  --input: oklch(0.94 0.003 255 / 14%);
+  /* Empty part of a bar, so the 100% end is visible on a panel (#2d2e2f on a panel). A tinted
+     red fill is 1.9:1 against it and the solid red 1.8:1 against the tint. */
+  --track: oklch(0.94 0.003 255 / 12%);
+
+  /* The one accent, a cold glacier cyan. It is the identity colour and it is used for exactly
+     five things: the logo mark, the active nav underline, the primary button fill, text links
+     and the focus ring. Nothing else. It sits far from the red and amber status hues and is
+     blue-leaning (B above G in sRGB), so it can never read as "green = good". */
+  --brand: oklch(0.8 0.1 212); /*      #67cfe3, 11:1 on the page */
+  --brand-ink: oklch(0.85 0.085 212); /* #89ddee, link text */
+  --brand-soft: oklch(0.8 0.1 212 / 12%);
+  --ring: var(--brand);
+
+  /* Primary action: the accent as a fill, with the page colour as its text (AA). */
+  --primary: var(--brand);
+  --primary-foreground: oklch(0.115 0.003 255);
+
+  /* Data status, the only saturated colour on any screen, tuned to sit in the dark ramp.
+     red = worse than Finland, slate (token status-amber) = at or better than Finland's level, grey = no public data.
+     Fill for bars and marks, soft + border for chips, ink for text (AA on every surface). */
+  --status-red: oklch(0.63 0.185 25); /*      #e34f4c */
+  --status-red-soft: oklch(0.63 0.185 25 / 14%);
+  --status-red-border: oklch(0.63 0.185 25 / 36%);
+  --status-red-ink: oklch(0.75 0.135 23); /*  #f88985 */
+  /* The tinted part of a red bar (the share up to Finland's line), as an opaque colour so a
+     bar and the key's swatch are the same pixels. */
+  --status-red-tint: color-mix(in oklch, var(--status-red) 56%, var(--card));
+  /* "At or better than Finland's level" is a cool slate (hue 255), so red is the only alarm
+     colour on any screen. The token name status-amber is historical and the data value stays
+     "amber"; nothing here is amber any more. One hue for marker, bar, border and text. */
+  --status-amber: oklch(0.74 0.045 255); /*   marker */
+  --status-amber-soft: oklch(0.68 0.045 255 / 14%); /* dark slate tint behind chips */
+  --status-amber-border: oklch(0.68 0.045 255 / 42%);
+  --status-amber-ink: oklch(0.82 0.04 255); /* text */
+  /* Slate as a bar fill: a step quieter than the marker. */
+  --status-amber-bar: oklch(0.68 0.045 255);
+  --status-grey: oklch(0.56 0.005 255); /*    #727577 */
+  --status-grey-soft: oklch(0.94 0.003 255 / 5%);
+  --status-grey-border: oklch(0.94 0.003 255 / 18%);
+  --status-grey-ink: var(--muted-foreground);
+  --trend-down: var(--muted-foreground);
+  /* Errors are stated in words and in the primary text colour; this is only a fallback. */
+  --destructive: var(--status-red-ink);
+
   --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --chart-2: oklch(0.7 0 0);
+  --chart-3: oklch(0.56 0 0);
+  --chart-4: oklch(0.44 0 0);
+  --chart-5: oklch(0.33 0 0);
+  --radius: 0.625rem;
+  --sidebar: var(--frame);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+    font-feature-settings: "ss01" off;
+  }
+  body {
+    @apply bg-background text-foreground;
+    text-rendering: optimizeLegibility;
+  }
+  /* Headings use the display face by default (utilities still override). */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-bricolage), var(--font-sans), sans-serif;
+    letter-spacing: -0.015em;
+  }
+  /* Disclosures draw their own chevron (components/ui/disclosure.tsx). */
+  summary {
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  ::selection {
+    background: oklch(0.94 0.003 255 / 22%);
+    color: var(--foreground);
+  }
+}
+
+/* Headings written without a type-* class (app/sources) take the system's weight and tracking,
+   so no page has a heavier h1 than the others. Unlayered on purpose: it has to beat the raw
+   font-semibold / tracking-tight utilities. Headings that opt into the text face keep theirs. */
+h1:not([class*="type-"], .font-sans) {
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+h2:not([class*="type-"], .font-sans) {
+  font-weight: 560;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+/* ---- Layout: one container for the header, the footer and every page. ---- */
+@utility page-container {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+}
+
+/* ---- Type scale. Use these instead of ad-hoc sizes. Weights stay at 600 or below. ---- */
+@utility type-display {
+  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
+  font-size: clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+  text-wrap: balance;
+}
+@utility type-page {
+  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
+  font-size: clamp(1.875rem, 1.5rem + 1.5vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+  text-wrap: balance;
+}
+/* Section titles (frame headers): 22px. Item titles inside a section use type-heading (17px),
+   so a section always outranks what it holds. */
+@utility type-title {
+  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
+  /* 22px from a tablet up; 19px on a phone, so a section title stays on one line. */
+  font-size: clamp(1.1875rem, 1rem + 0.75vw, 1.375rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  text-wrap: balance;
+}
+@utility type-heading {
+  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: 560;
+}
+@utility type-lede {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+@utility type-caption {
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+/* Notes on a chart or a card ("via Exa", "No indicator, so nothing to draw", dates): the text
+   face, 12px. Pair with text-muted-foreground. Words are never mono; a number inside a note
+   takes `figure`. */
+@utility type-note {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+/* Mono, 11px: source chips and bare axis numerals (0%, 100%, years, tick values). */
+@utility type-mark {
+  font-family: var(--font-chip);
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  letter-spacing: 0;
+  word-spacing: -0.25em;
+  font-variant-numeric: tabular-nums;
+}
+/* Numerals. One rule: a number inside a line of text is `figure` (sans, tabular); a standalone
+   key figure is `numeral` (a size on top). Both are Geist with tabular figures, so zeros are
+   plain and columns align. Source chips stay mono (type-mark).
+   `numeral`: key figures. Pair with a text-* size (20px to 80px). The tracking tightens with
+   the size, so "85.4%" at 60px is set tight and a 20px figure stays open. */
+@utility numeral {
+  font-family: var(--font-numeral);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "zero" 0;
+  letter-spacing: calc(-0.05em + 0.8px);
+  font-weight: 500;
+  line-height: 0.95;
+}
+/* `figure`: a data number at text size (table values, deltas, "54.7%" in a label, trend values).
+   Sets the face only: size, weight and colour come from where it sits. Wrap the number and its
+   unit ("+30.7 pts", "76.8%"), never the words around it. */
+@utility figure {
+  font-family: var(--font-numeral);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Legend labels (BarKey) and the short notes under a chart: 13px, one step up from muted. */
+@utility type-legend {
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  color: color-mix(in oklch, var(--foreground), var(--muted-foreground) 45%);
+}
+
+/* Empty measure track: "no public data" drawn as absence, not as a zero. */
+@utility bg-hatch {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--status-grey) 0 1px,
+    transparent 1px 6px
+  );
+}
+
+/* ---- Motion: one curve, one load moment (bars grow in). Final state is the base style. ---- */
+@keyframes fl-bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes fl-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@utility animate-bar-grow {
+  transform-origin: left center;
+  animation: fl-bar-grow 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 14ms);
+}
+@utility animate-fade-up {
+  animation: fl-fade-up 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 50ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-bar-grow,
+  .animate-fade-up {
+    animation: none;
   }
 }

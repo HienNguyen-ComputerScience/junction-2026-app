@@ -1,28 +1,55 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ActionCard } from "@/components/act/action-card";
+import { ActionCard, ActionSummary } from "@/components/act/action-card";
 import { RedFlagHelper } from "@/components/act/red-flag-helper";
 import { AskBox } from "@/components/exa/ask-box";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
-import { SourceChip } from "@/components/source-chip";
-import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { buildPathwaySteps, PathwaySteps } from "@/components/pathway/pathway-steps";
+import { BackLink } from "@/components/ui/back-link";
+import { Disclosure } from "@/components/ui/disclosure";
 import {
-  SELECTION_RULE,
+  Frame,
+  FrameDescription,
+  FrameHeader,
+  FrameMeta,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
+import { BarKey } from "@/components/ui/measure-bar";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { TextLink } from "@/components/ui/text-link";
+import {
   STAGE_LABELS,
-  bottleneckSentence,
   getBottleneck,
   otherActions,
   pickActions,
+  type Bottleneck,
 } from "@/lib/act";
-import { counties, getCounty, type Evidence } from "@/lib/data";
+import { counties, getCounty, LATEST_YEAR, type Evidence, type Stage } from "@/lib/data";
+import { STATUS_LABEL } from "@/lib/ranking";
 
 // Counties are a fixed, known set, so a blocking route is fine here.
 export const instant = false;
 
 export function generateStaticParams() {
   return counties.map((county) => ({ id: county.id }));
+}
+
+/** Stages as they read inside a sentence. */
+const STAGE_IN_SENTENCE: Record<Stage, string> = {
+  gp_access: "getting to a GP",
+  gp_recognition: "whether the GP recognises warning signs",
+  referral: "the GP to specialist referral",
+};
+
+/** The one-line answer beside the section title. */
+function bottleneckLede(bottleneck: Bottleneck): string {
+  const { focus, anyRed } = bottleneck;
+  if (focus.length === 0) return "No 2025 pathway data is published for this county.";
+  const worst = STAGE_IN_SENTENCE[focus[0].stage];
+  if (!anyRed) return `No measured stage is worse than Finland. Closest to Finland's level: ${worst}.`;
+  if (focus.length === 1) return `The delay sits at ${worst}, which is worse than Finland.`;
+  return `${focus.length === 2 ? "Both" : "All"} measured stages are worse than Finland. Worst is ${worst}.`;
 }
 
 export default async function CountyActPage({ params }: PageProps<"/county/[id]/act">) {
@@ -38,134 +65,176 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   const otherCount = others.reduce((total, group) => total + group.actions.length, 0);
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
-      <nav className="flex flex-wrap gap-2 text-sm">
-        <Link href={`/county/${county.id}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
-          ← Back to {county.name} pathway
-        </Link>
-        <Link href="/sources" className={buttonVariants({ variant: "ghost", size: "sm" })}>
-          Sources and limitations
-        </Link>
-      </nav>
-
-      <header className="flex flex-col gap-3">
-        <h1 className="text-3xl font-semibold">{county.name}: what to do next</h1>
-        <p className="text-lg">{bottleneckSentence(county.name, bottleneck)}</p>
-        <div className="flex flex-wrap gap-2">
-          {bottleneck.focus.map((gap) => (
-            <SourceChip key={gap.stage} sourceId={gap.source_id} year={gap.year} />
-          ))}
+    <main className="page-container flex flex-col gap-6 pt-4 sm:pt-6">
+      <header className="flex flex-col items-start gap-2">
+        <BackLink href={`/county/${county.id}`}>Back to {county.name} pathway</BackLink>
+        <div className="flex flex-col gap-2">
+          <p className="type-caption text-balance text-muted-foreground">
+            Path to early cancer care
+            <span className="max-sm:hidden"> · </span>
+            <span className="max-sm:block">{county.name_fi}</span>
+          </p>
+          <h1 className="type-page">{county.name}: what to do next</h1>
         </div>
       </header>
 
-      <section className="flex flex-col gap-4" aria-labelledby="recommended">
-        <div>
-          <h2 id="recommended" className="text-xl font-semibold">
+      {/* The compact step strip: where the delay sits, in one short row, so the first action
+          is on the first screen. The full detail of each step is on the county page. */}
+      <Frame aria-labelledby="where-heading">
+        <FrameHeader className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <FrameTitle id="where-heading" className="type-title">
+            Where the delay sits ({LATEST_YEAR})
+          </FrameTitle>
+          <p className="text-sm text-pretty text-foreground">{bottleneckLede(bottleneck)}</p>
+          <BarKey items={["finland"]} className="sm:ml-auto" />
+        </FrameHeader>
+        <FramePanel padding="none">
+          <PathwaySteps
+            steps={buildPathwaySteps(county.id)}
+            density="compact"
+            renderExtra={(step) =>
+              step.stage === "gp_recognition" ? (
+                <TextLink kind="jump" href="#red-flags" className="type-caption sm:min-h-6">
+                  Red-flag helper
+                </TextLink>
+              ) : null
+            }
+          />
+        </FramePanel>
+      </Frame>
+
+      <Frame aria-labelledby="recommended">
+        <FrameHeader>
+          <FrameTitle id="recommended" className="type-title">
             Recommended actions
-          </h2>
-          <p className="text-sm text-muted-foreground">{SELECTION_RULE}</p>
-        </div>
-        {recommended.map((action) => (
-          <ActionCard key={action.id} action={action}>
-            <EvidenceFinder actionId={action.id} actionTitle={action.action} />
-          </ActionCard>
-        ))}
-      </section>
-
-      {unmeasured.length > 0 || remaining.length > 0 ? (
-        <details className="rounded-xl border p-4">
-          <summary className="cursor-pointer text-lg font-semibold">
-            Show {otherCount} other evidence-backed {otherCount === 1 ? "option" : "options"}
-          </summary>
-          <div className="mt-4 flex flex-col gap-8">
-      {unmeasured.map((group) => (
-        <section key={group.stage} className="flex flex-col gap-3" aria-labelledby={`unmeasured-${group.stage}`}>
-          <div>
-            <h2 id={`unmeasured-${group.stage}`} className="text-xl font-semibold">
-              {STAGE_LABELS[group.stage]}: can&apos;t be measured here yet
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              {group.unmeasured} These actions still apply if the county finds a delay at this step.
-            </p>
-          </div>
-          <CompactList actions={group.actions} />
-        </section>
-      ))}
-
-      {remaining.length > 0 ? (
-        <section className="flex flex-col gap-4" aria-labelledby="other">
-          <h2 id="other" className="text-xl font-semibold">
-            Other options for this county
-          </h2>
-          {remaining.map((group) => (
-            <div key={group.stage} className="flex flex-col gap-2">
-              <h3 className="font-medium">
-                {STAGE_LABELS[group.stage]}
-                {group.unmeasured ? (
-                  <Badge variant="outline" className="ml-2 align-middle">
-                    no public data
-                  </Badge>
-                ) : null}
-              </h3>
-              {group.unmeasured ? (
-                <p className="text-sm text-muted-foreground">{group.unmeasured}</p>
-              ) : null}
-              <CompactList actions={group.actions} />
-            </div>
+          </FrameTitle>
+          {/* The selection rule in one line (the full rule is SELECTION_RULE in lib/act). */}
+          <FrameMeta className="max-sm:col-span-2 max-sm:col-start-1 max-sm:row-start-2 max-sm:justify-start">
+            Worst stage first: one action per stage, then up to three in all
+          </FrameMeta>
+        </FrameHeader>
+        <div className="flex flex-col gap-1.5">
+          {recommended.map((action, index) => (
+            <ActionCard key={action.id} action={action} index={index + 1}>
+              <EvidenceFinder actionId={action.id} actionTitle={action.action} />
+            </ActionCard>
           ))}
-        </section>
-      ) : null}
-          </div>
-        </details>
-      ) : null}
-
-      <section className="flex flex-col gap-4 rounded-xl border p-5" aria-labelledby="red-flags">
-        <div>
-          <h2 id="red-flags" className="text-xl font-semibold">
-            Red-flag helper for GPs
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Supports the &ldquo;GP recognises warning signs&rdquo; step: a concern in, the warning-sign
-            category and the fastest referral route out, with the guideline to check.
-          </p>
         </div>
-        <RedFlagHelper />
-      </section>
 
-      <section className="flex flex-col gap-3" aria-labelledby="ask-heading">
-        <h2 id="ask-heading" className="text-xl font-semibold">
-          Ask the evidence, answered live from Exa search results
-        </h2>
-        <AskBox />
-      </section>
+        {otherCount > 0 ? (
+          <Disclosure
+            className="mt-1.5"
+            summaryClassName="min-h-11 w-full gap-2 rounded-panel px-3 sm:px-4"
+            summary={
+              <span>
+                <span className="group-open/disc:hidden">Show</span>
+                <span className="hidden group-open/disc:inline">Hide</span> {otherCount} other evidence-backed{" "}
+                {otherCount === 1 ? "option" : "options"}
+              </span>
+            }
+          >
+            <div className="flex flex-col gap-1.5 pt-1.5">
+              {unmeasured.map((group) => (
+                <section key={group.stage} aria-labelledby={`unmeasured-${group.stage}`}>
+                  <GroupHead
+                    id={`unmeasured-${group.stage}`}
+                    title={`${STAGE_LABELS[group.stage]}: can't be measured here yet`}
+                    note={`${group.unmeasured} These actions still apply if the county finds a delay at this step.`}
+                    noData
+                  />
+                  <SummaryGrid actions={group.actions} />
+                </section>
+              ))}
 
-      <nav className="flex flex-wrap gap-2 border-t pt-4 text-sm">
-        <Link href={`/county/${county.id}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
-          ← Back to {county.name} pathway
-        </Link>
-        <Link href="/sources" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+              {remaining.length > 0 ? (
+                <section aria-labelledby="other" className="flex flex-col gap-1.5">
+                  <div className="px-3 pt-3 sm:px-4">
+                    <h3 id="other" className="type-heading">
+                      Other options for this county
+                    </h3>
+                  </div>
+                  {remaining.map((group) => (
+                    <div key={group.stage}>
+                      <GroupHead
+                        title={STAGE_LABELS[group.stage]}
+                        note={group.unmeasured}
+                        noData={group.unmeasured !== null}
+                        level="h4"
+                      />
+                      <SummaryGrid actions={group.actions} />
+                    </div>
+                  ))}
+                </section>
+              ) : null}
+            </div>
+          </Disclosure>
+        ) : null}
+      </Frame>
+
+      <Frame aria-labelledby="red-flags">
+        <FrameHeader>
+          <FrameTitle id="red-flags" className="type-title scroll-mt-24">
+            Red-flag helper for GPs
+          </FrameTitle>
+          <FrameDescription>
+            For the &ldquo;GP recognises warning signs&rdquo; step: a concern in, the referral route out.
+          </FrameDescription>
+        </FrameHeader>
+        <FramePanel padding="lg">
+          <RedFlagHelper />
+        </FramePanel>
+      </Frame>
+
+      <AskBox />
+
+      <nav aria-label="Page" className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
+        <BackLink href={`/county/${county.id}`}>Back to {county.name} pathway</BackLink>
+        <TextLink kind="nav" href="/sources" className="type-caption">
           Sources and limitations
-        </Link>
+        </TextLink>
       </nav>
     </main>
   );
 }
 
-function CompactList({ actions }: { actions: Evidence[] }) {
+function GroupHead({
+  id,
+  title,
+  note,
+  noData = false,
+  level = "h3",
+}: {
+  id?: string;
+  title: string;
+  note: string | null;
+  noData?: boolean;
+  level?: "h3" | "h4";
+}) {
+  const Heading = level;
   return (
-    <ul className="flex flex-col divide-y rounded-lg border text-sm">
+    <div className="flex flex-col gap-1 px-3 pt-3 pb-3 sm:px-4">
+      <Heading
+        id={id}
+        className={`flex flex-wrap items-center gap-2 ${level === "h3" ? "type-heading" : "font-sans text-sm font-semibold tracking-normal"}`}
+      >
+        {title}
+        {noData ? (
+          <StatusBadge status="no_data" size="xs">
+            {STATUS_LABEL.no_data}
+          </StatusBadge>
+        ) : null}
+      </Heading>
+      {note ? <p className="max-w-[52rem] type-caption text-muted-foreground">{note}</p> : null}
+    </div>
+  );
+}
+
+function SummaryGrid({ actions }: { actions: Evidence[] }) {
+  return (
+    <ul className="grid gap-1.5 md:grid-cols-2">
       {actions.map((action) => (
-        <li key={action.id} className="flex flex-col gap-1 p-3">
-          <div className="flex flex-wrap items-start justify-between gap-2">
-            <span className="font-medium">{action.action}</span>
-            <SourceChip sourceId={action.source_id} />
-          </div>
-          <span className="text-muted-foreground">
-            <span className="font-medium text-foreground">Owner:</span> {action.who_implements}
-          </span>
-          <span className="text-muted-foreground">
-            <span className="font-medium text-foreground">First step:</span> {action.first_step}
-          </span>
+        <li key={action.id}>
+          <ActionSummary action={action} />
         </li>
       ))}
     </ul>
