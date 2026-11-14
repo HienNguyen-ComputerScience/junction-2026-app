@@ -28,9 +28,9 @@ export function TopAction({
     // and the evidence source on the right.
     <div className="group relative grid rounded-b-panel gap-x-8 gap-y-4 border-t border-border px-5 py-5 transition-colors hover:bg-accent/50 sm:px-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-start">
       <div className="flex flex-col items-start gap-2.5">
-        <h3 className="font-sans type-caption font-medium text-muted-foreground">
+        <h4 className="font-sans text-base font-medium text-muted-foreground">
           {keepLevel ? "Action to keep this level" : "Recommended action 1"}
-        </h3>
+        </h4>
         <p className="text-base leading-snug font-semibold text-pretty text-foreground">{plainTitle(action.action)}</p>
         <Link
           href={href}
@@ -42,7 +42,7 @@ export function TopAction({
       </div>
       <div className="flex flex-col gap-2.5">
         <FirstStep compact>{action.first_step}</FirstStep>
-        <p className="flex items-center gap-2 type-caption text-muted-foreground">
+        <p className="flex items-center gap-2 text-base text-muted-foreground">
           Evidence{" "}
           <span className="relative z-10 inline-flex">
             <SourceChip sourceId={action.source_id} />

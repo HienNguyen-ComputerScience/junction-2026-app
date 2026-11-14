@@ -5,12 +5,15 @@ import { ArrowRight, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 
+import { markArrival } from "@/components/briefing/arrival";
+import { PRIMARY_BUTTON, SECONDARY_BUTTON } from "@/components/briefing/ui";
 import { FinlandMap, type FinlandMapArea } from "@/components/map/finland-map";
-import { buttonVariants } from "@/components/ui/button";
+import { Reveal } from "@/components/motion";
 import { Disclosure } from "@/components/ui/disclosure";
 import { FramePanel, FramePanelLabel } from "@/components/ui/frame";
 import { BarKey } from "@/components/ui/measure-bar";
 import { TextLink } from "@/components/ui/text-link";
+import { BRIEFING_STEP_COUNT, BRIEFING_STEPS, briefingHref } from "@/lib/briefing/steps";
 import type { GapStatus } from "@/lib/data";
 
 /** One area as the picker needs it. Plain data: everything with a number is pre-rendered. */
@@ -33,8 +36,8 @@ type Props = {
   defaultId: string;
   year: number;
   totalAreas: number;
-  /** Per area: the bottleneck step's focal figure (absent when it has no value). Server-rendered. */
-  leads: Record<string, ReactNode>;
+  /** Per area: the briefing's step 1 as a card (absent when the area has no briefing). Server-rendered. */
+  previews: Record<string, ReactNode>;
   /** One short line under an area's verdict (a recording caveat), where it has one. */
   notes: Record<string, ReactNode>;
   /** Per area: the first recommended action, pre-rendered (title and First step), linking to it on the act page. Keyed by PickerArea.actionId (the area id). */
@@ -58,11 +61,15 @@ const readUrlArea = () => new URLSearchParams(window.location.search).get("area"
 const noUrlArea = () => null;
 
 /**
- * The home page's tool: pick an area (the select or the map) and see where its pathway breaks.
- * Desktop: picker and map on the left, the answer hero on the right, both columns the same
- * height. Phone: the select, the answer, then the map.
+ * The home page. First screen: the guided briefing's opening, one tinted card with the area list
+ * and the one filled button ("Start the 2-minute briefing for …"), beside a preview of the
+ * briefing's step 1 for that area with its own "Next" button. Below a divider, "Or look through
+ * the data yourself": the map, the area's three steps, the first recommended action and plain
+ * links to the other pages, revealed quietly on scroll.
+ *
+ * Phone: the list, the Start button, the step-1 card, then the rest.
  */
-export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, leads, notes, actions, steps, mapChips, mapNote, mapKey }: Props) {
+export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, previews, notes, actions, steps, mapChips, mapNote, mapKey }: Props) {
   const selectId = useId();
   const answerRef = useRef<HTMLDivElement>(null);
   const urlArea = useSyncExternalStore(subscribe, readUrlArea, noUrlArea);
@@ -70,6 +77,9 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, leads
 
   const byId = (id: string | null) => areas.find((area) => area.id === id);
   const area = byId(picked) ?? byId(urlArea) ?? byId(defaultId) ?? areas[0];
+  const preview = previews[area.id] ?? null;
+  // An area the briefing has no step 1 for (no published GP figure) starts at the briefing's own chooser.
+  const startHref = preview ? briefingHref(area.id) : "/briefing";
 
   function choose(id: string, fromMap: boolean) {
     if (!byId(id)) return;
@@ -79,7 +89,7 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, leads
     window.history.replaceState(null, "", url);
     const name = byId(id)?.name;
     if (name) document.title = `${name} · FirstLine`;
-    // On a phone the answer sits above the map: bring it back into view.
+    // On a phone the area's answer sits above the map: bring it back into view.
     const top = answerRef.current?.getBoundingClientRect().top ?? 0;
     if (fromMap && top < 0) {
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -91,99 +101,177 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, leads
   }
 
   return (
-    <section
-      aria-label="Pick an area"
-      className="grid gap-2 lg:grid-cols-[21rem_minmax(0,1fr)] lg:grid-rows-[auto_minmax(0,1fr)] lg:items-stretch"
-    >
-      {/* The picker. */}
-      <FramePanel padding="none" className="px-5 pt-5 pb-4 sm:px-6 lg:col-start-1 lg:row-start-1">
-        <label htmlFor={selectId} className="text-sm font-medium text-foreground">
-          Choose your area
-        </label>
-        <div className="relative mt-1.5">
-          <select
-            id={selectId}
-            value={area.id}
-            onChange={(event) => choose(event.target.value, false)}
-            className="h-11 w-full appearance-none rounded-lg border border-input bg-muted pr-10 pl-3 text-[0.9375rem] font-medium text-foreground transition-colors outline-none hover:border-foreground/25 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-          >
-            {areas.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-          <ChevronDown
-            aria-hidden
-            strokeWidth={1.75}
-            className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
-          />
-        </div>
-        <TextLink kind="nav" href="/compare" className="text-sm">
-          Compare all {totalAreas} areas
-        </TextLink>
-      </FramePanel>
-
-      {/* The answer hero for the selected area. Content starts at the top with 32px of padding;
-          the card is as tall as the left column and its action block sits at the bottom. */}
-      <div ref={answerRef} className="flex scroll-mt-4 flex-col lg:col-start-2 lg:row-span-2 lg:row-start-1">
-        <FramePanel padding="none" className="flex flex-1 flex-col">
-          <div className="flex flex-col gap-6 p-6 sm:p-8 sm:pb-6">
-            <div className="flex flex-col gap-4" aria-live="polite">
-              <p className="type-caption font-medium text-muted-foreground">
-                {area.name}, {year}
-              </p>
-              {leads[area.id] ?? null}
-              <h2 className="type-heading text-pretty text-foreground">{area.verdict}</h2>
-              {notes[area.id] ?? null}
+    <>
+      {/* First screen: the briefing's opening. */}
+      <section
+        aria-label="Guided briefing"
+        className="grid gap-3 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start"
+      >
+        <FramePanel padding="none" className="flex flex-col gap-5 p-5 sm:p-7">
+          <div className="flex flex-col gap-2">
+            <label htmlFor={selectId} className="type-heading text-forest-ink">
+              Choose your area
+            </label>
+            <div className="relative">
+              <select
+                id={selectId}
+                value={area.id}
+                onChange={(event) => choose(event.target.value, false)}
+                className="h-[3.25rem] w-full appearance-none rounded-lg border border-input bg-cream-paper pr-11 pl-4 text-base font-semibold text-charcoal transition-colors outline-none hover:border-foreground/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink"
+              >
+                {areas.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                aria-hidden
+                strokeWidth={1.75}
+                className="pointer-events-none absolute top-1/2 right-4 size-5 -translate-y-1/2 text-forest-ink"
+              />
             </div>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-              <Link href={`/county/${area.id}/act`} className={cn(buttonVariants({ size: "lg" }), "max-sm:w-full")}>
-                See all actions
-                <ArrowRight aria-hidden data-icon="inline-end" />
-              </Link>
-              <TextLink kind="nav" href={`/county/${area.id}`} className="text-sm">
-                Full pathway for {area.name}
-              </TextLink>
-            </div>
-            {steps[area.id] ?? null}
           </div>
-          {/* Pinned to the bottom of the card, so it ends where the map card ends. */}
-          <div className="mt-auto">{area.actionId ? (actions[area.actionId] ?? null) : null}</div>
+          <div className="flex flex-col gap-3">
+            <Link href={startHref} onClick={markArrival} className={cn(PRIMARY_BUTTON, "w-full text-[1.0625rem] print:hidden")}>
+              <span>Start the 2-minute briefing for {area.name}</span>
+              <ArrowRight aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />
+            </Link>
+            <p className="text-base leading-6 text-pretty text-charcoal">
+              {BRIEFING_STEP_COUNT} short steps · about 2 minutes · ends in a plan you can print for your board
+            </p>
+          </div>
+          {/* The steps by name, where the wide layout has room beside the step-1 card. */}
+          <div className="flex flex-col gap-2 border-t border-border pt-5 max-lg:hidden">
+            <p className="text-base leading-6 font-semibold text-forest-ink">What the briefing covers</p>
+            <ol className="flex flex-col gap-1.5 text-base leading-6 text-charcoal">
+              {BRIEFING_STEPS.map((step) => (
+                <li key={step.id} className="flex gap-2.5">
+                  <span className="w-5 shrink-0 font-semibold text-forest-ink tabular-nums">{step.number}.</span>
+                  <span>{step.label}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
         </FramePanel>
-      </div>
 
-      {/* The map: last on a phone, under the picker from lg. */}
-      <FramePanel padding="none" className="flex flex-col max-lg:order-last lg:col-start-1 lg:row-start-2">
-        <FramePanelLabel className="flex-col items-start gap-0">
-          <span>Where a step is worse than Finland</span>
-          <span className="pt-0.5 text-[0.75rem] leading-4 font-normal text-muted-foreground">
-            Click an area on the map
-          </span>
-        </FramePanelLabel>
-        <div className="flex flex-col items-center px-5 pt-3 pb-3 sm:px-6">
-          <FinlandMap
-            areas={mapAreas}
-            selectedId={area.id}
-            highlight={[area.id]}
-            onSelect={(id) => choose(id, true)}
-            label={`Map of Finland's ${totalAreas} areas, coloured by the worst of the measured steps against Finland's level`}
-            className="h-[16.25rem] lg:h-[12.875rem]"
-          />
+        {/* The briefing's step 1 for the chosen area. */}
+        <div
+          aria-live="polite"
+          className="flex flex-col gap-6 rounded-lg border border-frame-border bg-cream-paper p-5 sm:p-7"
+        >
+          {preview ?? (
+            <p className="text-base leading-6 text-charcoal">
+              {area.name} has no published figure for the briefing&rsquo;s first step. The briefing&rsquo;s list of areas
+              opens on the area with the highest share.
+            </p>
+          )}
+          {preview ? (
+            <Link
+              href={briefingHref(area.id, "where")}
+              onClick={markArrival}
+              className={cn(SECONDARY_BUTTON, "w-full sm:w-fit print:hidden")}
+            >
+              <span>Next: {BRIEFING_STEPS[1].next}</span>
+              <ArrowRight aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />
+            </Link>
+          ) : null}
         </div>
-        <BarKey items={mapKey} className="px-5 pb-1 sm:px-6" />
-        <Disclosure summary="How the map is coloured" className="px-5 pb-1 sm:px-6">
-          <p className="pb-2 pl-[1.375rem] type-caption text-pretty text-muted-foreground">{mapNote}</p>
-        </Disclosure>
-        {/* The sources of the colours: one row at the bottom of the card, wrapped if it must. */}
-        <div className="mt-auto flex flex-wrap items-center gap-1.5 px-5 pt-1 pb-4 sm:px-6">
-          {mapChips.map((chip, i) => (
-            <span key={i} className="inline-flex">
-              {chip}
-            </span>
-          ))}
+      </section>
+
+      {/* Everything else, below a clear divider. */}
+      <section aria-labelledby="own-heading" className="mt-8 flex flex-col gap-4 sm:mt-12">
+        <div className="flex items-center gap-4 border-t border-forest-ink/25 pt-6">
+          <h2 id="own-heading" className="type-title text-forest-ink">
+            Or look through the data yourself
+          </h2>
         </div>
-      </FramePanel>
-    </section>
+
+        <Reveal className="grid gap-3 lg:grid-cols-[21rem_minmax(0,1fr)] lg:items-stretch">
+          {/* The area's answer: its verdict, the three steps and the first recommended action. */}
+          <div ref={answerRef} className="flex scroll-mt-4 flex-col lg:col-start-2 lg:row-start-1">
+            <FramePanel padding="none" className="flex flex-1 flex-col">
+              <div className="flex flex-col gap-5 p-5 sm:p-7 sm:pb-6">
+                <div className="flex flex-col gap-2">
+                  <p className="text-base text-muted-foreground">
+                    {area.name}, {year}
+                  </p>
+                  <h3 className="type-heading text-pretty text-foreground">{area.verdict}</h3>
+                  {notes[area.id] ?? null}
+                </div>
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+                  <TextLink kind="nav" href={`/county/${area.id}/act`} className="text-base">
+                    See all actions for {area.name}
+                  </TextLink>
+                  <TextLink kind="nav" href={`/county/${area.id}`} className="text-base">
+                    Full pathway for {area.name}
+                  </TextLink>
+                </div>
+                {steps[area.id] ?? null}
+              </div>
+              <div className="mt-auto">{area.actionId ? (actions[area.actionId] ?? null) : null}</div>
+            </FramePanel>
+          </div>
+
+          {/* The map: after the answer on a phone, on the left from lg. */}
+          <FramePanel padding="none" className="flex flex-col lg:col-start-1 lg:row-start-1">
+            <FramePanelLabel className="flex-col items-start gap-0 text-base">
+              <span>Where a step is worse than Finland</span>
+              <span className="pt-0.5 text-base font-normal text-muted-foreground">
+                Choose an area on the map
+              </span>
+            </FramePanelLabel>
+            <div className="flex flex-col items-center px-5 pt-3 pb-3 sm:px-6">
+              <FinlandMap
+                areas={mapAreas}
+                selectedId={area.id}
+                highlight={[area.id]}
+                onSelect={(id) => choose(id, true)}
+                label={`Map of Finland's ${totalAreas} areas, coloured by the worst of the measured steps against Finland's level`}
+                className="h-[16.25rem]"
+              />
+            </div>
+            <BarKey items={mapKey} className="px-5 pb-1 sm:px-6" />
+            <Disclosure summary="How the map is coloured" className="px-5 pb-1 sm:px-6">
+              <p className="pb-2 pl-[1.375rem] text-base text-pretty text-muted-foreground">{mapNote}</p>
+            </Disclosure>
+            <div className="mt-auto flex flex-wrap items-center gap-1.5 px-5 pt-1 pb-4 sm:px-6">
+              {mapChips.map((chip, i) => (
+                <span key={i} className="inline-flex">
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </FramePanel>
+        </Reveal>
+
+        <Reveal index={1}>
+          <nav aria-label="More pages" className="rounded-lg bg-keylime-wash p-5 sm:p-7">
+            <ul className="grid gap-x-8 gap-y-1 sm:grid-cols-2">
+              <li>
+                <TextLink kind="nav" href="/compare" className="text-base">
+                  Compare all {totalAreas} areas
+                </TextLink>
+              </li>
+              <li>
+                <TextLink kind="nav" href="/insights" className="text-base">
+                  Where access is hardest
+                </TextLink>
+              </li>
+              <li>
+                <TextLink kind="nav" href="/how-to-read" className="text-base">
+                  How to read these numbers
+                </TextLink>
+              </li>
+              <li>
+                <TextLink kind="nav" href="/sources" className="text-base">
+                  Sources &amp; limitations
+                </TextLink>
+              </li>
+            </ul>
+          </nav>
+        </Reveal>
+      </section>
+    </>
   );
 }

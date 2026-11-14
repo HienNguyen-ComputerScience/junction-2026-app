@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { AreaPicker, type PickerArea } from "@/components/home/area-picker";
-import { LeadFigure } from "@/components/home/lead-figure";
+import { BriefingPreview } from "@/components/home/briefing-preview";
 import { TopAction } from "@/components/home/top-action";
 import type { FinlandMapArea } from "@/components/map/finland-map";
 import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
@@ -12,13 +12,14 @@ import { shortReason } from "@/components/pathway/wording";
 import { SourceChip } from "@/components/source-chip";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { bottleneckStatus, getBottleneck, pickActions } from "@/lib/act";
+import { buildBriefing } from "@/lib/briefing/model";
 import { LATEST_YEAR, type County } from "@/lib/data";
 import { getMainReason } from "@/lib/main-reason";
 import { GP_WAIT_ID, REFERRAL_ID, STATUS_LABEL, type RankingRow } from "@/lib/ranking";
 
 /**
- * Server half of the home tool: computes, for all 22 areas, the one-line reason, the lead figure,
- * the top action and the three-step status row, and hands them to the client picker as plain
+ * Server half of the home tool: computes, for all 22 areas, the briefing's step 1 (the first
+ * card), the one-line reason, the top action and the three-step status row, and hands them to the client picker as plain
  * data and pre-rendered parts. No API route, no fetch.
  */
 export function HomeTool({
@@ -37,7 +38,7 @@ export function HomeTool({
     : (rows[0]?.county.id ?? all[0].id);
 
   const areas: PickerArea[] = [];
-  const leads: Record<string, ReactNode> = {};
+  const previews: Record<string, ReactNode> = {};
   const notes: Record<string, ReactNode> = {};
   const actions: Record<string, ReactNode> = {};
   const steps: Record<string, ReactNode> = {};
@@ -53,9 +54,13 @@ export function HomeTool({
     }
     steps[county.id] = <ThreeSteps countyId={county.id} />;
 
-    // The figure and the sentence under it are about the same step (getMainReason).
+    // The first card is the briefing's step 1, from the briefing's own model: always the GP
+    // wait, so it matches what "Start the briefing" opens on.
+    const briefing = buildBriefing(county.id);
+    if (briefing) previews[county.id] = <BriefingPreview name={county.name} stand={briefing.stand} />;
+
+    // The verdict and its recording note sit below the divider, with the three steps.
     const reason = getMainReason(county.id);
-    if (reason.gap) leads[county.id] = <LeadFigure gap={reason.gap} />;
     if (reason.caveat) notes[county.id] = <RecordingNote caveat={reason.caveat} />;
 
     areas.push({
@@ -95,7 +100,7 @@ export function HomeTool({
       defaultId={defaultId}
       year={LATEST_YEAR}
       totalAreas={all.length}
-      leads={leads}
+      previews={previews}
       notes={notes}
       actions={actions}
       steps={steps}
@@ -114,14 +119,14 @@ export function HomeTool({
 }
 
 /**
- * "The three steps" under the hero buttons: each step's short name and its status as a text
+ * "The three steps" in the area's answer below the divider: each step's short name and its status as a text
  * label (no numbers). Each is a link (a border and a chevron, a lighter surface on hover) to
  * that step's tab on the area's pathway page (?step=1, 2 or 3).
  */
 function ThreeSteps({ countyId }: { countyId: string }) {
   return (
     <div className="flex flex-col gap-2">
-      <p className="type-caption font-medium text-muted-foreground">The three steps</p>
+      <h4 className="text-base font-medium text-muted-foreground">The three steps of the way to care</h4>
       <ol className="grid gap-2 sm:grid-cols-3">
         {buildPathwaySteps(countyId).map((step) => (
           <li key={step.stage} className="min-w-0">
