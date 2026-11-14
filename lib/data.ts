@@ -62,7 +62,19 @@ export type Gap = {
   indicator_id: string;
   year: number;
   status: GapStatus;
+  /** The area's own value. Null when Sotkanet has none (status no_data). */
   value: number | null;
+  /**
+   * Set when the area has no value of its own but a wider one exists: the HUS
+   * hospital group handles referrals for four Uusimaa counties. Show it
+   * labelled as shared, never as the county's figure. It does not set status.
+   */
+  shared?: {
+    name: string;
+    value: number;
+    trend: { year: number; value: number }[];
+    confirmed_by: SourceId;
+  };
   national_value: number;
   note: string;
   source_id: SourceId;

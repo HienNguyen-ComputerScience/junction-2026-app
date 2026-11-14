@@ -10,6 +10,8 @@ export type StageCardProps = {
   step: number;
   title: string;
   status: GapStatus;
+  /** Replaces the default badge text, e.g. when only a shared value exists. */
+  statusLabel?: string;
   /** Present when the stage has a public indicator. */
   measure?: {
     value: number | null;
@@ -19,6 +21,8 @@ export type StageCardProps = {
     sourceId: string;
     year: number;
     trend: TrendPoint[];
+    /** A wider value shown when the area has none of its own. Never the area's figure. */
+    shared?: { name: string; value: number };
   };
   /** Shown instead of a measure when there is no public indicator. */
   emptyText?: string;
@@ -41,7 +45,7 @@ const STATUS_STYLE: Record<GapStatus, { card: string; badge: string }> = {
 
 const STATUS_ICON = { red: AlertTriangle, amber: Minus, no_data: CircleDashed };
 
-export function StageCard({ step, title, status, measure, emptyText }: StageCardProps) {
+export function StageCard({ step, title, status, statusLabel, measure, emptyText }: StageCardProps) {
   const style = STATUS_STYLE[status];
   const Icon = STATUS_ICON[status];
 
@@ -54,7 +58,7 @@ export function StageCard({ step, title, status, measure, emptyText }: StageCard
           className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${style.badge}`}
         >
           <Icon aria-hidden className="size-3.5" />
-          {STATUS_LABEL[status]}
+          {statusLabel ?? STATUS_LABEL[status]}
         </span>
       </div>
 
@@ -70,6 +74,19 @@ export function StageCard({ step, title, status, measure, emptyText }: StageCard
                 Finland: {formatPct(measure.nationalValue)}
               </span>
             </div>
+          ) : measure.shared ? (
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {measure.shared.name}-wide value, not a county figure
+              </span>
+              <span className="text-3xl font-semibold tabular-nums">
+                {formatPct(measure.shared.value)}
+              </span>
+              <span className="text-sm">{measure.caption}</span>
+              <span className="text-sm text-muted-foreground">
+                Finland: {formatPct(measure.nationalValue)}
+              </span>
+            </div>
           ) : (
             <span className="text-sm text-muted-foreground">
               Finland: {formatPct(measure.nationalValue)} {measure.caption}
@@ -77,7 +94,10 @@ export function StageCard({ step, title, status, measure, emptyText }: StageCard
           )}
           <p className="text-sm">{measure.note}</p>
           {measure.trend.some((point) => point.value !== null) && (
-            <TrendStrip trend={measure.trend} />
+            <TrendStrip
+              trend={measure.trend}
+              label={measure.shared && measure.value === null ? `Trend (${measure.shared.name}-wide)` : "Trend"}
+            />
           )}
           <div className="mt-auto">
             <SourceChip sourceId={measure.sourceId} year={measure.year} />
@@ -90,10 +110,10 @@ export function StageCard({ step, title, status, measure, emptyText }: StageCard
   );
 }
 
-function TrendStrip({ trend }: { trend: TrendPoint[] }) {
+function TrendStrip({ trend, label }: { trend: TrendPoint[]; label: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs text-muted-foreground">Trend</span>
+      <span className="text-xs text-muted-foreground">{label}</span>
       <div className="flex items-end gap-3">
         {trend.map((point) => (
           <div key={point.year} className="flex w-12 flex-col items-center gap-1">

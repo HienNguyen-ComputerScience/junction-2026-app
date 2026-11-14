@@ -32,3 +32,9 @@ Limits: Kuitunen and Tokola cover one cancer (DLBCL) with 160 patients from 7 Fi
 > "In Finland, lymphoma patients whose first stop was a public health centre waited a median 127 days from first symptom to treatment. Those who went private or through work: 76 days."
 
 Source chip: Kuitunen et al., Cancer Medicine 2026. It's the challenge speaker's own study, so judges will recognise it. It's now in `demo-script.md`, `video-script.md` and `video-shot-script.md`. The Vedsted & Olesen 75–85% line stays as a backup answer. Deck slide 2 (`docs/submission/deck-outline.md`) still uses the 75–85% line: that's nabeo11's call.
+
+## In the app (14 Nov, PR open for the lead)
+
+- County page: the slide-10 pathway as an 8-step strip, steps 3–5 marked, with the 127 vs 76 line and a source chip to the paper. The limitations box says 6411 covers public health centres only.
+- Data gap filled: East, Central and West Uusimaa and Vantaa–Kerava had a blank referral card. It now shows the **HUS-wide** value (74.1% of referrals processed within 3 days in 2025; Finland 76.8%), labelled "not a county figure". Source: Sotkanet 13, the HUS row. We checked it is HUS against HUS's own 2024 report: 246,244 referrals processed in 0–3 days, the same count as Sotkanet ([HUS, 31.12.2024, table 3](https://www.hus.fi/sites/default/files/2025-01/hoitoa-odottavat-potilaat-erikoisaloittain-2024-joulukuu.pdf)). The card stays grey and is not used to pick actions.
+- Still open, no public source found: whether GPs spot warning signs (step 4); cancer stage at diagnosis by county (the Cancer Registry has stage for under half of cases); share of first contacts through occupational or private care by county. 6411 is still not cancer-specific, and 5033 is still too flat to use.

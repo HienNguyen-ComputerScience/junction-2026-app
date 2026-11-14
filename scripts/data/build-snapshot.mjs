@@ -41,7 +41,7 @@ const INDICATORS = [
     direction: "lower_is_worse",
     stage: "referral",
     limitation:
-      "Measures how fast the hospital starts assessing a referral, not when the patient sees a specialist. Not cancer-specific. No county-level value for East, Central and West Uusimaa or Vantaa and Kerava.",
+      "Measures how fast the hospital starts assessing a referral, not when the patient sees a specialist. Not cancer-specific. Counted per hospital organisation: East, Central and West Uusimaa and Vantaa and Kerava have no value of their own, so their card shows the HUS-wide value, labelled as shared.",
   },
   {
     indicator_id: "5033",
@@ -59,6 +59,42 @@ const ANCHORS = [
   { county_id: "paijat-hame", indicator_id: "6411", year: 2025, value: 32.7 },
   { county_id: "vantaa-kerava", indicator_id: "6411", year: 2025, value: 85.4 },
   { county_id: "finland", indicator_id: "6411", year: 2025, value: 54.7 },
+];
+
+// HUS (Helsinki University Hospital group) runs specialised care for Helsinki
+// and four Uusimaa counties, so Sotkanet has no referral row for those
+// counties. It publishes one HUS row instead, under a region id that the
+// region list does not name. Why we are sure it is HUS: (1) the indicator's
+// own description says the statistic covers the counties, "HUSin alue" and
+// Helsinki; (2) the row plus all county rows add up exactly to Finland; (3) its
+// 2024 count is the figure in HUS's own report (table 3, processed in 0-3
+// days). The build fails if (2) or (3) stops holding.
+const HUS = {
+  region_id: 599,
+  counties: ["central-uusimaa", "east-uusimaa", "vantaa-kerava", "west-uusimaa"],
+  anchor: { indicator_id: "13", year: 2024, abs_value: 246244 },
+  source: {
+    source_id: "hus-referrals-2024",
+    kind: "statistic",
+    name: "HUS: Hoitoa odottavat potilaat erikoisaloittain 31.12.2024 (table 3, referrals received and processing times)",
+    url: "https://www.hus.fi/sites/default/files/2025-01/hoitoa-odottavat-potilaat-erikoisaloittain-2024-joulukuu.pdf",
+    publisher: "HUS",
+    retrieved: "2026-11-14",
+    data_updated: "2024-12-31",
+  },
+};
+
+// Studies quoted as context on the county page (not actions, not indicators).
+const CONTEXT_SOURCES = [
+  {
+    source_id: "kuitunen-2026",
+    kind: "statistic",
+    name: "Kuitunen J. et al. Socioeconomic Status and Access to Treatment in Diffuse Large B-Cell Lymphoma. Cancer Medicine 2026;15(5):e71920",
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC13158131/",
+    publisher: "Kuitunen et al., Cancer Medicine",
+    retrieved: "2026-11-14",
+    data_updated: "2026-05-01",
+  },
 ];
 
 async function get(path) {
@@ -155,10 +191,13 @@ const countyByRegion = new Map(counties.map((c) => [c.sotkanet_region_id, c]));
 
 // ---------------------------------------------------------------- values
 const values = [];
+const husRows = [];
 for (const ind of INDICATORS) {
   const query = YEARS.map((y) => `years=${y}`).join("&");
   const rows = await get(`/json?indicator=${ind.indicator_id}&${query}&genders=total`);
   for (const row of rows) {
+    if (row.region === HUS.region_id && row.value != null && ind.indicator_id === "13")
+      husRows.push({ ...row, indicator_id: ind.indicator_id });
     const county = countyByRegion.get(row.region);
     if (!county || row.value == null) continue; // other region levels, unlabelled ids
     values.push({
@@ -171,6 +210,24 @@ for (const ind of INDICATORS) {
     });
   }
 }
+// Is the unnamed row still HUS? Checked before the gaps use it.
+const husProblems = [];
+for (const year of YEARS) {
+  const hus = husRows.find((r) => r.indicator_id === "13" && r.year === year);
+  const own = values.filter((v) => v.indicator_id === "13" && v.year === year);
+  const total = own.find((v) => v.county_id === "finland")?.abs_value;
+  const sum = own
+    .filter((v) => v.county_id !== "finland")
+    .reduce((t, v) => t + (v.abs_value ?? 0), hus?.absValue ?? 0);
+  if (!hus || sum !== total)
+    husProblems.push(`HUS check ${year}: county rows + region ${HUS.region_id} = ${sum}, Finland = ${total}`);
+}
+const husAnchor = husRows.find(
+  (r) => r.indicator_id === HUS.anchor.indicator_id && r.year === HUS.anchor.year,
+);
+if (husAnchor?.absValue !== HUS.anchor.abs_value)
+  husProblems.push(`HUS anchor ${HUS.anchor.year}: expected ${HUS.anchor.abs_value}, got ${husAnchor?.absValue}`);
+sources.push(HUS.source, ...CONTEXT_SOURCES);
 values.sort(
   (a, b) =>
     a.indicator_id.localeCompare(b.indicator_id) ||
@@ -199,12 +256,32 @@ for (const ind of INDICATORS.filter((i) => i.stage)) {
       source_id: `sotkanet-${ind.indicator_id}`,
     };
     if (!v) {
+      // No county value. For the HUS counties the gap stays no_data (there is
+      // no figure for the county alone) but carries the HUS-wide series, so
+      // the app can show it, labelled as shared.
+      const hus =
+        ind.indicator_id === "13" && HUS.counties.includes(county.id)
+          ? husRows.filter((r) => r.indicator_id === "13").sort((a, b) => a.year - b.year)
+          : [];
+      const husLatest = hus.find((r) => r.year === LATEST_YEAR);
       gaps.push({
         ...base,
         status: "no_data",
         value: null,
         national_value: national.value,
-        note: `Sotkanet publishes no ${LATEST_YEAR} value for ${county.name} on this indicator.`,
+        note: husLatest
+          ? `Sotkanet publishes no ${LATEST_YEAR} value for ${county.name} alone. At HUS, which handles its hospital referrals, ${fmt(husLatest.value)}% of referrals were processed within 3 days in ${LATEST_YEAR} (Finland ${fmt(national.value)}%).`
+          : `Sotkanet publishes no ${LATEST_YEAR} value for ${county.name} on this indicator.`,
+        ...(husLatest
+          ? {
+              shared: {
+                name: "HUS",
+                value: husLatest.value,
+                trend: hus.map((r) => ({ year: r.year, value: r.value })),
+                confirmed_by: HUS.source.source_id,
+              },
+            }
+          : {}),
       });
       continue;
     }
@@ -270,13 +347,15 @@ sources.push(...evidenceSources);
 sources.sort((a, b) => a.kind.localeCompare(b.kind) || a.source_id.localeCompare(b.source_id));
 
 // ---------------------------------------------------------------- checks
-const problems = [];
+const problems = [...husProblems];
 const sourceIds = new Set(sources.map((s) => s.source_id));
 const countyIds = new Set(counties.map((c) => c.id));
 const indicatorIds = new Set(indicators.map((i) => i.indicator_id));
 const files = { counties, indicators, values, gaps, evidence };
 for (const [file, rows] of Object.entries(files)) {
   rows.forEach((row, i) => {
+    if (row.shared && !sourceIds.has(row.shared.confirmed_by))
+      problems.push(`${file}[${i}]: shared.confirmed_by "${row.shared.confirmed_by}" is not in sources`);
     if (!row.source_id || !sourceIds.has(row.source_id))
       problems.push(`${file}[${i}]: source_id "${row.source_id}" is not in sources`);
     if ("county_id" in row && !countyIds.has(row.county_id))

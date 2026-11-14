@@ -63,7 +63,26 @@
     "status": "no_data",
     "value": null,
     "national_value": 76.8,
-    "note": "Sotkanet publishes no 2025 value for Central Uusimaa on this indicator."
+    "note": "Sotkanet publishes no 2025 value for Central Uusimaa alone. At HUS, which handles its hospital referrals, 74.1% of referrals were processed within 3 days in 2025 (Finland 76.8%).",
+    "shared": {
+      "name": "HUS",
+      "value": 74.1,
+      "trend": [
+        {
+          "year": 2023,
+          "value": 69.6
+        },
+        {
+          "year": 2024,
+          "value": 73.3
+        },
+        {
+          "year": 2025,
+          "value": 74.1
+        }
+      ],
+      "confirmed_by": "hus-referrals-2024"
+    }
   },
   {
     "county_id": "east-uusimaa",
@@ -85,7 +104,26 @@
     "status": "no_data",
     "value": null,
     "national_value": 76.8,
-    "note": "Sotkanet publishes no 2025 value for East Uusimaa on this indicator."
+    "note": "Sotkanet publishes no 2025 value for East Uusimaa alone. At HUS, which handles its hospital referrals, 74.1% of referrals were processed within 3 days in 2025 (Finland 76.8%).",
+    "shared": {
+      "name": "HUS",
+      "value": 74.1,
+      "trend": [
+        {
+          "year": 2023,
+          "value": 69.6
+        },
+        {
+          "year": 2024,
+          "value": 73.3
+        },
+        {
+          "year": 2025,
+          "value": 74.1
+        }
+      ],
+      "confirmed_by": "hus-referrals-2024"
+    }
   },
   {
     "county_id": "helsinki",
@@ -459,7 +497,26 @@
     "status": "no_data",
     "value": null,
     "national_value": 76.8,
-    "note": "Sotkanet publishes no 2025 value for Vantaa and Kerava on this indicator."
+    "note": "Sotkanet publishes no 2025 value for Vantaa and Kerava alone. At HUS, which handles its hospital referrals, 74.1% of referrals were processed within 3 days in 2025 (Finland 76.8%).",
+    "shared": {
+      "name": "HUS",
+      "value": 74.1,
+      "trend": [
+        {
+          "year": 2023,
+          "value": 69.6
+        },
+        {
+          "year": 2024,
+          "value": 73.3
+        },
+        {
+          "year": 2025,
+          "value": 74.1
+        }
+      ],
+      "confirmed_by": "hus-referrals-2024"
+    }
   },
   {
     "county_id": "west-uusimaa",
@@ -481,6 +538,25 @@
     "status": "no_data",
     "value": null,
     "national_value": 76.8,
-    "note": "Sotkanet publishes no 2025 value for West Uusimaa on this indicator."
+    "note": "Sotkanet publishes no 2025 value for West Uusimaa alone. At HUS, which handles its hospital referrals, 74.1% of referrals were processed within 3 days in 2025 (Finland 76.8%).",
+    "shared": {
+      "name": "HUS",
+      "value": 74.1,
+      "trend": [
+        {
+          "year": 2023,
+          "value": 69.6
+        },
+        {
+          "year": 2024,
+          "value": 73.3
+        },
+        {
+          "year": 2025,
+          "value": 74.1
+        }
+      ],
+      "confirmed_by": "hus-referrals-2024"
+    }
   }
 ]

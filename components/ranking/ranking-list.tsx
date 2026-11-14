@@ -195,7 +195,15 @@ function RankingRowLink({
       <span className="order-5 col-span-3 text-xs sm:col-span-1 sm:text-sm">
         <span className="text-muted-foreground sm:sr-only">Referrals in 3 days: </span>
         {row.referral === null ? (
-          <span className="italic text-muted-foreground">no public data</span>
+          row.sharedReferral ? (
+            <span className="text-muted-foreground">
+              <span className="tabular-nums">{formatPct(row.sharedReferral.value)}</span>{" "}
+              {row.sharedReferral.name}-wide
+              <span className="sr-only">, no figure for this area alone</span>
+            </span>
+          ) : (
+            <span className="italic text-muted-foreground">no public data</span>
+          )
         ) : (
           <span
             className={`tabular-nums ${referralWorse ? "font-medium text-red-700 dark:text-red-400" : ""}`}

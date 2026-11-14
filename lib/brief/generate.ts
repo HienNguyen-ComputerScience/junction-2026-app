@@ -36,7 +36,8 @@ You get a fact sheet in JSON. Rules:
 - For each claim, list in "numbers" every number that appears in its text (years and ranks included), and in "source_ids" the exact "source_id" value of every fact or action the claim uses (fact_id values are not sources). A claim with no source_id is discarded. Do not cite a statistic source unless the claim uses one of its numbers.
 - Indicator 6411 counts non-urgent GP visits (appointments), not people. Say "non-urgent GP visits", never "people" or "patients", for those shares.
 - Amber means "at Finland's level or better", which is still a delay, not good. Never call an amber stage good, fine or solved.
-- Where a stage has status no_data, say there is no public data. Do not guess. A stage with source_id null has no source to cite, so mention it inside a claim that also states a sourced fact (for example together with the other stages' status), never alone.
+- A fact that says it is a HUS-wide value is shared by several areas. If you use it, say it is the HUS-wide value and that there is no figure for the county alone.
+- Where a stage has status no_data, say there is no public data for the county. Do not guess. A stage with source_id null has no source to cite, so mention it inside a claim that also states a sourced fact (for example together with the other stages' status), never alone.
 - No diagnosis, no medical advice, no statements about individual patients.
 - Headline: one sentence, where the pathway breaks. Then 3 to 5 claims, one or two sentences each: the worst stage with its numbers, the trend, the stages with no public data, and what to do first (name the action, who does it and the first step from the fact sheet).
 - Plain English, short sentences.`;

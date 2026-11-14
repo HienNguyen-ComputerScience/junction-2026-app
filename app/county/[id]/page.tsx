@@ -6,10 +6,11 @@ import { Fragment } from "react";
 import { CountyBrief } from "@/components/brief/county-brief";
 import { CountyNews } from "@/components/exa/county-news";
 import { LimitationsBox, type LimitationItem } from "@/components/pathway/limitations-box";
+import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { StageCard, type StageCardProps } from "@/components/pathway/stage-card";
 import { SourceChip } from "@/components/source-chip";
 import { buttonVariants } from "@/components/ui/button";
-import { counties, getCounty, getValue, LATEST_YEAR, type County } from "@/lib/data";
+import { counties, gaps, getCounty, getValue, LATEST_YEAR, type County } from "@/lib/data";
 import {
   formatPct,
   getIndicator,
@@ -109,6 +110,8 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           </p>
         </section>
 
+        <PathwayStrip countyId={county.id} />
+
         <section aria-labelledby="brief-heading" className="flex flex-col gap-3">
           <h2 id="brief-heading" className="text-xl font-semibold">
             Brief for the county director
@@ -130,6 +133,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
 function buildStages(county: County): StageCardProps[] {
   const gpGap = getStageGap(county.id, "gp_access");
   const referralGap = getStageGap(county.id, "referral");
+  const shared = referralGap?.shared;
 
   return [
     {
@@ -160,17 +164,23 @@ function buildStages(county: County): StageCardProps[] {
       step: 3,
       title: "GP → specialist referral",
       status: stageStatus(county.id, "referral"),
+      statusLabel: shared ? "No county figure" : undefined,
       measure: referralGap && {
         value: referralGap.value,
         nationalValue: referralGap.national_value,
-        caption: "of referrals were processed within 3 days (higher is faster)",
+        caption: shared
+          ? `of referrals to ${shared.name} hospitals were processed within 3 days (higher is faster)`
+          : "of referrals were processed within 3 days (higher is faster)",
         note: referralGap.note,
         sourceId: referralGap.source_id,
         year: referralGap.year,
-        trend: getTrend(county.id, REFERRAL_ID).map(({ year, value }) => ({
-          year,
-          value: value?.value ?? null,
-        })),
+        shared,
+        trend:
+          shared?.trend ??
+          getTrend(county.id, REFERRAL_ID).map(({ year, value }) => ({
+            year,
+            value: value?.value ?? null,
+          })),
       },
     },
   ];
@@ -190,10 +200,22 @@ function buildLimitations(county: County): LimitationItem[] {
   }
 
   items.push({
-    text: "GP recognition of possible cancer has no public indicator, so step 2 is grey for every county.",
+    text: "The GP wait covers public health centres only. Visits to occupational or private doctors are not in it. In a Finnish study of lymphoma patients, those who started in public primary care waited a median 127 days from symptoms to treatment, against 76 days for private or occupational care.",
+    sourceId: "kuitunen-2026",
   });
 
-  if (stageStatus(county.id, "referral") === "no_data") {
+  items.push({
+    text: "GP recognition of possible cancer has no public indicator, so step 2 is grey for every county. No public county data shows it yet; one candidate would be the share of cancers first found through an emergency visit.",
+  });
+
+  const shared = getStageGap(county.id, "referral")?.shared;
+  const husWide = gaps.find((gap) => gap.shared)?.shared;
+  if (shared) {
+    items.push({
+      text: `The referral step shows the ${shared.name}-wide value, not a figure for ${county.name}. ${shared.name} handles hospital referrals from Helsinki, East, Central and West Uusimaa, and Vantaa and Kerava, and THL publishes one number for all of them. So the step stays grey, and it is not used to rank or to pick actions. THL or ${shared.name} could publish it by the patient's home county. The link shows the ${shared.name} report we used to check that the number is ${shared.name}'s.`,
+      sourceId: shared.confirmed_by,
+    });
+  } else if (stageStatus(county.id, "referral") === "no_data") {
     items.push({
       text: `Sotkanet publishes no county-level referral data for ${county.name}, so its referral step is grey. We cannot say whether referrals here are fast or slow.`,
     });
@@ -204,6 +226,12 @@ function buildLimitations(county: County): LimitationItem[] {
     if (referralYears.length > 0 && referralYears.length < YEARS.length) {
       items.push({
         text: `${county.name} has referral values for ${referralYears.join(", ")} only, so the referral trend is incomplete.`,
+      });
+    }
+    if (county.id === "helsinki" && husWide) {
+      items.push({
+        text: `Helsinki's referral value covers the city's own specialist units only. Most hospital referrals from Helsinki go to ${husWide.name}, which processed ${formatPct(husWide.value)} within 3 days in ${LATEST_YEAR}.`,
+        sourceId: husWide.confirmed_by,
       });
     }
   }

@@ -37,6 +37,8 @@ export type RankingRow = {
   /** Percentage points change in 6411 since FIRST_YEAR, if both years exist. */
   gpWaitChange: number | null;
   referral: IndicatorValue | null;
+  /** HUS-wide referral value for areas with no value of their own. Not a county figure. */
+  sharedReferral: Gap["shared"] | null;
   /** Stage statuses from gaps.json (the same rule as the pathway screen). */
   gpStatus: GapStatus;
   referralStatus: GapStatus;
@@ -57,6 +59,7 @@ export function getRanking(): RankingRow[] {
         gpWait,
         gpWaitChange: first ? round1(gpWait.value - first.value) : null,
         referral: getValue(county.id, REFERRAL_ID) ?? null,
+        sharedReferral: getStageGap(county.id, "referral")?.shared ?? null,
         gpStatus: stageStatus(county.id, "gp_access"),
         referralStatus: stageStatus(county.id, "referral"),
       },
@@ -107,7 +110,7 @@ export function getVerdict(countyId: string): string {
     return "The delay sits at both measured steps: getting to a GP and the GP-to-specialist referral are both worse than Finland.";
   }
   if (gp === "red" && referral === "no_data") {
-    return "The delay sits at getting to a GP, which is worse than Finland. There is no public data on referral speed here.";
+    return `The delay sits at getting to a GP, which is worse than Finland. ${noReferralText(countyId)}`;
   }
   if (gp === "red") {
     return "The delay sits at getting to a GP: it is worse than Finland, while referrals are processed at or above Finland's level.";
@@ -121,9 +124,16 @@ export function getVerdict(countyId: string): string {
       ? ""
       : ` Even so, ${formatPct(gpValue)} of non-urgent GP visits here still come more than a week after people ask.`;
   if (referral === "no_data") {
-    return `No measured step is worse than Finland: GP access is at or better than Finland's level, and there is no public data on referral speed here.${stillWaiting}`;
+    return `No measured step is worse than Finland: GP access is at or better than Finland's level. ${noReferralText(countyId)}${stillWaiting}`;
   }
   return `No measured step is worse than Finland: GP access and referrals are both at or better than Finland's level.${stillWaiting}`;
+}
+
+/** What we can say about referrals where the area has no value of its own. */
+function noReferralText(countyId: string): string {
+  const gap = getStageGap(countyId, "referral");
+  if (!gap?.shared) return "There is no public data on referral speed here.";
+  return `There is no referral figure for this area alone: ${gap.shared.name}, which handles its hospital referrals, processed ${formatPct(gap.shared.value)} within 3 days (Finland ${formatPct(gap.national_value)}).`;
 }
 
 function round1(value: number): number {
