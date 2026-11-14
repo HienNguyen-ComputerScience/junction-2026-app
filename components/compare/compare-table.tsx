@@ -212,7 +212,9 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
             <Heading sort={sort} onSort={setSort} keyName="gp" sub={<>Finland overall: <span className="figure">{pct(finland)}</span></>}>
               GP visits waiting over 7 days, 2025
             </Heading>
-            <Heading sort={sort} onSort={setSort} keyName="change">Change since 2023</Heading>
+            <Heading sort={sort} onSort={setSort} keyName="change" sub={<>{RECORDING_MARK} recording changed, see note below</>}>
+              Change since 2023
+            </Heading>
             <Heading sort={sort} onSort={setSort} keyName="referral" sub={<>Finland overall: <span className="figure">{pct(finlandReferral)}</span></>}>
               Referrals handled within 3 days, 2025
             </Heading>
@@ -252,6 +254,9 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
         <p>
           <span className="font-semibold">Figure:</span> GP visits waiting over 7 days, 2025. Finland overall:{" "}
           <span className="figure">{pct(finland)}</span>. In brackets: points above (+) or below (−) Finland overall.
+        </p>
+        <p>
+          <span className="font-semibold">{RECORDING_MARK}</span> after a change since 2023: recording changed, see note below.
         </p>
         <p>
           <span className="font-semibold">Referrals:</span> handled within 3 days, 2025. Finland overall:{" "}
