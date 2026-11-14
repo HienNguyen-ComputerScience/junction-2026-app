@@ -43,7 +43,7 @@ export function StatUnit({
   suffix?: string;
   /** Set smaller after the figure, e.g. "of 22 areas", "points". */
   unit?: string;
-  /** alarm: the figure in the status ink (worse than Finland). */
+  /** alarm: the figure in the status ink (slower than Finland overall). */
   tone?: "plain" | "alarm";
   status?: { status: GapStatus; label: string };
   /** The one limitation that applies, always visible. */

@@ -63,7 +63,7 @@ export function StepDo({ briefing }: { briefing: Briefing }) {
       ) : null}
 
       <p className="animate-fade-up text-base leading-6 text-pretty text-charcoal" style={i(5)}>
-        Chosen for the step {anyRed ? "where the delay is" : "closest to Finland's level"}, by a fixed rule from a checked
+        Chosen for the step {anyRed ? "where the delay is" : "closest to Finland overall"}, by a fixed rule from a checked
         evidence table. Proposals for service planning, not medical advice.
       </p>
     </>

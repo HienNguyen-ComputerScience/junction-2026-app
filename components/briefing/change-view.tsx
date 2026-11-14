@@ -22,7 +22,7 @@ export type ChangeAction = {
     finland: string;
     year: number;
     target: {
-      /** "Finland's level (54.7%)". */
+      /** "Finland overall (54.7%)". */
       levelName: string;
       paces: { year: number; perYear: number; points: number; years: number }[];
     } | null;

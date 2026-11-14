@@ -2,12 +2,7 @@ import { buildXlsx, XLSX_TYPE, type Cell } from "@/lib/export/xlsx";
 import { changeText, FIRST_YEAR, getCompareLead, getCompareRows, LATEST_YEAR, vsFinlandText } from "@/lib/compare";
 import { getSource } from "@/lib/data";
 import { getIndicator, GP_WAIT_ID, REFERRAL_ID } from "@/lib/ranking";
-
-const STATUS_WORDS = {
-  red: "Worse than Finland's level",
-  amber: "At or better than Finland's level",
-  no_data: "No public data",
-} as const;
+import { statusLabel } from "@/lib/status-label";
 
 /** The compare table as an Excel workbook: every area, the figures as numbers, then the sources and limits. */
 export function GET() {
@@ -40,13 +35,13 @@ export function GET() {
       row.gpFirst,
       row.gpMiddle,
       row.gp,
-      STATUS_WORDS[row.gpStatus],
+      statusLabel(row.gpStatus, "gp_access"),
       row.gpVsFinland,
       row.gpChange,
       [changeText(row.gpChange), vsFinlandText(row.gpVsFinland)].filter(Boolean).join("; "),
       row.recording ?? "",
       row.referral,
-      row.referralCityOnly ? "City units only" : row.referralShared ? "HUS-wide figure only" : STATUS_WORDS[row.referralStatus],
+      row.referralCityOnly ? "City units only" : row.referralShared ? "HUS-wide figure only" : statusLabel(row.referralStatus, "referral"),
       row.referralCityOnly
         ? "Covers the city's own specialist units; most Helsinki referrals go to HUS."
         : row.referralShared
@@ -63,7 +58,7 @@ export function GET() {
     [`GP waits (Sotkanet 6411): ${getIndicator(GP_WAIT_ID)?.limitation ?? ""}`],
     [`Referrals (Sotkanet 13): ${getIndicator(REFERRAL_ID)?.limitation ?? ""}`],
     ["Where the number of recorded visits changed by more than 20% between 2023 and 2025, part of a change in the share may be how visits are recorded."],
-    ["The status compares each area with Finland's level, not with a clinical standard."],
+    ["The status compares each area with Finland overall (Sotkanet's whole-country value for the same indicator and year), not with a clinical standard."],
     [],
     ["Source", "Publisher", "Address", "Retrieved"],
     ...[gpSource, referralSource].flatMap((source): Cell[][] =>

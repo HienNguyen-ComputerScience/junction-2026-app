@@ -9,7 +9,7 @@ const pct = (value: number) => `${value.toFixed(1)}%`;
 
 /**
  * The compare page's picture: all 22 areas as bars (share of non-urgent GP visits waiting more
- * than 7 days), longest wait first, with Finland's level as a line. While the story is told, the
+ * than 7 days), longest wait first, with Finland overall as a line. While the story is told, the
  * area the text is about is marked and the other bars step back; for the area with the largest
  * rise, a tick shows where it stood in the first year. In its final state (no script, reduced
  * motion, phones, print) every bar is at full strength and the three areas the text names are
@@ -36,7 +36,7 @@ export function CompareBars({
     <figure className="flex flex-col gap-3">
       <figcaption className="type-eyebrow">Non-urgent GP visits waiting over 7 days, 2025, % of visits</figcaption>
       <ol className="relative flex flex-col gap-[3px]" aria-label="All areas, longest wait first">
-        {/* Finland's level, drawn across every row. */}
+        {/* Finland overall, drawn across every row. */}
         <li aria-hidden className="pointer-events-none absolute inset-y-0 left-[12rem] right-[3.75rem]">
           <span className="absolute inset-y-0 w-0 border-l-2 border-dashed border-forest-ink" style={{ left: scale(finland) }} />
         </li>
@@ -83,15 +83,15 @@ export function CompareBars({
       <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-base text-foreground">
         <span className="inline-flex items-center gap-2">
           <span aria-hidden className="h-4 w-0 border-l-2 border-dashed border-forest-ink" />
-          Finland {pct(finland)}
+          Finland overall: {pct(finland)}
         </span>
         <span className="inline-flex items-center gap-2">
           <span aria-hidden className="size-3 rounded-sm bg-status-red" />
-          Worse than Finland
+          Longer wait than Finland overall
         </span>
         <span className="inline-flex items-center gap-2">
           <span aria-hidden className="size-3 rounded-sm bg-status-amber" />
-          At or better
+          Same as or better
         </span>
         {risingId ? (
           <span className="inline-flex items-center gap-2">

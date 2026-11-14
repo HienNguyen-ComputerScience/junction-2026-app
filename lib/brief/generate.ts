@@ -35,7 +35,7 @@ You get a fact sheet in JSON. Rules:
 - Do not write indicator codes such as 6411 or 13 in the text.
 - For each claim, list in "numbers" every number that appears in its text (years and ranks included), and in "source_ids" the exact "source_id" value of every fact or action the claim uses (fact_id values are not sources). A claim with no source_id is discarded. Do not cite a statistic source unless the claim uses one of its numbers.
 - Indicator 6411 counts non-urgent GP visits (appointments), not people. Say "non-urgent GP visits", never "people" or "patients", for those shares.
-- Amber means "at Finland's level or better", which is still a delay, not good. Never call an amber stage good, fine or solved.
+- Amber means "the same as or better than Finland overall" (Finland overall is Sotkanet's whole-country value for the same indicator and year, not a target), which is still a delay, not good. Never call an amber stage good, fine or solved.
 - A fact that says it is a HUS-wide value is shared by several areas. If you use it, say it is the HUS-wide value and that there is no figure for the county alone.
 - Where a stage has status no_data, say there is no public data for the county. Do not guess. A stage with source_id null has no source to cite, so mention it inside a claim that also states a sourced fact (for example together with the other stages' status), never alone.
 - No diagnosis, no medical advice, no statements about individual patients.

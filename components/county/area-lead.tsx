@@ -43,7 +43,7 @@ export function AreaLead({ countyId, eyebrow, children }: { countyId: string; ey
   const indicator = lead?.indicatorId ? getIndicator(lead.indicatorId) : undefined;
 
   const meaning = lead
-    ? `${lead.statusLabel}${lead.finland !== null ? ` (Finland ${formatPct(lead.finland)})` : ""}${lead.changeText ? `, and ${lead.changeText}` : ""}.`
+    ? `${lead.statusLabel}${lead.finland !== null ? ` (Finland overall: ${formatPct(lead.finland)})` : ""}${lead.changeText ? `, and ${lead.changeText}` : ""}.`
     : shortReason(reason);
   const caveat = lead?.caveat
     ? { short: "part of the rise may be how visits are recorded", why: lead.caveat }

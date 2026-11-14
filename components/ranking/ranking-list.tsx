@@ -47,8 +47,8 @@ const ROW_DIVIDER =
 
 // Referral column: one short tag per state, so every cell has the same shape.
 const REFERRAL_TAG: Record<GapStatus, string> = {
-  red: "Worse",
-  amber: "Better",
+  red: "Slower",
+  amber: "Same or better",
   no_data: "No public data",
 };
 
@@ -61,7 +61,7 @@ export function RankingList({
   referralSourceId,
 }: Props) {
   const finlandX: CSSProperties = { left: `${nationalGpWait}%` };
-  const finlandLabel = `Finland ${formatPct(nationalGpWait)}`;
+  const finlandLabel = `Finland overall: ${formatPct(nationalGpWait)}`;
   const total = rows.length + unranked.length;
 
   return (
@@ -83,7 +83,7 @@ export function RankingList({
           line1="Referrals processed within 3 days"
           line2={
             <>
-              Finland&nbsp;<span className="figure">{formatPct(nationalReferral)}</span>, higher
+              Finland overall:&nbsp;<span className="figure">{formatPct(nationalReferral)}</span>, higher
               is better
             </>
           }
@@ -92,10 +92,10 @@ export function RankingList({
           {/* The full phrase of each row's short label, said once for the whole column. */}
           <span className="mt-0.5 flex flex-col">
             <StatusBadge status="red" variant="quiet">
-              Worse than Finland&apos;s level
+              Longer wait or slower than Finland overall
             </StatusBadge>
             <StatusBadge status="amber" variant="quiet">
-              At or better than Finland&apos;s level
+              Same as or better than Finland overall
             </StatusBadge>
           </span>
         </HeadCell>
@@ -442,7 +442,7 @@ function RankingRowLink({
               )}
               {referralStatus !== "no_data" && (
                 <span className="sr-only">
-                  {referralStatus === "red" && !row.sharedReferral ? " than Finland's level" : referralStatus === "amber" && !cityUnitsOnly && !row.sharedReferral ? " (at or better than Finland's level)" : ""} (Finland{" "}
+                  {(referralStatus === "red" && !row.sharedReferral) || (referralStatus === "amber" && !cityUnitsOnly && !row.sharedReferral) ? " than Finland overall" : ""} (Finland overall:{" "}
                   {formatPct(nationalReferral)})
                 </span>
               )}
@@ -467,7 +467,7 @@ function GapShort({ value, finland }: { value: number; finland: number }) {
   return (
     <>
       <span className="figure">{Math.abs(diff).toFixed(1)}</span>
-      <span className="sr-only"> percentage points</span> {diff > 0 ? "above" : "below"} Finland
+      <span className="sr-only"> percentage points</span> {diff > 0 ? "above" : "below"} Finland overall
     </>
   );
 }

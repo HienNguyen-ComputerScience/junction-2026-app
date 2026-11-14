@@ -41,8 +41,8 @@ function FlagCard({ row, index }: { row: WarningRow; index: number }) {
       </p>
       <p className="text-base text-pretty">
         {seriesText(row)} ({formatPoints(row.change)} over {row.last_year - row.first_year} years; {DIRECTION[row.indicator_id]}).
-        Finland {row.last_year}: <span className="figure">{formatValue(row.indicator_id, last.finland)}</span>.
-        {row.crossed ? ` Was at or better than Finland in ${row.first_year}, worse in ${row.last_year}.` : ""}
+        Finland overall {row.last_year}: <span className="figure">{formatValue(row.indicator_id, last.finland)}</span>.
+        {row.crossed ? ` Was the same as or better than Finland overall in ${row.first_year}, but not in ${row.last_year}.` : ""}
       </p>
       {row.trend_reasons.length ? (
         <ul className="flex list-disc flex-col gap-1 pl-5 text-base">
@@ -60,7 +60,7 @@ function FlagCard({ row, index }: { row: WarningRow; index: number }) {
 
 /**
  * Early warning: areas whose figure got worse over the published years, and areas that went from
- * at-or-better than Finland to worse. Always read with the confidence grade: when the recording
+ * at-or-better than Finland overall to worse. Always read with the confidence grade: when the recording
  * changed, the flag is "Possible, check recording", not an alarm. Three yearly points: direction
  * and size only, no forecast.
  *
@@ -151,7 +151,7 @@ export function EarlyWarning({
               { header: "Figure" },
               { header: "Years", sortable: false },
               { header: "Change toward worse (points)", align: "end" },
-              { header: "Crossed to worse than Finland" },
+              { header: "Crossed to falling short of Finland overall" },
               { header: "Flag" },
             ]}
             rows={rows.map((r) => ({

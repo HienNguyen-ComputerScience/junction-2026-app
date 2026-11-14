@@ -199,7 +199,7 @@ function buildLimitations(county: County): LimitationItem[] {
     items.push({
       title: "Many working-age visits skip the public queue",
       short: "Many working-age visits happen outside the public queue.",
-      text: `Working-age people (15-64) in ${county.name} made ${n(occupational.value)} occupational-health doctor visits per 1,000 residents in ${occupational.year}, against ${n(publicVisits.value)} public primary-care doctor visits (Finland ${n(occupationalFinland.value)} and ${n(publicFinland.value)}). These are visits, not people. People over 64, who are most cancer patients, are not in these numbers.`,
+      text: `Working-age people (15-64) in ${county.name} made ${n(occupational.value)} occupational-health doctor visits per 1,000 residents in ${occupational.year}, against ${n(publicVisits.value)} public primary-care doctor visits (Finland overall: ${n(occupationalFinland.value)} and ${n(publicFinland.value)}). These are visits, not people. People over 64, who are most cancer patients, are not in these numbers.`,
       sourceId: "sotkanet-2371",
     });
   }
@@ -214,7 +214,7 @@ function buildLimitations(county: County): LimitationItem[] {
     items.push({
       title: "Survival mixes early finding with treatment",
       short: "Cancer stage by county is not published; small counties vary.",
-      text: `5-year relative survival here was ${bowel.value}% for bowel cancer and ${breast.value}% for breast cancer (Finland ${bowelFinland.value}% and ${breastFinland.value}%), for patients diagnosed ${bowel.year - 9}-${bowel.year}. Cancer stage by county is not published. Small counties vary from year to year.`,
+      text: `5-year relative survival here was ${bowel.value}% for bowel cancer and ${breast.value}% for breast cancer (Finland overall: ${bowelFinland.value}% and ${breastFinland.value}%), for patients diagnosed ${bowel.year - 9}-${bowel.year}. Cancer stage by county is not published. Small counties vary from year to year.`,
       sourceId: "sotkanet-3627",
     });
   }
@@ -266,18 +266,18 @@ function buildLimitations(county: County): LimitationItem[] {
 
   const nationalGpWait = getNationalValue(GP_WAIT_ID);
   items.push({
-    title: "At or better than Finland's level does not mean good",
-    short: "Finland's level is itself a delay.",
-    text: `Finland's level is itself a delay${
+    title: "Same as or better than Finland overall does not mean good",
+    short: "Finland overall is itself a delay.",
+    text: `Finland overall is itself a delay${
       nationalGpWait
         ? `: ${formatPct(nationalGpWait.value)} of non-urgent GP visits nationally come more than a week after the need for care was assessed`
         : ""
     }.`,
   });
   items.push({
-    title: "Colours compare with Finland, not a target",
-    short: "Colours compare with Finland; they are not a clinical standard.",
-    text: `They compare this area's ${LATEST_YEAR} value with Finland's ${LATEST_YEAR} value on the same indicator. They are not a clinical standard.`,
+    title: "Colours compare with Finland overall, not a target",
+    short: "Colours compare with Finland overall; they are not a clinical standard.",
+    text: `They compare this area's ${LATEST_YEAR} value with Finland overall: Sotkanet's whole-country ${LATEST_YEAR} value for the same indicator. It is not a target and not an average of the areas. They are not a clinical standard.`,
   });
 
   return items;

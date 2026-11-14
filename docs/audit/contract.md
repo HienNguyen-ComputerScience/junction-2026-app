@@ -51,8 +51,8 @@ The only hues outside the greens. Never colour alone: every use carries a text l
 
 | Meaning | Mark / fill | Text (AA on every surface) | Chip background / border |
 |---|---|---|---|
-| Worse than Finland's level (`red`) | `--status-red` `#ad4a22` → `bg-status-red`, `fill-status-red` | `--status-red-ink` `#7c3110` → `text-status-red-ink` | `bg-status-red-soft`, `border-status-red-border`; `bg-status-red-tint` is the lighter part of a bar |
-| At or better than Finland's level (`amber`, drawn as slate) | `--status-amber` `#3f6672` (marker), `--status-amber-bar` `#4f7682` (bar) | `--status-amber-ink` `#27444e` → `text-status-amber-ink` | `bg-status-amber-soft`, `border-status-amber-border` |
+| Longer wait than Finland overall (`red`; "Slower than Finland overall" for the referral step) | `--status-red` `#ad4a22` → `bg-status-red`, `fill-status-red` | `--status-red-ink` `#7c3110` → `text-status-red-ink` | `bg-status-red-soft`, `border-status-red-border`; `bg-status-red-tint` is the lighter part of a bar |
+| Same as or better than Finland overall (`amber`, drawn as slate) | `--status-amber` `#3f6672` (marker), `--status-amber-bar` `#4f7682` (bar) | `--status-amber-ink` `#27444e` → `text-status-amber-ink` | `bg-status-amber-soft`, `border-status-amber-border` |
 | No public data (`no_data`) | `--status-grey` `#686e69` → `bg-status-grey`; `bg-hatch` for an empty track | `--status-grey-ink` (= muted foreground) | `bg-status-grey-soft`, `border-status-grey-border` (dashed) |
 
 Ready-made: `StatusBadge` (`components/ui/status-badge.tsx`, props `status`, `size`, `variant`), and `STATUS_FILL` / `STATUS_INK` class maps from the same file.
@@ -143,15 +143,15 @@ A horizontal bar that grows from the left to its value, once. One accessible ima
 |---|---|---|---|
 | `value` | `number` | required | |
 | `max` | `number` | `100` | Value at the right end of the track. |
-| `tone` | `"red" \| "slate" \| "grey" \| "forest"` | `"forest"` | red = worse than Finland, slate = at or better, grey = no data, forest = no status. |
-| `label` | `string` | required | Read by screen readers: "Vantaa and Kerava 85.4%, Finland 54.7%". |
-| `marker` | `number` | | A reference line (Finland's level), same scale as `value`. |
-| `markerLabel` | `string` | | Visible text under the line: "Finland 54.7%". |
+| `tone` | `"red" \| "slate" \| "grey" \| "forest"` | `"forest"` | red = longer wait or slower than Finland overall, slate = same as or better, grey = no data, forest = no status. |
+| `label` | `string` | required | Read by screen readers: "Vantaa and Kerava 85.4%, Finland overall 54.7%". |
+| `marker` | `number` | | A reference line (Finland overall), same scale as `value`. |
+| `markerLabel` | `string` | | Visible text under the line: "Finland overall: 54.7%". |
 | `play` | `boolean` | undefined | Undefined: grows on entering view or with its Reveal. `false`: empty; `true`: grows. |
 | `index` | `number` | `0` | Stagger among sibling bars. |
 | `className` | | | Width, margins. |
 
-Colour is never the only signal: show the figure and the status in words next to the bar. The domain bar with the red tint up to Finland's line is `MeasureBar` in `components/ui/measure-bar.tsx`; it also grows inside a Reveal.
+Colour is never the only signal: show the figure and the status in words next to the bar. The domain bar with the red tint up to Finland overall's line is `MeasureBar` in `components/ui/measure-bar.tsx`; it also grows inside a Reveal.
 
 ### `Disclosure`
 
@@ -184,7 +184,7 @@ Guardrails: normal scrolling only (no wheel or touch capture, no scroll-snap, no
   eyebrow="Getting to a GP, 2025"
   statement="Most GP visits in Kainuu wait more than a week."
   figure={<ChunkFigure tone="alarm" unit="of non-urgent GP visits waited over 7 days"><AnimatedNumber value={75.2} final="75.2%" /></ChunkFigure>}
-  meaning="That is 20.5 points worse than Finland's 54.7%."
+  meaning="That is 20.5 points above Finland overall (54.7%)."
   source={<SourceChip sourceId="sotkanet-6411" year={2025} />}
   caveat={{ short: "Counts visits, not people", why: "Sotkanet 6411 counts …" }}
 />
@@ -257,14 +257,14 @@ For every explanatory sentence on a page:
 The lead figure of a page or section, as one self-contained unit: eyebrow, a big figure that counts up once, `unit` set smaller after it, an optional status badge, the meaning in one or two plain sentences (children), the one limitation that applies (always visible), source chips, and optional `detail` behind a quiet "Show {detailLabel}" button.
 
 ```tsx
-<StatUnit eyebrow="Worse than Finland" value={14} decimals={0} final="14" unit="of 22 areas" tone="alarm"
-  status={{ status: "red", label: "Worse than Finland's level" }} sources={[{ sourceId: "sotkanet-6411", year: 2025 }]}
+<StatUnit eyebrow="Longer wait than Finland overall" value={14} decimals={0} final="14" unit="of 22 areas" tone="alarm"
+  status={{ status: "red", label: "Longer wait than Finland overall" }} sources={[{ sourceId: "sotkanet-6411", year: 2025 }]}
   limitation="Counts visits, not people." detail={…} detailLabel="what this figure counts" index={1}>
-  <p>have a larger share of non-urgent GP visits waiting more than 7 days than Finland.</p>
+  <p>have a larger share of non-urgent GP visits waiting more than 7 days than Finland overall.</p>
 </StatUnit>
 ```
 
-Use it for 2–4 figures at the top of a page (grid `md:grid-cols-2`), never inside a table. `tone="alarm"` only for a figure that is worse than Finland. The compare page (`/compare`) is the reference page for the pattern.
+Use it for 2–4 figures at the top of a page (grid `md:grid-cols-2`), never inside a table. `tone="alarm"` only for a figure that has a longer wait or is slower than Finland overall. The compare page (`/compare`) is the reference page for the pattern.
 
 ### `StepUnit` (`components/stat/step-unit.tsx`)
 
@@ -301,7 +301,7 @@ The export takes the parameters below. Every one is optional; anything missing o
 | Parameter | Values | Default | |
 |---|---|---|---|
 | `actions` | Comma-separated `Evidence.id`s, at most three, in the order to show | The area's recommended actions (`pickActions`) | The briefing's hand-off: the actions the director chose. Unknown ids are dropped. |
-| `target` | `finland` \| `best` | `finland` if any step is worse than Finland, else `best` | Level to aim for on each step. |
+| `target` | `finland` \| `best` | `finland` if any step is slower than Finland overall, else `best` | Level to aim for on each step. |
 | `year` | `2027` … `2031` | `2028` | End of the year to reach it by. |
 | `person1`…`person3` | text, 80 characters | empty | Named person responsible, per action. |
 | `review1`…`review3` | text | empty | Review date, per action. |
@@ -376,7 +376,7 @@ type DataGap = {
 |---|---|---|
 | All areas (21 counties and Helsinki) | `counties: County[]`; `getCounty(id)` | `lib/data` |
 | An area's value for an indicator | `getValue(countyId, indicatorId, year = 2025): IndicatorValue \| undefined` (`.value` in %, `.abs_value`, `.source_id`) | `lib/data` |
-| Finland's value | `getNationalValue(indicatorId, year?)` | `lib/ranking` |
+| Finland overall (the whole-country value) | `getNationalValue(indicatorId, year?)` | `lib/ranking` |
 | Indicator ids | `GP_WAIT_ID = "6411"`, `REFERRAL_ID = "13"`; `getIndicator(id)` gives `name`, `direction`, `limitation` | `lib/ranking` |
 | Rank | `getRanking(): RankingRow[]`, worst first by GP wait: `{ county, rank, gpWait, gpWaitChange, referral, sharedReferral, gpStatus, referralStatus }` | `lib/ranking` |
 | Values 2023–2025 | `getTrend(countyId, indicatorId)` → `{ year, value: IndicatorValue \| null }[]`; `YEARS`, `FIRST_YEAR` | `lib/ranking` |

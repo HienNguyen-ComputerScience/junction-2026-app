@@ -178,10 +178,10 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
           picture={<NoWayRoundTiles areas={tiles} />}
           steps={[
             <StoryStep key="all" title={`All ${c.areas} areas, ${noWayRound.year}.`} />,
-            <StoryStep key="long" title={`A longer GP wait than Finland's ${FINLAND_WAIT}.`}>
+            <StoryStep key="long" title={`A longer GP wait than Finland overall (${FINLAND_WAIT}).`}>
               <SourceChip sourceId="sotkanet-6411" year={noWayRound.year} />
             </StoryStep>,
-            <StoryStep key="few" title={`${c.long_few_main} of them also use occupational-health and private doctors less than Finland.`}>
+            <StoryStep key="few" title={`${c.long_few_main} of them also use occupational-health and private doctors less than Finland overall.`}>
               <div className="flex flex-wrap gap-2">
                 <SourceChip sourceId={robust[0].occupational.source_id} year={robust[0].occupational.year} />
                 <SourceChip sourceId={robust[0].private.source_id} year={robust[0].private.year} />

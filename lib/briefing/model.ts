@@ -38,6 +38,7 @@ import {
   getStageGap,
   GP_WAIT_ID,
   STATUS_LABEL,
+  statusLabel,
   YEARS,
 } from "@/lib/ranking";
 import { describeVisitChange, getRecordedVisitChange, isRecordingSensitiveChange } from "@/lib/recording";
@@ -60,7 +61,7 @@ export type BriefingStand = {
   status: GapStatus;
   /** The sentence that follows the figure: "of non-urgent GP visits in X come more than …". */
   statement: string;
-  /** "30.7 percentage points above Finland's level". */
+  /** "30.7 percentage points above Finland overall". */
   gapText: string;
   /** 1 is the highest share of late visits. */
   rank: number;
@@ -84,7 +85,7 @@ export type BriefingStage = {
   statusLabel: string;
   /** A limit on the status that must be read with it, shown on the step itself, or null. */
   note: string | null;
-  /** True for a measured step that is worse than Finland: where the delay is. */
+  /** True for a measured step that is slower than Finland overall: where the delay is. */
   isBreak: boolean;
   /** The area's own published share, or null. */
   value: number | null;
@@ -100,7 +101,7 @@ export type BriefingStage = {
   explains: string;
 };
 
-/** Step 2: the three steps, with the one(s) that are worse than Finland marked. */
+/** Step 2: the three steps, with the one(s) that are slower than Finland overall marked. */
 export type BriefingPathway = {
   lede: string;
   anyRed: boolean;
@@ -124,7 +125,7 @@ export type BriefingMeaning = {
   changeText: string | null;
   /** Set when the share moved and the recorded visits behind it changed a lot. Shown with the change. */
   caveat: string | null;
-  /** Set when no measured step is worse than Finland: why this figure is still shown. */
+  /** Set when no measured step is slower than Finland overall: why this figure is still shown. */
   noRedNote: string | null;
   limitation: string;
 };
@@ -146,7 +147,7 @@ export type BriefingWatch = {
   /** Which published level the pace aims for, or null when the area holds the best level. */
   target: {
     level: TargetLevel;
-    /** "Finland's level (54.7%)". */
+    /** "Finland overall (54.7%)". */
     levelName: string;
     value: number;
     /** One pace per target year on offer (lib/plan TARGET_YEARS). */
@@ -202,7 +203,7 @@ function ordinal(n: number): string {
 function gapWords(value: number, finland: number): string {
   const diff = diff1(value, finland);
   if (diff === 0) return "Level with Finland";
-  return `${Math.abs(diff).toFixed(1)} percentage points ${diff > 0 ? "above" : "below"} Finland's level`;
+  return `${Math.abs(diff).toFixed(1)} percentage points ${diff > 0 ? "above" : "below"} Finland overall`;
 }
 
 const GP_LIMITATION =
@@ -269,7 +270,7 @@ function buildStage(county: County, stage: Stage, breaks: Set<Stage>): BriefingS
   if (gap.value === null) {
     const shared = gap.shared;
     const finding = shared
-      ? `No figure for ${county.name} alone. ${shared.name === "HUS" ? HUS_FULL : shared.name}, which handles its hospital referrals, processed ${formatPct(shared.value)} of referrals within 3 days in ${gap.year} (Finland ${formatPct(gap.national_value)}). That value covers several areas, so it is not ${county.name}'s figure.`
+      ? `No figure for ${county.name} alone. ${shared.name === "HUS" ? HUS_FULL : shared.name}, which handles its hospital referrals, processed ${formatPct(shared.value)} of referrals within 3 days in ${gap.year} (Finland overall: ${formatPct(gap.national_value)}). That value covers several areas, so it is not ${county.name}'s figure.`
       : `No public data: Sotkanet publishes no ${gap.year} figure for ${county.name} on this step.`;
     return {
       ...base, year: gap.year, status: gap.status, statusLabel: shared ? "No county figure" : STATUS_LABEL.no_data,
@@ -288,7 +289,7 @@ function buildStage(county: County, stage: Stage, breaks: Set<Stage>): BriefingS
     figures += ` This figure covers only the city's own specialist units; most ${county.name} referrals go to ${HUS_FULL}.`;
   }
   return {
-    ...base, year: gap.year, status: gap.status, statusLabel: STATUS_LABEL[gap.status],
+    ...base, year: gap.year, status: gap.status, statusLabel: statusLabel(gap.status, gap.stage),
     note: cityOnly ? "The city's own units only. Most referrals go to the HUS hospital group." : null,
     isBreak: gap.status === "red" && breaks.has(stage),
     value: gap.value, finland: gap.national_value, sourceId: gap.source_id, figures, finding: null,
@@ -348,7 +349,7 @@ function buildMeaning(county: County, anyRed: boolean): BriefingMeaning | null {
     caveat,
     noRedNote: anyRed
       ? null
-      : `No measured step is worse than Finland. This is ${gap.stage === "gp_access" ? "the first step, getting to a GP" : "the last step, the GP to specialist referral"}.`,
+      : `No measured step is slower than Finland overall. This is ${gap.stage === "gp_access" ? "the first step, getting to a GP" : "the last step, the GP to specialist referral"}.`,
     limitation:
       gap.stage === "gp_access"
         ? "Visits, not people; all non-urgent GP visits, not only cancer-related ones. Rounded to whole visits."
@@ -368,7 +369,7 @@ function buildWatch(county: County, stage: Stage): BriefingWatch | null {
   const { value } = gap;
   const better = betterFor(gap.indicator_id);
 
-  // An area worse than Finland aims for Finland's level first; one at or better, for the best
+  // An area slower than Finland overall aims for that level first; one at or better, for the best
   // area's level. A referral figure that covers only the city's own units sets no target.
   let target: BriefingWatch["target"] = null;
   if (!(stage === "referral" && CITY_UNITS_ONLY_REFERRAL.has(county.id))) {
@@ -376,7 +377,7 @@ function buildWatch(county: County, stage: Stage): BriefingWatch | null {
     const level: TargetLevel = gap.status === "red" ? "finland" : "best";
     const aim =
       level === "finland"
-        ? { value: gap.national_value, name: `Finland's level (${formatPct(gap.national_value)})` }
+        ? { value: gap.national_value, name: `Finland overall (${formatPct(gap.national_value)})` }
         : best && best.id !== county.id
           ? { value: best.value, name: `the best area's level (${best.name}, ${formatPct(best.value)})` }
           : null;

@@ -18,8 +18,8 @@ export function BriefingPreview({ stand }: { stand: BriefingStand }) {
   const finland = formatPct(stand.finland);
   const status =
     stand.value === stand.finland
-      ? `Level with Finland's ${finland}.`
-      : `${stand.gapText} (${finland})${stand.status === "red" ? ", which is worse." : ", which is better."}`;
+      ? `Same as Finland overall: ${finland}.`
+      : `${stand.gapText} (Finland overall: ${finland})${stand.status === "red" ? ", a longer wait." : ", a shorter wait."}`;
 
   return (
     <div className="flex flex-col gap-5">

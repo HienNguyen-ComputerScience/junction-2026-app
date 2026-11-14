@@ -37,9 +37,9 @@ const STEP: Record<PathwayStepId, { title: string; question: string; missing?: s
 };
 
 const VERSUS: Record<NonNullable<PathwayItem["versus"]>, string> = {
-  better: "better than Finland",
-  same: "about the same as Finland",
-  worse: "worse than Finland",
+  better: "ahead of Finland overall",
+  same: "about the same as Finland overall",
+  worse: "behind Finland overall",
 };
 
 /** One short line per step for the strip: the status in words, never colour alone. */
@@ -56,7 +56,7 @@ function stepSummary(step: PathwayStep): string {
   const worse = items.filter((it) => it.versus === "worse").length;
   const better = items.filter((it) => it.versus === "better").length;
   const parts = [];
-  if (worse) parts.push(`${worse} of ${items.length} worse than Finland`);
+  if (worse) parts.push(`${worse} of ${items.length} behind Finland overall`);
   if (better) parts.push(`${better} of ${items.length} better`);
   if (items.length - worse - better) parts.push(`${items.length - worse - better} about the same`);
   return parts.join(", ");
@@ -80,12 +80,12 @@ function Item({ item }: { item: PathwayItem }) {
       <p className="text-base text-pretty">
         {item.shared ? (
           <>
-            {item.shared.name}-wide value, not this area&apos;s own (Finland{" "}
+            {item.shared.name}-wide value, not this area&apos;s own (Finland overall:{" "}
             <span className="figure">{formatValue(item.indicator_id, item.finland)}</span>).
           </>
         ) : (
           <>
-            {item.versus ? VERSUS[item.versus] : ""} (Finland <span className="figure">{formatValue(item.indicator_id, item.finland)}</span>)
+            {item.versus ? VERSUS[item.versus] : ""} (Finland overall: <span className="figure">{formatValue(item.indicator_id, item.finland)}</span>)
             {item.target !== undefined ? (
               <>
                 ; national target {item.target}%: {item.meets_target ? "reached" : "not reached"}
@@ -136,7 +136,7 @@ export function PathwayRow({
             Neither is about cancer only.
           </li>
           <li className="text-pretty">
-            &ldquo;About the same as Finland&rdquo; means within 1 percentage point. Screening is also compared with the
+            &ldquo;About the same as Finland overall&rdquo; means within 1 percentage point. Screening is also compared with the
             national target of 80% attendance in every programme and county (strategy Goal 2, p. 5; roadmap measure
             2.4.1, p. 48). <SourceChip sourceId="stm-cancer-strategy-2026-2035" />
           </li>

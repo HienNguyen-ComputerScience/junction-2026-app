@@ -271,7 +271,7 @@ export function derive(snapshot) {
       const flag = !flagged
         ? null
         : trendLevel === "solid"
-          ? { kind: "warning", label: kind === "worse" ? "Getting worse" : "Now worse than Finland" }
+          ? { kind: "warning", label: kind === "worse" ? "Getting worse" : "Now falls short of Finland overall" }
           : ind === "6103" && !trendReasons.some((t) => /^\d{4}: /.test(t))
             ? { kind: "check", label: "Possible, check comparability" }
             : { kind: "check", label: "Possible, check recording" };

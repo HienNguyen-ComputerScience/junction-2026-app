@@ -16,7 +16,7 @@ import {
   GP_WAIT_ID,
   REFERRAL_ID,
   REFERRAL_LATE_ID,
-  STATUS_LABEL,
+  statusLabel,
   YEARS,
 } from "@/lib/ranking";
 import { getRecordingCaveat } from "@/lib/recording";
@@ -80,7 +80,7 @@ function TabFace({ step }: { step: PathwayStep }) {
       {/* A step with no figure of its own shows its status alone: no number, no wider value
           (the hospital group's value is in the step's panel). */}
       <StatusBadge status={status} size="xs">
-        {shared ? "No county figure" : STATUS_LABEL[status]}
+        {shared ? "No county figure" : statusLabel(status, step.stage)}
       </StatusBadge>
     </>
   );
@@ -208,7 +208,7 @@ function LateReferrals({ countyId }: { countyId: string }) {
         {finland && (
           <>
             {" "}
-            · Finland <span className="figure text-foreground">{formatPct(finland.value)}</span>
+            · Finland overall: <span className="figure text-foreground">{formatPct(finland.value)}</span>
           </>
         )}
       </span>

@@ -8,7 +8,7 @@ import type { GapStatus } from "@/lib/data";
  * marker at Finland's value. Used wherever a share is drawn (hero, ranking, county step,
  * act stats), so the same mark means the same thing everywhere.
  *
- * One treatment for a bar that is worse than Finland:
+ * One treatment for a bar that is slower than Finland overall:
  *  - a wait share (lower is better) runs PAST the line: tinted red up to the line, solid red
  *    beyond it (the gap to Finland);
  *  - a referral share (higher is faster) stops SHORT of the line: the tinted fill ends at the
@@ -42,14 +42,14 @@ const BAR_FILL: Record<GapStatus, string> = {
   amber: "bg-status-amber-bar",
   no_data: "bg-status-grey",
 };
-/** The share itself on a bar that is worse than Finland; the gap to Finland is BAR_FILL.red. */
+/** The share itself on a bar that is slower than Finland overall; the gap to Finland is BAR_FILL.red. */
 const RED_TINT = "bg-status-red-tint";
 /** The "Finland overall" bar. */
 const NEUTRAL_FILL = "bg-foreground/45";
 
 /**
  * Is this a higher-is-better share? The status comes from the data, so the direction can be
- * read off it: "worse than Finland" below Finland's value, or "at or better" above it, can
+ * read off it: "slower than Finland overall" below Finland's value, or "at or better" above it, can
  * only be a share where higher is better. `higherIsBetter` overrides the inference.
  */
 function readsHigherIsBetter(
@@ -207,7 +207,7 @@ export const SHARED_BAR = "border border-dashed border-foreground/50 bg-transpar
  * The key for reading the bars and the map: one row of swatches, drawn like the marks they
  * name. One key per page, and nothing else in it.
  *  - `items`: which swatches to show, when a view has no hatched track or names the Finland
- *    line elsewhere. Default: all five ("Gap to Finland's level" names the faded shortfall of a referral bar).
+ *    line elsewhere. Default: all five ("Gap to Finland overall" names the faded shortfall of a referral bar).
  * One item per line on a phone, one wrapping row from `sm`.
  */
 export function BarKey({ className, items = KEY_ITEMS }: { className?: string; items?: KeyKind[] }) {
@@ -225,7 +225,7 @@ export function BarKey({ className, items = KEY_ITEMS }: { className?: string; i
             </>
           }
         >
-          Finland&apos;s value
+          Finland overall
         </KeyItem>
       )}
       {items.includes("red") && (
@@ -237,7 +237,7 @@ export function BarKey({ className, items = KEY_ITEMS }: { className?: string; i
             </>
           }
         >
-          Worse than Finland&apos;s level
+          Longer wait or slower than Finland overall
         </KeyItem>
       )}
       {items.includes("short") && (
@@ -249,12 +249,12 @@ export function BarKey({ className, items = KEY_ITEMS }: { className?: string; i
             </>
           }
         >
-          Gap to Finland&apos;s level
+          Gap to Finland overall
         </KeyItem>
       )}
       {items.includes("amber") && (
         <KeyItem swatch={<span className="h-full w-full rounded-[2px] bg-status-amber-bar" />}>
-          At or better than Finland&apos;s level
+          Same as or better than Finland overall
         </KeyItem>
       )}
       {items.includes("shared") && (
@@ -281,7 +281,7 @@ export function BarKey({ className, items = KEY_ITEMS }: { className?: string; i
  *  - higherIsBetter: optional override of the inferred direction (see BarFill).
  *  - size "lg": the tall bar of the home comparison card (16px on a phone, 20px from sm);
  *    size "sm": the 6px bar of the compact step strip.
- *  - gapLabel: the distance to Finland in words ("30.7 points worse than Finland"; use `pointsVsFinland`),
+ *  - gapLabel: the distance to Finland in words ("30.7 points slower than Finland overall"; use `pointsVsFinland`),
  *    for wait bars and referral bars alike. With size "lg" it is written inside the span between
  *    the bar's end and the Finland line, i.e. on the distance it measures (hidden if that span
  *    is too short). With the default size it sits just above the bar, against the Finland line

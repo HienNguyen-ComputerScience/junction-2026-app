@@ -6,9 +6,9 @@ import { cn } from "cn";
 import { useInViewOnce } from "@/components/motion/use-in-view";
 
 const TONE = {
-  /** Worse than Finland's level. */
+  /** Longer wait than Finland overall. */
   red: "bg-status-red",
-  /** At or better than Finland's level. */
+  /** Same as or better than Finland overall. */
   slate: "bg-status-amber-bar",
   /** No public data, or a neutral quantity. */
   grey: "bg-status-grey",
@@ -28,7 +28,7 @@ export type BarTone = keyof typeof TONE;
  *
  * - By default it grows when it first enters the viewport, or when a `Reveal` around it plays.
  * - With `play` it is driven by a button: empty while false, grows when it turns true.
- * - `marker` draws a vertical line at a reference value (Finland's level), `markerLabel` names it.
+ * - `marker` draws a vertical line at a reference value (Finland overall), `markerLabel` names it.
  */
 export function AnimatedBar({
   value,

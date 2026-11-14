@@ -10,6 +10,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { BarFill, FinlandTick } from "@/components/ui/measure-bar";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { CompareRow } from "@/lib/compare";
+import { statusLabel } from "@/lib/status-label";
 import { changeText, vsFinlandText } from "@/lib/compare-text";
 
 type SortKey = "gp" | "change" | "referral" | "name";
@@ -20,12 +21,6 @@ const SORTS: { key: SortKey; label: string }[] = [
   { key: "referral", label: "Slowest referrals first" },
   { key: "name", label: "Area name, A to Z" },
 ];
-
-const STATUS_WORDS = {
-  red: "Worse than Finland's level",
-  amber: "At or better than Finland's level",
-  no_data: "No public data",
-} as const;
 
 // Missing values always sort last, whatever the column.
 function compare(key: SortKey, a: CompareRow, b: CompareRow): number {
@@ -166,7 +161,7 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
                   <span className="flex flex-col items-start gap-1">
                     <span className={cn("figure text-xl", row.gpStatus === "red" ? "text-status-red-ink" : "text-foreground")}>{pct(row.gp)}</span>
                     <StatusBadge status={row.gpStatus} variant="quiet" className="h-auto shrink items-baseline whitespace-normal leading-snug">
-                      {STATUS_WORDS[row.gpStatus]}
+                      {statusLabel(row.gpStatus, "gp_access")}
                     </StatusBadge>
                   </span>
                   <span aria-hidden className="relative block h-2.5 w-full rounded-[2px] bg-track">
@@ -194,7 +189,7 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
                       <span className="flex flex-col items-start gap-1">
                         <span className="figure text-base">{pct(row.referral)}</span>
                         <StatusBadge status={row.referralCityOnly ? "no_data" : row.referralStatus} variant="quiet" className="h-auto shrink items-baseline whitespace-normal leading-snug">
-                          {row.referralCityOnly ? "City units only" : STATUS_WORDS[row.referralStatus]}
+                          {row.referralCityOnly ? "City units only" : statusLabel(row.referralStatus, "referral")}
                         </StatusBadge>
                       </span>
                       {row.referralCityOnly ? (
@@ -205,7 +200,7 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
                     <>
                       <span className="text-base">No figure for this area</span>
                       <span className="text-sm text-muted-foreground">
-                        HUS-wide, shared by four areas: {pct(row.referralShared.value)} (Finland {pct(finlandReferral)})
+                        HUS-wide, shared by four areas: {pct(row.referralShared.value)} (Finland overall: {pct(finlandReferral)})
                       </span>
                     </>
                   ) : (
@@ -257,13 +252,13 @@ function PrintTable({
             over 7 days, 2025
           </th>
           <th className={th}>
-            Status vs Finland
+            Status vs Finland overall
             <br />({pct(finland)})
           </th>
           <th className={cn(th, "text-right")}>
             Points
             <br />
-            vs Finland
+            vs Finland overall
           </th>
           <th className={cn(th, "text-right")}>2023</th>
           <th className={th}>
@@ -279,7 +274,7 @@ function PrintTable({
           <th className={th}>
             Referral status
             <br />
-            (Finland {pct(finlandReferral)})
+            (Finland overall: {pct(finlandReferral)})
           </th>
         </tr>
       </thead>

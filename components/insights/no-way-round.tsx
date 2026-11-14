@@ -49,7 +49,7 @@ export function NoWayRoundArea({ area, index = 0 }: { area: NwrArea; index?: num
           <AnimatedNumber value={area.wait.value} final={formatValue("6411", area.wait.value)} />
         </p>
         <p className="text-base text-pretty">
-          of non-urgent GP visits in {area.name} came more than 7 days after people asked, in {area.wait.year} (Finland{" "}
+          of non-urgent GP visits in {area.name} came more than 7 days after people asked, in {area.wait.year} (Finland overall:{" "}
           <span className="figure">{formatValue("6411", f.wait)}</span>).
         </p>
         <div className="flex flex-wrap items-start gap-3">
@@ -67,7 +67,7 @@ export function NoWayRoundArea({ area, index = 0 }: { area: NwrArea; index?: num
             />
           </p>
           <p className="text-base text-pretty">
-            occupational-health doctor visits per 1,000 residents aged 15–64 (Finland{" "}
+            occupational-health doctor visits per 1,000 residents aged 15–64 (Finland overall:{" "}
             <span className="figure">{f.occupational.toLocaleString("en-GB")}</span>).
           </p>
           <div className="flex flex-wrap items-start gap-3">
@@ -80,7 +80,7 @@ export function NoWayRoundArea({ area, index = 0 }: { area: NwrArea; index?: num
             <AnimatedNumber value={area.private.value} final={formatValue("692", area.private.value)} />
           </p>
           <p className="text-base text-pretty">
-            of residents were reimbursed by Kela for a private doctor visit (Finland{" "}
+            of residents were reimbursed by Kela for a private doctor visit (Finland overall:{" "}
             <span className="figure">{formatValue("692", f.private)}</span>).
           </p>
           <div className="flex flex-wrap items-start gap-3">

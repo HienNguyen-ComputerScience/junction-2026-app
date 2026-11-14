@@ -32,7 +32,7 @@ export function planFileName(plan: Plan, extension: "docx" | "xlsx"): string {
   return `firstline-action-plan-${plan.county.id}-${plan.date}.${extension}`;
 }
 
-/** "Finland's level (54.7%) by the end of 2028", or why the step has no target. */
+/** "Finland overall (54.7%) by the end of 2028", or why the step has no target. */
 export function targetGoal(step: PlanStep, year: number): string {
   if (!step.target) return "No target: the area has no figure of its own for this step";
   if (step.target.path.kind === "hold") return `Hold: already at ${step.target.levelName}`;
@@ -64,7 +64,7 @@ function roadmapSchedule(action: PlanAction): string {
   return action.measure.schedule.map((item) => `${item.period}: ${item.text}`).join("\n");
 }
 
-const STEP_HEAD = ["Step", "What is counted", "Area", "Finland", "Status", `Since ${FIRST_YEAR}`, "Source"];
+const STEP_HEAD = ["Step", "What is counted", "Area", "Finland overall", "Status", `Since ${FIRST_YEAR}`, "Source"];
 const GAP_HEAD = ["Step", "Figure nobody publishes", "What exists today", "What the area can record now", "Who could publish it (our proposal)", "Roadmap measure"];
 
 function stepRow(plan: Plan, step: PlanStep): string[] {
@@ -212,7 +212,7 @@ export function planToDocx(plan: Plan): Block[] {
 /** The plan as Excel sheets: one table per sheet, numbers as numbers so they sort and chart. */
 export function planToSheets(plan: Plan): Sheet[] {
   const steps: Cell[][] = [
-    ["Step", "What is counted", "Direction", `Area, % (${plan.steps[0]?.year ?? ""})`, "Finland, %", "Status", `Area, % (${FIRST_YEAR})`, "Change", "Note", "Source", "Source address"],
+    ["Step", "What is counted", "Direction", `Area, % (${plan.steps[0]?.year ?? ""})`, "Finland overall, %", "Status", `Area, % (${FIRST_YEAR})`, "Change", "Note", "Source", "Source address"],
     ...plan.steps.map((step): Cell[] => {
       const source = sourceOf(plan, step.sourceId);
       return [

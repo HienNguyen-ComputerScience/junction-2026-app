@@ -21,7 +21,7 @@ const FILL: Record<TileLevel, string> = {
 
 const SAYS: Record<TileLevel, string> = {
   0: "",
-  1: "longer GP wait than Finland",
+  1: "longer GP wait than Finland overall",
   2: "longer GP wait and few private or work-health doctor visits instead",
   3: "longer GP wait and few private or work-health doctor visits instead, in all six tests",
 };
@@ -78,7 +78,7 @@ export function NoWayRoundTiles({ areas }: { areas: { id: string; name: string; 
             <span className={cn("inline-flex h-6 w-10 items-center justify-center rounded-sm border-2", FILL[level])}>
               <Dots level={level} />
             </span>
-            {level === 1 ? "Longer GP wait than Finland" : level === 2 ? "… and few private or work-health doctor visits instead" : "… true in every one of the six tests we ran"}
+            {level === 1 ? "Longer GP wait than Finland overall" : level === 2 ? "… and few private or work-health doctor visits instead" : "… true in every one of the six tests we ran"}
           </li>
         ))}
       </ul>

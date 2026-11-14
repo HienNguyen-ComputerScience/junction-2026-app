@@ -38,7 +38,7 @@ export function Goal3Detail() {
       </div>
       <p className="text-pretty">
         <span className="font-semibold">Stand-in today:</span> the share of hospital referrals processed within 3 days
-        (Sotkanet 13; Finland{" "}
+        (Sotkanet 13; Finland overall:{" "}
         <span className="figure">{referral ? formatValue("13", referral.value) : "no value"}</span> in 2025). It is the
         only published, area-level timing figure after the GP, and it is the first step of the interval THL&apos;s
         guide follows (referral arrives → first treatment). It is not cancer-specific and stops before the patient is

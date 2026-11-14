@@ -34,7 +34,7 @@ import {
   type TargetLevel,
   type TargetPath,
 } from "@/lib/plan";
-import { CITY_UNITS_ONLY_REFERRAL, FIRST_YEAR, formatPct, getStageGap, STATUS_LABEL } from "@/lib/ranking";
+import { CITY_UNITS_ONLY_REFERRAL, FIRST_YEAR, formatPct, getStageGap, STATUS_LABEL, statusLabel } from "@/lib/ranking";
 import { getRecordingCaveat } from "@/lib/recording";
 import { diff1, formatAmount } from "@/lib/what-if";
 
@@ -149,7 +149,7 @@ const GAP_STEP_LABEL: Record<DataGap["step"], string> = {
 export function readPlanInput(params: URLSearchParams, anyRed: boolean): PlanInput {
   const list = (name: string) => Array.from({ length: MAX_ACTIONS }, (_, i) => cleanField(params.get(`${name}${i + 1}`)));
   return {
-    // An area with a step worse than Finland aims for Finland's level first; one without, for the best area's.
+    // An area with a step slower than Finland overall aims for Finland overall first; one without, for the best area's.
     target: parseTargetLevel(params.get("target"), anyRed ? "finland" : "best"),
     year: parseTargetYear(params.get("year")),
     person: list("person"),
@@ -233,7 +233,7 @@ function buildStep(countyId: string, stage: Stage, input: PlanInput): PlanStep {
       ? best.id === countyId
         ? "its own level, the best published"
         : `the best area's level (${best.name}, ${formatPct(best.value)})`
-      : `Finland's level (${formatPct(gap.national_value)})`;
+      : `Finland overall (${formatPct(gap.national_value)})`;
     target = {
       level,
       levelName,
@@ -244,7 +244,7 @@ function buildStep(countyId: string, stage: Stage, input: PlanInput): PlanStep {
   return {
     ...base,
     value: gap.value,
-    statusLabel: STATUS_LABEL[gap.status],
+    statusLabel: statusLabel(gap.status, gap.stage),
     note: cityOnly
       ? "This figure covers the city's own specialist units only. Most Helsinki referrals go to HUS, so it sets no target here."
       : null,
@@ -330,7 +330,7 @@ export function buildPlan(countyId: string, params: URLSearchParams, today: Date
     referral ? `Referrals (Sotkanet 13): ${referral.limitation.split(" Counted per hospital organisation")[0]}` : null,
     "Sotkanet 6411 is a share of recorded visits. Where the number of recorded visits changed a lot between 2023 and 2025, part of a change in the share may be how visits are recorded, not how long visits waited.",
     finlandGp !== null
-      ? `The status words compare the area with Finland's level in ${LATEST_YEAR}, not with a clinical standard. Finland's level is itself a delay: ${formatPct(finlandGp)} of non-urgent GP visits waited over 7 days.`
+      ? `The status words compare the area with Finland overall in ${LATEST_YEAR} (Sotkanet's whole-country value for the same indicator, not a target), not with a clinical standard. Finland overall is itself a delay: ${formatPct(finlandGp)} of non-urgent GP visits waited over 7 days.`
       : null,
     "The target path is arithmetic on published shares: an even pace from the latest figure to the chosen level. It is not a forecast and assumes no effect of any action.",
     "Results listed as tried elsewhere come from other countries or settings and are measured in their own units. They are not predictions for this area.",
@@ -351,7 +351,7 @@ export function buildPlan(countyId: string, params: URLSearchParams, today: Date
   });
 
   const targetLabel =
-    input.target === "best" ? "The best area's level on each step" : "Finland's level on each step";
+    input.target === "best" ? "The best area's level on each step" : "Finland overall on each step";
 
   return {
     county,

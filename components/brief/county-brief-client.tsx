@@ -65,7 +65,7 @@ function layoutOf(text: string): Layout {
       }
     }
   }
-  // "Short label (status): body", e.g. "The trend: ..." or "Getting a GP appointment (worse than Finland): ...".
+  // "Short label (status): body", e.g. "The trend: ..." or "Getting a GP appointment (slower than Finland overall): ...".
   const match = /^([A-Z][^:().\d]{2,40}?)(?: \(([^)]+)\))?: ([\s\S]+)$/.exec(text);
   if (match && ROW_LABELS.has(match[1])) {
     const [, label, status, body] = match;

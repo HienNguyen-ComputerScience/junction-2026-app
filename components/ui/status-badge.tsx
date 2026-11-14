@@ -18,7 +18,7 @@ export const STATUS_INK: Record<GapStatus, string> = {
 };
 
 /**
- * Colour for a big figure (`numeral`), by data status. Only "worse than Finland" colours the
+ * Colour for a big figure (`numeral`), by data status. Only "slower than Finland overall" colours the
  * figure itself; an amber figure stays in the text colour, with the marker and the label
  * carrying the amber, so a page keeps a calm end. Use this for numerals, STATUS_INK for labels.
  */

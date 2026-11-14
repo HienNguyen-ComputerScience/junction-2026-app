@@ -3,7 +3,7 @@
 // plain node. The callers read the published shares from lib/data and pass them in.
 //
 // Honesty rule: this is arithmetic on published shares, never a forecast. A target is a level
-// the director chooses (Finland's level or the best area's level) and a year; the functions
+// the director chooses (Finland overall or the best area's level) and a year; the functions
 // only say how far the published share is from that level and what even pace would close it.
 // No effect of any action is assumed.
 

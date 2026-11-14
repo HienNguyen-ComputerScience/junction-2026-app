@@ -156,8 +156,8 @@
   /* Data status: the only hues outside the greens, and never colour alone (a text label goes
      with every use). The alarm colour is a rust (terracotta), not a signal red: it reads as
      urgent next to the greens without fighting them, and its tint is a warm clay, not a pink.
-     The token is still called status-red. red = worse than Finland, slate (token status-amber, a historical name:
-     the data value stays "amber") = at or better than Finland's level, grey = no public data.
+     The token is still called status-red. red = slower than Finland overall, slate (token status-amber, a historical name:
+     the data value stays "amber") = the same as or better than Finland overall, grey = no public data.
      Fill for bars and marks (3:1 or more on cream, keylime, mint and sage), soft + border for
      chips, ink for text (AA on every surface). */
   --status-red: #ad4a22; /*      mark: 5.5:1 on cream, 4.8:1 on keylime, 3.6:1 on sage */

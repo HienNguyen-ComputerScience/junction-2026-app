@@ -7,7 +7,7 @@ import { MeasureBar } from "@/components/ui/measure-bar";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import { STAGE_LABELS } from "@/lib/act";
 import type { GapStatus, Stage } from "@/lib/data";
-import { formatPct, getStageGap, STATUS_LABEL, stageStatus } from "@/lib/ranking";
+import { formatPct, getStageGap, statusLabel, stageStatus } from "@/lib/ranking";
 
 /**
  * The three steps of the pathway, the one component for them on every page.
@@ -137,7 +137,7 @@ function StepStatus({ step }: { step: PathwayStep }) {
   return (
     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-2">
       <StatusBadge status={step.status} size="xs">
-        {step.measure?.shared && step.measure.value === null ? "No county figure" : STATUS_LABEL[step.status]}
+        {step.measure?.shared && step.measure.value === null ? "No county figure" : statusLabel(step.status, step.stage)}
       </StatusBadge>
       {step.measure ? (
         <SourceChip sourceId={step.measure.sourceId} />
@@ -232,7 +232,7 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
         {value !== null && measure && (
           <span className="pb-px type-caption whitespace-nowrap text-muted-foreground">
             <span className={cn("font-medium", STATUS_FIGURE[status])}>
-              {pointsVsFinland(value, measure.finland, step.stage === "referral")}
+              {pointsVsFinland(value, measure.finland)}
             </span>
           </span>
         )}
@@ -256,7 +256,7 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
         size={compact ? "sm" : "md"}
         value={value}
         finland={measure ? measure.finland : null}
-        finlandLabel={measure ? `Finland ${formatPct(measure.finland)}` : undefined}
+        finlandLabel={measure ? `Finland overall: ${formatPct(measure.finland)}` : undefined}
         status={status}
       />
 

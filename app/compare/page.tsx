@@ -18,7 +18,7 @@ export const metadata: Metadata = { title: "Compare all 22 areas | FirstLine" };
 const pct = (value: number) => `${value.toFixed(1)}%`;
 
 /**
- * Every area side by side, told on scroll: how many areas are worse than Finland (the headline),
+ * Every area side by side, told on scroll: how many areas are slower than Finland overall (the headline),
  * then a ScrollStory over the 22 bars (the longest wait, the shortest, the largest rise), then the
  * full table, sortable and downloadable, open at the end.
  */
@@ -35,15 +35,15 @@ export default function ComparePage() {
         lead
         as="h1"
         eyebrow={`Compare all ${lead.total} areas, ${LATEST_YEAR}`}
-        statement="Most areas wait longer than Finland"
+        statement="Most areas wait longer than Finland overall"
         figure={
-          <ChunkFigure tone="alarm" unit={`of ${lead.total} areas are worse than Finland's level`}>
+          <ChunkFigure tone="alarm" unit={`of ${lead.total} areas have a longer wait than Finland overall`}>
             <AnimatedNumber value={lead.worse} decimals={0} final={String(lead.worse)} level="loud" />
           </ChunkFigure>
         }
         meaning={
           <>
-            Finland&apos;s level: <span className="figure font-semibold">{pct(lead.finlandGp)}</span> of non-urgent GP visits waited
+            Finland overall: <span className="figure font-semibold">{pct(lead.finlandGp)}</span> of non-urgent GP visits waited
             more than 7 days. That level is itself a delay.
           </>
         }

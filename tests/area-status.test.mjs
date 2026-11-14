@@ -24,7 +24,7 @@ const { getVerdict } = await import("../lib/ranking.ts");
 
 // What the card's sentence (home card and act page) says, read back as a status.
 function statusFromCardText(text) {
-  if (text.startsWith("No measured step is worse than Finland")) return "amber";
+  if (text.startsWith("No measured step is slower than Finland overall")) return "amber";
   if (text.startsWith("No ") && text.includes("pathway data is published")) return "no_data";
   return "red";
 }
@@ -43,11 +43,11 @@ describe("area status: map colour = card verdict", () => {
   test("every area: the county page's verdict says the same", () => {
     for (const { id } of counties) {
       const verdict = getVerdict(id);
-      assert.equal(getAreaStatus(id) === "red", !verdict.startsWith("No measured step is worse than Finland"), `${id}: ${verdict}`);
+      assert.equal(getAreaStatus(id) === "red", !verdict.startsWith("No measured step is slower than Finland overall"), `${id}: ${verdict}`);
     }
   });
 
-  test("red exactly when a step with its own figure is worse than Finland; a HUS-wide value never counts", () => {
+  test("red exactly when a step with its own figure is slower than Finland overall; a HUS-wide value never counts", () => {
     for (const { id } of counties) {
       const gaps = getGaps(id);
       const anyRed = gaps.some((gap) => gap.status === "red");

@@ -23,7 +23,7 @@ function StageTile({ stage, index, confidence }: { stage: BriefingStage; index: 
           stage.isBreak ? "bg-status-red-soft" : measured ? "bg-keylime-wash" : "border border-dashed border-status-grey",
         )}
       >
-      {/* The mark of the step that is worse than Finland: a bar drawn across the top, then the words. */}
+      {/* The mark of the step that is slower than Finland overall: a bar drawn across the top, then the words. */}
       {stage.isBreak ? (
         <span aria-hidden className="animate-line-in absolute inset-x-0 top-0 h-1.5 bg-status-red" style={i(6)} />
       ) : null}
@@ -57,7 +57,7 @@ function StageTile({ stage, index, confidence }: { stage: BriefingStage; index: 
 
 /**
  * Step 2, "Where the delay is": the three steps from asking for a GP to reaching a specialist,
- * drawn in order, with the one that is worse than Finland marked. A step without a public
+ * drawn in order, with the one that is slower than Finland overall marked. A step without a public
  * figure is shown as that, in words, and counted in the sentence under the row.
  *
  * `confidence` is a slot per step, under its status, for the insights branch's confidence grade.
@@ -167,7 +167,7 @@ export function StepWhere({
                     ))}
                   </ol>
                   <p className="text-base leading-6 text-pretty text-charcoal">
-                    The colours compare {county.name} with Finland as a whole in {briefing.year}, not with a clinical
+                    The colours compare {county.name} with Finland overall (the whole-country figure for the same indicator) in {briefing.year}, not with a clinical
                     standard.
                   </p>
                 </div>

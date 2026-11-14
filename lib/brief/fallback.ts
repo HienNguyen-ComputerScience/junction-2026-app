@@ -43,19 +43,19 @@ export function buildFallbackBrief(context: BriefContext): ModelBrief {
   let headline: ModelClaim;
   if (gp && gpFi && gpStatus === "red") {
     headline = {
-      text: `In ${name}, the pathway breaks first at getting a GP appointment: ${show(gp)}% of non-urgent GP visits waited more than 7 days in ${y}, against ${show(gpFi)}% for Finland.`,
+      text: `In ${name}, the pathway breaks first at getting a GP appointment: ${show(gp)}% of non-urgent GP visits waited more than 7 days in ${y}, against ${show(gpFi)}% across Finland as a whole.`,
       numbers: [gp.value, 7, y, gpFi.value],
       source_ids: [gp.source_id],
     };
   } else if (ref && refFi && refStatus === "red") {
     headline = {
-      text: `In ${name}, the weakest public step is GP to specialist: ${show(ref)}% of referrals were processed within 3 days in ${y}, against ${show(refFi)}% for Finland.`,
+      text: `In ${name}, the weakest public step is GP to specialist: ${show(ref)}% of referrals were processed within 3 days in ${y}, against ${show(refFi)}% across Finland as a whole.`,
       numbers: [ref.value, 3, y, refFi.value],
       source_ids: [ref.source_id],
     };
   } else if (gp) {
     headline = {
-      text: `${name} is at or better than Finland's level where public data exists, but that is still a delay, not a pass: ${show(gp)}% of non-urgent GP visits waited more than 7 days in ${y}.`,
+      text: `${name} is the same as or better than Finland overall where public data exists, but that is still a delay, not a pass: ${show(gp)}% of non-urgent GP visits waited more than 7 days in ${y}.`,
       numbers: [gp.value, 7, y],
       source_ids: [gp.source_id],
     };
@@ -70,9 +70,9 @@ export function buildFallbackBrief(context: BriefContext): ModelBrief {
   // 1. Getting a GP appointment, against Finland and the other areas.
   if (gp && gpFi && gpDiff && gpRank && gpAreas) {
     const side = gpDiff.value > 0 ? "above" : gpDiff.value < 0 ? "below" : "level with";
-    const label = gpStatus === "red" ? "worse than Finland" : "at Finland's level or better, but still a delay";
+    const label = gpStatus === "red" ? "a longer wait than Finland overall" : "same as or better than Finland overall, but still a delay";
     claims.push({
-      text: `Getting a GP appointment (${label}): ${show(gp)}% of non-urgent GP visits waited more than 7 days in ${y}, ${show(gpDiff)} percentage points ${side} Finland's ${show(gpFi)}%. That is rank ${show(gpRank)} of ${show(gpAreas)} areas, counting from the longest wait.`,
+      text: `Getting a GP appointment (${label}): ${show(gp)}% of non-urgent GP visits waited more than 7 days in ${y}, ${show(gpDiff)} percentage points ${side} Finland overall (${show(gpFi)}%). That is rank ${show(gpRank)} of ${show(gpAreas)} areas, counting from the longest wait.`,
       numbers: [gp.value, 7, y, abs(gpDiff.value), gpFi.value, gpRank.value, gpAreas.value],
       source_ids: [gp.source_id],
     });
@@ -91,7 +91,7 @@ export function buildFallbackBrief(context: BriefContext): ModelBrief {
   // 3. GP to specialist, plus the stage nobody measures.
   const recognition = " Whether GPs recognise possible cancer has no public indicator in any county, so that stage has no public data.";
   if (ref && refFi && refRank && refAreas) {
-    const label = refStatus === "red" ? "worse than Finland" : "at Finland's level or better, but still not a pass";
+    const label = refStatus === "red" ? "slower than Finland overall" : "same as or better than Finland overall, but still not a pass";
     claims.push({
       text: `GP to specialist (${label}): ${show(ref)}% of referrals to specialist care were processed within 3 days in ${y}, against ${show(refFi)}% for Finland, rank ${show(refRank)} of ${show(refAreas)} areas with data, counting from the slowest.${recognition}`,
       numbers: [ref.value, 3, y, refFi.value, refRank.value, refAreas.value],
@@ -99,7 +99,7 @@ export function buildFallbackBrief(context: BriefContext): ModelBrief {
     });
   } else if (husRef && refFi) {
     claims.push({
-      text: `GP to specialist: Sotkanet publishes no ${y} value for ${name} alone. At HUS, which handles its hospital referrals, ${show(husRef)}% of referrals were processed within 3 days in ${y}, against ${show(refFi)}% for Finland. That is a HUS-wide value, not a county figure.${recognition}`,
+      text: `GP to specialist: Sotkanet publishes no ${y} value for ${name} alone. At HUS, which handles its hospital referrals, ${show(husRef)}% of referrals were processed within 3 days in ${y}, against ${show(refFi)}% across Finland as a whole. That is a HUS-wide value, not a county figure.${recognition}`,
       numbers: [y, husRef.value, 3, refFi.value],
       source_ids: [husRef.source_id],
     });

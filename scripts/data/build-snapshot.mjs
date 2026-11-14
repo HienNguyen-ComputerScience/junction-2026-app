@@ -548,8 +548,8 @@ const valueOf = (county_id, indicator_id, year) =>
 
 // ---------------------------------------------------------------- gaps
 // One rule, documented in data/README.md: compare the county with Finland
-// for the same indicator and year. Worse than Finland = red, otherwise amber
-// (still a delay, just not worse than the national level). No county value =
+// for the same indicator and year. Longer wait or slower than Finland overall = red, otherwise amber
+// (still a delay, just not worse than the national value). No county value =
 // no_data. gp_recognition has no public indicator, so it gets no rows and the
 // app shows it as grey.
 const gaps = [];
@@ -579,7 +579,7 @@ for (const ind of INDICATORS.filter((i) => i.stage)) {
         value: null,
         national_value: national.value,
         note: husLatest
-          ? `Sotkanet publishes no ${LATEST_YEAR} value for ${county.name} alone. At HUS, which handles its hospital referrals, ${fmt(husLatest.value)}% of referrals were processed within 3 days in ${LATEST_YEAR} (Finland ${fmt(national.value)}%).`
+          ? `Sotkanet publishes no ${LATEST_YEAR} value for ${county.name} alone. At HUS, which handles its hospital referrals, ${fmt(husLatest.value)}% of referrals were processed within 3 days in ${LATEST_YEAR} (Finland overall: ${fmt(national.value)}%).`
           : `Sotkanet publishes no ${LATEST_YEAR} value for ${county.name} on this indicator.`,
         ...(husLatest
           ? {
@@ -605,7 +605,7 @@ for (const ind of INDICATORS.filter((i) => i.stage)) {
       status: worse ? "red" : "amber",
       value: v.value,
       national_value: national.value,
-      note: `${fmt(v.value)}% ${what} in ${LATEST_YEAR} (Finland ${fmt(national.value)}%).`,
+      note: `${fmt(v.value)}% ${what} in ${LATEST_YEAR} (Finland overall: ${fmt(national.value)}%).`,
     });
   }
 }

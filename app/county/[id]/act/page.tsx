@@ -48,7 +48,7 @@ const FIGURE_CAVEAT: Record<string, string> = {
 /** The page's one statement: the area's main delay, in at most 12 words. */
 function statement(name: string, { focus, anyRed }: Bottleneck): string {
   if (focus.length === 0) return `${name}: no published pathway figures`;
-  if (!anyRed) return `${name}: no step worse than Finland. Closest: ${lowerFirst(STEP_SHORT[focus[0].stage])}`;
+  if (!anyRed) return `${name}: no step slower than Finland overall. Closest: ${lowerFirst(STEP_SHORT[focus[0].stage])}`;
   return `${name}'s ${focus.length > 1 ? "worst " : ""}delay: ${lowerFirst(STEP_SHORT[focus[0].stage])}`;
 }
 
@@ -122,7 +122,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
               <p className="text-lg text-foreground">{FIGURE_CAPTION[lead.indicator_id] ?? getIndicator(lead.indicator_id)?.short_name}</p>
               <span className="flex flex-wrap items-center gap-2 pt-1">
                 <span className="inline-flex min-h-8 items-center rounded-full bg-cream-paper px-3.5 text-base text-forest-ink">
-                  Finland {formatPct(lead.national_value)}
+                  Finland overall: {formatPct(lead.national_value)}
                 </span>
                 <SourceChip sourceId={lead.source_id} year={lead.year} />
               </span>

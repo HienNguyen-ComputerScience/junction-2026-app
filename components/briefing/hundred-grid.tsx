@@ -14,8 +14,8 @@ type DotState = "base" | "excess" | "short" | "empty";
  * (referrals handled in time, `higher`). `n` is this area's whole number of every 100, `f`
  * Finland's.
  *  - base: counted here.
- *  - excess: counted here, beyond Finland's level (late visits above Finland's level).
- *  - short: counted at Finland's level but not here.
+ *  - excess: counted here, beyond Finland overall (late visits above Finland overall).
+ *  - short: counted at Finland overall but not here.
  */
 function dotState(index: number, n: number, f: number | null, better: "lower" | "higher"): DotState {
   const at = index + 1;
@@ -59,9 +59,9 @@ export function HundredGrid({
   const has = (state: DotState) => states.includes(state);
   const worse = f !== null && (better === "lower" ? n > f : n < f);
 
-  // Late visits up to Finland's level are neutral and the part above it is red, the same rule
+  // Late visits up to Finland overall are neutral and the part above it is red, the same rule
   // as the bars elsewhere on the site. Referrals in time are slate; the part missing against
-  // Finland's level is hatched red.
+  // Finland overall is hatched red.
   const baseFill = better === "lower" && worse ? "bg-status-grey" : "bg-status-amber-bar";
   const dotClass: Record<DotState, string> = {
     base: baseFill,
@@ -79,17 +79,17 @@ export function HundredGrid({
         text:
           better === "lower"
             ? worse
-              ? "Late, up to Finland's level"
+              ? "Late, up to Finland overall"
               : "Late: more than a week after people asked"
             : "Processed within 3 days",
       },
-      { state: "excess", text: "Late, above Finland's level" },
+      { state: "excess", text: "Late, above Finland overall" },
       {
         state: "short",
         text:
           better === "lower"
-            ? `Late at Finland's level, not in ${areaName}`
-            : `Within 3 days at Finland's level, not in ${areaName}`,
+            ? `Late at the Finland-overall rate, not in ${areaName}`
+            : `Within 3 days at the Finland-overall rate, not in ${areaName}`,
       },
       { state: "empty", text: better === "lower" ? "Within a week" : "Took longer than 3 days" },
     ] as const
@@ -111,7 +111,7 @@ export function HundredGrid({
       <div className="flex flex-col gap-[14px]">
         <div
           role="img"
-          aria-label={`${n} of 100 dots are filled for ${areaName}${f !== null ? `; Finland's level is ${f}` : ""}.`}
+          aria-label={`${n} of 100 dots are filled for ${areaName}${f !== null ? `; Finland overall is ${f}` : ""}.`}
           className="grid w-fit grid-cols-10 gap-1.5 sm:grid-cols-20"
         >
           {states.map((state, index) => (

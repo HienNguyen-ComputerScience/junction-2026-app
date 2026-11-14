@@ -4,7 +4,7 @@ import { SourceChip } from "@/components/source-chip";
 import { Frame, FrameHeader, FramePanel, FrameTitle } from "@/components/ui/frame";
 import { TextLink } from "@/components/ui/text-link";
 import type { Stage } from "@/lib/data";
-import { getStageGap, STATUS_LABEL, stageStatus } from "@/lib/ranking";
+import { getStageGap, STATUS_LABEL, statusLabel, stageStatus } from "@/lib/ranking";
 import { cn } from "cn";
 
 type Group = "patient" | "county" | "hospital";
@@ -32,7 +32,7 @@ const GROUPS: { group: Group; label: string; from: number; span: number }[] = [
 function stageTag(countyId: string, stage: Stage): string {
   if (stage === "gp_recognition") return STATUS_LABEL.no_data;
   const status = stageStatus(countyId, stage);
-  if (status === "red" || status === "amber") return STATUS_LABEL[status];
+  if (status === "red" || status === "amber") return statusLabel(status, stage);
   const shared = getStageGap(countyId, stage)?.shared;
   return shared ? `${shared.name}-wide only` : STATUS_LABEL.no_data;
 }

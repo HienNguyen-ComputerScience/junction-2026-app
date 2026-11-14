@@ -36,10 +36,10 @@ Do not hand-edit the JSON; change `scripts/data/build-snapshot.mjs` and rebuild.
 
 ## Stage status rule (product decision, easy to change)
 
-For each county, the 2025 value is compared with Finland's 2025 value on the same indicator:
+For each county, the 2025 value is compared with Finland overall: Sotkanet's whole-country 2025 value for the same indicator (not a target, not an average of the areas):
 
-- **red**: worse than Finland
-- **amber**: Finland's level or better (still a delay, not a pass)
+- **red**: longer wait than Finland overall (GP access, 6411) or slower than Finland overall (referral, 13)
+- **amber**: same as or better than Finland overall (still a delay, not a pass)
 - **no_data**: Sotkanet has no county value
 
 `gp_recognition` (does the GP recognise possible cancer?) has no public indicator, so it has no rows and the app shows it as grey.

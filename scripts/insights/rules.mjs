@@ -163,8 +163,8 @@ export const SCOPE = {
 export const NWR_TESTS = [
   { id: "main", year: 2025, reference: "finland", margin: 0, label: "2025, compared with Finland (the main view)" },
   { id: "median", year: 2025, reference: "median", margin: 0, label: "2025, compared with the middle area of the 22 instead of Finland" },
-  { id: "margin5", year: 2025, reference: "finland", margin: 0.05, label: "2025, only counting areas more than 5% away from Finland's figure" },
-  { id: "margin10", year: 2025, reference: "finland", margin: 0.1, label: "2025, only counting areas more than 10% away from Finland's figure" },
+  { id: "margin5", year: 2025, reference: "finland", margin: 0.05, label: "2025, only counting areas more than 5% away from Finland overall" },
+  { id: "margin10", year: 2025, reference: "finland", margin: 0.1, label: "2025, only counting areas more than 10% away from Finland overall" },
   { id: "y2024", year: 2024, reference: "finland", margin: 0, label: "2024 figures, compared with Finland" },
   { id: "y2023", year: 2023, reference: "finland", margin: 0, label: "2023 figures, compared with Finland" },
 ];
@@ -175,22 +175,22 @@ export const NWR_GROUPS = [
   {
     id: "long-few",
     label: "Long wait, few other routes",
-    meaning: "GP wait longer than Finland's, and both occupational-health and private-doctor use lower than Finland's.",
+    meaning: "GP wait longer than Finland overall, and both occupational-health and private-doctor use lower than Finland overall.",
   },
   {
     id: "long-some",
     label: "Long wait, other routes in use",
-    meaning: "GP wait longer than Finland's, but occupational-health or private-doctor use at or above Finland's.",
+    meaning: "GP wait longer than Finland overall, but occupational-health or private-doctor use at or above Finland overall.",
   },
   {
     id: "short-few",
     label: "Shorter wait, few other routes",
-    meaning: "GP wait at or below Finland's, and both other routes used less than in Finland.",
+    meaning: "GP wait at or below Finland overall, and both other routes used less than in Finland overall.",
   },
   {
     id: "short-some",
     label: "Shorter wait, other routes in use",
-    meaning: "GP wait at or below Finland's, and at least one other route used as much as or more than in Finland.",
+    meaning: "GP wait at or below Finland overall, and at least one other route used as much as or more than in Finland overall.",
   },
 ];
 

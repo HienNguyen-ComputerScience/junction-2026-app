@@ -9,7 +9,7 @@
     {
       "id": "long-few",
       "label": "Long wait, few other routes",
-      "meaning": "GP wait longer than Finland's, and both occupational-health and private-doctor use lower than Finland's.",
+      "meaning": "GP wait longer than Finland overall, and both occupational-health and private-doctor use lower than Finland overall.",
       "areas": [
         "central-finland",
         "north-karelia",
@@ -24,7 +24,7 @@
     {
       "id": "long-some",
       "label": "Long wait, other routes in use",
-      "meaning": "GP wait longer than Finland's, but occupational-health or private-doctor use at or above Finland's.",
+      "meaning": "GP wait longer than Finland overall, but occupational-health or private-doctor use at or above Finland overall.",
       "areas": [
         "helsinki",
         "kanta-hame",
@@ -37,7 +37,7 @@
     {
       "id": "short-few",
       "label": "Shorter wait, few other routes",
-      "meaning": "GP wait at or below Finland's, and both other routes used less than in Finland.",
+      "meaning": "GP wait at or below Finland overall, and both other routes used less than in Finland overall.",
       "areas": [
         "central-ostrobothnia",
         "kainuu",
@@ -48,7 +48,7 @@
     {
       "id": "short-some",
       "label": "Shorter wait, other routes in use",
-      "meaning": "GP wait at or below Finland's, and at least one other route used as much as or more than in Finland.",
+      "meaning": "GP wait at or below Finland overall, and at least one other route used as much as or more than in Finland overall.",
       "areas": [
         "central-uusimaa",
         "east-uusimaa",
@@ -87,7 +87,7 @@
       "year": 2025,
       "reference": "finland",
       "margin": 0.05,
-      "label": "2025, only counting areas more than 5% away from Finland's figure",
+      "label": "2025, only counting areas more than 5% away from Finland overall",
       "values": {
         "wait": 54.7,
         "occupational": 2049,
@@ -99,7 +99,7 @@
       "year": 2025,
       "reference": "finland",
       "margin": 0.1,
-      "label": "2025, only counting areas more than 10% away from Finland's figure",
+      "label": "2025, only counting areas more than 10% away from Finland overall",
       "values": {
         "wait": 54.7,
         "occupational": 2049,

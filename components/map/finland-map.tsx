@@ -29,7 +29,7 @@ import {
  * outline (a hairline and a faint ground, its two largest islands), with no link and no
  * status, so the country keeps its shape and nothing suggests a value that does not exist.
  *
- * Status is never colour alone: every area's link is named "Name: 85.4%, Worse than Finland's level"
+ * Status is never colour alone: every area's link is named "Name: 85.4%, Longer wait than Finland overall"
  * (shown as a tooltip too), and highlighted areas carry a text label. The page's own legend
  * names the colours.
  *
@@ -65,7 +65,7 @@ type Props = {
   onSelect?: (id: string) => void;
 };
 
-// The fills of the bars, at the strength of the bars: an area that is worse than Finland is the
+// The fills of the bars, at the strength of the bars: an area that is slower than Finland overall is the
 // solid red of a bar's gap, an area at or better is the slate of a bar. The map's key and the
 // bars' key are therefore one key, with identical swatches. Hover and keyboard focus lift the
 // fill a step darker.

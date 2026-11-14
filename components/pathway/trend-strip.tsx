@@ -97,7 +97,7 @@ export const TREND_FILL: Record<GapStatus, string> = {
 export const TREND_PAST_FILL = "bg-foreground/25";
 
 /**
- * The judged column when it is worse than Finland, drawn by the bar rule of measure-bar.tsx
+ * The judged column when it is slower than Finland overall, drawn by the bar rule of measure-bar.tsx
  * turned upright. A wait share runs past the tick (tinted up to it, solid red above); a referral
  * share stops short of it (the tinted column ends at the value; the shortfall up to the tick is
  * faded red hatching).
@@ -216,10 +216,10 @@ function TrendChart({
   // The ticks are labelled on the chart, so the line under it only says when one is missing.
   const tickText =
     ticks.length === 0
-      ? "No Finland value is published for these years."
+      ? "No Finland-overall value is published for these years."
       : ticks.length === shown.length
         ? ""
-        : `Finland's value is published for ${ticks.map((point) => point.year).join(", ")} only.`;
+        : `The Finland-overall value is published for ${ticks.map((point) => point.year).join(", ")} only.`;
 
   return (
     <figure className="flex w-full min-w-0 flex-col gap-3">
