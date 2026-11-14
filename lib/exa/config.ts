@@ -203,4 +203,6 @@ export const ASK_EXAMPLES = [
 ];
 
 export const HOUR = 3_600_000;
-export const TTL = { news: 24 * HOUR, evidence: 7 * 24 * HOUR, ask: 24 * HOUR };
+// askNothingFound: 5 minutes. Long enough that a judge clicking the same chip again (or the whole room
+// clicking it) is served from cache, short enough that a wrong "nothing found" is retried soon.
+export const TTL = { news: 24 * HOUR, evidence: 7 * 24 * HOUR, ask: 24 * HOUR, askNothingFound: 5 * 60_000 };
