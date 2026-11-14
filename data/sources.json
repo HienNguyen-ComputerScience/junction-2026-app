@@ -144,6 +144,24 @@
     "data_updated": "2026-06-05"
   },
   {
+    "source_id": "sotkanet-2371",
+    "kind": "statistic",
+    "name": "Sotkanet 2371: Occupational health-care visits (physicians) per 1000 persons aged 15-64",
+    "url": "https://sotkanet.fi/sotkanet/en/metadata/indicators/2371",
+    "publisher": "Finnish institute for Health and Welfare (THL), Sotkanet",
+    "retrieved": "2026-11-14",
+    "data_updated": "2026-09-24"
+  },
+  {
+    "source_id": "sotkanet-293",
+    "kind": "statistic",
+    "name": "Sotkanet 293: Outpatient physician visits in primary health care for those aged 15-64 per 1000 persons of same age",
+    "url": "https://sotkanet.fi/sotkanet/en/metadata/indicators/293",
+    "publisher": "Finnish institute for Health and Welfare (THL), Sotkanet",
+    "retrieved": "2026-11-14",
+    "data_updated": "2026-09-24"
+  },
+  {
     "source_id": "sotkanet-3620",
     "kind": "statistic",
     "name": "Sotkanet 3620: Proportion of women invited to cervical cancer screening (smear test) who attended, %",
@@ -187,6 +205,15 @@
     "publisher": "Finnish institute for Health and Welfare (THL), Sotkanet",
     "retrieved": "2026-11-14",
     "data_updated": "2026-05-13"
+  },
+  {
+    "source_id": "sotkanet-692",
+    "kind": "statistic",
+    "name": "Sotkanet 692: Reimbursement for visits to private physicians, recipients as % of total population",
+    "url": "https://sotkanet.fi/sotkanet/en/metadata/indicators/692",
+    "publisher": "Social Insurance Institution of Finland (Kela), Sotkanet",
+    "retrieved": "2026-11-14",
+    "data_updated": "2026-06-08"
   },
   {
     "source_id": "sotkanet-regions",
