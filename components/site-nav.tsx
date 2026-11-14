@@ -50,7 +50,9 @@ export function NavLinks({
   areaIds: string[];
 }) {
   const fromUrl = pathname === "/" && areaParam && areaIds.includes(areaParam) ? areaParam : null;
-  const actionsArea = countyOf(pathname) ?? fromUrl ?? lastArea ?? defaultArea;
+  // Home always shows an area (its ?area=, else the default), so the remembered one is not used there.
+  const remembered = pathname === "/" ? null : lastArea;
+  const actionsArea = countyOf(pathname) ?? fromUrl ?? remembered ?? defaultArea;
   const hrefs: Record<string, string> = {
     areas: "/",
     actions: `/county/${actionsArea}/act`,
