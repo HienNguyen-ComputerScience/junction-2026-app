@@ -83,7 +83,7 @@ export function AskBox() {
           Ask the evidence
         </FrameTitle>
         {/* Only once there are live results to mark; before that the page's one mark is the news'. */}
-        {data && (
+        {data && !data.offTopic && (
           <FrameMeta>
             <LiveMark result={data} />
           </FrameMeta>
