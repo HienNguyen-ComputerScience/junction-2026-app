@@ -38,7 +38,15 @@ export function LimitationsBox({
           summaryClassName="min-h-11 w-full gap-1.5 px-3.5 py-2.5 hover:no-underline"
           summary={
             <span>
-              {TITLE} <span className="font-normal text-muted-foreground tabular-nums">({items.length})</span>
+              <span className="sm:hidden">
+                Limitations{" "}
+                <span className="font-normal whitespace-nowrap text-muted-foreground tabular-nums">({items.length})</span>
+                : read before acting
+              </span>
+              <span className="max-sm:hidden">
+                {TITLE}{" "}
+                <span className="font-normal whitespace-nowrap text-muted-foreground tabular-nums">({items.length})</span>
+              </span>
             </span>
           }
         >

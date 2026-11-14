@@ -81,20 +81,20 @@ export function TrendStrip({ stages, areaName }: { stages: TrendStage[]; areaNam
 }
 
 /** The one judged column of a trend (the latest year), in its status colour. */
-const TREND_FILL: Record<GapStatus, string> = {
+export const TREND_FILL: Record<GapStatus, string> = {
   red: "bg-status-red",
   amber: "bg-status-amber-bar",
   no_data: "bg-status-grey",
 };
 /** Earlier years have no status (only the latest year is judged): quiet and neutral. */
-const TREND_PAST_FILL = "bg-foreground/25";
+export const TREND_PAST_FILL = "bg-foreground/25";
 
 /**
  * The judged column when it is worse than Finland, drawn by the bar rule of measure-bar.tsx
  * turned upright: tinted red, with the solid red on the gap to Finland's value. A wait share
  * runs past the tick (solid above it); a referral share stops short of it (solid up to it).
  */
-function WorseColumn({ value, finland }: { value: number; finland: number }) {
+export function WorseColumn({ value, finland }: { value: number; finland: number }) {
   const low = Math.min(value, finland);
   const high = Math.max(value, finland);
   return (
@@ -119,8 +119,8 @@ function TrendRow({ stage }: { stage: TrendStage }) {
   const word = change > 0 ? (faster ? "faster" : "worse") : faster ? "slower" : "better";
 
   return (
-    <li className="grid gap-x-8 gap-y-5 py-5 first:pt-0 last:pb-0 lg:grid-cols-[1fr_2fr]">
-      <div className="flex flex-col gap-3">
+    <li className="grid gap-x-10 gap-y-5 py-5 first:pt-0 last:pb-0 lg:grid-cols-[15rem_minmax(0,1fr)]">
+      <div className="flex flex-col gap-4 lg:py-2">
         <p className="flex items-center gap-2 text-[0.9375rem] leading-snug font-semibold">
           <StepMark step={stage.step} status={stage.status} className="size-5 text-[0.6875rem]" />
           <span>
@@ -133,11 +133,11 @@ function TrendRow({ stage }: { stage: TrendStage }) {
             <dt className="type-caption text-muted-foreground">Since {first.year}</dt>
             <dd className="flex items-baseline gap-1.5 whitespace-nowrap">
               {change === 0 ? (
-                <span className="numeral text-[1.625rem] text-foreground">No change</span>
+                <span className="numeral text-[2.25rem] leading-none text-foreground">No change</span>
               ) : (
                 <>
-                  <span className="numeral text-[1.625rem] text-foreground">{Math.abs(change).toFixed(1)}</span>
-                  <span className="type-caption text-muted-foreground">pts {word}</span>
+                  <span className="numeral text-[2.25rem] leading-none text-foreground">{Math.abs(change).toFixed(1)}</span>
+                  <span className="text-sm text-muted-foreground">pts {word}</span>
                 </>
               )}
             </dd>
@@ -163,7 +163,7 @@ function TrendRow({ stage }: { stage: TrendStage }) {
  * Columns by year on a zero-based 0 to 100% scale, so 58.0 and 85.4 look as different as they
  * are. Only the latest year is judged and drawn in its status colour; earlier years are neutral
  * grey. Finland is drawn per year: a short white tick at that year's own Finland value on that
- * year's bar, with a small label beside it (below the year on a phone). A year without a
+ * year's bar, labelled once, under the year on the axis (never between the bars). A year without a
  * published Finland value has no tick, and the line under the chart says so.
  */
 function TrendChart({
@@ -183,7 +183,7 @@ function TrendChart({
   const finlandOf = (year: number) => nationalTrend.find((point) => point.year === year)?.value ?? null;
   // Value labels sit 6px above their bar. One that would cover the Finland tick of its own
   // column moves just above the tick instead.
-  const PLOT = 128;
+  const PLOT = 176;
   const LABEL = 20;
   const labelBottom = (value: number, finland: number | null, gapAbove: boolean) => {
     const bottom = (clamp(value) / 100) * PLOT + 6;
@@ -205,10 +205,10 @@ function TrendChart({
         : `Finland's value is published for ${ticks.map((point) => point.year).join(", ")} only.`;
 
   return (
-    <figure className="flex w-full max-w-[640px] min-w-0 flex-col gap-3">
+    <figure className="flex w-full min-w-0 flex-col gap-3">
       <div aria-hidden className="flex flex-col gap-2 pt-5">
-        <div className="relative h-32 border-b border-foreground/40">
-          <div className="absolute inset-0 flex gap-3 px-1 sm:gap-6 sm:px-3">
+        <div className="relative h-44 border-b border-foreground/40">
+          <div className="absolute inset-0 flex gap-4 px-1 sm:gap-10 sm:px-4">
             {trend.map((point, i) => {
               const finland = finlandOf(point.year);
               const worse =
@@ -219,7 +219,7 @@ function TrendChart({
                     <span className="pb-1 type-caption text-faint">No data</span>
                   ) : (
                     <>
-                      <div className="relative h-full w-full max-w-24">
+                      <div className="relative h-full w-full max-w-28">
                         {worse ? (
                           <WorseColumn value={clamp(point.value)} finland={clamp(finland)} />
                         ) : (
@@ -232,19 +232,10 @@ function TrendChart({
                           />
                         )}
                         {finland !== null && (
-                          <>
-                            <span
-                              className="absolute -inset-x-1 h-0.5 bg-foreground"
-                              style={{ bottom: `calc(${clamp(finland)}% - 1px)` }}
-                            />
-                            <span
-                              className="absolute left-full ml-2.5 flex translate-y-1/2 flex-col whitespace-nowrap type-note leading-4 text-muted-foreground max-sm:hidden"
-                              style={{ bottom: `${clamp(finland)}%` }}
-                            >
-                              <span>Finland</span>
-                              <span className="figure text-foreground">{formatPct(finland)}</span>
-                            </span>
-                          </>
+                          <span
+                            className="absolute -inset-x-1.5 h-0.5 bg-foreground"
+                            style={{ bottom: `calc(${clamp(finland)}% - 1px)` }}
+                          />
                         )}
                       </div>
                       <span
@@ -263,15 +254,15 @@ function TrendChart({
             })}
           </div>
         </div>
-        <div className="flex gap-3 px-1 sm:gap-6 sm:px-3">
+        <div className="flex gap-4 px-1 sm:gap-10 sm:px-4">
           {trend.map((point) => {
             const finland = finlandOf(point.year);
             return (
               <span key={point.year} className="flex flex-1 flex-col items-center text-center">
                 <span className="figure text-[0.8125rem] text-muted-foreground">{point.year}</span>
                 {finland !== null && point.value !== null && (
-                  <span className="type-note text-muted-foreground sm:hidden">
-                    Finland <span className="figure">{formatPct(finland)}</span>
+                  <span className="type-note text-muted-foreground">
+                    Finland <span className="figure text-foreground">{formatPct(finland)}</span>
                   </span>
                 )}
               </span>
