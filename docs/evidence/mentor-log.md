@@ -54,4 +54,5 @@ Copy this block once per conversation.
 - First impression: the map of regions, which works as the hook.
 - Second impression: "why are they so high, so red?" They need to see how the benchmark works: what the % means, why red (compared with Finland's own level, which is itself 54.7%), and what a good level would be.
 - They want the main reason an area is red, in one short sentence a normal person gets at a glance. "Ask the evidence" lists a lot of sources but gives no main reason.
+- They want the dashboard cleaner, with fewer words.
 - Changes this causes: passed to Phương on the board (UI is Phương's). No change to `evidence.json`.
