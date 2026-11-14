@@ -156,7 +156,7 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, leads
       {/* The map: last on a phone, under the picker from lg. */}
       <FramePanel padding="none" className="flex flex-col max-lg:order-last lg:col-start-1 lg:row-start-2">
         <FramePanelLabel className="flex-col items-start gap-0">
-          <span>Red: any step worse than Finland</span>
+          <span>Where a step is worse than Finland</span>
           <span className="pt-0.5 text-[0.75rem] leading-4 font-normal text-muted-foreground">
             Click an area on the map
           </span>

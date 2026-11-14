@@ -104,7 +104,7 @@ export function RankingList({
       {/* Below lg: one line that says what the bar and the line are, before the data. The key
           is under the list. */}
       <p className="border-b border-border px-4 py-3 type-caption text-pretty text-muted-foreground sm:px-5 lg:hidden">
-        Bars: non-urgent GP visits waiting over 7 days. White line, and the gap in each row:{" "}
+        Bars: non-urgent GP visits waiting over 7 days. Dark line, and the gap in each row:{" "}
         {withFigures(finlandLabel)}.
       </p>
 

@@ -267,10 +267,9 @@ export function FinlandMap({
                   strokeWidth={small ? 0.75 : 1}
                   className={cn(
                     "transition-colors group-focus-visible:stroke-ring group-focus-visible:[stroke-width:4px]",
-                    // Selected: lighter fill; its accent outline is drawn on top, after the loop.
-                    // While one area is selected the others step back a little.
+                    // Selected: its Forest Ink outline is drawn on top, after the loop. The other
+                    // areas keep their full fill: dimmed on a light panel they wash out below 3:1.
                     "stroke-card",
-                    selectedId !== undefined && !selected && "opacity-[0.72] group-hover:opacity-100 group-focus-visible:opacity-100",
                     selected ? SELECTED_FILL[area.status] : small ? SMALL_AREA[area.status] : AREA_FILL[area.status],
                   )}
                 />
