@@ -30,7 +30,7 @@ const ITEMS: NavItem[] = [
     short: "Actions",
     match: (p) => p.startsWith("/county") && (p.endsWith("/act") || p.endsWith("/plan")),
   },
-  { key: "insights", label: "Where access is hardest", short: "Access", match: (p) => p.startsWith("/insights") },
+  { key: "insights", label: "Where access is hardest", short: "Hardest areas", match: (p) => p.startsWith("/insights") },
   { key: "ask", label: "Ask the evidence", short: "Ask", match: (p) => p.startsWith("/ask") },
   // The walkthrough of where the numbers come from and what they cannot say (app/how-to-read).
   { key: "how-to-read", label: "How to read these numbers", short: "How to read", match: (p) => p.startsWith("/how-to-read") },
