@@ -337,3 +337,10 @@ test("lists: every category id is unique and has keywords", () => {
   assert.equal(new Set(ids).size, ids.length);
   for (const category of RED_FLAG_CATEGORIES) assert.ok(category.keywords.length > 0, category.id);
 });
+
+test("each category's hint word matches that category", () => {
+  for (const category of RED_FLAG_CATEGORIES) {
+    assert.deepEqual(matchCategories(category.hint), [category.id], category.id);
+  }
+  assert.deepEqual(redFlags.HINT_WORDS, RED_FLAG_CATEGORIES.map((category) => category.hint));
+});
