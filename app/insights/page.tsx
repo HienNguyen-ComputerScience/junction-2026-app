@@ -252,6 +252,17 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
               ))}
             </ul>
           </CaveatNote>
+          <SaveShare
+            className="pt-2 print:hidden"
+            options={[
+              { kind: "print" },
+              {
+                kind: "email",
+                subject: "Where cancer care access is hardest in Finland",
+                intro: "Where access to early cancer care is hardest across Finland, from published figures:",
+              },
+            ]}
+          />
         </Reveal>
       </header>
 
@@ -356,17 +367,6 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
         action={
           <div className="flex flex-wrap items-center gap-3 *:max-w-full">
             <StarterDownload label="Download the recording template (Excel)" />
-            <SaveShare
-              className="print:hidden"
-              options={[
-                { kind: "print" },
-                {
-                  kind: "email",
-                  subject: "Where cancer care access is hardest in Finland",
-                  intro: "Where access to early cancer care is hardest across Finland, from published figures:",
-                },
-              ]}
-            />
           </div>
         }
         more={
