@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { BadgeCheck } from "lucide-react";
 
 import { SourceChip } from "@/components/source-chip";
+import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import { FramePanel } from "@/components/ui/frame";
 import { STAGE_LABELS } from "@/lib/act";
@@ -21,19 +21,11 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 const TAG =
   "inline-flex h-6 w-fit shrink-0 items-center rounded-sm border border-input px-2 text-[0.75rem] leading-none font-medium text-foreground";
 
-/** "Source checked" plus the source chip. On a phone the chip comes first and the tag shortens. */
+/** "Source checked" (the quiet provenance mark, solid: the team checked it) plus the source chip. */
 function SourceMarks({ action }: { action: Evidence }) {
   return (
-    <span className="flex min-w-0 flex-wrap items-center gap-2">
-      {action.verified ? (
-        <span className={`${TAG} gap-1.5 max-sm:order-last max-sm:h-7 max-sm:border-transparent max-sm:px-0`}>
-          <BadgeCheck aria-hidden strokeWidth={1.75} className="size-4 text-muted-foreground" />
-          <span aria-hidden className="sm:hidden">
-            Checked
-          </span>
-          <span className="max-sm:sr-only">Source checked</span>
-        </span>
-      ) : null}
+    <span className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
+      {action.verified ? <Badge variant="checked">Source checked</Badge> : null}
       <SourceChip sourceId={action.source_id} />
     </span>
   );

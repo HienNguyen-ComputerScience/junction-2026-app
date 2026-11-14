@@ -66,9 +66,11 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
           <div className="flex flex-col gap-3 rounded-lg border border-dashed border-input bg-muted/40 p-4">
             <div className="flex flex-col gap-1.5">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="secondary">Found live — unverified</Badge>
+                <Badge variant="unverified">Found live — unverified</Badge>
                 <span className="type-note text-muted-foreground">via Exa</span>
-                {data && <Badge variant="secondary">{STATUS_LABEL[data.freshness]}</Badge>}
+                {data && (
+                  <span className="type-note text-muted-foreground">· {STATUS_LABEL[data.freshness]}</span>
+                )}
               </div>
               <p className="type-micro text-muted-foreground">
                 Not checked by the team, unlike this action&apos;s own source. Read before relying on it.

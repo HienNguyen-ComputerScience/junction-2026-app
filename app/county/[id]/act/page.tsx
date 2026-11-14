@@ -51,7 +51,23 @@ const STAGE_IN_SENTENCE: Record<Stage, string> = {
   referral: "the GP to specialist referral",
 };
 
-/** The one-line answer above the stat cards. The full summary sentence sits under them. */
+/**
+ * A data sentence with its percentages set in the figure face ("(Finland 54.7%)"), so every
+ * data number on the page uses the same numerals. The words stay in the text face.
+ */
+function withFigures(text: string): ReactNode {
+  return text.split(/(\d+(?:\.\d+)?%)/).map((part, i) =>
+    i % 2 === 1 ? (
+      <span key={i} className="figure">
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
+
+/** The one-line answer above the stat strip. The full summary sentence sits under it. */
 function bottleneckLede(bottleneck: Bottleneck): string {
   const { focus, anyRed } = bottleneck;
   if (focus.length === 0) return "No 2025 pathway data is published for this county.";
@@ -143,7 +159,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           {/* The full summary, data-derived, for reading without the chart. */}
           <Disclosure summary="Read as text">
             <p className="max-w-[60rem] pt-1 pb-1 text-sm leading-relaxed text-pretty text-muted-foreground">
-              {bottleneckSentence(county.name, bottleneck)}
+              {withFigures(bottleneckSentence(county.name, bottleneck))}
             </p>
           </Disclosure>
         </FrameFooter>
@@ -351,7 +367,7 @@ function StageStat({ step, gap }: { step: number; gap: Gap }) {
           <span aria-hidden className="max-md:hidden" />
         </>
       )}
-      <p className="pt-3 type-caption text-pretty text-muted-foreground">{caption}</p>
+      <p className="pt-3 type-caption text-pretty text-muted-foreground">{withFigures(caption)}</p>
       <MeasureBar
         className="pt-5 md:self-end"
         value={gap.value}
