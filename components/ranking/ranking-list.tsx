@@ -156,7 +156,7 @@ export function RankingList({
                 <span aria-hidden>–</span>
                 <span className="sr-only">Not ranked</span>
               </span>
-              <span className="flex items-center py-4 text-[0.9375rem] font-semibold transition-colors group-hover:text-brand-ink group-focus-visible:text-brand-ink lg:col-start-2 lg:py-4">
+              <span className="flex items-center py-4 text-base font-semibold transition-colors group-hover:text-brand-ink group-focus-visible:text-brand-ink lg:col-start-2 lg:py-4">
                 <span className="sr-only">Not ranked: </span>
                 {county.name}
               </span>
@@ -348,14 +348,14 @@ function RankingRowLink({
       className={`${ROW_GRID} ${ROW_LINK} ${divider ? ROW_DIVIDER : ""}`}
     >
       {/* Desktop: its own column. */}
-      <span className="hidden figure text-[0.8125rem] leading-6 text-faint lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:flex lg:items-center">
+      <span className="hidden figure text-base leading-6 text-faint lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:flex lg:items-center">
         <span className="sr-only">Rank </span>
         {row.rank}
       </span>
 
-      <span className="col-start-1 row-start-1 flex min-w-0 items-baseline gap-2 pt-3 text-[0.9375rem] leading-6 font-semibold transition-colors group-hover:text-brand-ink group-focus-visible:text-brand-ink lg:col-start-2 lg:pt-1.5">
+      <span className="col-start-1 row-start-1 flex min-w-0 items-baseline gap-2 pt-3 text-base leading-6 font-semibold transition-colors group-hover:text-brand-ink group-focus-visible:text-brand-ink lg:col-start-2 lg:pt-1.5">
         {/* Phone: the rank is inline before the name, so the bar can use the full card width. */}
-        <span className="shrink-0 figure text-[0.8125rem] font-normal text-faint lg:hidden">
+        <span className="shrink-0 figure text-base font-normal text-faint lg:hidden">
           <span className="sr-only">Rank </span>
           {row.rank}
         </span>
@@ -412,7 +412,7 @@ function RankingRowLink({
             {/* No value: nothing here, the "No public data" tag says it. The cell keeps its
                 width so the bars line up down the column. */}
             <span
-              className={`w-11 shrink-0 figure text-[0.8125rem] font-medium empty:hidden sm:empty:block lg:w-12 lg:text-sm ${row.referral === null ? "text-muted-foreground" : "text-foreground"}`}
+              className={`w-11 shrink-0 figure text-base font-medium empty:hidden sm:empty:block lg:w-12 lg:text-sm ${row.referral === null ? "text-muted-foreground" : "text-foreground"}`}
             >
               {row.referral !== null
                 ? formatPct(row.referral.value)

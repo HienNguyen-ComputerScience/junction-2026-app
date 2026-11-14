@@ -325,16 +325,16 @@ h2:not([class*="type-"], .font-sans) {
   text-transform: uppercase;
   color: var(--color-forest-ink);
 }
-/* Secondary matter around the body copy (meta lines, table notes): 14px. */
+/* Secondary matter around the body copy (meta lines, table notes): 16px, the body floor. */
 @utility type-caption {
-  font-size: 0.875rem;
-  line-height: 1.375rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
-/* Notes on a chart or a card ("via Exa", "No indicator, so nothing to draw", dates): 13px.
+/* Notes on a chart or a card ("via Exa", "No indicator, so nothing to draw", dates): 16px, the body floor.
    Pair with text-muted-foreground. A number inside a note takes `figure`. */
 @utility type-note {
-  font-size: 0.8125rem;
-  line-height: 1.125rem;
+  font-size: 1rem;
+  line-height: 1.375rem;
   font-variant-numeric: tabular-nums;
 }
 /* 12px: source chips and bare axis numerals (0%, 100%, years, tick values). */

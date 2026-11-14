@@ -70,8 +70,8 @@ Fonts are loaded with `next/font` in `app/layout.tsx`: Inter as `--font-sans` (3
 | `type-heading` | Inter 600, 18px / 1.3. Item title inside a section. |
 | `type-lede` | 18px / 1.6. |
 | `type-eyebrow` | 11px, 600, uppercase, 0.08em, Forest Ink. The only uppercase style. |
-| `type-caption` | 14px. Meta lines. |
-| `type-note` | 13px. Notes on a chart. |
+| `type-caption` | 16px (was 14px). Meta lines. |
+| `type-note` | 16px (was 13px). Notes on a chart. |
 | `type-mark` | 12px tabular. Axis numerals. |
 | `numeral` | A standalone key figure: Inter 300, tabular, tight. Add a `text-*` size (20–80px). |
 | `figure` | A number inside a line of text: tabular figures only. |

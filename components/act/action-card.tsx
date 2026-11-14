@@ -11,7 +11,7 @@ import type { Evidence } from "@/lib/data";
 
 /** A plain text tag (step, checked): the chip shape in the UI sans, so it never reads as a source. */
 const TAG =
-  "inline-flex h-6 w-fit shrink-0 items-center rounded-sm border border-input px-2 text-[0.75rem] leading-none font-medium text-muted-foreground";
+  "inline-flex h-6 w-fit shrink-0 items-center rounded-sm border border-input px-2 text-base leading-none font-medium text-muted-foreground";
 
 /** "Source checked" (the quiet provenance mark, solid: the team checked it) plus the source chip. */
 function SourceMarks({ action }: { action: Evidence }) {
@@ -106,9 +106,9 @@ function EvidenceStat({ action, children }: { action: Evidence; children?: React
       {stat ? (
         <>
           {/* A figure with no stated comparison in the data is labelled as a study result. */}
-          {qualifier ? null : <p className="text-[0.8125rem] leading-4 text-muted-foreground">Study finding:</p>}
+          {qualifier ? null : <p className="text-base leading-4 text-muted-foreground">Study finding:</p>}
           <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p>
-          {qualifier ? <p className="text-[0.8125rem] leading-snug text-pretty text-muted-foreground first-letter:uppercase">{qualifier}</p> : null}
+          {qualifier ? <p className="text-base leading-snug text-pretty text-muted-foreground first-letter:uppercase">{qualifier}</p> : null}
         </>
       ) : (
         <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-foreground tabular-nums">

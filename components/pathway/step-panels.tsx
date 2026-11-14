@@ -61,7 +61,7 @@ function TabFace({ step }: { step: PathwayStep }) {
     <>
       <span className="flex items-start gap-2 max-sm:w-full sm:h-10">
         <StepMark step={step.step} status={status} className="mt-px size-5 text-[0.6875rem]" />
-        <span className="text-[0.9375rem] leading-5 font-semibold text-pretty text-foreground">
+        <span className="text-base leading-5 font-semibold text-pretty text-foreground">
           <span className="sr-only">Step {step.step}: </span>
           {step.title}
         </span>
@@ -123,7 +123,7 @@ function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) 
           <TextLink kind="nav" inline href={`/county/${countyId}/act#referral-routes`} className="text-sm">
             The four referral routes a county needs
           </TextLink>
-          <TextLink kind="jump" href={WHY.gp_recognition ?? "#"} className="min-h-6 text-[0.8125rem]">
+          <TextLink kind="jump" href={WHY.gp_recognition ?? "#"} className="min-h-6 text-base">
             see why
           </TextLink>
         </span>
@@ -155,7 +155,7 @@ function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) 
           <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <SourceChip sourceId={measure.sourceId} />
             {WHY[step.stage] ? (
-              <TextLink kind="jump" href={WHY[step.stage] ?? "#"} className="min-h-6 text-[0.8125rem]">
+              <TextLink kind="jump" href={WHY[step.stage] ?? "#"} className="min-h-6 text-base">
                 see why
               </TextLink>
             ) : null}

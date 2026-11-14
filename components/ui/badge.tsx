@@ -14,7 +14,7 @@ const PROVENANCE = "gap-1.5 px-0 text-base font-normal text-muted-foreground"
 const PROVENANCE_ICON = { unverified: Globe, provenance: Globe, checked: ShieldCheck } as const
 
 const badgeVariants = cva(
-  "group/badge inline-flex h-6 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2.5 py-0.5 text-[0.8125rem] leading-none font-medium whitespace-nowrap transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  "group/badge inline-flex h-6 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2.5 py-0.5 text-base leading-none font-medium whitespace-nowrap transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 [&>svg]:pointer-events-none [&>svg]:size-3!",
   {
     variants: {
       variant: {
@@ -37,7 +37,7 @@ const badgeVariants = cva(
         // The reference tag: drawn exactly like SourceChip (components/source-chip.tsx), so a
         // source reads the same whether it is a link or a plain tag.
         outline:
-          "h-7 border-border bg-cream-paper text-[0.75rem] font-medium tracking-normal text-forest-ink tabular-nums [a]:hover:border-forest-ink",
+          "h-7 border-border bg-cream-paper text-base font-medium tracking-normal text-forest-ink tabular-nums [a]:hover:border-forest-ink",
         ghost:
           "hover:bg-muted hover:text-muted-foreground",
         link: "text-brand-ink underline-offset-4 hover:underline",

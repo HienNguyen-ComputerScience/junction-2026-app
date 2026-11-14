@@ -38,7 +38,7 @@ export function StepUnit({
         <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <span className="type-eyebrow">Step {step.number}</span>
           {flag ? (
-            <span className="rounded-full bg-forest-ink px-2.5 py-0.5 text-[0.8125rem] font-semibold text-cream-paper">{flag}</span>
+            <span className="rounded-full bg-forest-ink px-2.5 py-0.5 text-base font-semibold text-cream-paper">{flag}</span>
           ) : null}
         </p>
         <Heading className="type-heading">{step.label}</Heading>

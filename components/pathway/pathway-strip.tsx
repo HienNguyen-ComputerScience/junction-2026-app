@@ -102,7 +102,7 @@ export function PathwayStrip({ countyId }: { countyId: string }) {
                       step={card.step}
                       status={card.status}
                       className={cn(
-                        "size-7 text-[0.8125rem] ring-4 ring-card",
+                        "size-7 text-base ring-4 ring-card",
                         card.status === "no_data" && "bg-muted",
                       )}
                     />
@@ -124,7 +124,7 @@ export function PathwayStrip({ countyId }: { countyId: string }) {
                   <span
                     title={step.stage ? `Challenge talk wording: ${step.label}` : undefined}
                     className={cn(
-                      "text-[0.8125rem] leading-snug text-pretty",
+                      "text-base leading-snug text-pretty",
                       card ? "font-medium text-foreground" : "text-muted-foreground",
                     )}
                   >

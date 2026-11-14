@@ -288,7 +288,7 @@ export function CountyBriefClient({
           <Button variant="outline" onClick={writeAiBrief} disabled={status === "loading"}>
             {status === "loading" ? "Writing…" : triedAi ? "Rewrite with AI again" : "Rewrite with AI"}
           </Button>
-          <p className="text-[0.75rem] leading-4 text-muted-foreground">Checked against the figures</p>
+          <p className="text-base leading-4 text-muted-foreground">Checked against the figures</p>
         </div>
         {(status === "limited" || status === "error") && (
           <p

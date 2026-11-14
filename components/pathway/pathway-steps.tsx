@@ -104,7 +104,7 @@ export function StepMark({ step, status, className }: { step: number; status: Ga
     <span
       aria-hidden
       className={cn(
-        "flex size-6 shrink-0 items-center justify-center rounded-full text-[0.75rem] font-semibold tabular-nums",
+        "flex size-6 shrink-0 items-center justify-center rounded-full text-base font-semibold tabular-nums",
         MARK[status],
         className,
       )}
@@ -118,7 +118,7 @@ function StepTitle({ step, compact = false }: { step: PathwayStep; compact?: boo
   return (
     // Top-aligned: the steps share subgrid rows, so a one-line and a two-line title take the same row height.
     <div className="flex min-w-0 items-start gap-2.5">
-      <StepMark step={step.step} status={step.status} className={compact ? undefined : "size-7 text-[0.8125rem]"} />
+      <StepMark step={step.step} status={step.status} className={compact ? undefined : "size-7 text-base"} />
       <h3
         className={cn(
           "min-w-0 font-sans font-semibold tracking-normal text-pretty text-forest-ink",
@@ -227,7 +227,7 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
           </span>
         ) : (
           // No figure of the area's own: never a big number, not even the hospital group's.
-          <span className="pb-px text-[0.9375rem] leading-none text-muted-foreground">No number</span>
+          <span className="pb-px text-base leading-none text-muted-foreground">No number</span>
         )}
         {value !== null && measure && (
           <span className="pb-px type-caption whitespace-nowrap text-muted-foreground">
