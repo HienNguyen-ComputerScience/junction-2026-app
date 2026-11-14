@@ -43,10 +43,17 @@ export function ActionCard({
         )}
         <span className="type-caption font-medium">{STAGE_LABELS[action.stage]}</span>
         <span className="flex min-w-0 flex-wrap items-center gap-2 sm:ml-auto">
+          {/* Phone: the chip first, then a bare "Checked", so both fit on one line. */}
           {action.verified ? (
-            <Badge variant="outline" className="gap-1 max-sm:h-7">
+            <Badge
+              variant="outline"
+              className="gap-1 max-sm:order-last max-sm:h-7 max-sm:border-transparent max-sm:bg-transparent max-sm:px-0"
+            >
               <BadgeCheck aria-hidden className="size-3.5!" />
-              Source checked
+              <span aria-hidden className="sm:hidden">
+                Checked
+              </span>
+              <span className="max-sm:sr-only">Source checked</span>
             </Badge>
           ) : null}
           <SourceChip sourceId={action.source_id} />

@@ -12,11 +12,21 @@ import { isAskResponse, STATUS_LABEL, TOO_MANY, type AskResponse } from "./types
 
 const MAX_QUESTION = 300;
 
-const EXAMPLES = [
-  "Did Denmark's cancer fast-track pathways shorten diagnosis times?",
-  "How long do people wait to see a GP in Vantaa?",
-  "Onko Kainuussa lääkäripula?",
+// `query` is what is sent to /api/ask and is the demo-cache key: never reword it.
+// `label` is what the chip and the input show; without one, the query itself is shown.
+const EXAMPLES: { query: string; label?: string }[] = [
+  { query: "Did Denmark's cancer fast-track pathways shorten diagnosis times?" },
+  {
+    query: "How long do people wait to see a GP in Vantaa?",
+    label: "How long is the wait for a non-urgent GP visit in Vantaa?",
+  },
+  { query: "Onko Kainuussa lääkäripula?" },
 ];
+
+/** A suggestion's display label maps back to its query, so the input can show the label. */
+function toQuery(text: string): string {
+  return EXAMPLES.find((ex) => ex.label === text)?.query ?? text;
+}
 
 type State =
   | { kind: "idle" }
@@ -33,7 +43,7 @@ export function AskBox() {
   useEffect(() => () => ctrlRef.current?.abort(), []);
 
   function ask(text: string) {
-    const q = text.trim();
+    const q = toQuery(text.trim());
     if (q.length < 3 || loading) return;
     ctrlRef.current?.abort();
     const ctrl = new AbortController();
@@ -117,16 +127,16 @@ export function AskBox() {
         <div className="flex flex-wrap gap-2">
           {EXAMPLES.map((ex) => (
             <button
-              key={ex}
+              key={ex.query}
               type="button"
               disabled={loading}
               onClick={() => {
-                setQuestion(ex);
-                ask(ex);
+                setQuestion(ex.label ?? ex.query);
+                ask(ex.query);
               }}
               className="min-h-10 rounded-lg border border-input bg-card px-3 py-1.5 text-left type-caption text-foreground transition-colors outline-none hover:border-brand/40 hover:bg-brand-soft hover:text-brand-ink focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60 sm:min-h-9"
             >
-              {ex}
+              {ex.label ?? ex.query}
             </button>
           ))}
         </div>

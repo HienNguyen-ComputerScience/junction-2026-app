@@ -11,12 +11,13 @@ import { BackLink } from "@/components/ui/back-link";
 import {
   Frame,
   FrameDescription,
+  FrameFooter,
   FrameHeader,
   FrameMeta,
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
-import { MeasureBar } from "@/components/ui/measure-bar";
+import { BarKey, MeasureBar } from "@/components/ui/measure-bar";
 import { STATUS_INK, StatusBadge } from "@/components/ui/status-badge";
 import {
   SELECTION_RULE,
@@ -97,7 +98,9 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
                 </StatusBadge>
               </div>
               <p className="text-sm text-pretty text-muted-foreground">
-                No public data anywhere in Finland.
+                No public data anywhere in Finland. No statistic shows how often GPs spot possible
+                cancer at the first visit, so nobody can see how this step performs. The red-flag
+                helper below supports it.
               </p>
               <div className="mt-auto flex flex-col gap-2 pt-1">
                 <MeasureBar value={null} finland={null} status="no_data" />
@@ -108,6 +111,9 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
             </FramePanel>
           </li>
         </ul>
+        <FrameFooter>
+          <BarKey />
+        </FrameFooter>
       </Frame>
 
       <Frame aria-labelledby="recommended">

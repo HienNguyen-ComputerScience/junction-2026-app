@@ -48,10 +48,11 @@ export function RankingList({
 
   return (
     <div className="flex flex-col">
-      {/* Column header, desktop: sticky so the chips and the Finland label stay in view while
-          scrolling. Two fixed lines, so no cell can push the Finland label off its line. */}
+      {/* Column header, desktop. Not sticky: a sticky header slices the row passing under it.
+          The Finland label is repeated on the line at each lower group heading instead.
+          Two fixed lines, so no cell can push the Finland label off its line. */}
       <div
-        className={`${ROW_GRID} sticky top-0 z-10 hidden rounded-t-panel border-b border-border bg-card px-5 pt-3 type-micro text-muted-foreground lg:grid`}
+        className={`${ROW_GRID} hidden border-b border-border px-5 pt-3 type-micro text-muted-foreground lg:grid`}
       >
         <HeadCell line1="#" />
         <HeadCell line1="Area" line2={`change since ${FIRST_YEAR}`} />
@@ -224,6 +225,15 @@ function GroupDivider({
             style={{ right: `${100 - nationalGpWait}%` }}
           >
             Solid red: beyond Finland&apos;s line
+          </span>
+        )}
+        {/* Lower groups: the column header has scrolled away, so the line is named again. */}
+        {status !== "red" && (
+          <span
+            className="absolute inset-y-0 flex items-center pt-2 pl-2.5 type-mark font-medium whitespace-nowrap text-foreground"
+            style={finlandX}
+          >
+            Finland {formatPct(nationalGpWait)}
           </span>
         )}
         <span className="absolute inset-y-0 w-0.5 -translate-x-1/2 bg-foreground" style={finlandX} />

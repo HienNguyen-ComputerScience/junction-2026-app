@@ -93,6 +93,20 @@ export function FinlandAxis({
 }
 
 /**
+ * The key for reading the bars, in words. Use it wherever wait bars and referral bars sit
+ * together: a wait bar is worse when it runs past the line, a referral bar when it stops short.
+ */
+export function BarKey({ className }: { className?: string }) {
+  return (
+    <p className={className}>
+      Bars start at 0%; the ink line marks Finland&apos;s value. GP wait, lower is better: a red
+      bar is tinted up to the line and solid beyond it. Referrals, higher is faster: a bar that
+      stops short of the line is slower than Finland.
+    </p>
+  );
+}
+
+/**
  * Bar + Finland line + axis label, as one block. Decorative: the value, the Finland value and
  * the status are always given in text next to it.
  *  - value null: an empty hatched track ("no public data"), never a zero-length bar.

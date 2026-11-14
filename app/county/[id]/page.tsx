@@ -8,6 +8,7 @@ import { LimitationsBox, type LimitationItem } from "@/components/pathway/limita
 import { StageCard, StepRail, type StageCardProps } from "@/components/pathway/stage-card";
 import { SourceChip } from "@/components/source-chip";
 import { BackLink } from "@/components/ui/back-link";
+import { BarKey } from "@/components/ui/measure-bar";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Frame,
@@ -55,7 +56,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           on the first screen. Phones: the box moves below the pathway so the key number
           comes first (the wrapper is display: contents there, and `order` places the box). */}
       <div className="contents lg:grid lg:grid-cols-[minmax(0,1fr)_30rem] lg:items-start lg:gap-10">
-        <header className="flex flex-col items-start gap-4">
+        <header className="flex flex-col items-start gap-4 lg:gap-5">
           <BackLink href="/">Back to ranking</BackLink>
           <div className="flex flex-col gap-2">
             <p className="type-caption text-muted-foreground">
@@ -63,7 +64,9 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             </p>
             <h1 className="type-page">{county.name}</h1>
           </div>
-          <p className="max-w-[40rem] type-lede">{getVerdict(county.id)}</p>
+          <p className="max-w-[40rem] type-lede lg:max-w-[31rem] lg:text-[1.375rem] lg:leading-8">
+            {getVerdict(county.id)}
+          </p>
           <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
             What to do about it
             <ArrowRight aria-hidden data-icon="inline-end" />
@@ -104,10 +107,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           </ol>
         </FramePanel>
         <FrameFooter className="flex flex-col gap-2">
-          <p>
-            Bars start at 0%. The ink line marks Finland&apos;s value; the solid red part of a bar
-            is the share beyond it.
-          </p>
+          <BarKey />
           <p className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
             <span>
               Context: referrals left unprocessed for more than 21 days in {LATEST_YEAR}:{" "}
