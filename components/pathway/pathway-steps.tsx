@@ -255,7 +255,7 @@ function CompactStep({ step, extra }: { step: PathwayStep; extra?: ReactNode }) 
   const { measure, status } = step;
   const value = measure?.value ?? null;
   return (
-    <li className="flex min-w-0 flex-col px-4 py-2.5 sm:px-5 md:row-span-5 md:grid md:grid-rows-subgrid md:py-2">
+    <li className="flex min-w-0 flex-col px-5 py-3 sm:px-6 md:row-span-5 md:grid md:grid-rows-subgrid md:py-3">
       <StepTitle step={step} compact />
       <p className="min-h-8 pt-1.5">
         {measure && value !== null && (

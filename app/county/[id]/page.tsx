@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -66,10 +65,16 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const verdict = getVerdict(county.id);
   // The lead may state the hospital group's referral figure (Sotkanet 13): its source stands in the chip row.
   const hus = gaps.find((gap) => gap.shared)?.shared;
-  const leadHusChip = hus && verdict.includes(formatPct(hus.value)) ? <SourceChip sourceId="sotkanet-13" year={LATEST_YEAR} /> : null;
+  // The verdict is shown as written, split where it is displayed: its first sentence is the lead
+  // line, the rest a quieter line under it. The hospital group's referral figure (Sotkanet 13)
+  // gets its chip right after the sentence that states it.
+  const [leadSentence, ...restSentences] = verdict.split(/(?<=\.)\s+/);
+  const husText = hus ? formatPct(hus.value) : null;
+  const husChip = <SourceChip sourceId="sotkanet-13" year={LATEST_YEAR} />;
+  const chipAfter = (sentence: string) => (husText && sentence.includes(husText) ? husChip : null);
 
   return (
-    <main className="page-container flex flex-col gap-6 pt-4 sm:pt-6">
+    <main className="page-container flex flex-col gap-10 pt-4 sm:gap-14 sm:pt-6">
       {/* Desktop: title, verdict and the key figure on the left, the limitations box (quieter)
           beside them, so both are on the first screen. Below lg the limitations are a one-line
           disclosure right under the main action instead (the two are never displayed at the
@@ -85,14 +90,24 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             </p>
             <h1 className="type-page lg:text-[2.75rem] lg:leading-[1.1]">{county.name}</h1>
           </div>
-          <p className="max-w-[40rem] type-lede lg:max-w-[36rem] lg:text-[1.375rem] lg:leading-8">
-            {verdict}
-          </p>
-          {keyGap ? (
-            <KeyFigure gap={keyGap} extraChip={leadHusChip} />
-          ) : (
-            leadHusChip
-          )}
+          {keyGap && <KeyFigure gap={keyGap} />}
+          <div className="flex max-w-[36rem] flex-col gap-2">
+            <p className="type-lede text-foreground lg:text-[1.25rem] lg:leading-7">
+              {leadSentence}
+              {chipAfter(leadSentence) && <span className="ml-2 inline-flex align-middle">{husChip}</span>}
+            </p>
+            {restSentences.length > 0 && (
+              <p className="max-w-[68ch] text-sm leading-relaxed text-pretty text-muted-foreground">
+                {restSentences.map((sentence, i) => (
+                  <span key={i}>
+                    {i > 0 && " "}
+                    {sentence}
+                    {chipAfter(sentence) && <span className="ml-2 inline-flex align-middle">{husChip}</span>}
+                  </span>
+                ))}
+              </p>
+            )}
+          </div>
           <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
             What to do about it
             <ArrowRight aria-hidden data-icon="inline-end" />
@@ -170,20 +185,19 @@ function keyFigureGap(county: County): Gap | null {
 }
 
 /** The first screen's one key number: the figure, its status and source, and what it counts. */
-function KeyFigure({ gap, extraChip }: { gap: Gap; extraChip?: ReactNode }) {
+function KeyFigure({ gap }: { gap: Gap }) {
   if (gap.value === null) return null;
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <p className={`numeral text-[3.5rem] leading-none sm:text-[4rem] ${STATUS_FIGURE[gap.status]}`}>
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <p className={`numeral text-[3.5rem] leading-[0.95] sm:text-[4.75rem] ${STATUS_FIGURE[gap.status]}`}>
           {formatPct(gap.value)}
         </p>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col items-start gap-1.5">
           <StatusBadge status={gap.status} size="md">
             {STATUS_LABEL[gap.status]}
           </StatusBadge>
           <SourceChip sourceId={gap.source_id} year={gap.year} />
-          {extraChip}
         </div>
       </div>
       <p className="text-sm text-pretty text-muted-foreground">

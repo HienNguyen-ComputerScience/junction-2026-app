@@ -7,7 +7,7 @@ import { useId, useRef, useState, useSyncExternalStore, type ReactNode } from "r
 
 import { FinlandMap, type FinlandMapArea } from "@/components/map/finland-map";
 import { buttonVariants } from "@/components/ui/button";
-import { Frame, FramePanel, FramePanelLabel } from "@/components/ui/frame";
+import { FramePanel, FramePanelLabel } from "@/components/ui/frame";
 import { BarKey } from "@/components/ui/measure-bar";
 import { TextLink } from "@/components/ui/text-link";
 
@@ -88,17 +88,17 @@ export function AreaPicker({
   // Optional parts are left out when empty, never kept as a gap.
   const action = area.actionId ? actions[area.actionId] : null;
   const what = whatIfs[area.id] ?? null;
-  const half = action && what ? undefined : "md:col-span-2";
 
   return (
-    <Frame
+    // No outer frame: the panels sit on the page, so the deepest nesting is panel > First step box.
+    <section
       aria-label="Pick an area"
-      className="grid gap-1.5 max-sm:rounded-none max-sm:border-0 max-sm:bg-transparent max-sm:p-0 lg:grid-cols-[21rem_minmax(0,1fr)] lg:grid-rows-[auto_minmax(0,1fr)]"
+      className="grid gap-2 lg:grid-cols-[21rem_minmax(0,1fr)] lg:grid-rows-[auto_minmax(0,1fr)]"
     >
       {/* The picker. */}
-      <FramePanel padding="none" className="px-4 pt-3 pb-2 sm:px-5 lg:col-start-1 lg:row-start-1">
-        <label htmlFor={selectId} className="type-caption font-medium text-muted-foreground">
-          Choose an area
+      <FramePanel padding="none" className="px-5 pt-5 pb-4 sm:px-6 lg:col-start-1 lg:row-start-1">
+        <label htmlFor={selectId} className="text-sm font-medium text-foreground">
+          Choose your area
         </label>
         <div className="relative mt-1.5">
           <select
@@ -119,40 +119,51 @@ export function AreaPicker({
             className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
           />
         </div>
-        <TextLink kind="jump" href="#ranking" className="mt-1 text-sm">
-          See all {totalAreas} areas
+        <p className="mt-1.5 type-caption text-muted-foreground">
+          <span className="lg:hidden">Or tap an area on the map below.</span>
+          <span className="max-lg:hidden">Or click an area on the map.</span>
+        </p>
+        <TextLink kind="jump" href="#ranking" className="text-sm">
+          Compare all {totalAreas} areas
         </TextLink>
       </FramePanel>
 
       {/* The answer for the selected area. */}
       <div
         ref={answerRef}
-        className="grid scroll-mt-4 content-start gap-1.5 md:grid-cols-2 lg:col-start-2 lg:row-span-2 lg:row-start-1"
+        className="grid scroll-mt-4 content-start gap-2 md:grid-cols-2 lg:col-start-2 lg:row-span-2 lg:row-start-1"
       >
-        <FramePanel padding="none" className="px-4 pt-3 pb-3 sm:px-5 md:col-span-2" aria-live="polite">
-          <p className="type-caption text-muted-foreground">
-            {area.name}, {year}: where the pathway breaks
-          </p>
-          {leads[area.id] ?? null}
-          <h2 className="mt-2 type-title text-pretty text-foreground">{area.verdict}</h2>
+        {/* The answer: the figure and the verdict on the left, the way to the actions on the
+            right (under them on a phone), so the main button is on the first screen. */}
+        <FramePanel
+          padding="none"
+          className="grid gap-x-8 gap-y-5 px-5 pt-5 pb-5 sm:px-6 md:col-span-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-end"
+        >
+          <div className="flex flex-col gap-3" aria-live="polite">
+            <p className="type-caption font-medium text-muted-foreground">
+              {area.name}, {year}: where the pathway breaks
+            </p>
+            {leads[area.id] ?? null}
+            <h2 className="type-heading text-pretty text-foreground">{area.verdict}</h2>
+          </div>
+          <div className="flex flex-col items-start gap-3 md:items-end">
+            <Link href={`/county/${area.id}/act`} className={cn(buttonVariants({ size: "lg" }), "max-sm:w-full")}>
+              See all actions
+              <ArrowRight aria-hidden data-icon="inline-end" />
+            </Link>
+            <TextLink kind="nav" href={`/county/${area.id}`} className="text-sm">
+              Full pathway for {area.name}
+            </TextLink>
+          </div>
         </FramePanel>
 
-        {action && <div className={half}>{action}</div>}
-        {what && <div className={half}>{what}</div>}
+        {action && <div className="md:col-span-2">{action}</div>}
+        {what && <div className="md:col-span-2">{what}</div>}
 
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 px-1 pt-1.5 pb-1 md:col-span-2">
-          <Link href={`/county/${area.id}/act`} className={cn(buttonVariants({ size: "lg" }), "max-sm:w-full")}>
-            See all actions for {area.name}
-            <ArrowRight aria-hidden data-icon="inline-end" />
-          </Link>
-          <TextLink kind="nav" href={`/county/${area.id}`} className="text-sm">
-            Full pathway for {area.name}
-          </TextLink>
-        </div>
 
         {/* The three steps come after the answer and the action, so both fit the first screen. */}
         <FramePanel padding="none" className="md:col-span-2">
-          <FramePanelLabel className="sm:px-5">
+          <FramePanelLabel>
             <h3 className="font-sans type-caption font-medium text-muted-foreground">
               The three steps to a specialist ({year})
             </h3>
@@ -162,18 +173,18 @@ export function AreaPicker({
       </div>
 
       {/* The map: last on a phone, under the picker from lg. */}
-      <FramePanel padding="none" className="max-lg:order-last lg:col-start-1 lg:row-start-2">
-        <FramePanelLabel className="sm:px-5">
+      <FramePanel padding="none" className="max-lg:order-last lg:col-start-1 lg:row-start-2 lg:self-start">
+        <FramePanelLabel>
           <span>Non-urgent GP visits waiting over 7 days</span>
           {mapChip}
         </FramePanelLabel>
-        <div className="flex flex-col items-center gap-2 px-4 pt-3 pb-3 sm:px-5">
+        <div className="flex flex-col items-center gap-3 px-5 pt-4 pb-4 sm:px-6">
           <FinlandMap
             areas={mapAreas}
             selectedId={area.id}
             highlight={[area.id]}
             onSelect={(id) => choose(id, true)}
-            className="h-[16.25rem] lg:h-[20rem]"
+            className="mb-5 h-[16.25rem] lg:h-[20rem]"
           />
           <p className="self-start type-caption text-pretty text-muted-foreground">
             Not specific to cancer: it covers all non-urgent GP visits. Map: Statistics Finland, CC BY
@@ -181,8 +192,8 @@ export function AreaPicker({
           </p>
         </div>
         {/* The page's one key: the map's fills and the steps' bars use the same marks. */}
-        <BarKey className="border-t border-border px-4 py-2.5 sm:px-5" />
+        <BarKey className="px-5 pt-1 pb-5 sm:px-6" />
       </FramePanel>
-    </Frame>
+    </section>
   );
 }

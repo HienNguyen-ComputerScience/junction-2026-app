@@ -14,8 +14,10 @@ import { cn } from "cn";
  *     <FrameFooter>footnotes</FrameFooter>
  *   </Frame>
  *
- * The page is dark: a frame is one surface step above the page and a panel one step above the
- * frame, each edged with a hairline. No shadows.
+ * A frame is a section, not a surface: its title sits on the page and its panels are the one
+ * raised surface (bg-card and a hairline). Inside a panel, items are separated by space and
+ * hairline dividers; the only surface inside a panel is a block that means something (the
+ * First step box, an input, a chip). So nothing is ever more than two surfaces deep. No shadows.
  */
 
 type FrameElement = "section" | "div" | "article" | "aside";
@@ -29,7 +31,7 @@ function Frame({
     <Comp
       data-slot="frame"
       className={cn(
-        "group/frame flex flex-col rounded-frame border border-frame-border bg-frame p-1.5 text-foreground",
+        "group/frame flex flex-col text-foreground",
         className,
       )}
       {...props}
@@ -42,7 +44,7 @@ function FrameHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="frame-header"
       className={cn(
-        "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 px-3 pt-3 pb-3 sm:px-4",
+        "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 px-0 pb-4",
         className,
       )}
       {...props}
@@ -88,7 +90,7 @@ function FrameDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       data-slot="frame-description"
-      className={cn("col-span-2 max-w-3xl type-caption text-muted-foreground", className)}
+      className={cn("col-span-2 max-w-[68ch] type-caption text-muted-foreground", className)}
       {...props}
     />
   );
@@ -120,16 +122,22 @@ function FramePanel({
 }
 
 /**
- * The label strip of a panel that has a title: the title on the left, its chip (a source, a
- * provenance tag) on the right, a hairline under it. Use it as the first child of a
- * `FramePanel padding="none"`; a panel without a title has no strip.
+ * The title row of a panel that needs a title: the title on the left, its chip (a source, a
+ * provenance tag) on the right. Use it as the first child of a `FramePanel padding="none"`; a
+ * panel without a title has none. `divider` draws a hairline under it, only where rows with
+ * their own dividers follow (a list, a table); otherwise the space alone separates it.
  */
-function FramePanelLabel({ className, ...props }: React.ComponentProps<"div">) {
+function FramePanelLabel({
+  className,
+  divider = false,
+  ...props
+}: React.ComponentProps<"div"> & { divider?: boolean }) {
   return (
     <div
       data-slot="frame-panel-label"
       className={cn(
-        "flex min-h-11 flex-wrap items-center justify-between gap-x-4 gap-y-1.5 border-b border-border px-4 py-2 type-caption font-medium text-foreground sm:px-6",
+        "flex min-h-11 flex-wrap items-center justify-between gap-x-4 gap-y-1.5 px-5 type-caption font-medium text-foreground sm:px-6",
+        divider ? "border-b border-border py-2" : "pt-4 pb-0",
         className,
       )}
       {...props}
@@ -141,7 +149,7 @@ function FrameFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="frame-footer"
-      className={cn("px-3 pt-3 pb-2 type-caption text-muted-foreground sm:px-4", className)}
+      className={cn("px-0 pt-4 type-caption text-muted-foreground", className)}
       {...props}
     />
   );

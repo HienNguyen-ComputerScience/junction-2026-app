@@ -1,6 +1,6 @@
 import { FirstStep } from "@/components/act/action-card";
 import { SourceChip } from "@/components/source-chip";
-import { FramePanel, FramePanelLabel } from "@/components/ui/frame";
+import { FramePanel } from "@/components/ui/frame";
 import type { Evidence } from "@/lib/data";
 
 /**
@@ -10,18 +10,25 @@ import type { Evidence } from "@/lib/data";
  */
 export function TopAction({ action }: { action: Evidence }) {
   return (
-    <FramePanel padding="none" className="flex h-full flex-col">
-      <FramePanelLabel className="sm:px-5">
+    // Wide: the action and its owner on the left, the First step box and the evidence source on
+    // the right. No title strip: the small heading leads the left column.
+    <FramePanel
+      padding="none"
+      className="grid h-full gap-x-8 gap-y-4 px-5 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-start"
+    >
+      <div className="flex flex-col gap-2.5">
         <h3 className="font-sans type-caption font-medium text-muted-foreground">Recommended action 1</h3>
-        <SourceChip sourceId={action.source_id} />
-      </FramePanelLabel>
-      <div className="flex flex-col gap-2.5 px-4 py-2.5 sm:px-5">
-        <p className="type-heading text-pretty text-foreground">{action.action}</p>
-        <FirstStep compact>{action.first_step}</FirstStep>
-        <dl className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-3 type-caption text-muted-foreground">
+        <p className="text-base leading-snug font-semibold text-pretty text-foreground">{action.action}</p>
+        <dl className="mt-1 flex flex-col gap-1 type-caption text-muted-foreground">
           <dt>Owner</dt>
-          <dd className="text-pretty">{action.who_implements}</dd>
+          <dd className="text-pretty text-foreground/90">{action.who_implements}</dd>
         </dl>
+      </div>
+      <div className="flex flex-col gap-2.5">
+        <FirstStep compact>{action.first_step}</FirstStep>
+        <p className="flex items-center gap-2 type-caption text-muted-foreground">
+          Evidence <SourceChip sourceId={action.source_id} />
+        </p>
       </div>
     </FramePanel>
   );
