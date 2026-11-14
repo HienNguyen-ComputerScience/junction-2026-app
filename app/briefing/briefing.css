@@ -59,6 +59,12 @@
   background-image: repeating-linear-gradient(135deg, var(--status-grey) 0 1px, transparent 1px 7px);
 }
 
+/* The button bar stays at the bottom of the window. Anything that takes the keyboard focus is
+   scrolled far enough up that the bar never covers it. */
+.bf-root :is(a, button, select, summary, [tabindex]) {
+  scroll-margin-bottom: 7rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bf-root *,
   .bf-root *::before,
@@ -88,7 +94,15 @@
     color: #0f3e17;
     text-decoration: underline;
   }
-  .bf-print section {
+  /* A step may run on to the next page; its heading stays with its first lines, and no
+     paragraph, list item or action is split. Avoiding a break inside a whole step pushed
+     short steps onto a page of their own. */
+  .bf-print h1,
+  .bf-print h2 {
+    break-after: avoid;
+  }
+  .bf-print p,
+  .bf-print li {
     break-inside: avoid;
   }
 }
