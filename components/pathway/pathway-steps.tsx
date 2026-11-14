@@ -224,7 +224,7 @@ function FullStep({ step, led }: { step: PathwayStep; led: boolean }) {
                 Finland <span className="figure">{formatPct(measure.finland)}</span>, {measure.direction}
               </>
             ) : (
-              "Not measured anywhere in Finland"
+              "No public indicator in any county"
             )}
           </p>
           <p className="pt-1 type-caption text-pretty text-muted-foreground">

@@ -13,7 +13,7 @@
 - Two densities. `density="full"` (county page): three divided columns on shared rows (subgrid). `density="compact"` (act page): one short strip, per step its name and value, what the value counts, a thin bar, the badge and the chip.
 - The section title gives the year ("… (2025)"), so the chip in a step leaves it out and the status row stays one row.
 - `ledStage`: the step whose figure already leads the page shows its gap to Finland in the slot instead, so **one number is on screen once per viewport**.
-- `TrendStrip` (`components/pathway/trend-strip.tsx`) is the panel under the full steps: the change since 2023 in words and the three yearly bars.
+- `TrendStrip` (`components/pathway/trend-strip.tsx`) is the panel under the full steps: the change since 2023 in words and the three yearly columns. Only the latest year has a status, so it alone is drawn by the bar rule (upright); the earlier years are neutral grey, and the panel's label strip says so once.
 
 ## Bars: the Finland line
 
@@ -21,14 +21,14 @@ Every bar is zero-based (0 to 100%) and carries a thin off-white marker at Finla
 
 - `<MeasureBar value finland finlandLabel status />`: bar, line and axis. `value={null}` draws a hatched empty track (no public data), `finland={null}` draws no line. `size`: `"sm"` 6px (compact steps), default, `"lg"` (the home card). `gapLabel`: the distance to Finland as text ("+30.7 pts", from `gapToFinland(value, finland)` in `components/ranking/ranking-list.tsx`).
 - `BarFill`, `FinlandTick`, `FinlandAxis`: the parts, for custom layouts (the ranking draws one continuous 1px line down the bar rows, and only through bar rows).
-- **One treatment for "worse than Finland", on every bar (big bars, the ranking's mini bars, the home card):** the solid red part is always the gap to Finland and always touches the line.
+- **One treatment for "worse than Finland", on every bar (big bars, the ranking's mini bars, the home card, the judged column of the trend):** the solid red part is always the gap to Finland and always touches the line.
   - a **wait** share (lower is better): tinted red up to the Finland line, solid red beyond it;
   - a **referral** share (higher is faster): tinted red up to the value, solid red from the value to the Finland line.
   - The tint is the opaque token `bg-status-red-tint`. The kind is read from the data; pass `higherIsBetter` only to override.
 - At or better than Finland: slate (`bg-status-amber-bar`; the token name is historical). Slate is not "good", and a slate figure stays in the text colour (`STATUS_FIGURE`).
-- Grey fill: only the "Finland overall" bar. Hatched track: no public data.
+- Grey fill: only a mark without a status, i.e. the "Finland overall" bar and the earlier years of the trend. Hatched track: no public data.
 - The map of Finland (`components/map/finland-map.tsx`) fills its areas with the same tokens at the same strength as the bars: `status-red`, `status-amber-bar`, the hatch.
-- `<BarKey items />`: the key, one row of swatches drawn like the marks: "Finland's value", "Worse than Finland" (tint then solid), "At or better than Finland's level", "No public data". **One key per page** (home: in the hero card; county: under the steps; act: beside the strip's title), with `items` limited to the marks in view. No prose legends.
+- `<BarKey items />`: the key, one row of swatches drawn like the marks: "Finland's value", "Worse than Finland" (tint then solid), "At or better than Finland's level", "No public data". **One key per page** (home: in the hero card; county: under the steps; act: beside the strip's title), with `items` limited to the marks in view. No prose legends: a sentence under a chart is only for what a swatch cannot say.
 - `withFigures("Finland 54.7%")` sets the numbers of a one-string label in the figure face.
 
 ## Buttons and links

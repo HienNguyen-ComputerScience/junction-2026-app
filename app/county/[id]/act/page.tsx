@@ -110,7 +110,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           </FrameTitle>
           {/* The selection rule in one line (the full rule is SELECTION_RULE in lib/act). */}
           <FrameMeta className="max-sm:col-span-2 max-sm:col-start-1 max-sm:row-start-2 max-sm:justify-start">
-            Worst stage first, one action per stage, up to three
+            Worst stage first: one action per stage, then up to three in all
           </FrameMeta>
         </FrameHeader>
         <div className="flex flex-col gap-1.5">

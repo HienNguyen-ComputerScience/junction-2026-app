@@ -24,9 +24,6 @@ const sourceRows = indicators.map((indicator) => ({
   years: [...new Set(values.filter((value) => value.indicator_id === indicator.indicator_id).map((value) => value.year))].sort(),
 }));
 
-/** The indicator the essential distinction is about: its chip sits in that card's label row. */
-const gpWaitIndicator = indicators.find((indicator) => String(indicator.indicator_id) === "6411");
-
 /** A label column in muted text and the value in body ink, like the act page's Owner and Precedent rows. */
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -59,7 +56,6 @@ export default function SourcesPage() {
             <h2 id="essential-caveat" className="font-sans type-caption font-medium tracking-normal">
               The essential distinction
             </h2>
-            {gpWaitIndicator && <SourceChip sourceId={gpWaitIndicator.source_id} />}
           </FramePanelLabel>
           <p className="max-w-[52rem] px-4 py-4 text-[0.9375rem] leading-relaxed text-pretty text-foreground sm:px-6 sm:py-5">
             THL Sotkanet 6411 (latest snapshot year: 2025) covers <strong className="font-semibold">non-urgent GP appointments with waiting-time data</strong>, not people with suspected cancer. GP waiting time is a proxy for access, not a cancer diagnosis or referral delay. The referral indicators describe processing of specialist referrals generally, not the whole GP-to-specialist journey.
@@ -136,8 +132,9 @@ export default function SourcesPage() {
           {evidenceSources.map((source) => (
             <li key={source.source_id}>
               <FramePanel padding="sm" className="flex h-full flex-col gap-1">
-                <TextLink kind="external" href={source.url} className="max-w-full text-sm">
-                  <span className="min-w-0 text-pretty">{source.name}</span>
+                {/* Inline, so the arrow follows the last word of a name of any length. */}
+                <TextLink kind="external" inline href={source.url} className="text-sm text-pretty max-sm:py-2">
+                  {source.name}
                 </TextLink>
                 <p className="type-caption text-muted-foreground">{source.publisher} · retrieved {source.retrieved}</p>
               </FramePanel>

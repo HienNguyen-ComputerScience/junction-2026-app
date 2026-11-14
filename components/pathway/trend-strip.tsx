@@ -38,6 +38,11 @@ export function TrendStrip({ stages, areaName }: { stages: TrendStage[]; areaNam
   const years = stages[0]?.trend ?? [];
   if (years.length === 0) return null;
   const span = `${years[0].year}–${years[years.length - 1].year}`;
+  // Said once for the panel: only the latest year is judged, so only its column has a status colour.
+  const judgedYear = withTrend.find((stage) => {
+    const points = valued(stage.trend);
+    return points[points.length - 1].year === stage.year;
+  })?.year;
 
   return (
     <FramePanel padding="none" role="group" aria-labelledby="trend-heading">
@@ -45,7 +50,10 @@ export function TrendStrip({ stages, areaName }: { stages: TrendStage[]; areaNam
         <h3 id="trend-heading" className="font-sans type-caption font-medium tracking-normal">
           Trend, {span}
         </h3>
-        <span className="font-normal text-muted-foreground">Share by year, on a 0 to 100% scale</span>
+        <span className="font-normal text-muted-foreground">
+          Share by year on a 0 to 100% scale.
+          {judgedYear !== undefined && ` Only ${judgedYear} has a status; earlier years are grey.`}
+        </span>
       </FramePanelLabel>
       <div className="flex flex-col gap-4 px-4 py-5 sm:px-6">
         {withTrend.length > 0 && (
@@ -66,14 +74,33 @@ export function TrendStrip({ stages, areaName }: { stages: TrendStage[]; areaNam
   );
 }
 
-/** The one judged bar of a trend (the latest year), in its status colour. */
+/** The one judged column of a trend (the latest year), in its status colour. */
 const TREND_FILL: Record<GapStatus, string> = {
   red: "bg-status-red",
   amber: "bg-status-amber-bar",
   no_data: "bg-status-grey",
 };
-/** Earlier years are not judged against the latest Finland value: quiet and neutral. */
+/** Earlier years have no status (only the latest year is judged): quiet and neutral. */
 const TREND_PAST_FILL = "bg-foreground/25";
+
+/**
+ * The judged column when it is worse than Finland, drawn by the bar rule of measure-bar.tsx
+ * turned upright: tinted red, with the solid red on the gap to Finland's value. A wait share
+ * runs past the tick (solid above it); a referral share stops short of it (solid up to it).
+ */
+function WorseColumn({ value, finland }: { value: number; finland: number }) {
+  const low = Math.min(value, finland);
+  const high = Math.max(value, finland);
+  return (
+    <>
+      <span className="absolute inset-x-0 bottom-0 bg-status-red-tint" style={{ height: `${low}%` }} />
+      <span
+        className="absolute inset-x-0 rounded-t-[3px] bg-status-red"
+        style={{ bottom: `${low}%`, height: `${high - low}%` }}
+      />
+    </>
+  );
+}
 
 function TrendRow({ stage }: { stage: TrendStage }) {
   const points = valued(stage.trend);
@@ -155,25 +182,24 @@ function TrendChart({
   // column moves just above the tick instead.
   const PLOT = 128;
   const LABEL = 20;
-  const labelBottom = (value: number, finland: number | null) => {
+  const labelBottom = (value: number, finland: number | null, gapAbove: boolean) => {
     const bottom = (clamp(value) / 100) * PLOT + 6;
     if (finland === null) return bottom;
     const tickPx = (clamp(finland) / 100) * PLOT;
+    // A red gap drawn from the value up to the tick: the label clears the tick, not the value.
+    if (gapAbove) return tickPx + 5;
     return bottom < tickPx + 3 && bottom + LABEL > tickPx - 3 ? tickPx + 5 : bottom;
   };
   const judged = trend[latestIndex]?.year === latestYear;
   const shown = trend.filter((point) => point.value !== null);
   const ticks = shown.filter((point) => finlandOf(point.year) !== null);
-  // One line under the chart: what the tick is, and that only the latest year is judged.
+  // The ticks are labelled on the chart, so the line under it only says when one is missing.
   const tickText =
     ticks.length === 0
       ? "No Finland value is published for these years."
       : ticks.length === shown.length
-        ? "White tick: Finland's value in the same year."
-        : `White tick: Finland's value in the same year, where published (${ticks
-            .map((point) => point.year)
-            .join(", ")}).`;
-  const colourText = judged ? ` Only ${latestYear} is coloured by its status.` : "";
+        ? ""
+        : `Finland's value is published for ${ticks.map((point) => point.year).join(", ")} only.`;
 
   return (
     <figure className="flex min-w-0 flex-col gap-3">
@@ -182,6 +208,8 @@ function TrendChart({
           <div className="absolute inset-0 flex gap-3 px-1 sm:gap-6 sm:px-3">
             {trend.map((point, i) => {
               const finland = finlandOf(point.year);
+              const worse =
+                judged && i === latestIndex && status === "red" && finland !== null && point.value !== null;
               return (
                 <div key={point.year} className="relative flex h-full flex-1 items-end justify-center">
                   {point.value === null ? (
@@ -189,13 +217,17 @@ function TrendChart({
                   ) : (
                     <>
                       <div className="relative h-full w-full max-w-24">
-                        <span
-                          className={cn(
-                            "absolute inset-x-0 bottom-0 rounded-t-[3px]",
-                            judged && i === latestIndex ? TREND_FILL[status] : TREND_PAST_FILL,
-                          )}
-                          style={{ height: `${clamp(point.value)}%` }}
-                        />
+                        {worse ? (
+                          <WorseColumn value={clamp(point.value)} finland={clamp(finland)} />
+                        ) : (
+                          <span
+                            className={cn(
+                              "absolute inset-x-0 bottom-0 rounded-t-[3px]",
+                              judged && i === latestIndex ? TREND_FILL[status] : TREND_PAST_FILL,
+                            )}
+                            style={{ height: `${clamp(point.value)}%` }}
+                          />
+                        )}
                         {finland !== null && (
                           <>
                             <span
@@ -217,7 +249,7 @@ function TrendChart({
                           "absolute z-10 bg-card px-1 figure text-[0.8125rem] leading-5",
                           i === latestIndex ? "font-semibold text-foreground" : "text-muted-foreground",
                         )}
-                        style={{ bottom: `${labelBottom(point.value, finland)}px` }}
+                        style={{ bottom: `${labelBottom(point.value, finland, worse && point.value < finland)}px` }}
                       >
                         {formatPct(point.value)}
                       </span>
@@ -245,10 +277,7 @@ function TrendChart({
         </div>
       </div>
       <figcaption className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 type-caption text-muted-foreground">
-        <span>
-          {tickText}
-          {colourText}
-        </span>
+        <span>{tickText}</span>
         <SourceChip sourceId={sourceId} />
       </figcaption>
       <p className="sr-only">
