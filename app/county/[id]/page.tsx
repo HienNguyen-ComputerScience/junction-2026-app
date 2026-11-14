@@ -10,18 +10,18 @@ import { buildPathwaySteps, PathwaySteps, type PathwayStep } from "@/components/
 import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { TrendStrip, type TrendStage } from "@/components/pathway/trend-strip";
 import { SourceChip } from "@/components/source-chip";
-import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
+import { LeadFigure } from "@/components/home/lead-figure";
 import { BackLink } from "@/components/ui/back-link";
 import { BarKey } from "@/components/ui/measure-bar";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Frame,
-  FrameDescription,
   FrameHeader,
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
 import { getBottleneck } from "@/lib/act";
+import { bestForStage, getMainReason } from "@/lib/main-reason";
 import { counties, gaps, getCounty, getValue, LATEST_YEAR, type County, type Gap } from "@/lib/data";
 import {
   formatPct,
@@ -33,7 +33,6 @@ import {
   GP_WAIT_ID,
   REFERRAL_ID,
   REFERRAL_LATE_ID,
-  STATUS_LABEL,
   stageStatus,
   YEARS,
 } from "@/lib/ranking";
@@ -62,15 +61,20 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const limitations = buildLimitations(county);
   const lateReferrals = getValue(county.id, REFERRAL_LATE_ID);
   const lateReferralsFinland = getNationalValue(REFERRAL_LATE_ID);
-  const keyGap = keyFigureGap(county);
   const { anyRed } = getBottleneck(county.id);
+  // The lead line is the main reason sentence, the same one as on the home card; the figure above
+  // it is the step that sentence is about.
+  const reason = getMainReason(county.id);
   const verdict = getVerdict(county.id);
   // The lead may state the hospital group's referral figure (Sotkanet 13): its source stands in the chip row.
   const hus = gaps.find((gap) => gap.shared)?.shared;
-  // The verdict is shown as written, split where it is displayed: its first sentence is the lead
-  // line, the rest a quieter line under it. The hospital group's referral figure (Sotkanet 13)
-  // gets its chip right after the sentence that states it.
-  const [leadSentence, ...restSentences] = verdict.split(/(?<=\.)\s+/);
+  // Of the verdict only what the main reason does not say is kept, as a quieter line: the
+  // hospital group's referral figure (Sotkanet 13), with its chip right after the sentence that
+  // states it. The verdict's first sentence and its "Even so" figure are in the main reason.
+  const restSentences = verdict
+    .split(/(?<=\.)\s+/)
+    .slice(1)
+    .filter((sentence) => !sentence.startsWith("Even so"));
   const husText = hus ? formatPct(hus.value) : null;
   const husChip = <SourceChip sourceId="sotkanet-13" year={LATEST_YEAR} />;
   const chipAfter = (sentence: string) => (husText && sentence.includes(husText) ? husChip : null);
@@ -92,11 +96,10 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             </p>
             <h1 className="type-page lg:text-[2.75rem] lg:leading-[1.1]">{county.name}</h1>
           </div>
-          {keyGap && <KeyFigure gap={keyGap} />}
+          {reason.gap && <LeadFigure gap={reason.gap} best={bestForStage(reason.gap.stage)} />}
           <div className="flex max-w-[36rem] flex-col gap-2">
             <p className="type-lede text-foreground lg:text-[1.25rem] lg:leading-7">
-              {leadSentence}
-              {chipAfter(leadSentence) && <span className="ml-2 inline-flex align-middle">{husChip}</span>}
+              {reason.text}
             </p>
             {restSentences.length > 0 && (
               <p className="max-w-[68ch] text-sm leading-relaxed text-pretty text-muted-foreground">
@@ -125,7 +128,6 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           <FrameTitle id="pathway-heading" className="type-title">
             The first steps, compared with Finland ({LATEST_YEAR})
           </FrameTitle>
-          <FrameDescription>Gaps to Finland are in percentage points (pts).</FrameDescription>
         </FrameHeader>
         <div className="flex flex-col gap-1.5">
           <FramePanel padding="none">
@@ -176,46 +178,6 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
 /** Finland's value for each year of the trend, from the same indicator (null where unpublished). */
 function nationalTrend(indicatorId: string) {
   return YEARS.map((year) => ({ year, value: getNationalValue(indicatorId, year)?.value ?? null }));
-}
-
-const KEY_CAPTION: Record<Gap["stage"], string> = {
-  gp_access: "of non-urgent GP visits waited more than 7 days",
-  referral: "of referrals were processed within 3 days (higher is faster)",
-  gp_recognition: "",
-};
-
-/**
- * The stage the first screen leads with: the worst measured stage when one is worse than
- * Finland, otherwise step 1 (getting to a GP) with its amber status.
- */
-function keyFigureGap(county: County): Gap | null {
-  const { focus, anyRed } = getBottleneck(county.id);
-  const gp = getStageGap(county.id, "gp_access");
-  const gap = anyRed ? focus[0] : gp && gp.value !== null ? gp : focus[0];
-  return gap && gap.value !== null ? gap : null;
-}
-
-/** The first screen's one key number: the figure, its status and source, and what it counts. */
-function KeyFigure({ gap }: { gap: Gap }) {
-  if (gap.value === null) return null;
-  return (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-        <p className={`numeral text-[3.5rem] leading-[0.95] sm:text-[4.75rem] ${STATUS_FIGURE[gap.status]}`}>
-          {formatPct(gap.value)}
-        </p>
-        <div className="flex flex-col items-start gap-1.5">
-          <StatusBadge status={gap.status} size="md">
-            {STATUS_LABEL[gap.status]}
-          </StatusBadge>
-          <SourceChip sourceId={gap.source_id} year={gap.year} />
-        </div>
-      </div>
-      <p className="text-sm text-pretty text-muted-foreground">
-        {KEY_CAPTION[gap.stage]} · Finland <span className="figure">{formatPct(gap.national_value)}</span>
-      </p>
-    </div>
-  );
 }
 
 /** The trend of every step that has an indicator, for the panel under the steps. */

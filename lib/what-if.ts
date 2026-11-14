@@ -32,7 +32,7 @@ export type WhatIf =
     };
 
 /** One decimal, the way gapToFinland rounds: each share to one decimal, then the difference. */
-function diff1(a: number, b: number): number {
+export function diff1(a: number, b: number): number {
   return Math.round((Number(a.toFixed(1)) - Number(b.toFixed(1))) * 10) / 10;
 }
 

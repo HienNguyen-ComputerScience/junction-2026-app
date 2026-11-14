@@ -16,7 +16,7 @@ import type { GapStatus } from "@/lib/data";
 export type PickerArea = {
   id: string;
   name: string;
-  /** Where the pathway stands, in one sentence. */
+  /** The main reason sentence (lib/main-reason): where the delay sits, against Finland and 2023. */
   verdict: string;
   /** The area's overall status: the one the map colours it by. */
   status: GapStatus;
@@ -39,6 +39,8 @@ type Props = {
   whatIfs: Record<string, ReactNode>;
   actions: Record<string, ReactNode>;
   mapChip: ReactNode;
+  /** One line under the map: what red means and the benchmark, with its figures. */
+  mapNote: ReactNode;
 };
 
 // The selection is mirrored in the URL (?area=), read after hydration so the page stays static.
@@ -65,6 +67,7 @@ export function AreaPicker({
   whatIfs,
   actions,
   mapChip,
+  mapNote,
 }: Props) {
   const selectId = useId();
   const answerRef = useRef<HTMLDivElement>(null);
@@ -143,7 +146,7 @@ export function AreaPicker({
           <div className="flex flex-col gap-5 px-5 pt-5 pb-5 sm:px-6">
             <div className="flex flex-col gap-3" aria-live="polite">
               <p className="type-caption font-medium text-muted-foreground">
-                {area.name}, {year}: {area.status === "red" ? "where the pathway breaks" : "where the pathway stands"}
+                {area.name}, {year}
               </p>
               {leads[area.id] ?? null}
               <h2 className="type-heading text-pretty text-foreground">{area.verdict}</h2>
@@ -189,9 +192,7 @@ export function AreaPicker({
             className="mb-5 h-[16.25rem] lg:h-[20rem]"
           />
           <p className="self-start type-caption text-pretty text-muted-foreground">
-            Each area is coloured by the worse of its two measured steps, the GP wait and the referral, against Finland
-            (the same status as its answer). An area is red if either is worse. Not specific to cancer: the GP wait
-            covers all non-urgent GP visits. Map: Statistics Finland, CC BY 4.0
+            {mapNote}
           </p>
         </div>
         {/* The page's one key: the map's fills and the steps' bars use the same marks. */}
