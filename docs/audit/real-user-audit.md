@@ -226,7 +226,9 @@ The team lead asked for product-page storytelling on every page except home and 
 | Ask | The question box (its title is the h1) and this month's news. |
 | Error, not found | Title and two buttons. |
 
-Not done: the focus effect on the plan (its parts are mostly tables and form fields, which stay out of the effect, so it would only fade the lead).
+Focus effect, final version ("fade the card, not the text", team lead's choice): every chunk and story text block is a card; the one in focus is Mint Veil, the others Cream Paper with a Border Mist hairline. Text never fades. All text/surface pairs measured AA (lowest 5.8:1, faint text on mint). Screenshots: `screenshots/after/scroll/focus-cards_county_1366_step0-to-1.png`, `focus-cards_county_390_step1-to-2.png`.
+
+Not done here: the plan page. It moved to the export agent (with the print, Word, Excel and email buttons) before its focus effect was added.
 
 ### What was removed or simplified, and why
 

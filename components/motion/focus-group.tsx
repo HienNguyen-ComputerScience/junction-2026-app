@@ -5,23 +5,24 @@ import { cn } from "cn";
 
 import { prefersReducedMotion } from "@/lib/motion";
 
-/** How close to the top or bottom of the page counts as "at the end": everything is in focus there. */
+/** How close to the top or bottom of the page counts as "at the end": the first or last item is in focus there. */
 const EDGE = 48;
 
 /**
- * Focus effect for a scroll page: the chunk nearest the middle of the screen is in focus at full
- * strength; the others step back (opacity 0.8 and scale 0.98 from 640px, opacity 0.85 on a
- * phone). As the reader scrolls, focus moves to the next chunk. The page scrolls normally.
+ * Focus effect for a scroll page: every item is a card. The one nearest the middle of the screen
+ * is Mint Veil and slightly larger (scale 1.02); the others are Cream Paper with a Border Mist
+ * hairline, slightly smaller (0.96). The card changes, never the text: no opacity anywhere. As
+ * the reader scrolls, focus moves to the next card. The page scrolls normally.
  *
  * - Items are every `Chunk` and every `ScrollStory` text block inside the group (they carry
  *   `data-focus-item`); put `data-focus-item` on anything else that should take part. Sticky
- *   pictures never fade.
+ *   pictures, full tables, the limitations box and MoreCard stay out.
  * - One IntersectionObserver per group, on a band through the middle of the viewport. Nothing
  *   captures the wheel or touch, nothing snaps, nothing scrolls by script.
- * - Dim, never hide: faded items stay readable (AA measured at the floor), clickable and in the
- *   accessibility tree. An item holding keyboard focus or an opened "Show …" is at full strength.
- * - Full strength everywhere before script runs, under reduced motion, in print, and at the very
- *   top and bottom of the page (so the first and last chunks of a short page come into focus).
+ * - An item holding keyboard focus or an opened "Show …" stays in the focused state.
+ * - At the very top of the page the first item is in focus, at the very bottom the last.
+ * - Before script runs, under reduced motion and in print, every item is in one neutral state
+ *   (cream with the hairline, no scale, no animation). Styles: app/globals.css, "FocusGroup".
  */
 export function FocusGroup({ children, className }: { children: ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -38,14 +39,17 @@ export function FocusGroup({ children, className }: { children: ReactNode; class
         else delete item.dataset.focus;
       }
     };
-    // At the ends of the page the effect rests, so every item is at full strength.
-    const atEdge = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      return window.scrollY < EDGE || window.scrollY > max - EDGE;
-    };
+    // At the ends of the page the first or last item takes focus (the middle band may never reach it).
     const update = () => {
-      if (atEdge()) delete root.dataset.focusOn;
-      else if (root.querySelector("[data-focus='in']")) root.dataset.focusOn = "";
+      const list = items();
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (window.scrollY < EDGE && list.length) setFocus(list[0]);
+      else if (window.scrollY > max - EDGE && list.length) setFocus(list[list.length - 1]);
+      if (root.querySelector("[data-focus='in']")) root.dataset.focusOn = "";
+    };
+    // Paper gets the neutral state; coming back resumes.
+    const toNeutral = () => {
+      delete root.dataset.focusOn;
     };
 
     const observer = new IntersectionObserver(
@@ -59,10 +63,14 @@ export function FocusGroup({ children, className }: { children: ReactNode; class
     );
     for (const item of items()) observer.observe(item);
     window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("beforeprint", toNeutral);
+    window.addEventListener("afterprint", update);
     update();
     return () => {
       observer.disconnect();
       window.removeEventListener("scroll", update);
+      window.removeEventListener("beforeprint", toNeutral);
+      window.removeEventListener("afterprint", update);
       delete root.dataset.focusOn;
       for (const item of items()) delete item.dataset.focus;
     };

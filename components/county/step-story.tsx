@@ -39,7 +39,7 @@ export function StepsPicture({ steps, mainStage, year }: { steps: PlanStep[]; ma
                   <span className="sr-only">Step {step.number}: </span>
                   {step.label}
                 </span>
-                {step.stage === mainStage ? <span className="rounded-full bg-forest-ink px-2.5 py-0.5 text-sm font-semibold text-cream-paper">The main delay</span> : null}
+                {step.stage === mainStage ? <span className="rounded-full bg-forest-ink px-2.5 py-0.5 text-base font-semibold text-cream-paper">The main delay</span> : null}
               </p>
               <StatusBadge status={step.status} className="h-auto max-w-full shrink items-baseline whitespace-normal leading-snug">
                 {step.statusLabel}
@@ -73,7 +73,7 @@ export function StepStoryText({
     <div className="motion-loud flex flex-col items-start gap-4 py-6">
       <Reveal className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span className="type-eyebrow">Step {step.number}</span>
-        {flag ? <span className="rounded-full bg-forest-ink px-2.5 py-0.5 text-sm font-semibold text-cream-paper">{flag}</span> : null}
+        {flag ? <span className="rounded-full bg-forest-ink px-2.5 py-0.5 text-base font-semibold text-cream-paper">{flag}</span> : null}
       </Reveal>
       <Reveal index={1}>
         <h3 className="font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.5rem]">{step.label}</h3>

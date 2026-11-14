@@ -127,6 +127,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           },
           {
             key: "news",
+            print: false,
             label: "Local news, last 12 months (found live, unverified)",
             children: (
               <Disclosure show="Show the news" hide="Hide the news">
