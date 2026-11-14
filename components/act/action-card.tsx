@@ -58,7 +58,7 @@ const rounded = (n: number) => String(Math.round(n * 10) / 10);
  */
 export function plainStat({ value, unit, metric }: Effect): string | null {
   if (unit === "odds ratio" && /^mortality/.test(metric) && value > 0 && value < 1) {
-    return `${rounded((1 - value) * 100)}% lower odds of dying`;
+    return `${rounded((1 - value) * 100)}% lower odds of dying from any cause`;
   }
   if (unit === "days" && /^median diagnostic interval/.test(metric) && value < 0) {
     return `Diagnosis ${rounded(Math.abs(value))} days faster`;
@@ -133,11 +133,14 @@ function EvidenceStat({ action, children }: { action: Evidence; children?: React
 export function ActionCard({
   action,
   index,
+  showIndex = true,
   children,
 }: {
   action: Evidence;
   /** 1-based position in the list of recommended actions. */
   index?: number;
+  /** Show the "Action N" eyebrow; off where a carousel counter already says it. */
+  showIndex?: boolean;
   children?: ReactNode;
 }) {
   return (
@@ -156,7 +159,7 @@ export function ActionCard({
 
         <div className="flex flex-col gap-2.5">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-            {index !== undefined && (
+            {index !== undefined && showIndex && (
               <span className="type-caption font-medium text-muted-foreground tabular-nums">Action {index}</span>
             )}
             <span className={`${TAG} gap-1`}>

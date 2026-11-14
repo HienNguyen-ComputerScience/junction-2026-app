@@ -19,7 +19,7 @@ export function OwnerRow({
   return (
     <p className={cn("flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm leading-snug text-muted-foreground", className)}>
       <span className="min-w-0 text-pretty">
-        <span className="text-[0.75rem]">Owner:</span> {owner}
+        <span className="text-[0.75rem]">Owner:</span> {owner.replace(": ", ", ")}
       </span>
       {evidence ? (
         <>
