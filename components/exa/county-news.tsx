@@ -42,7 +42,10 @@ export function CountyNews({ countyId }: { countyId: string }) {
           <LiveMark result={state.kind === "error" ? { freshness: "unavailable" } : data} />
         </FrameMeta>
         <FrameDescription className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <span>News and county pages about access to a doctor, in Finnish.</span>
+          <span>
+            News and county pages about access to a doctor, in Finnish.
+            {data?.freshness === "stale-cache" && data.message ? ` ${data.message}` : ""}
+          </span>
         </FrameDescription>
       </FrameHeader>
       <FramePanel padding="none" className="px-4 py-4 sm:px-6 sm:py-5">

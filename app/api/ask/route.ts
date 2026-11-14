@@ -20,6 +20,9 @@ import { clientIp, hit, limitedReply, type LimitedReply } from "@/lib/exa/rate-l
 import { detectCounty, filterRelevant, isOnTopic, namesOtherCountry } from "@/lib/exa/relevance";
 import { getMainReason, reasonLinks } from "@/lib/main-reason";
 
+// Worst case is about 42 s (12 s search + 15 s model call with one retry).
+export const maxDuration = 60;
+
 // POST /api/ask  { "question": "..." }
 // Answers only from Exa results. Each answer sentence cites items by 1-based index;
 // unsupported sentences are dropped by the validator. Otherwise: a clean "nothing found".

@@ -27,7 +27,7 @@ A wellbeing services county director (or a GP in that county). Judges are market
   - **Evidence finder:** under each action, an Exa search of research papers and Nordic reports, with Contents text so Claude can write a cited card. Shown as "found live — unverified", next to Luan's checked table.
   - **Judge question box:** a free-text question answered only from Exa results, with links and a clean "nothing found".
   - Server-side only (`EXA_API_KEY` in `.env.local`, never in client code). Cache results for the demo; must degrade gracefully if Exa is down.
-  - Credits: $50 per participant, code `EXA50JUNCTION` at dashboard.exa.ai/billing.
+  - Credits: $50 per participant; ask the team lead for the code.
 
 ## Research notes (with source links)
 - THL Sotkanet: https://sotkanet.fi (6411 GP visits waiting > 7 days: 2025 range Päijät-Häme 32.7% → Vantaa–Kerava 85.4%, Finland 54.7%).

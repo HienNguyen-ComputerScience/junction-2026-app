@@ -156,7 +156,7 @@ export function PathwaySteps({
 }: {
   steps: PathwayStep[];
   density: "full" | "compact";
-  /** A link for a step, on its own line under the status row (the red-flag helper for step 2). */
+  /** A link for a step, on its own line under the status row (for example the four referral routes for step 2). */
   renderExtra?: (step: PathwayStep) => ReactNode;
   className?: string;
 }) {
