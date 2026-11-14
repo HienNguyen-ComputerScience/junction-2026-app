@@ -1,9 +1,7 @@
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { MainNav, NavLinks } from "@/components/site-nav";
-import { buttonVariants } from "@/components/ui/button";
+import { BriefingHeaderButton, MainNav, NavLinks } from "@/components/site-nav";
 import { counties } from "@/lib/data";
 import { getRanking } from "@/lib/ranking";
 
@@ -37,16 +35,9 @@ export function SiteHeader() {
               FirstLine
             </span>
           </Link>
-          <p className="hidden truncate border-l border-border pl-3 type-caption text-muted-foreground md:block">
-            For county directors: where early cancer care slows, and what to do
-          </p>
         </div>
-        {/* The guided briefing is built on its own branch; this is its one entry point in the header. */}
-        <Link href="/briefing" className={buttonVariants({ variant: "default", size: "default", className: "shrink-0" })}>
-          <span className="sm:hidden">Guided briefing</span>
-          <span className="hidden sm:inline">Start the guided briefing</span>
-          <ArrowRight aria-hidden strokeWidth={1.75} />
-        </Link>
+        {/* The guided briefing's button, on every page but home, where the first screen holds it. */}
+        <BriefingHeaderButton />
       </div>
       <div className="border-t border-frame-border">
         <Suspense fallback={<NavLinks pathname={null} defaultArea={defaultArea} areaIds={areaIds} />}>
