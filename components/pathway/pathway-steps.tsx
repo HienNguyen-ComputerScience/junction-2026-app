@@ -121,8 +121,8 @@ export function StepMark({
 
 function StepTitle({ step, compact = false }: { step: PathwayStep; compact?: boolean }) {
   return (
-    // Two lines are always reserved (from md), so values, bars and chips share rows across the steps.
-    <div className={cn("flex min-w-0 items-start gap-2.5", compact ? "md:min-h-12" : "lg:min-h-14")}>
+    // Top-aligned: the steps share subgrid rows, so a one-line and a two-line title take the same row height.
+    <div className="flex min-w-0 items-start gap-2.5">
       <StepMark step={step.step} status={step.status} className={compact ? undefined : "size-7 text-[0.8125rem]"} />
       <h3
         className={cn(

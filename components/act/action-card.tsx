@@ -19,7 +19,7 @@ function Field({
   strong?: boolean;
 }) {
   return (
-    <div className="grid gap-x-4 gap-y-1 @md:grid-cols-[6rem_minmax(0,1fr)]">
+    <div className="grid items-start gap-x-4 gap-y-1 @md:grid-cols-[6rem_minmax(0,1fr)]">
       <dt className="type-caption text-muted-foreground">{label}</dt>
       <dd
         className={`text-sm leading-relaxed text-pretty tabular-nums ${strong ? "text-foreground" : "text-muted-foreground"}`}
