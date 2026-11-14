@@ -8,7 +8,7 @@ import { starterDataset } from "@/lib/insights";
 export const STARTER_TEMPLATE_URL = "/api/insights/starter-template";
 
 /** The download as a link that looks like a primary button: it says what it opens. */
-export function StarterDownload() {
+export function StarterDownload({ label = "Download the Excel template (.xlsx)" }: { label?: string }) {
   return (
     <a
       href={STARTER_TEMPLATE_URL}
@@ -17,7 +17,7 @@ export function StarterDownload() {
       data-print="hide"
     >
       <Download aria-hidden strokeWidth={1.75} data-icon="inline-start" />
-      Download the Excel template (.xlsx)
+      {label}
     </a>
   );
 }

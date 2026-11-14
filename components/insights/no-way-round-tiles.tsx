@@ -1,0 +1,82 @@
+"use client";
+
+import { cn } from "cn";
+
+import { useStoryStep } from "@/components/motion";
+
+/** 0 other areas, 1 longer GP wait than Finland, 2 and few other routes, 3 and in every test. */
+export type TileLevel = 0 | 1 | 2 | 3;
+
+const FILL: Record<TileLevel, string> = {
+  0: "border-border-mist bg-cream-paper text-charcoal",
+  1: "border-transparent bg-mint-veil text-charcoal",
+  2: "border-transparent bg-sage-mist text-charcoal",
+  3: "border-transparent bg-forest-ink text-cream-paper font-semibold",
+};
+
+const SAYS: Record<TileLevel, string> = {
+  0: "",
+  1: "longer GP wait than Finland",
+  2: "longer GP wait and few other routes",
+  3: "longer GP wait and few other routes, under all six cut-offs",
+};
+
+/** One to three dots: the level as a shape, so the picture never depends on colour alone. */
+function Dots({ level }: { level: TileLevel }) {
+  if (level === 0) return null;
+  return (
+    <span aria-hidden className="flex shrink-0 gap-0.5">
+      {Array.from({ length: level }, (_, i) => (
+        <span key={i} className="size-1.5 rounded-full bg-current" />
+      ))}
+    </span>
+  );
+}
+
+/**
+ * The picture that holds still while the "no way round" story scrolls past: the 22 areas as
+ * boxes. Step 0 all plain; step 1 the longer GP waits; step 2 those with few other routes too;
+ * step 3 the two that hold under every cut-off. The final state (server, phone, reduced motion,
+ * print) shows every level at once, each with its own fill and number of dots.
+ */
+export function NoWayRoundTiles({ areas }: { areas: { id: string; name: string; level: TileLevel }[] }) {
+  const step = useStoryStep();
+  const shown = (level: TileLevel): TileLevel => {
+    if (step === null) return level;
+    return level >= step ? (Math.min(level, step) as TileLevel) : 0;
+  };
+  return (
+    <div className="flex flex-col gap-4">
+      <ul className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+        {areas.map((a) => {
+          const level = shown(a.level);
+          return (
+            <li
+              key={a.id}
+              className={cn(
+                "flex min-h-11 items-center justify-between gap-2 rounded-sm border px-2.5 py-1.5 text-base leading-tight transition-colors duration-(--motion-rise) ease-(--motion-ease)",
+                FILL[level],
+              )}
+            >
+              <span className="min-w-0">
+                {a.name}
+                {SAYS[a.level] ? <span className="sr-only">: {SAYS[a.level]}</span> : null}
+              </span>
+              <Dots level={level} />
+            </li>
+          );
+        })}
+      </ul>
+      <ul aria-hidden className="flex flex-col gap-1.5 text-base">
+        {([1, 2, 3] as const).map((level) => (
+          <li key={level} className="flex items-center gap-2.5">
+            <span className={cn("inline-flex h-6 w-10 items-center justify-center rounded-sm border", FILL[level])}>
+              <Dots level={level} />
+            </span>
+            {level === 1 ? "Longer GP wait than Finland" : level === 2 ? "… and few other routes" : "… under all six cut-offs"}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
