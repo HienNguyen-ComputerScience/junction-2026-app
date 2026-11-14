@@ -10,7 +10,12 @@ Files: `app/county/[id]/act/page.tsx` and `components/act/`:
 
 ## What the page is now
 
-1. **Opening card** (keylime). The area's delay as one serif statement ("Vantaa and Kerava's delay: getting to a GP"), the figure counting up (85.4%), one caption line ("of GP visits waited over 7 days"), a "Finland 54.7%" pill and the source chip. Then one quiet button, "Why only these actions?", and the primary "Make the action plan for the board".
+1. **Opening card** (keylime). It holds:
+   - the area's delay as one serif statement ("Vantaa and Kerava's delay: getting to a GP"; an area with no step worse than Finland reads "Central Uusimaa: no step worse than Finland. Closest: getting to a GP");
+   - the figure counting up (85.4%) with one caption line ("of non-urgent GP visits waited over 7 days");
+   - a "Finland 54.7%" pill and the source chip;
+   - the figure's main caveat, always visible as a `CaveatNote` ("Read with care: All non-urgent GP visits, not only cancer"), with the indicator's full limitation behind "Why?";
+   - one quiet button, "Why only these actions?", and the primary "Make the action plan for the board".
 2. **One mint card per action.** Each card reveals in order as it scrolls in: a fade and rise at the loud level (500ms with a 120ms stagger), and each piece stays. The card shows:
    - the number and a short title (8 words at most);
    - an "Owner: …" pill;
@@ -37,13 +42,15 @@ The short titles, owners and why lines are a mapping in `components/act/action-c
 
 The count is scripted on the rendered page at 1366×768, scrolled to the end so every reveal has played. It leaves out navigation, links, buttons, source chips and screen-reader-only text.
 
-| Area | Before (state at 4c519d1) | Round 2 (cut) | Round 3 (removal pass, final) |
-|---|---|---|---|
-| Vantaa and Kerava | 380 | 125 | 82 |
-| Kainuu | 333 | 119 | 76 |
-| Central Uusimaa | 385 | 123 | 82 |
+| Area | Before (state at 4c519d1) | Round 2 (cut) | Round 3 (removal pass) | Final |
+|---|---|---|---|---|
+| Vantaa and Kerava | 380 | 125 | 82 | 83 |
+| Kainuu | 333 | 119 | 76 | 76 |
+| Central Uusimaa | 385 | 123 | 82 | 87 |
 
-The 82 words on Vantaa and Kerava, in full: "Vantaa and Kerava's delay: getting to a GP · 85.4% · of GP visits waited over 7 days · Finland 54.7% · Give every patient a named GP · Owner: Primary care director · A GP who knows the patient notices a new symptom sooner. · Triage contacts with Omaolo, the online checker · Owner: Digital services lead · Frees phone lines and GP slots; urgent cases are routed faster. · Add GP capacity and named GPs county-wide · Owner: STM and the county · Finland's own roadmap names it as the first measure."
+The final count adds "non-urgent" to the caption and names the closest step on areas with no step worse than Finland. The caveat note's own text is in its button and is not counted; it adds about 8 words.
+
+The 82 words of round 3 on Vantaa and Kerava, in full: "Vantaa and Kerava's delay: getting to a GP · 85.4% · of GP visits waited over 7 days · Finland 54.7% · Give every patient a named GP · Owner: Primary care director · A GP who knows the patient notices a new symptom sooner. · Triage contacts with Omaolo, the online checker · Owner: Digital services lead · Frees phone lines and GP slots; urgent cases are routed faster. · Add GP capacity and named GPs county-wide · Owner: STM and the county · Finland's own roadmap names it as the first measure."
 
 ## Removal pass (round 3: "Is it needed? If it is, is this the best implementation?")
 
@@ -80,7 +87,7 @@ None of these was the only place a caveat, owner or source appears on the site.
 | "What if" panel (round 1) | The plan's target and yearly-pace arithmetic. `components/home/what-if-panel.tsx` is now unused (not my file). |
 | Full action title, detail, owner line | "Show details" → "The action in full". |
 | "Source checked" badge | "Show details" → "Where it was done and what happened". |
-| The figure's limitation (indicator text) | Behind "Why only these actions?" as "What the figure covers: …", and on the area page. |
+| The figure's limitation (indicator text) | Always visible in short under the figure ("All non-urgent GP visits, not only cancer"; "When assessment starts, not when the patient is seen" for referrals), with the full text behind its "Why?". Also on the area page. |
 | "GP recognises warning signs: no public data" | Behind "Why only these actions?" and in the other-actions group. |
 
 ## Click-through
@@ -94,11 +101,31 @@ Run on the production build (`next build`, `next start`) with `playwright-core` 
 - **Print** (`print` media with the `beforeprint` handler): every section is open (7 on Vantaa and Kerava), no "Show …" button is shown, and every part has its own label. The PDF is `after/vantaa-kerava-print.pdf`.
 - **Console:** no script errors. The one failed request on every page is the site header's prefetch of `/how-to-read`, a 404 until that page lands (not this page's link).
 
+## Focus effect (shared `FocusGroup`)
+
+The opening card and each action card are `data-focus-item`s in one `FocusGroup`. The end card and "Back to <area>" are outside it. Measured on Vantaa and Kerava with the focus walk script:
+
+- **1366×768, scrolling:** the item in the middle of the window is at 1.0 and the others at 0.8. At the top and bottom of the page everything is at 1.0.
+- **Opened or focused items:** an opened card stays at 1.0 while another is in the middle, and so does a card holding keyboard focus.
+- **390px:** the others are at 0.85.
+- **Reduced motion and print:** every item is at 1.0.
+- **No sideways scroll and no script errors.**
+
+The 0.8 floor is the shared component's own, measured for WCAG AA. It is not overridden here.
+
+## Last fixes
+
+- **Opening figure.** Its main caveat is always visible (contract: never behind a button). The captions use the data's words: "non-urgent" for indicator 6411 and "processed" for indicator 13.
+- **Areas with no step worse than Finland.** The statement names the closest step, so the figure and actions have a subject.
+- **Every area checked.** All 22 areas were fetched and each shows a statement, a figure, a caption, a caveat and three cards. `finland` is the national row and has no act page.
+- **Plan button at 390px.** The label overran the button's padding (the class string did not beat `whitespace-nowrap`). It now merges with `cn` and wraps inside the button.
+
 ## Earlier rounds on this branch
 
 - **Round 1 (4c519d1):** the actions became a numbered list with depth behind four buttons. The step strip and what-if panel were removed. The referral routes and web search went behind buttons. A nested-disclosure bug was found: an inner "Show …" read "Hide …" while closed, because both use the same `group/show` name. The route evidence links are now always visible, so nothing is nested.
 - **Round 2:** the team lead found it still a wall of text. The page was cut to 125 words, with a sticky pathway picture beside the cards and four buttons per card.
-- **Round 3 (final):** the removal pass above.
+- **Round 3:** the removal pass above.
+- **Final:** the caveat note, the caption wording and the shared focus effect.
 
 Round-1 screenshots are in `screenshots/round1/`.
 

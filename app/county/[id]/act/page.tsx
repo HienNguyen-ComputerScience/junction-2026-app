@@ -2,13 +2,14 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cn } from "cn";
 
 import { ActionSummary } from "@/components/act/action-card";
 import { lowerFirst, STEP_SHORT } from "@/components/act/action-copy";
 import { ActionItem } from "@/components/act/action-item";
 import { ReferralRoutes } from "@/components/act/referral-routes";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
-import { AnimatedNumber, CaveatNote, Disclosure, Reveal } from "@/components/motion";
+import { AnimatedNumber, CaveatNote, Disclosure, FocusGroup, Reveal } from "@/components/motion";
 import { SourceChip } from "@/components/source-chip";
 import { BackLink } from "@/components/ui/back-link";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -85,7 +86,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   const showStep = new Set(recommended.map((action) => action.stage)).size > 1;
 
   const planButton = (
-    <Link href={planHref} className={`${buttonVariants({ size: "lg" })} h-auto max-w-full whitespace-normal`}>
+    <Link href={planHref} className={cn(buttonVariants({ size: "lg" }), "h-auto max-w-full shrink whitespace-normal text-left")}>
       Make the action plan for the board
       <ArrowRight aria-hidden data-icon="inline-end" />
     </Link>
@@ -97,67 +98,70 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
         items={[{ label: "Areas", href: "/" }, { label: county.name, href: `/county/${county.id}` }, { label: "Actions" }]}
       />
 
-      {/* 1. The main delay, its figure, and the one thing to do with it. */}
-      <section aria-labelledby="act-title" className="mt-6 flex flex-col gap-6 rounded-lg bg-keylime-wash px-7 py-9 sm:px-12 sm:py-12">
-        <Reveal index={0}>
-          <h1 id="act-title" className="type-page max-w-[22ch] text-pretty">
-            {statement(county.name, bottleneck)}
-          </h1>
-        </Reveal>
-        {lead && leadValue !== null ? (
-          <Reveal index={1} className="flex flex-col gap-2">
-            <p className="numeral text-[4rem] leading-none text-forest-ink sm:text-[5rem]">
-              <AnimatedNumber value={leadValue} final={formatPct(leadValue)} decimals={1} level="loud" />
-            </p>
-            <p className="text-lg text-foreground">{FIGURE_CAPTION[lead.indicator_id] ?? getIndicator(lead.indicator_id)?.short_name}</p>
-            <span className="flex flex-wrap items-center gap-2 pt-1">
-              <span className="inline-flex min-h-8 items-center rounded-full bg-cream-paper px-3.5 text-base text-forest-ink">
-                Finland {formatPct(lead.national_value)}
+      {/* The focus effect covers the opening and the action cards, not the end card or the way back. */}
+      <FocusGroup>
+        {/* 1. The main delay, its figure, and the one thing to do with it. */}
+        <section data-focus-item aria-labelledby="act-title" className="mt-6 flex flex-col gap-6 rounded-lg bg-keylime-wash px-7 py-9 sm:px-12 sm:py-12">
+          <Reveal index={0}>
+            <h1 id="act-title" className="type-page max-w-[22ch] text-pretty">
+              {statement(county.name, bottleneck)}
+            </h1>
+          </Reveal>
+          {lead && leadValue !== null ? (
+            <Reveal index={1} className="flex flex-col gap-2">
+              <p className="numeral text-[4rem] leading-none text-forest-ink sm:text-[5rem]">
+                <AnimatedNumber value={leadValue} final={formatPct(leadValue)} decimals={1} level="loud" />
+              </p>
+              <p className="text-lg text-foreground">{FIGURE_CAPTION[lead.indicator_id] ?? getIndicator(lead.indicator_id)?.short_name}</p>
+              <span className="flex flex-wrap items-center gap-2 pt-1">
+                <span className="inline-flex min-h-8 items-center rounded-full bg-cream-paper px-3.5 text-base text-forest-ink">
+                  Finland {formatPct(lead.national_value)}
+                </span>
+                <SourceChip sourceId={lead.source_id} year={lead.year} />
               </span>
-              <SourceChip sourceId={lead.source_id} year={lead.year} />
-            </span>
-            {FIGURE_CAVEAT[lead.indicator_id] ? (
-              <CaveatNote short={FIGURE_CAVEAT[lead.indicator_id]} className="mt-2">
-                {getIndicator(lead.indicator_id)?.limitation}
-              </CaveatNote>
-            ) : null}
+              {FIGURE_CAVEAT[lead.indicator_id] ? (
+                <CaveatNote short={FIGURE_CAVEAT[lead.indicator_id]} className="mt-2">
+                  {getIndicator(lead.indicator_id)?.limitation}
+                </CaveatNote>
+              ) : null}
+            </Reveal>
+          ) : null}
+          <Reveal index={2}>
+            <Disclosure tone="quiet" show="Why only these actions?" hide="Hide why">
+              <ul className="flex max-w-[62ch] flex-col gap-2.5 rounded-lg bg-cream-paper px-5 py-4 text-base leading-relaxed text-pretty print:px-0">
+                <li className="hidden font-semibold text-forest-ink print:block">Why only these actions</li>
+                {whyNotes(county.name, bottleneck).map((note) => (
+                  <li key={note}>{note}</li>
+                ))}
+              </ul>
+            </Disclosure>
           </Reveal>
-        ) : null}
-        <Reveal index={2}>
-          <Disclosure tone="quiet" show="Why only these actions?" hide="Hide why">
-            <ul className="flex max-w-[62ch] flex-col gap-2.5 rounded-lg bg-cream-paper px-5 py-4 text-base leading-relaxed text-pretty print:px-0">
-              <li className="hidden font-semibold text-forest-ink print:block">Why only these actions</li>
-              {whyNotes(county.name, bottleneck).map((note) => (
-                <li key={note}>{note}</li>
-              ))}
-            </ul>
-          </Disclosure>
-        </Reveal>
-        {recommended.length > 0 ? (
-          <Reveal index={3} className="pt-1">
-            <div data-print="hide">{planButton}</div>
-          </Reveal>
-        ) : null}
-      </section>
-
-      {/* 2. The actions, one card each. */}
-      {recommended.length > 0 ? (
-        <section aria-labelledby="actions-title" className="mt-[18vh]">
-          <h2 id="actions-title" className="sr-only">
-            Recommended actions for {county.name}
-          </h2>
-          <ol className="flex max-w-3xl flex-col gap-16 md:gap-[28vh]">
-            {recommended.map((action, index) => (
-              <li key={action.id} className="print-flow">
-                <ActionItem action={action} index={index + 1} showStep={showStep} />
-              </li>
-            ))}
-          </ol>
-          <Reveal className="mt-16 md:mt-[18vh]">
-            <div data-print="hide">{planButton}</div>
-          </Reveal>
+          {recommended.length > 0 ? (
+            <Reveal index={3} className="pt-1">
+              <div data-print="hide">{planButton}</div>
+            </Reveal>
+          ) : null}
         </section>
-      ) : null}
+
+        {/* 2. The actions, one card each. */}
+        {recommended.length > 0 ? (
+          <section aria-labelledby="actions-title" className="mt-[18vh]">
+            <h2 id="actions-title" className="sr-only">
+              Recommended actions for {county.name}
+            </h2>
+            <ol className="flex max-w-3xl flex-col gap-16 md:gap-[28vh]">
+              {recommended.map((action, index) => (
+                <li key={action.id} className="print-flow">
+                  <ActionItem action={action} index={index + 1} showStep={showStep} />
+                </li>
+              ))}
+            </ol>
+            <Reveal className="mt-16 md:mt-[18vh]">
+              <div data-print="hide">{planButton}</div>
+            </Reveal>
+          </section>
+        ) : null}
+      </FocusGroup>
 
       {/* 3. Everything else, as three buttons. */}
       <section aria-label={`More for ${county.name}`} className="mt-[14vh] flex flex-col rounded-lg bg-slate-hush px-7 py-4 sm:px-10">

@@ -37,6 +37,7 @@ export function ActionItem({ action, index, showStep }: { action: Evidence; inde
 
   return (
     <article
+      data-focus-item
       id={`action-${index}`}
       aria-labelledby={`action-${index}-title`}
       className="flex w-full min-w-0 scroll-mt-28 flex-col gap-5 rounded-lg bg-mint-veil px-7 py-8 sm:px-10 sm:py-10"
