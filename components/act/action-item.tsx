@@ -70,7 +70,7 @@ export function ActionItem({ action, index, showStep }: { action: Evidence; inde
             <Part label="First step">
               <p className={`${TEXT} font-semibold`}>{action.first_step}</p>
             </Part>
-            <Part label="The result">
+            <Part label="Result where it was tried">
               {stat ? (
                 <div className="flex flex-col gap-1">
                   <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p>
@@ -82,7 +82,7 @@ export function ActionItem({ action, index, showStep }: { action: Evidence; inde
                 <p className={`${TEXT} tabular-nums`}>{action.effect_text}</p>
               )}
             </Part>
-            <Part label="What it will not fix">
+            <Part label="What it will not fix or prove">
               <p className={TEXT}>{action.limitations}</p>
             </Part>
             <Disclosure tone="quiet" show="Show how it works and the study" hide="Hide how it works and the study">
