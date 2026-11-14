@@ -11,7 +11,7 @@ Files: `docs/submission/deck.html` (source) and `docs/submission/firstline-deck.
 - Slide 4: "Rank" → "Pick an area". Slide 6: the four HUS areas now show the HUS-wide referral value, labelled as not a county figure (no longer a grey card). Say: "Where only a wider figure exists, we show it and say so."
 - Slide 8: "Real today" adds the home page, national news strip, sources page and the live deploy. The old "Next" column is now "Not in public data yet": GP recognition of warning signs, cancer stage by county, first contacts through work or private care.
 - Slide 9: live demo URL filled in.
-- Still to do: retake from the live URL after the final deploy, then remove the slide-1 draft footer. Lines below that say "amber", "grey referral" for Vantaa–Kerava, "Rank all 22 areas" or "Next: sources page / live deploy" are v3 history.
+- Done 14 Nov 08:45: screenshots 01–06 and 09 retaken from the live URL (main f7caadf, PRs #89–#102), slide-1 draft footer removed. Retake again only if the UI changes before Sunday. Lines below that say "amber", "grey referral" for Vantaa–Kerava, "Rank all 22 areas" or "Next: sources page / live deploy" are v3 history.
 
 Re-render from PowerShell. Bare `--headless` from Git Bash produced no PDF. Without `--user-data-dir`, Edge can hand off to a running instance and exit without writing.
 

@@ -85,7 +85,7 @@ Mirrors the "Final submission checklist" in [docs/junction-2026-guide.md](../jun
 | [x] | Repo is public, or shared so organisers can open it; all submissions are MIT-licensed | HienNguyen-ComputerScience | Repo settings. MIT `LICENSE` exists at the repo root (PR #52) | Done: repo is public (14 Nov); MIT `LICENSE` at the repo root (PR #52) |
 | [ ] | Source code publicity setting on the form | nabeo11 | [submission-text.md](submission-text.md) | TODO (human) |
 | [ ] | Credit preference on the form | nabeo11 | [submission-text.md](submission-text.md) | TODO (human) |
-| [ ] | Pitch deck as PDF | nabeo11 (deck) | `docs/submission/firstline-deck.pdf` (source `deck.html`, notes `deck-notes.md`) | Draft v4 in repo (14 Nov: new UI, screenshots from main 9032e79 local build, see `deck-notes.md`); retake from the live URL after the final deploy, then remove the "Draft" footer. A second 16-slide draft is in `deck-nabeo11/`. Which PDF is uploaded on Sunday: TODO (lead decides) |
+| [ ] | Pitch deck as PDF | nabeo11 (deck) | `docs/submission/firstline-deck.pdf` (source `deck.html`, notes `deck-notes.md`) | Draft v4 in repo (14 Nov: new UI, screenshots from main 9032e79 local build, see `deck-notes.md`); screenshots retaken from the live URL on 14 Nov (main f7caadf), "Draft" footer removed. A second 16-slide draft is in `deck-nabeo11/`. Which PDF is uploaded on Sunday: TODO (lead decides) |
 | [ ] | Team phone numbers and Discord usernames | nabeo11 | Collect from each member; never commit them to the repo | TODO (human) |
 | [ ] | Set status to FINAL | nabeo11 | none | TODO (human) |
 | [ ] | Re-open the submitted project and check every field saved | nabeo11 | none | TODO (human) |
