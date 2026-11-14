@@ -646,6 +646,10 @@ h2:not([class*="type-"], .font-sans) {
     opacity: 1 !important;
     transform: none !important;
   }
+  /* A count caught mid-run must not print its moving digits over the final value. */
+  [data-slot="animated-number"] > [aria-hidden] {
+    display: none !important;
+  }
   /* Closed sections print open (PrintExpand does the same from script). */
   details::details-content {
     content-visibility: visible !important;

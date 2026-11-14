@@ -47,7 +47,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 FirstLine
               </span>
             </div>
-            <p className="type-caption text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               Decision support for service planning. Not medical advice. No patient
               data.
             </p>
