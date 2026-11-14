@@ -171,4 +171,45 @@ How this fits the audit: the guided briefing answers findings 1.3, 2.1, 4.3 and 
 
 ## Status after the build
 
-To be filled in at the end of the branch: each item above marked done or skipped with the reason, and what still falls short after a second pass as the same persona.
+The guided briefing (`app/briefing/**`) and the insights pages (`app/insights/**`) were split off to two other agents on this branch; their status is in their own folders under `docs/audit/`. This section covers the rest.
+
+| Rank | Item | Status | Where |
+|---|---|---|---|
+| 1 | Guided briefing | Handed to the briefing agent. The entry point is in place: "Start the guided briefing" in the header on every page. | `components/site-header.tsx` |
+| 2 | County action plan | **Done.** `/county/<id>/plan`: where the area stands, a target you choose (Finland's level or the best area's, by 2027–2031) with the yearly pace as plain arithmetic, the actions with responsible role, first step, national roadmap measure and schedule, the published figure that will show whether it worked, fields for person, review date and local cost, what to start recording, limits, sources, and a decision line. Print or save as PDF, Download as Word, Download for Excel, Email the plan. Word and Excel files were opened in Word and Excel and read back for five area shapes. | `app/county/[id]/plan/`, `lib/plan*.ts`, `lib/export/` |
+| 3 | Cream-paper theme | **Done** for tokens, type, buttons, badges, chips, cards, map and bars; status colours are rust (worse) and slate (at or better), each always with words. Every text/background pair checked for WCAG AA. | `app/globals.css`, `components/ui/` |
+| 4 | Print | **Done.** Print buttons on compare, act, county and plan. On paper: header, nav and buttons hidden, closed sections open, every reveal shown, panels white with a thin rule, small units kept whole. Compare prints as two landscape pages (the four figures; all 22 areas on one page, one line each, with notes and sources). | `app/globals.css` (`@media print`), `components/motion/print-*.tsx` |
+| 5 | Act page | **Done.** The recommended actions as a numbered list (the carousel is gone), "Make the action plan for the board" at the top and after the list, opening the plan with those actions filled in; until now nothing linked to the plan. | `app/county/[id]/act/page.tsx` |
+| 6 | Finland overall (`/national`) | **Skipped.** The compare page now opens with the national picture (Finland's level, how many areas are worse, the gap between areas, how many got worse since 2023 with the recording caveat), the plan carries the national roadmap measures and the what-to-record list, and the insights agent owns the national "no way round", worsening and confidence pieces. A separate page would have repeated them. | — |
+| 7 | Compare | **Done.** Four lead figures; a table that sorts from a labelled list or by its headings, with change since 2023, comparison with Finland and the recording caveat for every area; Download the table for Excel (figures as numbers, a notes-and-sources sheet). | `app/compare/`, `lib/compare*.ts`, `components/compare/` |
+| 8 | Plain wording pass | **Partly done.** Wording on every page touched (compare, act, county, plan, home figure) uses plain labels ("Show …", "Make the action plan for the board", "Read with care"). Not swept: the live-search panels and the Ask page. | — |
+| 9 | Fast-track estimate | **Skipped.** The plan already carries the Denmark result as the action's published evidence with its limits; a county-baseline estimate needs a county diagnostic-interval figure that is not published (it is on the what-to-record list instead). | — |
+| 10 | County step tabs as plain sections | **Done.** The three steps are always-visible cards shared with the plan (figure, status in words, what it counts with Finland's value, change since 2023, caveat, trend, source); the step behind the main reason is flagged "The main delay"; the limitations box is open at every width. | `app/county/[id]/page.tsx`, `components/stat/step-unit.tsx` |
+
+### Second pass as the county director
+
+- **Better:** I can open my area, see the three steps without clicking anything, press one labelled button to get a plan with my actions in it, type the names and dates, and print it or download it for Word or Excel. The compare table sorts the way I'd sort in Excel and prints on one page.
+- **Still short:** the guided briefing is not on this branch yet, so the header button leads nowhere here. The Ask page and the live-search panels keep their web-app wording. The county "brief" panel still shows its actions one at a time in a small carousel. Some secondary labels on older components are 12–13px.
+
+### Second pass as a two-minute judge
+
+Home → an area → "Make the action plan for the board" → Download as Word is four presses, and every figure on the way carries its source chip and its limitation.
+
+## Motion and disclosure
+
+**Shared pieces** (`components/motion/`, contract in `docs/audit/contract.md`): `Reveal` (fade and an 8px rise, 320ms, 60ms stagger, plays once on entering view), `AnimatedNumber` (counts up over 600ms and lands on the exact published text, which is what screen readers get), `AnimatedBar` and the bars in tables (grow over 500ms when their row appears), `Disclosure` (a native `<details>` whose summary reads "Show …" / "Hide …"), `PrintButton` and `PrintExpand`. A louder set of timings (`motion-loud`) exists for the briefing.
+
+**Guardrails kept:** content is in the HTML before any script runs; nothing scroll-jacks; reduced motion shows everything at once; print opens every section and shows every reveal; the headline figure, its source and its main limitation are never behind a button; sortable tables are complete on the page.
+
+**Where it is used:**
+
+| Page | Chunks that appear | Behind a "Show …" button |
+|---|---|---|
+| Compare | Four lead figures (count up), the table's rows (fade in, bars grow), section headings | What the GP-wait figure counts (indicator text); what "HUS-wide" and "City units only" mean |
+| County | Three step cards (figure counts up, trend bars grow), section headings | Limitations after the first four ("Show 6 more limitations"); each limitation's full text |
+| Act | The numbered actions, one after another | The other evidence-backed options; each action's evidence details |
+| Plan | The three step cards, each action block | Each action's roadmap schedule |
+| Home | The area's lead figure counts up | How the map is coloured |
+
+Screenshots: `docs/audit/screenshots/before/` and `docs/audit/screenshots/after/` (per page, desktop and phone, and the printed PDFs).
+

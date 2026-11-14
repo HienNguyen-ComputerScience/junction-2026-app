@@ -185,6 +185,16 @@ The lead figure of a page or section, as one self-contained unit: eyebrow, a big
 
 Use it for 2–4 figures at the top of a page (grid `md:grid-cols-2`), never inside a table. `tone="alarm"` only for a figure that is worse than Finland. The compare page (`/compare`) is the reference page for the pattern.
 
+### `StepUnit` (`components/stat/step-unit.tsx`)
+
+One pathway step as a card, the same on the county page and in the plan: `<StepUnit step={step} index={i} flag="The main delay">{trend}</StepUnit>`. `step` is a `PlanStep` from `getAreaSteps(countyId)` (county page) or `plan.steps`. It handles every shape: a figure, no figure (step 2), a HUS-wide shared referral ("No county figure", the reason in words) and Helsinki's city-units figure (no target). Children go under the text, above the source.
+
+### Print layout
+
+- On paper, `[data-slot=frame-panel]`, `[data-slot=card]`, `[data-slot=stat-unit]` and the tinted surfaces print white with a thin grey rule; status colours keep their colour.
+- `print-wide` on a page's `<main>` prints the whole page on landscape A4 (Chromium lays a document out at one width, so put it on `<main>`, not on one section).
+- A table that is too wide for paper gets a paper twin: the screen table `print:hidden`, a plain `hidden print:table` next to it (see `PrintTable` in `components/compare/compare-table.tsx`).
+
 ### Link that looks like a button
 
 `buttonVariants({ variant, size, className })` returns merged classes (it runs `cn`), so `<Link className={buttonVariants({ variant: "outline" })}>` gets the outline border. Two variants only: `default` (primary, one per view) and `outline`.
@@ -290,6 +300,7 @@ type DataGap = {
 | Sources | `getSource(sourceId): Source`; `<SourceChip sourceId year />` | `lib/data`, `components/source-chip` |
 | Limitations | `getIndicator(id).limitation`; `gap.note`; `getRecordingCaveat(areaId): { tag, text } \| null` (show it wherever a rise in the GP-wait share is shown); `CITY_UNITS_ONLY_REFERRAL` (Helsinki); `gap.shared` (the HUS-wide referral value, never a county's own figure) | `lib/ranking`, `lib/recording` |
 | Best area, gap to it | `bestForStage(stage)`, `betterFor(indicatorId)`; `whatIf(…)`, `diff1(a, b)` | `lib/main-reason`, `lib/what-if` |
+| An area's three steps, as the plan shows them | `getAreaSteps(countyId): PlanStep[]` | `lib/plan-model` |
 | Every area side by side | `getCompareRows(): CompareRow[]` (rank, 2023–2025 GP values, vs Finland, change, recording caveat, own/shared/city-only referral); `getCompareLead(rows)` (the four lead counts); `changeText`, `vsFinlandText` (client-safe, `lib/compare-text`). Excel: `GET /compare/export` | `lib/compare` |
 | Formatting | `formatPct(value)` → `"85.4%"` | `lib/ranking` |
 
