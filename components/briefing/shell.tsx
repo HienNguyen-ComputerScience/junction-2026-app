@@ -101,8 +101,8 @@ export function BriefingShell({
           <div className="flex flex-col gap-3 px-[21px] pt-[21px] sm:px-[42px] sm:pt-[28px]">
             <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
               <p className="text-base leading-6 font-semibold text-forest-ink">Briefing for {areaName}</p>
-              <Link href="/compare" className={TEXT_LINK}>
-                Leave the briefing: full table of all areas
+              <Link href={`/?area=${areaId}`} className={TEXT_LINK}>
+                Leave the briefing
               </Link>
             </div>
             <div className="flex items-center gap-4">
@@ -140,7 +140,7 @@ export function BriefingShell({
             aria-label="Briefing steps"
             className="sticky bottom-0 z-10 flex items-stretch justify-between gap-3 rounded-b-[14px] border-t border-border-mist bg-cream-paper px-[21px] py-[14px] sm:px-[42px]"
           >
-            <Link href={previous ? briefingHref(areaId, previous) : "/briefing"} className={cn(SECONDARY_BUTTON, "shrink-0 max-sm:px-4")}>
+            <Link href={previous ? briefingHref(areaId, previous) : `/?area=${areaId}`} className={cn(SECONDARY_BUTTON, "shrink-0 max-sm:px-4")}>
               <ArrowLeft aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />
               <span>
                 Back<span className="max-sm:sr-only">{previous ? "" : ": choose another area"}</span>
