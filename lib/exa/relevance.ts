@@ -29,11 +29,11 @@ const TOPIC = [
   "mortalit", "surviv", "lung", "breast", "bowel", "colorectal", "prostate", "skin cancer", "appointment",
   "primary care", "specialist", "emergency", "mental", "dental", "sote", "nhs ", "thl ", "kela ", "astrazeneca",
   "imaging", "ct scan", "mri ", "biopsy", "red flag", "guarantee", "fast track", "triage", "e consult", "econsult",
-  "health centre", "health center", "life expectancy", "vaccin", "elderly care", "pharma",
+  "health centre", "health center", "life expectancy", "vaccin", "elderly care", "pharma", "call back", "callback",
   // Finnish
   "terve", "hoit", "hoid", "laakar", "sairaa", "sairau", "syop", "kasvai", "potila", "jono", "odot", "lahete",
   "lahett", "hyvinvointialue", "diagno", "seulo", "seula", "oire", "kuolle", "laake", "hammas", "mielenterv",
-  "neuvola", "paivyst", "vastaanot", "omalaakar", "tutkimu", "kuvanta",
+  "neuvola", "paivyst", "vastaanot", "omalaakar", "tutkimu", "kuvanta", "takaisinsoit", "soittopyyn",
 ];
 
 /** Places and names that need no confirmation in the results (they are on topic by design). */
@@ -80,18 +80,55 @@ export function contentStems(question: string): string[] {
   return [...new Set(words.map((w) => w.slice(0, 5)))];
 }
 
-/** Capitalised words after the first word that are not known places/names, e.g. ["narnia"]. */
+/** Words that are capitalised for reasons other than being a name (folded). */
+const NOT_NAMES = new Set([
+  // English function and question words
+  "the", "and", "but", "nor", "yet", "for", "not", "are", "was", "were", "has", "had", "have", "does", "did",
+  "can", "could", "will", "would", "should", "shall", "may", "might", "must", "why", "what", "which", "who",
+  "whom", "whose", "when", "where", "how", "its", "this", "that", "these", "those", "there", "then", "they",
+  "you", "she", "his", "her", "our", "your", "their", "any", "all", "some", "yes", "please",
+  "thanks", "thank", "hello", "hey", "now", "today", "yesterday", "tomorrow", "also", "maybe", "however", "okay",
+  "mrs", "prof", "new", "year",
+  // Finnish question and function words
+  "miksi", "miten", "mita", "mika", "mitka", "missa", "mista", "mihin", "milloin", "kuinka", "kuka", "ketka",
+  "onko", "ovatko", "oliko", "olisiko", "voiko", "voinko", "pitaako", "saako", "paaseeko", "kannattaako",
+  "enta", "mutta", "tai", "sen", "han", "mina", "sina", "minulla", "minun", "meidan", "nyt", "tana", "tanaan",
+  "eilen", "huomenna", "kiitos", "hei", "moi",
+  // Months and weekdays (English)
+  "january", "february", "march", "april", "june", "july", "august", "september", "october", "november",
+  "december", "jan", "feb", "mar", "apr", "jun", "jul", "aug", "sep", "sept", "oct", "nov", "dec",
+  "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+  "mon", "tue", "tues", "wed", "thu", "thur", "thurs", "fri", "sat", "sun",
+  // Holidays
+  "christmas", "xmas", "easter", "midsummer",
+]);
+
+/** Finnish months, weekdays and holidays: word-start stems, since they inflect ("tammikuussa", "maanantaina"). */
+const NOT_NAME_STEMS = [
+  "tammikuu", "helmikuu", "maaliskuu", "huhtikuu", "toukokuu", "kesakuu", "heinakuu", "elokuu", "syyskuu",
+  "lokakuu", "marraskuu", "joulukuu", "maanantai", "tiistai", "keskiviikko", "torstai", "perjantai", "lauantai",
+  "sunnuntai", "joulu", "juhannu", "paasiai",
+];
+
+/**
+ * Unknown places or names in the question, e.g. ["narnia"]: capitalised words that do not start a
+ * sentence and are not known names, topic terms, function or question words, months, weekdays or holidays.
+ */
 export function unknownNames(question: string): string[] {
-  const tokens = question.split(/\s+/).slice(1);
+  const tokens = question.trim().split(/\s+/);
   // Title Case or ALL CAPS questions: capitals say nothing about names, so skip the rule.
-  const words = tokens.filter((t) => /\p{L}{3,}/u.test(t));
+  const words = tokens.slice(1).filter((t) => /\p{L}{3,}/u.test(t));
   if (words.filter((t) => /^\P{L}*\p{Lu}/u.test(t)).length * 2 > words.length) return [];
   const out: string[] = [];
-  for (const t of tokens) {
-    const word = t.replace(/['’]s$/i, "").replace(/[^\p{L}-]/gu, "");
+  for (let n = 1; n < tokens.length; n++) {
+    // Sentence start: the previous token ends a sentence ("long." "that?" "now!" "note:"), maybe before a quote/bracket.
+    if (/[.!?:;]['"’”)\]]*$/u.test(tokens[n - 1])) continue;
+    // "I'll", "I've", "I'd", "I'm" are not names.
+    if (/^\P{L}*I['’]/u.test(tokens[n])) continue;
+    const word = tokens[n].replace(/['’]s$/i, "").replace(/[^\p{L}-]/gu, "");
     if (word.length < 3 || !/^\p{Lu}/u.test(word)) continue;
     const folded = fold(word).trim();
-    if (KNOWN_NAMES.has(folded) || hasStem(` ${folded} `, TOPIC)) continue;
+    if (KNOWN_NAMES.has(folded) || NOT_NAMES.has(folded) || hasStem(` ${folded} `, TOPIC) || hasStem(` ${folded} `, NOT_NAME_STEMS)) continue;
     out.push(folded);
   }
   return out;
