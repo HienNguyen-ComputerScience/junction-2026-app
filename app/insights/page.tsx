@@ -50,7 +50,7 @@ function StoryStep({ title, children }: { title: string; children?: ReactNode })
         </h3>
       </Reveal>
       {children ? (
-        <Reveal index={1} className="flex flex-col items-start gap-3">
+        <Reveal index={1} className="flex flex-col items-start gap-3 *:max-w-full">
           {children}
         </Reveal>
       ) : null}
@@ -129,7 +129,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
         figure={
           <div className="grid gap-8 sm:grid-cols-2 sm:gap-12">
             {robust.map((a) => (
-              <div key={a.county_id} className="flex flex-col items-start gap-3">
+              <div key={a.county_id} className="flex flex-col items-start gap-3 *:max-w-full">
                 <p className="type-heading text-forest-ink">{a.name}</p>
                 <p className="numeral text-[4rem] leading-none text-status-red-ink sm:text-[5.5rem] print:text-[32pt]">
                   <AnimatedNumber value={a.wait.value} final={formatValue("6411", a.wait.value)} level="loud" />
@@ -184,6 +184,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
         </Reveal>
         <ScrollStory
           label={`The ${c.areas} areas, ${noWayRound.year}`}
+          className="grid-cols-1 *:min-w-0"
           picture={<NoWayRoundTiles areas={tiles} />}
           steps={[
             <StoryStep key="all" title={`All ${c.areas} areas, ${noWayRound.year}.`} />,
@@ -199,18 +200,17 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
             <StoryStep
               key="two"
               title={`Only ${robust.map((a) => a.name).join(" and ")} stay there under all ${TESTS} cut-offs we tested.`}
-            >
-              <div className="flex flex-col items-start gap-3">
-                <Disclosure show="Show how we tested this" hide="Hide how we tested this">
-                  <TestsTable />
-                </Disclosure>
-                <Disclosure show="Show the full table" hide="Hide the full table">
-                  <AreaTable />
-                </Disclosure>
-              </div>
-            </StoryStep>,
+            />,
           ]}
         />
+        <div className="flex flex-col items-start gap-3 *:max-w-full">
+          <Disclosure show="Show how we tested this" hide="Hide how we tested this">
+            <TestsTable />
+          </Disclosure>
+          <Disclosure show="Show the full table" hide="Hide the full table">
+            <AreaTable />
+          </Disclosure>
+        </div>
       </section>
 
       {/* 3. Early warning. */}
@@ -243,7 +243,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
             ),
           }}
         >
-          <div className="flex flex-col items-start gap-3">
+          <div className="flex flex-col items-start gap-3 *:max-w-full">
             <Disclosure show={`Show all ${gp.areas} areas`} hide={`Hide the ${gp.areas} areas`}>
               <GpWaitWarningTable />
             </Disclosure>
@@ -277,7 +277,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
         }}
         className="scroll-mt-20"
       >
-        <div className="flex flex-col items-start gap-6">
+        <div className="flex flex-col items-start gap-6 *:max-w-full">
           <StarterDownload label="Download the recording template (Excel)" />
           <Disclosure show={`Show the ${fieldCount} fields`} hide={`Hide the ${fieldCount} fields`}>
             <StarterFields />
