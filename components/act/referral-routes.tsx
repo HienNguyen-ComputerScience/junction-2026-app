@@ -1,7 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 
 import { SourceChip } from "@/components/source-chip";
-import { Disclosure } from "@/components/ui/disclosure";
 import {
   FINNISH_ROADMAP,
   KAYPA_HOITO,
@@ -20,15 +19,6 @@ const ROUTES: { urgency: Urgency; label: string }[] = [
   { urgency: "prompt", label: "GP check within two weeks" },
   { urgency: "safety_net", label: "Safety-net and recheck" },
 ];
-
-/** One to three words per concern for the tags; the full label stays in the title attribute. */
-const SHORT_LABEL: Record<string, string> = {
-  bleeding: "Bleeding",
-  lump: "Lump or swelling",
-  swallowing: "Trouble swallowing",
-  vague: "Vague symptoms",
-  "persistent-change": "Change that won't heal",
-};
 
 /** The two studies behind the vague route, named by country and author or setting. */
 const STUDY_NAME: Record<string, string> = {
@@ -77,14 +67,14 @@ function LinkChips({ links }: { links: GuidelineLink[] }) {
   return (
     <ul role="list" className="contents">
       {links.map((link) => (
-        <li key={link.url} className="flex items-center gap-1">
+        <li key={link.url} className="flex min-w-0 flex-wrap items-center gap-1.5">
           <a
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
             title={link.label}
             aria-label={`${chipName(link)}: ${link.label} (opens in a new tab)`}
-            className="inline-flex h-6 items-center gap-1 rounded-sm border border-input px-1.5 text-[0.8125rem] font-medium text-brand-ink outline-none hover:bg-background/60 focus-visible:ring-3 focus-visible:ring-ring/50 max-sm:h-9"
+            className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-input bg-cream-paper px-3 py-1 text-left text-sm font-medium text-brand-ink outline-none hover:bg-mint-veil focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             {chipName(link)}
             <ArrowUpRight aria-hidden className="size-3.5 shrink-0" />
@@ -96,7 +86,7 @@ function LinkChips({ links }: { links: GuidelineLink[] }) {
   );
 }
 
-const ROW_LABEL = "type-note shrink-0 whitespace-nowrap text-muted-foreground";
+const ROW_LABEL = "text-sm font-semibold shrink-0 whitespace-nowrap text-foreground";
 
 /**
  * Static panel for county administrators: the four referral routes a county needs, what each is
@@ -116,7 +106,7 @@ export function ReferralRoutes() {
           return (
             <li
               key={urgency}
-              className="flex flex-col gap-1.5 rounded-lg border border-input px-4 py-2.5"
+              className="flex flex-col gap-2.5 rounded-lg bg-mint-veil px-6 py-6"
             >
               <h3 className="type-heading flex gap-2.5">
                 <span aria-hidden className="text-muted-foreground">
@@ -130,37 +120,27 @@ export function ReferralRoutes() {
                   concerns.map((category) => (
                     <span
                       key={category.id}
-                      title={category.label}
-                      className="inline-flex h-6 items-center rounded-full border border-border px-2.5 text-[0.8125rem]"
+                      className="inline-flex min-h-8 items-center rounded-full bg-cream-paper px-3 py-1 text-sm text-pretty"
                     >
-                      {SHORT_LABEL[category.id] ?? category.label}
+                      {category.label}
                     </span>
                   ))
                 ) : (
-                  <span className="type-caption text-muted-foreground">
+                  <span className="text-sm text-muted-foreground">
                     Concerns that fit no other route
                   </span>
                 )}
               </div>
-              <p className="text-sm leading-snug text-pretty">
-                <span className="type-note mr-2 text-muted-foreground">
+              <p className="text-base leading-relaxed text-pretty">
+                <span className="mr-2 font-semibold">
                   GP does
                 </span>
                 {leadingSentences(tier.gpAction, urgency === "prompt" ? 2 : 1)}
               </p>
-              <Disclosure
-                summary={
-                  <>
-                    Evidence ({links.length})
-                    <span className="sr-only"> for {label}</span>
-                  </>
-                }
-                summaryClassName="min-h-7"
-              >
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pt-1 pb-1">
-                  <LinkChips links={links} />
-                </div>
-              </Disclosure>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                <span className={ROW_LABEL}>Behind it</span>
+                <LinkChips links={links} />
+              </div>
             </li>
           );
         })}
