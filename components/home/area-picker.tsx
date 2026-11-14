@@ -10,13 +10,16 @@ import { buttonVariants } from "@/components/ui/button";
 import { FramePanel, FramePanelLabel } from "@/components/ui/frame";
 import { BarKey } from "@/components/ui/measure-bar";
 import { TextLink } from "@/components/ui/text-link";
+import type { GapStatus } from "@/lib/data";
 
 /** One area as the picker needs it. Plain data: everything with a number is pre-rendered. */
 export type PickerArea = {
   id: string;
   name: string;
-  /** Where the pathway breaks, in one sentence. */
+  /** Where the pathway stands, in one sentence. */
   verdict: string;
+  /** The area's overall status: the one the map colours it by. */
+  status: GapStatus;
   /** The first recommended action's id (a key of `actions`), or null when there is none. */
   actionId: string | null;
 };
@@ -25,7 +28,7 @@ type Props = {
   /** All areas, in the order of the select. */
   areas: PickerArea[];
   mapAreas: FinlandMapArea[];
-  /** Shown before anyone picks: the area that leads the ranking. */
+  /** Shown before anyone picks: the area named by ?area= on this request, else the one that leads the ranking. */
   defaultId: string;
   year: number;
   totalAreas: number;
@@ -77,6 +80,8 @@ export function AreaPicker({
     const url = new URL(window.location.href);
     url.searchParams.set("area", id);
     window.history.replaceState(null, "", url);
+    const name = byId(id)?.name;
+    if (name) document.title = `${name} · FirstLine`;
     // On a phone the answer sits above the map: bring it back into view.
     const top = answerRef.current?.getBoundingClientRect().top ?? 0;
     if (fromMap && top < 0) {
@@ -141,7 +146,7 @@ export function AreaPicker({
         >
           <div className="flex flex-col gap-3" aria-live="polite">
             <p className="type-caption font-medium text-muted-foreground">
-              {area.name}, {year}: where the pathway breaks
+              {area.name}, {year}: {area.status === "red" ? "where the pathway breaks" : "where the pathway stands"}
             </p>
             {leads[area.id] ?? null}
             <h2 className="type-heading text-pretty text-foreground">{area.verdict}</h2>
@@ -175,7 +180,7 @@ export function AreaPicker({
       {/* The map: last on a phone, under the picker from lg. */}
       <FramePanel padding="none" className="max-lg:order-last lg:col-start-1 lg:row-start-2 lg:self-start">
         <FramePanelLabel>
-          <span>Non-urgent GP visits waiting over 7 days</span>
+          <span>Worst measured step against Finland</span>
           {mapChip}
         </FramePanelLabel>
         <div className="flex flex-col items-center gap-3 px-5 pt-4 pb-4 sm:px-6">
@@ -184,11 +189,14 @@ export function AreaPicker({
             selectedId={area.id}
             highlight={[area.id]}
             onSelect={(id) => choose(id, true)}
+            label={`Map of Finland's ${totalAreas} areas, coloured by the worst of the measured steps against Finland's level`}
             className="mb-5 h-[16.25rem] lg:h-[20rem]"
           />
           <p className="self-start type-caption text-pretty text-muted-foreground">
-            Not specific to cancer: it covers all non-urgent GP visits. Map: Statistics Finland, CC BY
-            4.0
+            Each area is coloured by the worse of its two measured steps, the GP wait and the
+            referral, against Finland (the same status as its answer). An area is red if either is
+            worse. Not specific to cancer: the GP wait covers all non-urgent GP visits. Map: Statistics
+            Finland, CC BY 4.0
           </p>
         </div>
         {/* The page's one key: the map's fills and the steps' bars use the same marks. */}

@@ -6,9 +6,10 @@ import type { Evidence } from "@/lib/data";
 /**
  * The first recommended action for an area, condensed from the act page's action card: the
  * action, its First step box, its owner and its evidence source. The rest (precedent, evidence,
- * limitations, "Source checked") is on the act page.
+ * limitations, "Source checked") is on the act page. `keepLevel`: no measured step is worse
+ * than Finland, so the label reads as keeping the level, not fixing a break.
  */
-export function TopAction({ action }: { action: Evidence }) {
+export function TopAction({ action, keepLevel = false }: { action: Evidence; keepLevel?: boolean }) {
   return (
     // Wide: the action and its owner on the left, the First step box and the evidence source on
     // the right. No title strip: the small heading leads the left column.
@@ -17,7 +18,9 @@ export function TopAction({ action }: { action: Evidence }) {
       className="grid h-full gap-x-8 gap-y-4 px-5 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-start"
     >
       <div className="flex flex-col gap-2.5">
-        <h3 className="font-sans type-caption font-medium text-muted-foreground">Recommended action 1</h3>
+        <h3 className="font-sans type-caption font-medium text-muted-foreground">
+          {keepLevel ? "Action to keep this level" : "Recommended action 1"}
+        </h3>
         <p className="text-base leading-snug font-semibold text-pretty text-foreground">{action.action}</p>
         <dl className="mt-1 flex flex-col gap-1 type-caption text-muted-foreground">
           <dt>Owner</dt>
