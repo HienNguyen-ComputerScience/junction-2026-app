@@ -53,17 +53,10 @@ export default function HomePage({ searchParams }: PageProps<"/">) {
         waits
       </h1>
 
-      {/* The one request-time part: the server render of /?area=<id> already shows that area. */}
-      <Suspense
-        fallback={
-          <div
-            aria-busy
-            className="min-h-[30rem] rounded-panel border border-border bg-card p-6 text-base text-muted-foreground lg:col-span-2"
-          >
-            Loading the areas…
-          </div>
-        }
-      >
+      {/* The one request-time part: the server render of /?area=<id> already shows that area. Until
+          it lands (and for good without JavaScript) the static shell holds the whole tool for the
+          default area, so the page is complete and the layout doesn't jump. */}
+      <Suspense fallback={<HomeTool rows={rows} unranked={unranked} />}>
         <Tool searchParams={searchParams} rows={rows} unranked={unranked} />
       </Suspense>
     </main>

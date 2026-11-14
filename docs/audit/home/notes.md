@@ -13,6 +13,7 @@ Goal: raise the judges' home score from 8.5. Round 4: clarity 8.5, ease 9.0, hie
 | 1366: the status line | "… a longer / wait." left one word alone on the last line. |
 | 1366 and 390: the link list | Five 1100px-wide rows for 200px labels. Three of the five (Where access is hardest, How to read these numbers, Sources & limitations) repeat the nav. |
 | Motion | The links section faded in on scroll, the one scroll-driven reveal on a page that is meant to have none. Choosing another area swapped the card with no feedback. Start had no hover or pending state. |
+| No JavaScript (and the frame before the stream lands) | The static shell held only the headline and a large "Loading the areas…" box. Without JavaScript that was the whole page (`before-nojs-1366-full.png`). |
 
 ### What changed
 
@@ -25,17 +26,22 @@ Goal: raise the judges' home score from 8.5. Round 4: clarity 8.5, ease 9.0, hie
 - **Start button:** the label is left-aligned with the arrow at the right edge, so a two-line label on a phone reads as a sentence rather than a centred block. The label and the line under it use `text-balance`.
 - **Status line** in step 1: `text-balance`, so it breaks into two even lines with no lone word.
 - **Links: five to two.** "Compare all 22 areas" and "Full page for <area>" are the two places the nav doesn't name. The nav's "Areas" goes to `/`, and the other three are nav items one line above the headline. On a laptop the two sit on one line; on a phone they stack, each 44px tall.
+  - The earlier pass kept all five because the lead named them. To restore them, add the three `{ href, label }` rows (`/insights` "Where access is hardest", `/how-to-read` "How to read these numbers", `/sources` "Sources & limitations") back to `links` in `area-picker.tsx`.
+- **No JavaScript.** The Suspense fallback is now the whole tool for the default area (`<HomeTool rows unranked />`), not a loading box.
+  - Without JavaScript the page is complete: headline, list, a working Start link, step 1 and links.
+  - With JavaScript nothing jumps when the stream lands.
+  - Trade-off: without JavaScript, `/?area=<id>` shows the default area (Vantaa and Kerava), not `<id>`. With JavaScript the list reads `?area=` at once.
 - **Motion and interaction:**
   - The links section is a plain section, with no scroll reveal.
   - Choosing an area plays a quiet `animate-fade-up` (320ms) on the new step-1 card. It plays only on a change, never on load. The `aria-live` wrapper stays mounted, so the change is still announced.
-  - Start's arrow nudges 4px forward on hover and keyboard focus.
-  - While the briefing loads, the arrow becomes a spinner (`useLinkStatus`). The spinner only turns when motion is allowed.
+  - Start's arrow nudges 4px forward on hover and keyboard focus. Measured on hover: `translate` goes from none to 4px.
+  - While the briefing loads, the arrow becomes a spinner (`useLinkStatus`). The spinner only turns when motion is allowed. This shows only when the route isn't prefetched yet, so it was **not observed**.
   - Reduced motion: every animation is off (checked with `document.getAnimations().length === 0` right after load and right after an area change).
 - **Files:** `app/page.tsx`, `components/home/area-picker.tsx`, `components/home/briefing-preview.tsx`. No new numbers and no new wording about Finland overall.
 
 ### Checked (`next build` + `next start -p 3113`, playwright-core with Chromium 1255)
 
-106 checks passed, 0 failed, before and after the change. The script is in the session scratchpad; it is not committed.
+The final run passed 108 checks with 0 failures. The before run used an earlier, smaller version of the script: 58 checks, all passing. That version could not catch the no-JS gap, because it only grepped the HTML. The script is in the session scratchpad; it is not committed.
 
 - **Views:** 1366×768 and 390×844, each with and without reduced motion.
 - **First screen:** Start is fully on the first screen (bottom edge at 522px of 768 at 1366, and 495–521px of 844 at 390) for **all 22 areas**. Every area has a step-1 card. No sideways scroll for any area at either width.
@@ -46,8 +52,8 @@ Goal: raise the judges' home score from 8.5. Round 4: clarity 8.5, ease 9.0, hie
   - Tab from the list lands on Start with the focus ring showing (`after-1366-focus-start.png`).
   - Enter opens `/briefing/kainuu`, whose title is "Step 1 of …". Browser Back returns to `/?area=kainuu` with Kainuu selected.
   - No page errors.
-- **No JavaScript:** `/?area=helsinki` server HTML holds `href="/briefing/helsinki"`, "Step 1 of" and the links.
-- **Print:** A4 PDF is 1 page with the figure and source.
+- **No JavaScript:** these are checked on the rendered page, not the HTML string. A visible Start link to `/briefing/…`, a visible step 1, visible links, and no loading box.
+- **Print:** the A4 PDF is 1 page with the figure and source. `after-print-media-a4.png` shows print media at A4 width (794px): one column, with the headline over step 1.
 - **Verify command:** `npm test` (517/517), `brief:check`, `typecheck`, `lint`, `build`, `check-insights` and `check-hardcoded` all pass.
 
 ### Screenshots (`screenshots/round5/`)
@@ -61,7 +67,8 @@ Goal: raise the judges' home score from 8.5. Round 4: clarity 8.5, ease 9.0, hie
   - `-1366-kainuu.png` and `-390-kainuu.png`: an area below Finland overall, drawn in slate.
   - `-1366-focus-start.png`: keyboard focus on Start.
   - `-nojs-1366-full.png`: the page without JavaScript.
-  - `-print-media.png`: print media.
+  - `before-print-media.png`: print media at 1366px wide.
+  - `after-print-media-a4.png`: print media at A4 width.
 
 ### Self-score against the rubric (honest, not a judge)
 
@@ -72,8 +79,10 @@ Goal: raise the judges' home score from 8.5. Round 4: clarity 8.5, ease 9.0, hie
 - **Clarity +0.5:** two links instead of five, and one composition with no empty block.
 - **Hierarchy +0.5:** the headline now introduces the action it sits over, and the eye runs headline → list → Start, with the evidence beside them.
 - **Type and spacing +1.0:** no dead green, no hyphen break, no lone word, and a shorter page.
-- **Motion +0.5:** feedback on area change, on hover and focus, and while loading, with no scroll reveal.
+- **Motion +0.5:** feedback on area change and on hover and focus, with no scroll reveal. The loading spinner isn't counted, since it wasn't observed.
 - **Ease** stays at 9.0, since the flow is unchanged.
+- **Accessibility** stays at 9.0, but the page is now complete without JavaScript.
+- **Overall:** 8.95 is just under the 9.0 goal.
 - It is a judgement call whether a judge lifts motion to 9; the count-up was removed site-wide, so the page's motion is now only feedback.
 
 ### Not changed, and needed from others
