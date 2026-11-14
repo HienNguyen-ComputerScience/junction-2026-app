@@ -1,5 +1,81 @@
 # Act page: cut to small chunks (post-freeze experiment)
 
+## Hero rework (round 5, target ≥ 9.0 from the judge's 8.6)
+
+Files: `app/county/[id]/act/page.tsx` and `components/act/action-item.tsx`. Screenshots are in `screenshots/hero-r5/before/` and `screenshots/hero-r5/after/`. Raw measurements are `measure-before.json` and `measure-after2.json`.
+
+**Where the height went (before, 1366×768, Vantaa and Kerava):**
+- 201px above the hero (header 122, breadcrumb, `pt-6`, `mt-6`).
+- A 497px hero in one column. The h1 was capped at `max-w-[22ch]`, so it wrapped beside "Save or share", and the figure block used only the left half of a 1126px card.
+- 82px between the hero and the card.
+
+Shrinking the padding and numeral (R3-02) could only save 17px, because the height came from the one-column stack, not the padding.
+
+**What changed:**
+- **Hero, from 1280px:** a two-column grid. The statement sits on the left with "Why only these actions?" under it and "Save or share" at the bottom. The figure block is on the right, in a 36rem column: numeral, caption, Finland overall pill, source chip and caveat.
+  - DOM, tab and phone order are unchanged: h1 → figure → Why → share.
+  - Under 1280px the hero is one column in that order.
+- **"Save or share" is the last thing in the hero** at every width, as on the area page. Its menu opens downwards, in flow, at the end of the card.
+  - The numeral does not move: 224 closed, 221 with the menu open, 217 with Why and the menu both open. The 3–7px is the reveal's own rise settling.
+  - The 200px gap under the title is gone.
+- **Spacing:** page `pt-6` → `pt-4`, hero `mt-6` → `mt-4`, actions section `mt-8` → `mt-7`, h2 `mb-5` → `mb-4`. The hero is `px-5 py-7` on a phone (it was `px-7 py-9`), so phone text gets 16px more width.
+- **Action card:** `gap-5` → `gap-4`, `sm:py-10` → `sm:py-9`, `px-5` on a phone. The reveal has three stagger steps instead of five (title; owner and why; chip and "Show details"), so a card is complete about 0.74s after it scrolls in, not about 0.98s. The scroll-driven reveal itself is kept.
+- **Caveat wording:** the act hero's caveat now uses the area page's words, so the same figure carries the same caveat on both pages (R4 noted the mismatch). The new strings are "Counts visits, not people; not only cancer" and "Measures when assessment starts, not when a specialist is seen".
+
+**Kept unchanged:**
+- the mint `FocusGroup` cards;
+- the trimmed "Show details";
+- the two bottom panels;
+- every figure, chip and caveat.
+
+### First-card y (top of `#action-1`, page coordinates)
+
+The settled state is reduced motion, the judge's number. Motion-on adds about 6px of the reveal rise while a card is mid-play.
+
+| Viewport | Area | Before | After |
+|---|---|---|---|
+| 1366×768 | Vantaa and Kerava | 780 | **574** (card title ends at 666; owner pill on screen) |
+| 1366×768 | Kainuu | 780 | **620** (title ends at 712) |
+| 1366×768 | Central Uusimaa (4-line statement) | 828 | **670** (title ends at 762) |
+| 1280×800 | Vantaa and Kerava | — | 571 |
+| 1024×800 | Vantaa and Kerava (one column) | — | 810 |
+| 390×844 | Vantaa and Kerava | 1000 | 972 |
+| 390×844 | Kainuu | 918 | 914 |
+
+At 1366×768 the first card's number, title and owner are on the first screen. In a real laptop window of about 650px, the number and title of Vantaa and Kerava's card 1 are visible; its why line still needs one scroll. On a phone, the hero still fills the first screen, because the shared two-row nav takes 170px.
+
+### Checks
+
+Run on `next build` + `next start -p 3124`, with playwright-core 1.65.1 driving its bundled Chromium. The server was stopped by PID.
+
+- **Sideways scroll:** none at 390, 1024, 1280, 1366 or 1440. That holds with Save or share open, with Why and Save or share both open, and with every `<details>` open.
+- **Small text:** none under 16px in `main`.
+- **No JavaScript:** all three cards, the figure and every reveal are visible once the CSS entrance has played, and nothing is left at opacity 0. Save or share renders as a button.
+- **Print (the `beforeprint` handler plus print media):** all 11 `<details>` are open, none closed. Save or share is hidden, and nothing is faint. The PDF is `after/vantaa-kerava-print.pdf`.
+- **Reduced motion:** every item is in place at load. The full pages with everything open are `after/*-all-open-reduced.png`.
+- **Console:** no page errors.
+
+### Fact-diff (`main.innerText`, every `<details>` open, Vantaa and Kerava, Kainuu and Central Uusimaa)
+
+The only changed lines are the two caveat short forms above. Every number, source chip, limitation and action text is identical. The only move is "Save or share", now at the end of the hero; it is hidden on paper.
+
+### Self-score (rubric weights)
+
+| Clarity 25% | Ease 25% | Hierarchy & consistency 20% | Type & spacing 15% | Motion & interaction 10% | Accessibility 5% | Weighted |
+|---|---|---|---|---|---|---|
+| 9.0 | 9.0 | 9.0 | 8.5 | 8.5 | 9.0 | **8.9** |
+
+**Why it moves:**
+- **Ease:** the first action is on the first screen at 1366.
+- **Hierarchy:** the statement and the figure read side by side, as one claim and its evidence. The share menu no longer splits the hero.
+- **Consistency:** the caveat now matches the area page.
+- **Motion:** the card's reveal completes sooner.
+
+**Why it is not a clear 9.0:**
+- On a phone the hero still fills the first screen.
+- In a 650px laptop window, card 1's why line is below the fold.
+- On Central Uusimaa the four-line statement pushes the card to 670.
+
 Branch `t3/act-page-small-chunks`, stacked on `t3/experimental-real-user-audit`.
 
 Files: `app/county/[id]/act/page.tsx` and `components/act/`:

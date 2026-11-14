@@ -39,8 +39,9 @@ export function ActionItem({ action, index, showStep }: { action: Evidence; inde
       data-focus-item
       id={`action-${index}`}
       aria-labelledby={`action-${index}-title`}
-      className="flex w-full min-w-0 scroll-mt-28 flex-col gap-5 rounded-lg bg-mint-veil px-7 py-8 sm:px-10 sm:py-10"
+      className="flex w-full min-w-0 scroll-mt-28 flex-col gap-4 rounded-lg bg-mint-veil px-5 py-7 sm:px-10 sm:py-9"
     >
+      {/* Three stagger steps, not five: the whole card is in place about 0.75s after it scrolls in. */}
       <Reveal index={0} className="flex items-baseline gap-5">
         <span aria-hidden className="numeral text-[3.5rem] leading-none text-forest-ink">
           {index}
@@ -56,15 +57,15 @@ export function ActionItem({ action, index, showStep }: { action: Evidence; inde
         {showStep ? <span className={PILL}>Fixes: {lowerFirst(STEP_SHORT[action.stage])}</span> : null}
       </Reveal>
 
-      <Reveal as="p" index={2} className="text-lg leading-snug text-pretty text-foreground">
+      <Reveal as="p" index={1} className="text-lg leading-snug text-pretty text-foreground">
         {copy.why}
       </Reveal>
 
-      <Reveal index={3}>
+      <Reveal index={2}>
         <SourceChip sourceId={action.source_id} />
       </Reveal>
 
-      <Reveal index={4}>
+      <Reveal index={2}>
         <Disclosure tone="quiet" label="details">
           <div className="flex flex-col gap-5 rounded-lg bg-cream-paper px-5 py-5 sm:px-6 print:px-0 print:py-1">
             <Part label="First step">

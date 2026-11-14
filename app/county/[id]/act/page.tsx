@@ -40,10 +40,13 @@ const FIGURE_CAPTION: Record<string, string> = {
   "13": "of referrals processed within 3 days",
 };
 
-/** The figure's main caveat in a few words, always visible; the indicator's full limitation is behind "Why?". */
+/**
+ * The figure's main caveat in a few words, always visible; the indicator's full limitation is behind "Why?".
+ * Worded as on the area page's opening card, so the same figure carries the same caveat on both pages.
+ */
 const FIGURE_CAVEAT: Record<string, string> = {
-  "6411": "All non-urgent GP visits, not only cancer",
-  "13": "When assessment starts, not when the patient is seen",
+  "6411": "Counts visits, not people; not only cancer",
+  "13": "Measures when assessment starts, not when a specialist is seen",
 };
 
 /** The page's one statement: the area's main delay, in at most 12 words. */
@@ -98,25 +101,30 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   ];
 
   return (
-    <main className={`page-container flex flex-col pt-4 sm:pt-6 ${MOTION_LOUD_CLASS}`}>
+    <main className={`page-container flex flex-col pt-4 ${MOTION_LOUD_CLASS}`}>
       <Breadcrumb
         items={[{ label: "Areas", href: "/" }, { label: county.name, href: `/county/${county.id}` }, { label: "Actions" }]}
       />
 
       {/* The focus effect covers the opening and the action cards, not the end card or the way back. */}
       <FocusGroup>
-        {/* 1. The main delay, its figure, and the one thing to do with it. */}
-        <section data-focus-item aria-labelledby="act-title" className="mt-6 flex flex-col gap-6 rounded-lg bg-keylime-wash px-7 py-9 sm:px-12 sm:py-12">
-          <div className="flex flex-col gap-5 max-sm:contents sm:flex-row sm:items-start sm:justify-between">
-            <Reveal index={0}>
-              <h1 id="act-title" className="type-page max-w-[22ch] text-pretty">
-                {statement(county.name, bottleneck)}
-              </h1>
-            </Reveal>
-            <SaveShare options={shareOptions} align="end" className="max-sm:order-1 sm:shrink-0 sm:items-end" />
-          </div>
+        {/*
+          1. The main delay, its figure, and the two quiet controls. One column on a phone, in reading order.
+          From 1280px: the statement and its controls on the left, the figure block on the right. "Save or
+          share" is last, so its menu opens downwards at the end of the card and never moves the figure.
+        */}
+        <section
+          data-focus-item
+          aria-labelledby="act-title"
+          className="mt-4 grid grid-cols-1 gap-5 rounded-lg bg-keylime-wash px-5 py-7 sm:px-10 sm:py-10 xl:grid-cols-[minmax(0,1fr)_36rem] xl:grid-rows-[auto_1fr_auto] xl:gap-x-10"
+        >
+          <Reveal index={0} className="xl:col-start-1 xl:row-start-1">
+            <h1 id="act-title" className="type-page text-pretty">
+              {statement(county.name, bottleneck)}
+            </h1>
+          </Reveal>
           {lead && leadValue !== null ? (
-            <Reveal index={1} className="flex flex-col gap-2">
+            <Reveal index={1} className="flex flex-col gap-2 xl:col-start-2 xl:row-span-3 xl:row-start-1 xl:self-start">
               <p className={cn("numeral text-[4rem] leading-none sm:text-[5rem]", bottleneck.anyRed ? "text-status-red-ink" : "text-forest-ink")}>
                 <AnimatedNumber value={leadValue} final={formatPct(leadValue)} decimals={1} level="loud" />
               </p>
@@ -134,7 +142,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
               ) : null}
             </Reveal>
           ) : null}
-          <Reveal index={2}>
+          <Reveal index={2} className="xl:col-start-1 xl:row-start-2 xl:self-start">
             <Disclosure tone="quiet" show="Why only these actions?" hide="Hide why">
               <ul className="flex max-w-[62ch] flex-col gap-2.5 rounded-lg bg-cream-paper px-5 py-4 text-base leading-relaxed text-pretty print:px-0">
                 <li className="hidden font-semibold text-forest-ink print:block">Why only these actions</li>
@@ -144,12 +152,13 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
               </ul>
             </Disclosure>
           </Reveal>
+          <SaveShare options={shareOptions} className="xl:col-start-1 xl:row-start-3 xl:self-end" />
         </section>
 
         {/* 2. The actions, one card each. */}
         {recommended.length > 0 ? (
-          <section aria-labelledby="actions-title" className="mt-8">
-            <h2 id="actions-title" className="type-title mb-5 text-forest-ink">
+          <section aria-labelledby="actions-title" className="mt-7">
+            <h2 id="actions-title" className="type-title mb-4 text-forest-ink">
               Recommended actions for {county.name}
             </h2>
             <ol className="flex max-w-3xl flex-col gap-16 md:gap-[12vh]">

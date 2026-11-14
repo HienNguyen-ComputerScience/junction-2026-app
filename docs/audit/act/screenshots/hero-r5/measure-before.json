@@ -1,0 +1,716 @@
+[
+ {
+  "label": "before",
+  "size": "1366x768",
+  "area": "vantaa-kerava",
+  "reduced": false,
+  "hero": {
+   "top": 201,
+   "bottom": 698,
+   "height": 497,
+   "left": 120,
+   "right": 1246
+  },
+  "h1": {
+   "top": 238,
+   "bottom": 336,
+   "height": 98,
+   "left": 157,
+   "right": 585
+  },
+  "h1Lines": 2,
+  "numeral": {
+   "top": 361,
+   "bottom": 442,
+   "height": 82,
+   "left": 157,
+   "right": 1209
+  },
+  "share": {
+   "top": 238,
+   "bottom": 291,
+   "height": 53,
+   "left": 1026,
+   "right": 1209
+  },
+  "h2": {
+   "top": 725,
+   "bottom": 760,
+   "height": 35,
+   "left": 131,
+   "right": 1235
+  },
+  "card": {
+   "top": 787,
+   "bottom": 1115,
+   "height": 328,
+   "left": 146,
+   "right": 884
+  },
+  "cardTitle": {
+   "top": 848,
+   "bottom": 875,
+   "height": 28,
+   "left": 234,
+   "right": 513
+  },
+  "overflowX": 0,
+  "small": [],
+  "errors": []
+ },
+ {
+  "label": "before",
+  "size": "1366x768",
+  "area": "vantaa-kerava",
+  "reduced": true,
+  "hero": {
+   "top": 206,
+   "bottom": 693,
+   "height": 487,
+   "left": 131,
+   "right": 1235
+  },
+  "h1": {
+   "top": 242,
+   "bottom": 338,
+   "height": 96,
+   "left": 167,
+   "right": 587
+  },
+  "h1Lines": 2,
+  "numeral": {
+   "top": 362,
+   "bottom": 442,
+   "height": 80,
+   "left": 167,
+   "right": 1199
+  },
+  "share": {
+   "top": 242,
+   "bottom": 294,
+   "height": 52,
+   "left": 1019,
+   "right": 1199
+  },
+  "h2": {
+   "top": 725,
+   "bottom": 760,
+   "height": 35,
+   "left": 131,
+   "right": 1235
+  },
+  "card": {
+   "top": 780,
+   "bottom": 1122,
+   "height": 342,
+   "left": 131,
+   "right": 899
+  },
+  "cardTitle": {
+   "top": 843,
+   "bottom": 872,
+   "height": 29,
+   "left": 222,
+   "right": 513
+  },
+  "overflowX": 0,
+  "small": [],
+  "errors": [],
+  "allOpenOverflowX": 0
+ },
+ {
+  "label": "before",
+  "size": "1366x768",
+  "area": "kainuu",
+  "reduced": false,
+  "hero": {
+   "top": 201,
+   "bottom": 698,
+   "height": 497,
+   "left": 120,
+   "right": 1246
+  },
+  "h1": {
+   "top": 238,
+   "bottom": 336,
+   "height": 98,
+   "left": 157,
+   "right": 585
+  },
+  "h1Lines": 2,
+  "numeral": {
+   "top": 361,
+   "bottom": 442,
+   "height": 82,
+   "left": 157,
+   "right": 1209
+  },
+  "share": {
+   "top": 238,
+   "bottom": 291,
+   "height": 53,
+   "left": 1026,
+   "right": 1209
+  },
+  "h2": {
+   "top": 725,
+   "bottom": 760,
+   "height": 35,
+   "left": 131,
+   "right": 1235
+  },
+  "card": {
+   "top": 787,
+   "bottom": 1115,
+   "height": 328,
+   "left": 146,
+   "right": 884
+  },
+  "cardTitle": {
+   "top": 848,
+   "bottom": 875,
+   "height": 28,
+   "left": 234,
+   "right": 671
+  },
+  "overflowX": 0,
+  "small": [],
+  "errors": []
+ },
+ {
+  "label": "before",
+  "size": "1366x768",
+  "area": "kainuu",
+  "reduced": true,
+  "hero": {
+   "top": 206,
+   "bottom": 693,
+   "height": 487,
+   "left": 131,
+   "right": 1235
+  },
+  "h1": {
+   "top": 242,
+   "bottom": 338,
+   "height": 96,
+   "left": 167,
+   "right": 587
+  },
+  "h1Lines": 2,
+  "numeral": {
+   "top": 362,
+   "bottom": 442,
+   "height": 80,
+   "left": 167,
+   "right": 1199
+  },
+  "share": {
+   "top": 242,
+   "bottom": 294,
+   "height": 52,
+   "left": 1019,
+   "right": 1199
+  },
+  "h2": {
+   "top": 725,
+   "bottom": 760,
+   "height": 35,
+   "left": 131,
+   "right": 1235
+  },
+  "card": {
+   "top": 780,
+   "bottom": 1122,
+   "height": 342,
+   "left": 131,
+   "right": 899
+  },
+  "cardTitle": {
+   "top": 843,
+   "bottom": 872,
+   "height": 29,
+   "left": 222,
+   "right": 677
+  },
+  "overflowX": 0,
+  "small": [],
+  "errors": [],
+  "allOpenOverflowX": 0
+ },
+ {
+  "label": "before",
+  "size": "1366x768",
+  "area": "central-uusimaa",
+  "reduced": false,
+  "hero": {
+   "top": 201,
+   "bottom": 746,
+   "height": 546,
+   "left": 120,
+   "right": 1246
+  },
+  "h1": {
+   "top": 238,
+   "bottom": 385,
+   "height": 147,
+   "left": 157,
+   "right": 585
+  },
+  "h1Lines": 3,
+  "numeral": {
+   "top": 409,
+   "bottom": 491,
+   "height": 82,
+   "left": 157,
+   "right": 1209
+  },
+  "share": {
+   "top": 238,
+   "bottom": 291,
+   "height": 53,
+   "left": 1026,
+   "right": 1209
+  },
+  "h2": {
+   "top": 773,
+   "bottom": 808,
+   "height": 35,
+   "left": 131,
+   "right": 1235
+  },
+  "card": {
+   "top": 835,
+   "bottom": 1163,
+   "height": 328,
+   "left": 146,
+   "right": 884
+  },
+  "cardTitle": {
+   "top": 896,
+   "bottom": 923,
+   "height": 28,
+   "left": 234,
+   "right": 513
+  },
+  "overflowX": 0,
+  "small": [],
+  "errors": []
+ },
+ {
+  "label": "before",
+  "size": "1366x768",
+  "area": "central-uusimaa",
+  "reduced": true,
+  "hero": {
+   "top": 206,
+   "bottom": 741,
+   "height": 535,
+   "left": 131,
+   "right": 1235
+  },
+  "h1": {
+   "top": 242,
+   "bottom": 386,
+   "height": 144,
+   "left": 167,
+   "right": 587
+  },
+  "h1Lines": 3,
+  "numeral": {
+   "top": 410,
+   "bottom": 490,
+   "height": 80,
+   "left": 167,
+   "right": 1199
+  },
+  "share": {
+   "top": 242,
+   "bottom": 294,
+   "height": 52,
+   "left": 1019,
+   "right": 1199
+  },
+  "h2": {
+   "top": 773,
+   "bottom": 808,
+   "height": 35,
+   "left": 131,
+   "right": 1235
+  },
+  "card": {
+   "top": 828,
+   "bottom": 1170,
+   "height": 342,
+   "left": 131,
+   "right": 899
+  },
+  "cardTitle": {
+   "top": 891,
+   "bottom": 920,
+   "height": 29,
+   "left": 222,
+   "right": 513
+  },
+  "overflowX": 0,
+  "small": [],
+  "errors": [],
+  "allOpenOverflowX": 0
+ },
+ {
+  "label": "before",
+  "size": "390",
+  "area": "vantaa-kerava",
+  "reduced": false,
+  "hero": {
+   "top": 240,
+   "bottom": 895,
+   "height": 655,
+   "left": 12,
+   "right": 378
+  },
+  "h1": {
+   "top": 262,
+   "bottom": 340,
+   "height": 78,
+   "left": 35,
+   "right": 355
+  },
+  "h1Lines": 2,
+  "numeral": {
+   "top": 365,
+   "bottom": 430,
+   "height": 65,
+   "left": 35,
+   "right": 355
+  },
+  "share": {
+   "top": 820,
+   "bottom": 873,
+   "height": 53,
+   "left": 35,
+   "right": 218
+  },
+  "h2": {
+   "top": 920,
+   "bottom": 980,
+   "height": 60,
+   "left": 16,
+   "right": 374
+  },
+  "card": {
+   "top": 1008,
+   "bottom": 1359,
+   "height": 351,
+   "left": 23,
+   "right": 367
+  },
+  "cardTitle": {
+   "top": 1055,
+   "bottom": 1110,
+   "height": 55,
+   "left": 97,
+   "right": 346
+  },
+  "overflowX": 0,
+  "small": [],
+  "errors": []
+ },
+ {
+  "label": "before",
+  "size": "390",
+  "area": "vantaa-kerava",
+  "reduced": true,
+  "hero": {
+   "top": 246,
+   "bottom": 888,
+   "height": 642,
+   "left": 16,
+   "right": 374
+  },
+  "h1": {
+   "top": 268,
+   "bottom": 345,
+   "height": 77,
+   "left": 38,
+   "right": 352
+  },
+  "h1Lines": 2,
+  "numeral": {
+   "top": 369,
+   "bottom": 433,
+   "height": 64,
+   "left": 38,
+   "right": 352
+  },
+  "share": {
+   "top": 815,
+   "bottom": 867,
+   "height": 52,
+   "left": 38,
+   "right": 217
+  },
+  "h2": {
+   "top": 920,
+   "bottom": 980,
+   "height": 60,
+   "left": 16,
+   "right": 374
+  },
+  "card": {
+   "top": 1000,
+   "bottom": 1366,
+   "height": 366,
+   "left": 16,
+   "right": 374
+  },
+  "cardTitle": {
+   "top": 1049,
+   "bottom": 1107,
+   "height": 58,
+   "left": 92,
+   "right": 352
+  },
+  "overflowX": 0,
+  "small": [],
+  "errors": [],
+  "allOpenOverflowX": 0
+ },
+ {
+  "label": "before",
+  "size": "390",
+  "area": "kainuu",
+  "reduced": false,
+  "hero": {
+   "top": 240,
+   "bottom": 842,
+   "height": 602,
+   "left": 12,
+   "right": 378
+  },
+  "h1": {
+   "top": 262,
+   "bottom": 341,
+   "height": 78,
+   "left": 35,
+   "right": 355
+  },
+  "h1Lines": 2,
+  "numeral": {
+   "top": 365,
+   "bottom": 430,
+   "height": 65,
+   "left": 35,
+   "right": 355
+  },
+  "share": {
+   "top": 767,
+   "bottom": 820,
+   "height": 53,
+   "left": 35,
+   "right": 218
+  },
+  "h2": {
+   "top": 868,
+   "bottom": 898,
+   "height": 30,
+   "left": 16,
+   "right": 374
+  },
+  "card": {
+   "top": 926,
+   "bottom": 1277,
+   "height": 351,
+   "left": 23,
+   "right": 367
+  },
+  "cardTitle": {
+   "top": 973,
+   "bottom": 1028,
+   "height": 55,
+   "left": 97,
+   "right": 346
+  },
+  "overflowX": 0,
+  "small": [],
+  "errors": []
+ },
+ {
+  "label": "before",
+  "size": "390",
+  "area": "kainuu",
+  "reduced": true,
+  "hero": {
+   "top": 246,
+   "bottom": 836,
+   "height": 590,
+   "left": 16,
+   "right": 374
+  },
+  "h1": {
+   "top": 268,
+   "bottom": 345,
+   "height": 77,
+   "left": 38,
+   "right": 352
+  },
+  "h1Lines": 2,
+  "numeral": {
+   "top": 369,
+   "bottom": 433,
+   "height": 64,
+   "left": 38,
+   "right": 352
+  },
+  "share": {
+   "top": 763,
+   "bottom": 815,
+   "height": 52,
+   "left": 38,
+   "right": 217
+  },
+  "h2": {
+   "top": 868,
+   "bottom": 898,
+   "height": 30,
+   "left": 16,
+   "right": 374
+  },
+  "card": {
+   "top": 918,
+   "bottom": 1284,
+   "height": 366,
+   "left": 16,
+   "right": 374
+  },
+  "cardTitle": {
+   "top": 967,
+   "bottom": 1025,
+   "height": 58,
+   "left": 92,
+   "right": 352
+  },
+  "overflowX": 0,
+  "small": [],
+  "errors": [],
+  "allOpenOverflowX": 0
+ },
+ {
+  "label": "before",
+  "size": "390",
+  "area": "central-uusimaa",
+  "reduced": false,
+  "hero": {
+   "top": 239,
+   "bottom": 972,
+   "height": 734,
+   "left": 12,
+   "right": 378
+  },
+  "h1": {
+   "top": 261,
+   "bottom": 418,
+   "height": 157,
+   "left": 35,
+   "right": 355
+  },
+  "h1Lines": 4,
+  "numeral": {
+   "top": 442,
+   "bottom": 507,
+   "height": 65,
+   "left": 35,
+   "right": 355
+  },
+  "share": {
+   "top": 897,
+   "bottom": 950,
+   "height": 53,
+   "left": 35,
+   "right": 218
+  },
+  "h2": {
+   "top": 997,
+   "bottom": 1057,
+   "height": 60,
+   "left": 16,
+   "right": 374
+  },
+  "card": {
+   "top": 1085,
+   "bottom": 1436,
+   "height": 351,
+   "left": 23,
+   "right": 367
+  },
+  "cardTitle": {
+   "top": 1131,
+   "bottom": 1187,
+   "height": 55,
+   "left": 97,
+   "right": 346
+  },
+  "overflowX": 0,
+  "small": [],
+  "errors": []
+ },
+ {
+  "label": "before",
+  "size": "390",
+  "area": "central-uusimaa",
+  "reduced": true,
+  "hero": {
+   "top": 246,
+   "bottom": 965,
+   "height": 719,
+   "left": 16,
+   "right": 374
+  },
+  "h1": {
+   "top": 268,
+   "bottom": 421,
+   "height": 154,
+   "left": 38,
+   "right": 352
+  },
+  "h1Lines": 4,
+  "numeral": {
+   "top": 445,
+   "bottom": 509,
+   "height": 64,
+   "left": 38,
+   "right": 352
+  },
+  "share": {
+   "top": 891,
+   "bottom": 943,
+   "height": 52,
+   "left": 38,
+   "right": 217
+  },
+  "h2": {
+   "top": 997,
+   "bottom": 1057,
+   "height": 60,
+   "left": 16,
+   "right": 374
+  },
+  "card": {
+   "top": 1077,
+   "bottom": 1443,
+   "height": 366,
+   "left": 16,
+   "right": 374
+  },
+  "cardTitle": {
+   "top": 1126,
+   "bottom": 1184,
+   "height": 58,
+   "left": 92,
+   "right": 352
+  },
+  "overflowX": 0,
+  "small": [],
+  "errors": [],
+  "allOpenOverflowX": 0
+ }
+]
