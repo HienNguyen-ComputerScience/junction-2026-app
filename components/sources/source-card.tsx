@@ -84,6 +84,34 @@ export function SourceCard({
   );
 }
 
+export type SourceListItem = { key: string; name: string; href: string; publisher: string };
+
+/**
+ * A group of sources as one framed line, with the full list behind "Show all N": one line per
+ * source, the name as the link, then the publisher. Open on paper.
+ */
+export function SourceList({ line, note, items }: { line: ReactNode; note?: ReactNode; items: SourceListItem[] }) {
+  return (
+    <div className={cn(SOURCE_FRAME, "flex flex-col gap-1")}>
+      <p className="text-base text-pretty text-foreground">{line}</p>
+      <Disclosure show={`Show all ${items.length}`} hide="Hide the list" tone="quiet" contentClassName="pt-2">
+        {note && <p className="pb-3 text-base text-pretty text-muted-foreground">{note}</p>}
+        <ul className="flex flex-col">
+          {items.map((item) => (
+            <li key={item.key} className="border-t border-frame-border py-2.5 text-base text-pretty">
+              {/* Inline, so the arrow follows the last word of a name of any length. */}
+              <TextLink kind="external" inline href={item.href}>
+                {item.name}
+              </TextLink>
+              <span className="text-muted-foreground"> · {item.publisher}</span>
+            </li>
+          ))}
+        </ul>
+      </Disclosure>
+    </div>
+  );
+}
+
 /**
  * One limitation as a framed one-liner. The line is always visible; the detail sits behind
  * "Show detail" and is open on paper.

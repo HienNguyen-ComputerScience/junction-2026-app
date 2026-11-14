@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { cn } from "cn";
 
-import { FocusGroup, Reveal } from "@/components/motion";
+import { Disclosure, FocusGroup, Reveal } from "@/components/motion";
 import { SaveShare } from "@/components/share";
-import { LimitationItem, SOURCE_FRAME, SourceCard } from "@/components/sources/source-card";
+import { LimitationItem, SOURCE_FRAME, SourceCard, SourceList, type SourceListItem } from "@/components/sources/source-card";
 import { BackLink } from "@/components/ui/back-link";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { TextLink } from "@/components/ui/text-link";
@@ -51,14 +51,6 @@ const sourceRows = indicators.map((indicator) => ({
   source: sources.find((source) => source.source_id === indicator.source_id),
   years: [...new Set(values.filter((value) => value.indicator_id === indicator.indicator_id).map((value) => value.year))].sort(),
 }));
-
-/** The jump links under the title, in the order the sections appear on the page. */
-const sections = [
-  { href: "#cannot-tell", label: "What the data can't tell you" },
-  { href: "#indicators", label: "Indicators" },
-  { href: "#evidence", label: "Evidence for actions" },
-  { href: "#other-sources", label: "Other sources" },
-];
 
 const flaggedAreas = counties.filter((county) => isRecordingSensitive(county.id)).length;
 const finlandVisitChange = getRecordedVisitChange("finland");
@@ -149,40 +141,6 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-function IndicatorCards({ rows }: { rows: typeof sourceRows }) {
-  return (
-    <div className="flex flex-col gap-4">
-      {rows.map(({ indicator, source, years }) => {
-        const lead = firstSentence(indicator.limitation);
-        // The card already shows the first sentence, so Scope continues from the second.
-        const scope = indicator.limitation.slice(lead.length).trim();
-        return (
-          <SourceCard
-            key={indicator.indicator_id}
-            focus
-            title={indicator.short_name}
-            note={lead}
-            publisher={source?.publisher ?? indicator.source_id}
-            years={years.length ? years.join(", ") : "No county values in snapshot"}
-            href={source?.url ?? "https://sotkanet.fi"}
-            linkLabel="Official definition on Sotkanet"
-            detailLabel="definition and scope"
-            detail={
-              <dl className="flex flex-col gap-2">
-                <Row label="Full name">{indicator.name}</Row>
-                <Row label="Source">
-                  {indicator.source_id} · retrieved {source?.retrieved ?? "unknown"} · publisher updated {source?.data_updated ?? "unknown"}
-                </Row>
-                {scope && <Row label="Scope">{scope}</Row>}
-              </dl>
-            }
-          />
-        );
-      })}
-    </div>
-  );
-}
-
 /** A section heading: an 11px eyebrow, the serif title and at most one line under it. */
 function SectionHead({ id, eyebrow, title, line }: { id: string; eyebrow?: string; title: string; line?: ReactNode }) {
   return (
@@ -196,12 +154,132 @@ function SectionHead({ id, eyebrow, title, line }: { id: string; eyebrow?: strin
   );
 }
 
+type SourceRow = (typeof sourceRows)[number];
+
+/** "2023–2025" for consecutive years, otherwise the list. */
+function yearsText(years: SourceRow["years"]): string {
+  if (!years.length) return "No county values in snapshot";
+  const nums = years.map(Number);
+  const consecutive = nums.every((year, i) => i === 0 || year === nums[i - 1] + 1);
+  return consecutive && nums.length > 1 ? `${years[0]}–${years[years.length - 1]}` : years.join(", ");
+}
+
+/** The publisher in a few words for a list row: its abbreviation if it has one (THL, Kela), without ", Sotkanet". */
+function shortPublisher(publisher: string): string {
+  const abbreviation = /\(([^)]+)\)/.exec(publisher);
+  return abbreviation ? abbreviation[1] : publisher.replace(/, Sotkanet$/, "");
+}
+
+/** An indicator's definition: full name, source and dates, and its scope (`withLead`: the whole limitation text). */
+function Definition({ row, withLead }: { row: SourceRow; withLead: boolean }) {
+  const { indicator, source } = row;
+  const lead = firstSentence(indicator.limitation);
+  const scope = withLead ? indicator.limitation : indicator.limitation.slice(lead.length).trim();
+  return (
+    <dl className="flex flex-col gap-2">
+      <Row label="Full name">{indicator.name}</Row>
+      <Row label="Publisher">{source?.publisher ?? "unknown"}</Row>
+      <Row label="Source">
+        {indicator.source_id} · retrieved {source?.retrieved ?? "unknown"} · publisher updated {source?.data_updated ?? "unknown"}
+      </Row>
+      {scope && <Row label="Scope">{scope}</Row>}
+    </dl>
+  );
+}
+
+/** The two indicators the ranking reads, as full focus cards: name, main caveat, publisher, years, link. */
+function RankingCards({ rows }: { rows: SourceRow[] }) {
+  return (
+    <FocusGroup className="flex flex-col gap-4">
+      {rows.map((row) => (
+        <SourceCard
+          key={row.indicator.indicator_id}
+          focus
+          title={row.indicator.short_name}
+          note={firstSentence(row.indicator.limitation)}
+          publisher={row.source?.publisher ?? row.indicator.source_id}
+          years={yearsText(row.years)}
+          href={row.source?.url ?? "https://sotkanet.fi"}
+          linkLabel="Official definition on Sotkanet"
+          detailLabel="definition and scope"
+          detail={<Definition row={row} withLead={false} />}
+        />
+      ))}
+    </FocusGroup>
+  );
+}
+
+/** Context-only indicators: one framed list, one row each (name · publisher · years · Sotkanet link). */
+function ContextList({ rows }: { rows: SourceRow[] }) {
+  return (
+    <ul className={cn(SOURCE_FRAME, "flex flex-col py-2")}>
+      {rows.map((row) => (
+        <li
+          key={row.indicator.indicator_id}
+          className="print-keep flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-b border-frame-border py-3 last:border-b-0"
+        >
+          <p className="min-w-0 flex-1 basis-[30rem] text-base text-pretty">
+            <span className="font-semibold text-foreground">{row.indicator.short_name}</span>
+            <span className="text-muted-foreground">
+              {" · "}
+              {row.source ? shortPublisher(row.source.publisher) : row.indicator.source_id}
+              {" · "}
+              <span className="tabular-nums">{yearsText(row.years)}</span>
+              {" · "}
+            </span>
+            {row.source && (
+              <TextLink kind="external" inline href={row.source.url}>
+                Sotkanet
+              </TextLink>
+            )}
+          </p>
+          {/* Closed: the button sits at the row's end. Open: the definition takes the full row. */}
+          <Disclosure label="definition and scope" tone="quiet" className="open:basis-full" contentClassName="pt-2 pb-2">
+            <Definition row={row} withLead />
+          </Disclosure>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function SourcesPage() {
   const ranking = sourceRows.filter(({ indicator }) => RANKING_IDS.includes(indicator.indicator_id));
   const context = sourceRows.filter(({ indicator }) => !RANKING_IDS.includes(indicator.indicator_id));
 
+  const evidenceItems: SourceListItem[] = evidenceSources.map((source) => ({
+    key: source.source_id,
+    name: source.name,
+    href: source.url,
+    publisher: evidenceRetrieved ? source.publisher : `${source.publisher} · retrieved ${source.retrieved}`,
+  }));
+  const otherItems: SourceListItem[] = [
+    ...otherSources.map((source) => ({
+      key: source.source_id,
+      name: source.name,
+      href: source.url,
+      publisher: otherRetrieved ? source.publisher : `${source.publisher} · retrieved ${source.retrieved}`,
+    })),
+    ...(regionsSource
+      ? [
+          {
+            key: regionsSource.source_id,
+            name: regionsSource.name,
+            href: regionsSource.url,
+            publisher: regionsSource.retrieved === otherRetrieved ? regionsSource.publisher : `${regionsSource.publisher} · retrieved ${regionsSource.retrieved}`,
+          },
+        ]
+      : []),
+    {
+      key: "map-boundaries",
+      name: "Map boundaries: wellbeing services counties 2025 (1:4 500 000), CC BY 4.0",
+      href: "https://stat.fi/en/services/statistical-data-services/geographic-data/statistical-areas/municipality-based-statistical-units",
+      publisher: "Statistics Finland open data",
+    },
+  ];
+
   return (
-    <main className={cn("page-container flex flex-col gap-16 pt-4 pb-12 sm:pt-6", MOTION_LOUD_CLASS)}>
+    <main className={cn("page-container flex flex-col gap-12 pt-4 pb-12 sm:pt-6", MOTION_LOUD_CLASS)}>
       <header className="flex flex-col items-start gap-6">
         <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: "Sources & limitations" }]} />
         <Reveal className="flex max-w-[52rem] flex-col gap-3">
@@ -222,18 +300,7 @@ export default function SourcesPage() {
             </Link>
           </p>
         </Reveal>
-        <Reveal index={2} className="flex flex-wrap items-center gap-x-6 gap-y-4">
-          <nav aria-label="On this page">
-            <ul className="flex flex-wrap items-center gap-x-5 gap-y-1">
-              {sections.map((section) => (
-                <li key={section.href}>
-                  <TextLink kind="jump" href={section.href} className="text-base">
-                    {section.label}
-                  </TextLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        <Reveal index={2}>
           <SaveShare
             className="print:hidden"
             options={[
@@ -249,7 +316,7 @@ export default function SourcesPage() {
       </header>
 
       {/* The point of the page: always visible, never behind a button. */}
-      <section id="cannot-tell" aria-labelledby="gaps" className="flex scroll-mt-20 flex-col gap-6">
+      <section aria-labelledby="gaps" className="flex flex-col gap-6">
         <SectionHead id="gaps" eyebrow="Read with care" title="What the data can't tell you" />
         <ul className="grid gap-3 md:grid-cols-2">
           {limitations.map((limitation) => (
@@ -260,91 +327,40 @@ export default function SourcesPage() {
         </ul>
       </section>
 
-      <section id="indicators" aria-labelledby="indicator-sources" className="flex scroll-mt-20 flex-col gap-10">
-        <SectionHead id="indicator-sources" eyebrow="The public indicators" title="Indicators" />
-        <FocusGroup className="flex max-w-[52rem] flex-col gap-10">
+      <section aria-labelledby="indicator-sources" className="flex flex-col gap-8">
+        <SectionHead id="indicator-sources" title="Indicators" />
         <section aria-labelledby="indicators-ranking" className="flex max-w-[52rem] flex-col gap-4">
           <Reveal className="flex flex-col gap-1">
             <h3 id="indicators-ranking" className="type-heading text-forest-ink">Used to rank counties</h3>
             <p className="text-base text-muted-foreground">Sotkanet 6411 sets the order; 13 sets the referral status shown beside it.</p>
           </Reveal>
-          <IndicatorCards rows={ranking} />
+          <RankingCards rows={ranking} />
         </section>
-        <section aria-labelledby="indicators-context" className="flex max-w-[52rem] flex-col gap-4">
+        <section aria-labelledby="indicators-context" className="flex flex-col gap-4">
           <Reveal className="flex flex-col gap-1">
             <h3 id="indicators-context" className="type-heading text-forest-ink">Shown for context only</h3>
             <p className="text-base text-muted-foreground">Not used for ranking or stage status.</p>
           </Reveal>
-          <IndicatorCards rows={context} />
+          <ContextList rows={context} />
         </section>
-        </FocusGroup>
       </section>
 
-      <section id="evidence" aria-labelledby="evidence-sources" className="flex scroll-mt-20 flex-col gap-6">
-        <SectionHead
-          id="evidence-sources"
-          eyebrow="Checked sources"
-          title="Evidence for actions"
-          line={`Each recommended action cites one of these checked sources.${evidenceRetrieved ? ` All retrieved on ${evidenceRetrieved}; the publisher is the host of the link.` : " The publisher is the host of the link."}`}
+      <section aria-labelledby="evidence-sources" className="flex flex-col gap-6">
+        <SectionHead id="evidence-sources" title="Evidence for actions" />
+        <SourceList
+          line={`${evidenceItems.length} studies, guidelines and strategies behind the recommended actions.${evidenceRetrieved ? ` All retrieved ${evidenceRetrieved}.` : ""}`}
+          note="Each recommended action cites one of these checked sources; the publisher is the host of the link."
+          items={evidenceItems}
         />
-        <ul className="grid gap-3 md:grid-cols-2">
-          {evidenceSources.map((source) => (
-            <li key={source.source_id}>
-              <SourceCard
-                title={source.name}
-                publisher={evidenceRetrieved ? source.publisher : `${source.publisher} · retrieved ${source.retrieved}`}
-                href={source.url}
-                headingLevel="h3"
-              />
-            </li>
-          ))}
-        </ul>
       </section>
 
-      <section id="other-sources" aria-labelledby="other-sources-title" className="flex scroll-mt-20 flex-col gap-6">
-        <SectionHead
-          id="other-sources-title"
-          eyebrow="Background only"
-          title="Other sources"
-          line={`Background figures cited with a source chip on county pages. They are not county indicators and do not change any ranking, status or action.${otherRetrieved ? ` All retrieved on ${otherRetrieved}.` : ""}`}
+      <section aria-labelledby="other-sources-title" className="flex flex-col gap-6">
+        <SectionHead id="other-sources-title" title="Other sources" />
+        <SourceList
+          line={`${otherItems.length} more: background figures cited on county pages, the list of areas and the map. None changes a ranking, status or action.`}
+          note={`The background figures are not county indicators and do not change any ranking, status or action.${otherRetrieved ? ` All retrieved ${otherRetrieved}.` : ""}`}
+          items={otherItems}
         />
-        <ul className="grid gap-3 md:grid-cols-2">
-          {otherSources.map((source) => (
-            <li key={source.source_id}>
-              <SourceCard
-                title={source.name}
-                publisher={otherRetrieved ? source.publisher : `${source.publisher} · retrieved ${source.retrieved}`}
-                href={source.url}
-                headingLevel="h3"
-              />
-            </li>
-          ))}
-          {regionsSource && (
-            <li>
-              <SourceCard
-                title={regionsSource.name}
-                publisher={`${regionsSource.publisher} · retrieved ${regionsSource.retrieved}`}
-                href={regionsSource.url}
-                headingLevel="h3"
-              />
-            </li>
-          )}
-          <li>
-            <article className={cn("print-keep flex h-full flex-col gap-2", SOURCE_FRAME)}>
-              <h3 className="text-lg leading-7 font-semibold text-pretty text-forest-ink">Map boundaries</h3>
-              <p className="text-base text-pretty text-muted-foreground">
-                Statistics Finland, wellbeing services counties 2025 (1:4 500 000), CC BY 4.0
-              </p>
-              <TextLink
-                kind="external"
-                href="https://stat.fi/en/services/statistical-data-services/geographic-data/statistical-areas/municipality-based-statistical-units"
-                className="mt-auto text-base"
-              >
-                Statistics Finland open data
-              </TextLink>
-            </article>
-          </li>
-        </ul>
       </section>
 
       <nav aria-label="Page" className="print:hidden">
