@@ -292,10 +292,10 @@ function StatColumn({ children }: { children: ReactNode }) {
   );
 }
 
-/** Step mark, step name, and the status under the name. */
-function StatHead({ step, title, status }: { step: number; title: string; status: Gap["status"] }) {
+/** Row 1: the step mark inline before the step name, so every part below shares the column edge. */
+function StatTitle({ step, title, status }: { step: number; title: string; status: Gap["status"] }) {
   return (
-    <div className="flex items-start gap-3">
+    <div className="flex items-center gap-3">
       <span
         aria-hidden
         className={cn(
@@ -305,15 +305,22 @@ function StatHead({ step, title, status }: { step: number; title: string; status
       >
         {step}
       </span>
-      <div className="flex min-w-0 flex-col items-start gap-2">
-        <h3 className="font-heading text-base leading-7 font-semibold tracking-normal text-pretty">
-          <span className="sr-only">Step {step}: </span>
-          {title}
-        </h3>
-        <StatusBadge status={status} size="xs">
-          {STATUS_LABEL[status]}
-        </StatusBadge>
-      </div>
+      <h3 className="min-w-0 font-heading text-base leading-7 font-semibold tracking-normal text-pretty">
+        <span className="sr-only">Step {step}: </span>
+        {title}
+      </h3>
+    </div>
+  );
+}
+
+/** Row 2: the status badge with the source chip beside it, as on the county page. */
+function StatStatus({ status, children }: { status: Gap["status"]; children?: ReactNode }) {
+  return (
+    <div className="flex min-h-6 flex-wrap items-center gap-x-3 gap-y-2 pt-3">
+      <StatusBadge status={status} size="xs">
+        {STATUS_LABEL[status]}
+      </StatusBadge>
+      {children}
     </div>
   );
 }
@@ -321,7 +328,7 @@ function StatHead({ step, title, status }: { step: number; title: string; status
 /** In the figure's place when there is no value: a plain statement, never a dash. */
 function NoFigure({ children }: { children: ReactNode }) {
   return (
-    <p className="pt-5 text-[0.9375rem] leading-snug text-pretty text-muted-foreground md:self-end">
+    <p className="pt-5 text-[0.9375rem] leading-snug text-pretty text-muted-foreground">
       {children}
     </p>
   );
@@ -346,7 +353,10 @@ function StageStat({ step, gap }: { step: number; gap: Gap }) {
   const caption = prefix && gap.note.startsWith(prefix) ? gap.note.slice(prefix.length) : gap.note;
   return (
     <StatColumn>
-      <StatHead step={step} title={STAGE_LABELS[gap.stage]} status={gap.status} />
+      <StatTitle step={step} title={STAGE_LABELS[gap.stage]} status={gap.status} />
+      <StatStatus status={gap.status}>
+        <SourceChip sourceId={gap.source_id} year={gap.year} />
+      </StatStatus>
       {gap.value !== null ? (
         <>
           <p className={cn("pt-5 numeral text-[2.75rem] sm:text-[3rem]", STATUS_FIGURE[gap.status])}>
@@ -374,15 +384,12 @@ function StageStat({ step, gap }: { step: number; gap: Gap }) {
         <span aria-hidden className="max-md:hidden" />
       )}
       <MeasureBar
-        className="pt-5 md:self-end"
+        className="pt-5"
         value={gap.value}
         finland={gap.national_value}
         finlandLabel={`Finland ${formatPct(gap.national_value)}`}
         status={gap.status}
       />
-      <div className="pt-4">
-        <SourceChip sourceId={gap.source_id} year={gap.year} />
-      </div>
     </StatColumn>
   );
 }
@@ -391,21 +398,20 @@ function StageStat({ step, gap }: { step: number; gap: Gap }) {
 function RecognitionStat({ step }: { step: number }) {
   return (
     <StatColumn>
-      <StatHead step={step} title={STAGE_LABELS.gp_recognition} status="no_data" />
+      <StatTitle step={step} title={STAGE_LABELS.gp_recognition} status="no_data" />
+      <StatStatus status="no_data" />
       <NoFigure>No public data anywhere in Finland</NoFigure>
       <span aria-hidden className="max-md:hidden" />
       <p className="pt-3 type-caption text-pretty text-muted-foreground">
         No statistic shows how often GPs spot possible cancer at the first visit, so nobody can see how
         this step performs.
       </p>
-      <div className="flex flex-col gap-2 pt-5 md:self-end">
+      <div className="flex flex-col gap-2 pt-5">
         <MeasureBar value={null} finland={null} status="no_data" />
         <p className="h-4 type-note text-muted-foreground">No indicator, so nothing to draw</p>
-      </div>
-      <div className="pt-4">
         <a
           href="#red-flags"
-          className="inline-flex h-9 items-center gap-1 rounded-sm type-caption font-medium text-brand-ink underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50 sm:h-6"
+          className="inline-flex h-9 w-fit items-center gap-1 rounded-sm type-caption font-medium text-brand-ink underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           The red-flag helper below supports it
           <ArrowDown aria-hidden strokeWidth={1.75} className="size-4" />

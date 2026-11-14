@@ -8,11 +8,24 @@ import { STAGE_LABELS } from "@/lib/act";
 import type { Evidence } from "@/lib/data";
 
 /** Label and value. Side by side when the card has room, stacked on a phone. */
-function Field({ label, children }: { label: string; children: ReactNode }) {
+function Field({
+  label,
+  children,
+  tone = "ink",
+}: {
+  label: string;
+  children: ReactNode;
+  /** `ink` for what the card argues from (the evidence); `quiet` for supporting context. */
+  tone?: "ink" | "quiet";
+}) {
   return (
     <div className="grid gap-x-4 gap-y-1 @md:grid-cols-[6rem_minmax(0,1fr)]">
       <dt className="type-caption text-muted-foreground">{label}</dt>
-      <dd className="text-sm leading-relaxed text-pretty text-foreground tabular-nums">{children}</dd>
+      <dd
+        className={`text-sm leading-relaxed text-pretty tabular-nums ${tone === "ink" ? "text-foreground" : "text-muted-foreground"}`}
+      >
+        {children}
+      </dd>
     </div>
   );
 }
@@ -34,13 +47,13 @@ function SourceMarks({ action }: { action: Evidence }) {
 /** The step to take first: the one emphasised block on a card. */
 function FirstStep({ children, compact = false }: { children: ReactNode; compact?: boolean }) {
   return (
-    <div className="rounded-lg border border-input bg-muted px-4 py-3.5">
+    <div className="rounded-lg border border-input bg-muted px-4 py-3">
       <p className="type-caption font-medium text-muted-foreground">First step</p>
       <p
         className={
           compact
             ? "mt-1 text-sm leading-relaxed font-medium text-pretty text-foreground"
-            : "mt-1 text-[1.0625rem] leading-[1.55] font-medium text-pretty text-foreground"
+            : "mt-1 text-base leading-[1.5] font-medium text-pretty text-foreground"
         }
       >
         {children}
@@ -69,7 +82,7 @@ export function ActionCard({
     <FramePanel
       padding="none"
       id={index !== undefined ? `action-${index}` : undefined}
-      className="@container scroll-mt-20 px-4 pt-4 pb-5 sm:px-6 sm:pt-5 sm:pb-6"
+      className="@container scroll-mt-20 px-4 py-4 sm:px-6 sm:py-5"
     >
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         {index !== undefined && (
@@ -86,8 +99,8 @@ export function ActionCard({
         </span>
       </div>
 
-      <div className="mt-4 grid gap-x-10 gap-y-6 @3xl:grid-cols-2">
-        <div className="flex flex-col gap-5">
+      <div className="mt-3 grid gap-x-10 gap-y-4 @3xl:grid-cols-2">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <h3 className="font-heading text-[1.125rem] leading-[1.35] font-semibold tracking-[-0.01em] text-pretty">
               {action.action}
@@ -100,24 +113,32 @@ export function ActionCard({
           </dl>
         </div>
 
-        <dl className="flex flex-col gap-4 @3xl:pt-1">
-          <Field label="Precedent">{action.precedent}</Field>
-          <Field label="Evidence">
-            {action.effect_text}
-            <div className="mt-1 flex flex-col items-start">
-              {/* NICE content may not be reproduced outside the UK: link only, never the quote. */}
-              {action.source_id.startsWith("ev-nice") ? null : (
-                <Disclosure summary="Quote and page in the source">
-                  <p className="mb-2 border-l-2 border-border pl-3 type-caption text-muted-foreground">
-                    {action.quote_or_page}
-                  </p>
-                </Disclosure>
-              )}
-              {children}
-            </div>
-          </Field>
-          <Field label="Limitations">{action.limitations}</Field>
-        </dl>
+        <div className="flex flex-col gap-3 @3xl:pt-1">
+          <dl className="flex flex-col gap-3">
+            <Field label="Precedent" tone="quiet">
+              {action.precedent}
+            </Field>
+            <Field label="Evidence">
+              {action.effect_text}
+              <div className="mt-1 flex flex-col items-start">
+                {/* NICE content may not be reproduced outside the UK: link only, never the quote. */}
+                {action.source_id.startsWith("ev-nice") ? null : (
+                  <Disclosure summary="Quote and page in the source">
+                    <p className="mb-2 border-l-2 border-border pl-3 type-caption text-muted-foreground">
+                      {action.quote_or_page}
+                    </p>
+                  </Disclosure>
+                )}
+                {children}
+              </div>
+            </Field>
+          </dl>
+          <Disclosure summary="Limitations" className="@md:pl-[7rem]" summaryClassName="@md:-ml-[7rem] @md:w-fit">
+            <p className="pb-1 text-sm leading-relaxed text-pretty text-muted-foreground">
+              {action.limitations}
+            </p>
+          </Disclosure>
+        </div>
       </div>
     </FramePanel>
   );
