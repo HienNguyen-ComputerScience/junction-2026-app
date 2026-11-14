@@ -1,9 +1,10 @@
 "use client";
 
 import { useId, useState } from "react";
-import { Check, ShieldAlert } from "lucide-react";
+import { Check, ListChecks, ShieldAlert } from "lucide-react";
 import { cn } from "cn";
 
+import { FramePanel, FramePanelLabel } from "@/components/ui/frame";
 import { TextLink } from "@/components/ui/text-link";
 
 import {
@@ -39,41 +40,19 @@ const SECTION = {
   links: "Check the detail in the guideline",
 } as const;
 
-/** What each section of the result will hold, in plain words, for the empty state. */
-const SECTION_HINT = {
-  speed: "How soon the person should see a GP, from urgent to a planned recheck",
-  gp: "The next step at the practice: the tests to run or the referral to make",
-  links: "The guideline pages to check the exact criteria, ages and tests against",
-} as const;
-
-/**
- * Before any input: the result card's own sections, each with a line on what will appear there.
- * Static text, no placeholder bars, so it never reads as a stuck loading state.
- */
+/** Before any input: one calm panel saying what to do. The result rows appear with a result. */
 function EmptyResult() {
   return (
-    <div className="flex h-full flex-col justify-between gap-4 rounded-lg border border-dashed border-input p-4 sm:p-5">
-      <div className="flex flex-col gap-1.5">
-        <p aria-hidden className="type-caption text-muted-foreground">
-          {SECTION.category}
-        </p>
-        <p className="font-heading text-[1.125rem] leading-[1.35] font-semibold tracking-[-0.01em] text-pretty text-muted-foreground">
-          Pick a concern or type a few words to see the warning-sign category and the referral route
-        </p>
+    <FramePanel padding="none">
+      <FramePanelLabel>
+        <span>{SECTION.category}</span>
+      </FramePanelLabel>
+      <div className="flex flex-col items-start gap-2 px-4 py-5 sm:px-6">
+        <ListChecks aria-hidden className="size-4 text-muted-foreground" strokeWidth={1.75} />
+        <p className="type-heading">No concern picked yet</p>
+        <p className="type-caption text-muted-foreground">Pick a concern on the left, or type a few words.</p>
       </div>
-      <dl className="flex flex-col gap-4 border-t border-border pt-4">
-        {(["speed", "gp"] as const).map((key) => (
-          <div key={key} className="flex flex-col gap-1">
-            <dt className="type-caption text-muted-foreground">{SECTION[key]}</dt>
-            <dd className="text-sm leading-relaxed text-pretty text-faint">{SECTION_HINT[key]}</dd>
-          </div>
-        ))}
-      </dl>
-      <dl className="flex flex-col gap-1 border-t border-border pt-4">
-        <dt className="type-caption text-muted-foreground">{SECTION.links}</dt>
-        <dd className="text-sm leading-relaxed text-pretty text-faint">{SECTION_HINT.links}</dd>
-      </dl>
-    </div>
+    </FramePanel>
   );
 }
 
