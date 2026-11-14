@@ -589,6 +589,30 @@ h2:not([class*="type-"], .font-sans) {
   a {
     text-decoration: none;
   }
+  /* A4 is narrower than a desktop screen: wide tables print smaller and tighter, and no column
+     keeps a screen minimum width. */
+  table.stack-table {
+    font-size: 10pt;
+  }
+  table.stack-table :is(th, td) {
+    min-width: 0 !important;
+    padding: 5pt 5pt !important;
+  }
+  table.stack-table :is(th, td) :is(.text-base, .text-xl, .text-sm, button) {
+    font-size: inherit !important;
+    min-height: 0 !important;
+  }
+  table.stack-table thead button {
+    text-decoration: none !important;
+  }
+  /* Lead figures print compact, so four fit on one page. */
+  [data-slot="stat-unit"] {
+    padding: 14pt !important;
+    gap: 6pt !important;
+  }
+  [data-slot="stat-unit"] .numeral {
+    font-size: 32pt !important;
+  }
 }
 
 /* ---- A table that reads as labelled rows on a phone. Give each <td> a data-label and wrap its

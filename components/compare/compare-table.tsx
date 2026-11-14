@@ -64,12 +64,14 @@ className?: string;
       aria-sort={active ? (ascending ? "ascending" : "descending") : undefined}
       className={cn("px-3 pb-3 text-left align-bottom text-sm font-semibold text-muted-foreground first:pl-0 last:pr-0", className)}
     >
+      {/* Paper gets plain text: Chromium leaves buttons out of the header row it repeats on each page. */}
+      {keyName ? <span className="hidden print:inline">{children}</span> : null}
       {keyName ? (
         <button
           type="button"
           onClick={() => onSort(keyName)}
           className={cn(
-            "inline-flex min-h-9 items-center gap-1.5 rounded-sm text-left underline decoration-forest-ink/30 underline-offset-4 outline-none hover:text-forest-ink hover:decoration-forest-ink focus-visible:ring-3 focus-visible:ring-ring/50",
+            "print:hidden inline-flex min-h-9 items-center gap-1.5 rounded-sm text-left underline decoration-forest-ink/30 underline-offset-4 outline-none hover:text-forest-ink hover:decoration-forest-ink focus-visible:ring-3 focus-visible:ring-ring/50",
             active && "text-forest-ink",
           )}
         >
@@ -163,9 +165,9 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
               </td>
               <td data-label="GP visits waiting over 7 days, 2025" className="px-3 py-3.5 align-top">
                 <div className="flex flex-col gap-2">
-                  <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="flex flex-col items-start gap-1">
                     <span className={cn("figure text-xl", row.gpStatus === "red" ? "text-status-red-ink" : "text-foreground")}>{pct(row.gp)}</span>
-                    <StatusBadge status={row.gpStatus} variant="quiet" className="shrink whitespace-normal">
+                    <StatusBadge status={row.gpStatus} variant="quiet" className="h-auto shrink items-baseline whitespace-normal leading-snug">
                       {STATUS_WORDS[row.gpStatus]}
                     </StatusBadge>
                   </span>
@@ -191,9 +193,9 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
                 <div className="flex flex-col gap-1">
                   {row.referral !== null ? (
                     <>
-                      <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                      <span className="flex flex-col items-start gap-1">
                         <span className="figure text-base">{pct(row.referral)}</span>
-                        <StatusBadge status={row.referralCityOnly ? "no_data" : row.referralStatus} variant="quiet" className="shrink whitespace-normal">
+                        <StatusBadge status={row.referralCityOnly ? "no_data" : row.referralStatus} variant="quiet" className="h-auto shrink items-baseline whitespace-normal leading-snug">
                           {row.referralCityOnly ? "City units only" : STATUS_WORDS[row.referralStatus]}
                         </StatusBadge>
                       </span>

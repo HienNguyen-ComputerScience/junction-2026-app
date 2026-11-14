@@ -107,7 +107,8 @@ export default function ComparePage() {
             index={3}
           >
             <p>
-              have a larger share of visits waiting than in {FIRST_YEAR}.
+              have a share of visits waiting at least 1 point higher than in {FIRST_YEAR}. Changes under 1 point count as
+              about the same.
               {lead.fastest ? (
                 <>
                   {" "}
