@@ -155,6 +155,10 @@ export function AskBox() {
                       </span>
                     ))}
                   </p>
+                  <p className="text-xs text-muted-foreground">
+                    Numbers here come from the web sources cited and can measure something different from the dashboard&apos;s
+                    indicators (share of GP visits waiting more than 7 days).
+                  </p>
                 </div>
               )}
 

@@ -1,4 +1,5 @@
 import { AskBox } from "@/components/exa/ask-box";
+import { NationalNews } from "@/components/exa/national-news";
 import { RankingList } from "@/components/ranking/ranking-list";
 import { SourceChip } from "@/components/source-chip";
 import { LATEST_YEAR } from "@/lib/data";
@@ -82,6 +83,10 @@ export default function CountyRankingPage() {
           Ask the evidence, answered live from Exa search results
         </h2>
         <AskBox />
+      </section>
+
+      <section aria-label="National news" className="flex flex-col gap-3">
+        <NationalNews />
       </section>
     </main>
   );

@@ -26,7 +26,7 @@ Run 3 tested commit c4f067d. PRs #45 (22:36 UTC) and #10 (22:38 UTC) merged afte
 | Rate limit and committed demo cache (saved results with their date when live search is down) | Merged (PR #41); pass in Run 3 | `lib/exa/rate-limit.ts`, `data/exa-cache/` |
 | AI county brief with snapshot validator and fallback | Merged (PR #29); mounted on the county page (PR #39); `/api/brief` passes in Run 3 | `lib/brief/`, `app/api/brief/`, `components/brief/` |
 | Exa UI panels: county news, evidence finder, question box | Mounted (PR #39, issue #32 closed). County news on the county page; evidence finder and question box on the act page; question box also on the ranking page. Answers and evidence results tested via the API in Run 3, then clicked in the browser in Run 3b (commit 0e40cdf): question box, evidence finder and "Write AI brief" work | `components/exa/` |
-| National news strip | API works (Run 3). **Not on any page** | `/api/national-news` |
+| National news strip | API works (Run 3). Shown on the ranking page `/`, under the question box (up to 4 dated items, "Found live — unverified"; not yet in a test run) | `components/exa/national-news.tsx`, `/api/national-news` |
 | Polish: 404 for unknown counties, collapse extra actions | Merged (PR #45) after Run 3. PR #49 made the first request a real 404. Run 3b (browser, commit 0e40cdf): `/county/narnia` shows the 404 page; the extra actions were not exercised | `app/` |
 | Sources and limitations page | Merged (PR #10, issue #9 closed) at 22:38 UTC, after Run 3. Run 3b (browser, commit 0e40cdf): loads, header link works, lists the 3 Sotkanet indicators and limitations; **does not list the evidence-table sources** | `app/sources/` |
 | E2E docs and browser run | Merged (PR #25, #27, #35, #36) | `docs/pitch/`, `docs/evidence/` |
@@ -58,7 +58,7 @@ Platform: hackjunction.app. Needs a draft project and the chosen challenge. Both
 | [ ] | Attend the Exa workshop (Sat 16:30) | whole team | `docs/junction-2026-guide.md` | TODO (human) |
 | [ ] | Merge screens 1 and 2 (issue #17) | HienNguyen-ComputerScience (app) | `app/` | Merged (PR #23); box left for the owner |
 | [ ] | Merge screen 3 and red-flag helper (issue #21) | HienNguyen-ComputerScience | `app/` | Merged (PR #26); box left for the owner |
-| [ ] | Merge Exa UI panels (PR #22) and mount them, the question box and the AI brief on the pages (issue #32) | HienNguyen-ComputerScience | `app/`, `components/exa/`, `components/brief/` | Mounted (PR #39, issue #32 closed; Run 3). National news strip still not on a page. Box left for the owner |
+| [ ] | Merge Exa UI panels (PR #22) and mount them, the question box and the AI brief on the pages (issue #32) | HienNguyen-ComputerScience | `app/`, `components/exa/`, `components/brief/` | Mounted (PR #39, issue #32 closed; Run 3). National news strip now on `/` (#66). Box left for the owner |
 | [ ] | Merge sources and limitations page (PR #10) | bestawperna | `app/sources/` | Merged (PR #10, 13 Nov 22:38 UTC), after Run 3; loads in Run 3b but lists only the 3 Sotkanet indicators. Box left for the owner |
 | [x] | Deploy to Vercel and write the live URL into README.md | HienNguyen-ComputerScience (deploy) | `README.md` "Live demo" | Done 14 Nov (not auto-deploying; redeploy after the freeze) |
 | [ ] | Decide demo credentials: the app has no accounts, so write "none needed" if still true | HienNguyen-ComputerScience | `README.md` | TODO (human) |
