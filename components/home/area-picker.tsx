@@ -7,7 +7,7 @@ import { useId, useRef, useState, useSyncExternalStore, type ReactNode } from "r
 
 import { FinlandMap, type FinlandMapArea } from "@/components/map/finland-map";
 import { buttonVariants } from "@/components/ui/button";
-import { FramePanel, FramePanelLabel } from "@/components/ui/frame";
+import { FramePanel } from "@/components/ui/frame";
 import { BarKey } from "@/components/ui/measure-bar";
 import { TextLink } from "@/components/ui/text-link";
 import type { GapStatus } from "@/lib/data";
@@ -33,7 +33,8 @@ type Props = {
   year: number;
   totalAreas: number;
   /** Server-rendered parts, so no snapshot data is shipped to the browser. */
-  steps: Record<string, ReactNode>;
+  /** Per area: the pathway line, the step where it breaks lit. */
+  lines: Record<string, ReactNode>;
   /** Per area: the bottleneck step's focal figure (absent when it has no value). */
   leads: Record<string, ReactNode>;
   whatIfs: Record<string, ReactNode>;
@@ -51,7 +52,7 @@ const noUrlArea = () => null;
 
 /**
  * The home page's tool: pick an area (the select or the map) and see where its pathway breaks,
- * the steps, the top recommended action and the what-if, all for that area. Desktop: picker
+ * the pathway line, the top recommended action and the what-if, all for that area. Desktop: picker
  * and map on the left, the answer on the right. Phone: the select, the answer, then the map.
  */
 export function AreaPicker({
@@ -60,7 +61,7 @@ export function AreaPicker({
   defaultId,
   year,
   totalAreas,
-  steps,
+  lines,
   leads,
   whatIfs,
   actions,
@@ -99,46 +100,50 @@ export function AreaPicker({
 
   return (
     // No outer frame: the panels sit on the page, so the deepest nesting is panel > First step box.
-    <section
-      aria-label="Pick an area"
-      className="grid gap-2 lg:grid-cols-[21rem_minmax(0,1fr)] lg:grid-rows-[auto_minmax(0,1fr)]"
-    >
-      {/* The picker. */}
-      <FramePanel padding="none" className="px-5 pt-5 pb-4 sm:px-6 lg:col-start-1 lg:row-start-1">
-        <label htmlFor={selectId} className="text-sm font-medium text-foreground">
-          Choose your area
-        </label>
-        <div className="relative mt-1.5">
-          <select
-            id={selectId}
-            value={area.id}
-            onChange={(event) => choose(event.target.value, false)}
-            className="h-11 w-full appearance-none rounded-lg border border-input bg-muted pr-10 pl-3 text-[0.9375rem] font-medium text-foreground transition-colors outline-none hover:border-foreground/25 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-          >
-            {areas.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-          <ChevronDown
-            aria-hidden
-            strokeWidth={1.75}
-            className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
-          />
+    <section aria-label="Pick an area" className="grid gap-2 lg:grid-cols-[21rem_minmax(0,1fr)]">
+      {/* The picker and the signature: choose an area, see its whole pathway as one line with the
+          step where it breaks lit. Full width, directly under the headline. */}
+      <FramePanel padding="none" className="px-5 pt-4 pb-5 sm:px-6 lg:col-span-2">
+        <div className="flex flex-col gap-x-6 gap-y-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <label htmlFor={selectId} className="text-sm font-medium text-foreground">
+            Choose your area
+          </label>
+          <div className="relative sm:w-[19rem]">
+            <select
+              id={selectId}
+              value={area.id}
+              onChange={(event) => choose(event.target.value, false)}
+              className="h-11 w-full appearance-none rounded-lg border border-input bg-muted pr-10 pl-3 text-[0.9375rem] font-medium text-foreground transition-colors outline-none hover:border-foreground/25 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              {areas.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              aria-hidden
+              strokeWidth={1.75}
+              className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
+            />
+          </div>
+          <p className="type-caption text-muted-foreground">
+            <span className="lg:hidden">Or tap an area on the map below.</span>
+            <span className="max-lg:hidden">Or click an area on the map.</span>
+          </p>
+          <TextLink kind="jump" href="#ranking" className="text-sm sm:ml-auto">
+            Compare all {totalAreas} areas
+          </TextLink>
         </div>
-        <p className="mt-1.5 type-caption text-muted-foreground">
-          <span className="lg:hidden">Or tap an area on the map below.</span>
-          <span className="max-lg:hidden">Or click an area on the map.</span>
-        </p>
-        <TextLink kind="jump" href="#ranking" className="text-sm">
-          Compare all {totalAreas} areas
-        </TextLink>
+        <div className="mt-3 border-t border-border pt-3">
+          <h2 className="sr-only">{area.name}: the path from first symptoms to treatment</h2>
+          {lines[area.id] ?? null}
+        </div>
       </FramePanel>
 
       {/* The answer for the selected area: the hero card (figure, verdict, the way to the actions,
-          and the top action as its second row), then the what-if, then the three steps. */}
-      <div ref={answerRef} className="grid scroll-mt-4 content-start gap-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+          and the top action as its second row), then the what-if. */}
+      <div ref={answerRef} className="grid scroll-mt-4 content-start gap-2 lg:col-start-2 lg:row-start-2">
         <FramePanel padding="none">
           <div className="flex flex-col gap-5 px-5 pt-5 pb-5 sm:px-6">
             <div className="flex flex-col gap-3" aria-live="polite">
@@ -162,23 +167,17 @@ export function AreaPicker({
         </FramePanel>
 
         {what}
-
-        <FramePanel padding="none">
-          <FramePanelLabel>
-            <h3 className="font-sans type-caption font-medium text-muted-foreground">
-              The three steps to a specialist ({year})
-            </h3>
-          </FramePanelLabel>
-          {steps[area.id]}
-        </FramePanel>
       </div>
 
-      {/* The map: last on a phone, under the picker from lg. */}
+      {/* The map: last on a phone, beside the answer from lg. */}
       <FramePanel padding="none" className="max-lg:order-last lg:col-start-1 lg:row-start-2">
-        <FramePanelLabel>
-          <span>Worst measured step against Finland</span>
+        {/* Title on its own line, the two source chips on the next: they never overflow the card. */}
+        <div className="flex flex-col gap-2 px-5 pt-4 sm:px-6">
+          <h3 className="font-sans text-sm font-medium text-foreground">
+            Worst measured step against Finland ({year})
+          </h3>
           {mapChip}
-        </FramePanelLabel>
+        </div>
         <div className="flex flex-col items-center gap-3 px-5 pt-4 pb-4 sm:px-6">
           <FinlandMap
             areas={mapAreas}

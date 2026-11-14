@@ -59,7 +59,13 @@ function EmptyResult() {
       <div className="flex flex-col items-start gap-2 px-5 py-5 sm:px-6">
         <ListChecks aria-hidden className="size-4 text-muted-foreground" strokeWidth={1.75} />
         <p className="type-heading">No concern picked yet</p>
-        <p className="type-caption text-muted-foreground">Pick a concern on the left, or type a few words.</p>
+        <p className="text-sm text-pretty text-muted-foreground">
+          Tick a concern on the left, or type what the patient describes in the box under the list, for example{" "}
+          <span className="text-foreground">&ldquo;weight loss&rdquo;</span>,{" "}
+          <span className="text-foreground">&ldquo;lump in the neck&rdquo;</span> or{" "}
+          <span className="text-foreground">&ldquo;veriyskä&rdquo;</span>. How fast to refer, and the guideline to
+          check, appear here.
+        </p>
       </div>
     </FramePanel>
   );

@@ -29,7 +29,7 @@ type Props = {
 // of a group. It is drawn through bar rows only: a group heading has no bar and no line.
 // Below lg: area (rank inline before the name) | value, then the change and gap line, the bar, and the referral line.
 const ROW_GRID =
-  "grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 lg:grid-cols-[2rem_minmax(0,12rem)_minmax(0,1fr)_10.5rem_15.5rem] lg:gap-x-5";
+  "grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 lg:grid-cols-[2rem_minmax(0,12rem)_minmax(0,1fr)_14rem_15.5rem] lg:gap-x-5";
 
 // The referral column is a second indicator, not a detail of the GP wait: a hairline with 24px
 // on each side separates the two, in the header, the group headings and every row alike.
@@ -47,11 +47,7 @@ const ROW_DIVIDER =
   "before:absolute before:inset-x-2.5 before:top-0 before:h-px before:bg-foreground/[0.06] lg:before:inset-x-0";
 
 // Referral column: one short tag per state, so every cell has the same shape.
-const REFERRAL_TAG: Record<GapStatus, string> = {
-  red: "Slower than Finland",
-  amber: "At least as fast",
-  no_data: "No public data",
-};
+const REFERRAL_TAG: Record<GapStatus, string> = STATUS_LABEL;
 
 /**
  * The gap to Finland in percentage points, for display: the difference of the two one-decimal
@@ -62,6 +58,24 @@ export function gapToFinland(value: number, finland: number): string {
   const abs = Math.abs(diff).toFixed(1);
   if (abs === "0.0") return "0.0 pts";
   return `${diff > 0 ? "+" : "−"}${abs} pts`;
+}
+
+/**
+ * The gap to Finland in words, never a sign: { amount: "30.7", words: "points slower than
+ * Finland" }, or { amount: null, words: "Same as Finland" }. The same one-decimal arithmetic
+ * as gapToFinland. The direction comes from the measure, not the sign: a larger GP wait share
+ * is slower, a larger referral share (`higherIsBetter`) is faster.
+ */
+export function gapInWords(
+  value: number,
+  finland: number,
+  { higherIsBetter = false, unit = "points" }: { higherIsBetter?: boolean; unit?: string } = {},
+): { amount: string | null; words: string } {
+  const diff = Number(value.toFixed(1)) - Number(finland.toFixed(1));
+  const abs = Math.abs(diff).toFixed(1);
+  if (abs === "0.0") return { amount: null, words: "Same as Finland" };
+  const slower = higherIsBetter ? diff < 0 : diff > 0;
+  return { amount: abs, words: `${unit} ${slower ? "slower" : "faster"} than Finland` };
 }
 
 export function RankingList({
@@ -370,9 +384,7 @@ function RankingRowLink({
           <StatusBadge status={row.gpStatus} variant="quiet">
             <span>
               <span className="sr-only">{STATUS_LABEL[row.gpStatus]}: </span>
-              <span className="figure">{gapToFinland(row.gpWait.value, nationalGpWait)}</span>
-              {/* On a phone the line above the list says what the gap is measured against. */}
-              <span className="max-lg:sr-only"> vs Finland</span>
+              <GapWords value={row.gpWait.value} finland={nationalGpWait} />
             </span>
           </StatusBadge>
         </span>
@@ -427,13 +439,14 @@ function RankingRowLink({
             <span>
               {row.referral === null && row.sharedReferral ? (
                 <>
-                  {row.sharedReferral.name}-wide
-                  <span className="sr-only">, no figure for this area alone</span>
+                  No county figure ({row.sharedReferral.name}-wide)
+                  <span className="sr-only"> value shown</span>
                 </>
-              ) : cityUnitsOnly ? (
-                "City units only"
               ) : (
-                REFERRAL_TAG[referralStatus]
+                <>
+                  {REFERRAL_TAG[referralStatus]}
+                  {cityUnitsOnly && <span className="sr-only"> (the city&apos;s own units only)</span>}
+                </>
               )}
               {referralStatus !== "no_data" && (
                 <span className="sr-only">
@@ -465,10 +478,20 @@ function ChangeSince({ change }: { change: number | null }) {
         "No change"
       ) : (
         <>
-          <span className="figure">{size} pts</span> {change > 0 ? "worse" : "better"}
+          <span className="figure">{size} points</span> {change > 0 ? "worse" : "better"}
         </>
       )}{" "}
       since {FIRST_YEAR}
+    </span>
+  );
+}
+
+/** The GP wait's gap to Finland in words, "30.7 points slower than Finland": no sign. */
+function GapWords({ value, finland }: { value: number; finland: number }) {
+  const { amount, words } = gapInWords(value, finland);
+  return (
+    <span>
+      {amount !== null && <span className="figure">{amount}</span>} {words}
     </span>
   );
 }

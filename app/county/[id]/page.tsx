@@ -2,25 +2,22 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
 
 import { CountyBrief } from "@/components/brief/county-brief";
 import { CountyNews } from "@/components/exa/county-news";
+import { FirstContactGap } from "@/components/pathway/first-contact-gap";
 import { LimitationsBox, type LimitationItem } from "@/components/pathway/limitations-box";
+import { PathwayLine } from "@/components/pathway/pathway-line";
 import { buildPathwaySteps, PathwaySteps, type PathwayStep } from "@/components/pathway/pathway-steps";
-import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { TrendStrip, type TrendStage } from "@/components/pathway/trend-strip";
 import { SourceChip } from "@/components/source-chip";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import { BackLink } from "@/components/ui/back-link";
 import { BarKey } from "@/components/ui/measure-bar";
 import { buttonVariants } from "@/components/ui/button";
-import {
-  Frame,
-  FrameDescription,
-  FrameHeader,
-  FramePanel,
-  FrameTitle,
-} from "@/components/ui/frame";
+import { Frame, FrameHeader, FramePanel, FrameTitle } from "@/components/ui/frame";
+import { TextLink } from "@/components/ui/text-link";
 import { getBottleneck } from "@/lib/act";
 import { counties, gaps, getCounty, getValue, LATEST_YEAR, type County, type Gap } from "@/lib/data";
 import {
@@ -74,6 +71,21 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const husText = hus ? formatPct(hus.value) : null;
   const husChip = <SourceChip sourceId="sotkanet-13" year={LATEST_YEAR} />;
   const chipAfter = (sentence: string) => (husText && sentence.includes(husText) ? husChip : null);
+  // "HUS" is explained at its first use on the page, beside the verdict's own words (unchanged).
+  const HUS_WORD = /\bHUS\b(?!-)/;
+  const firstHus = [leadSentence, ...restSentences].findIndex((sentence) => HUS_WORD.test(sentence));
+  // index: the sentence's place in the verdict (0 is the lead sentence).
+  const glossHus = (sentence: string, index: number): ReactNode => {
+    const at = index === firstHus ? sentence.search(HUS_WORD) : -1;
+    if (at < 0) return sentence;
+    return (
+      <>
+        {sentence.slice(0, at + 3)}
+        <span className="text-muted-foreground"> (Helsinki University Hospital region)</span>
+        {sentence.slice(at + 3)}
+      </>
+    );
+  };
 
   return (
     <main className="page-container flex flex-col gap-10 pt-4 sm:gap-14 sm:pt-6">
@@ -81,10 +93,14 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           beside them, so both are on the first screen. Below lg the limitations are a one-line
           disclosure right under the main action instead (the two are never displayed at the
           same width). */}
-      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_29rem] lg:items-start lg:gap-12">
+      {/* The page's name, then the pathway line (the same one as on home and the act page),
+          then the hero: the key figure and the verdict on the left, the limitations box beside
+          them, so all of it is on the first screen. Below lg the limitations are a one-line
+          disclosure under the main action instead (never displayed at the same width). */}
+      <div className="flex flex-col gap-5 sm:gap-6">
         <header className="flex flex-col items-start gap-4">
           <BackLink href="/">Back to all areas</BackLink>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1.5">
             <p className="type-caption text-balance text-muted-foreground">
               Path to early cancer care
               <span className="max-sm:hidden"> · </span>
@@ -92,32 +108,41 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             </p>
             <h1 className="type-page lg:text-[2.75rem] lg:leading-[1.1]">{county.name}</h1>
           </div>
-          {keyGap && <KeyFigure gap={keyGap} />}
-          <div className="flex max-w-[36rem] flex-col gap-2">
-            <p className="type-lede text-foreground lg:text-[1.25rem] lg:leading-7">
-              {leadSentence}
-              {chipAfter(leadSentence) && <span className="ml-2 inline-flex align-middle">{husChip}</span>}
-            </p>
-            {restSentences.length > 0 && (
-              <p className="max-w-[68ch] text-sm leading-relaxed text-pretty text-muted-foreground">
-                {restSentences.map((sentence, i) => (
-                  <span key={i}>
-                    {i > 0 && " "}
-                    {sentence}
-                    {chipAfter(sentence) && <span className="ml-2 inline-flex align-middle">{husChip}</span>}
-                  </span>
-                ))}
-              </p>
-            )}
-          </div>
-          <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
-            {anyRed ? "See all actions" : "Actions to keep this level"}
-            <ArrowRight aria-hidden data-icon="inline-end" />
-          </Link>
-          <LimitationsBox items={limitations} variant="disclosure" className="mt-2 w-full lg:hidden" />
         </header>
 
-        <LimitationsBox items={limitations} className="max-lg:hidden" />
+        <FramePanel padding="none" className="px-5 pt-2 pb-4 sm:px-6">
+          <PathwayLine countyId={county.id} size="sm" redFlagHref={`/county/${county.id}/act#red-flags`} />
+        </FramePanel>
+
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_29rem] lg:items-start lg:gap-12">
+          <div className="flex flex-col items-start gap-4">
+            {keyGap && <KeyFigure gap={keyGap} />}
+            <div className="flex max-w-[36rem] flex-col gap-2">
+              <p className="type-lede text-foreground lg:text-[1.25rem] lg:leading-7">
+                {glossHus(leadSentence, 0)}
+                {chipAfter(leadSentence) && <span className="ml-2 inline-flex align-middle">{husChip}</span>}
+              </p>
+              {restSentences.length > 0 && (
+                <p className="max-w-[68ch] text-sm leading-relaxed text-pretty text-muted-foreground">
+                  {restSentences.map((sentence, i) => (
+                    <span key={i}>
+                      {i > 0 && " "}
+                      {glossHus(sentence, i + 1)}
+                      {chipAfter(sentence) && <span className="ml-2 inline-flex align-middle">{husChip}</span>}
+                    </span>
+                  ))}
+                </p>
+              )}
+            </div>
+            <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
+              {anyRed ? "See all actions" : "Actions to keep this level"}
+              <ArrowRight aria-hidden data-icon="inline-end" />
+            </Link>
+            <LimitationsBox items={limitations} variant="disclosure" className="mt-2 w-full lg:hidden" />
+          </div>
+
+          <LimitationsBox items={limitations} visibleCount={2} className="max-lg:hidden" />
+        </div>
       </div>
 
       <Frame aria-labelledby="pathway-heading">
@@ -125,11 +150,21 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           <FrameTitle id="pathway-heading" className="type-title">
             The first steps, compared with Finland ({LATEST_YEAR})
           </FrameTitle>
-          <FrameDescription>Gaps to Finland are in percentage points (pts).</FrameDescription>
         </FrameHeader>
         <div className="flex flex-col gap-1.5">
           <FramePanel padding="none">
-            <PathwaySteps steps={steps} density="full" />
+            <PathwaySteps
+              steps={steps}
+              density="full"
+              renderExtra={(step) =>
+                step.stage === "gp_recognition" ? (
+                  <TextLink kind="nav" href={`/county/${county.id}/act#red-flags`} className="type-caption">
+                    Use the red-flag helper
+                  </TextLink>
+                ) : null
+              }
+            />
+            <FirstContactGap />
           </FramePanel>
           <TrendStrip
             stages={buildTrendStages(county, steps)}
@@ -164,8 +199,6 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           />
         </div>
       </Frame>
-
-      <PathwayStrip countyId={county.id} />
 
       <CountyBrief countyId={county.id} />
       <CountyNews key={county.id} countyId={county.id} />
@@ -246,13 +279,15 @@ function buildLimitations(county: County): LimitationItem[] {
     const indicator = getIndicator(indicatorId);
     if (indicator) {
       items.push({
-        text: `${indicator.short_name}: ${indicator.limitation}`,
+        title: indicator.short_name,
+        text: indicator.limitation,
         sourceId: indicator.source_id,
       });
     }
   }
 
   items.push({
+    title: "Public health centres only",
     text: "The GP wait covers public health centres only. Visits to occupational or private doctors are not in it. In a Finnish study of lymphoma patients, those who started in public primary care waited a median 127 days from symptoms to treatment, against 76 days for private or occupational care.",
     sourceId: "kuitunen-2026",
   });
@@ -265,6 +300,7 @@ function buildLimitations(county: County): LimitationItem[] {
   if (occupational && publicVisits && occupationalFinland && publicFinland) {
     const n = (value: number) => Math.round(value).toLocaleString("en-GB");
     items.push({
+      title: "Occupational visits skip the public queue",
       text: `Working-age people (15-64) in ${county.name} made ${n(occupational.value)} occupational-health doctor visits per 1,000 residents in ${occupational.year}, against ${n(publicVisits.value)} public primary-care doctor visits (Finland ${n(occupationalFinland.value)} and ${n(publicFinland.value)}). These are visits, not people. Occupational visits are outside the public queue the GP wait measures. People over 64, who are most cancer patients, are not in these numbers.`,
       sourceId: "sotkanet-2371",
     });
@@ -278,12 +314,14 @@ function buildLimitations(county: County): LimitationItem[] {
   const breastFinland = getValue("finland", "3625", 2024);
   if (bowel && breast && bowelFinland && breastFinland) {
     items.push({
+      title: "Survival is context only",
       text: `In ${county.name}, 5-year relative survival was ${bowel.value}% for bowel cancer and ${breast.value}% for breast cancer (Finland ${bowelFinland.value}% and ${breastFinland.value}%), for patients diagnosed ${bowel.year - 9}-${bowel.year}. Cancer stage by county is not published, and survival mixes how early cancer is found with how well it is treated. Small counties vary from year to year.`,
       sourceId: "sotkanet-3627",
     });
   }
 
   items.push({
+    title: "No data on GP recognition",
     text: "GP recognition of possible cancer has no public indicator, so step 2 is grey for every county. No public county data shows it yet; one candidate would be the share of cancers first found through an emergency visit.",
   });
 
@@ -291,11 +329,13 @@ function buildLimitations(county: County): LimitationItem[] {
   const husWide = gaps.find((gap) => gap.shared)?.shared;
   if (shared) {
     items.push({
+      title: `Referral figure is ${shared.name}-wide`,
       text: `The referral step shows the ${shared.name}-wide value, not a figure for ${county.name}. ${shared.name} handles hospital referrals from East, Central and West Uusimaa and Vantaa and Kerava, and THL publishes one ${shared.name}-wide number for them, not one per county. So the step stays grey, and it is not used to rank or to pick actions. THL or ${shared.name} could publish it by the patient's home county. The link shows the ${shared.name} report we used to check that the number is ${shared.name}'s.`,
       sourceId: shared.confirmed_by,
     });
   } else if (stageStatus(county.id, "referral") === "no_data") {
     items.push({
+      title: "No referral data here",
       text: `Sotkanet publishes no county-level referral data for ${county.name}, so its referral step is grey. We cannot say whether referrals here are fast or slow.`,
     });
   } else {
@@ -304,11 +344,13 @@ function buildLimitations(county: County): LimitationItem[] {
       .map((point) => point.year);
     if (referralYears.length > 0 && referralYears.length < YEARS.length) {
       items.push({
+        title: "Incomplete referral trend",
         text: `${county.name} has referral values for ${referralYears.join(", ")} only, so the referral trend is incomplete.`,
       });
     }
     if (county.id === "helsinki" && husWide) {
       items.push({
+        title: "City units only",
         text: `Helsinki's referral value covers the city's own specialist units only. Most hospital referrals from Helsinki go to ${husWide.name}, which processed ${formatPct(husWide.value)} within 3 days in ${LATEST_YEAR}.`,
         sourceId: "sotkanet-13",
       });
@@ -317,6 +359,7 @@ function buildLimitations(county: County): LimitationItem[] {
 
   const nationalGpWait = getNationalValue(GP_WAIT_ID);
   items.push({
+    title: "Finland's level is itself a delay",
     text: `At or better than Finland's level does not mean good. Finland's level is itself a delay${
       nationalGpWait
         ? `: ${formatPct(nationalGpWait.value)} of non-urgent GP visits nationally come more than a week after the need for care was assessed`
@@ -324,6 +367,7 @@ function buildLimitations(county: County): LimitationItem[] {
     }.`,
   });
   items.push({
+    title: "Colours are a comparison, not a target",
     text: `Colours compare this area's ${LATEST_YEAR} value with Finland's ${LATEST_YEAR} value on the same indicator. They are not a target or a clinical standard.`,
   });
 

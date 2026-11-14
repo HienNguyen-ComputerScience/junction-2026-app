@@ -5,9 +5,8 @@ import { LeadFigure } from "@/components/home/lead-figure";
 import { TopAction } from "@/components/home/top-action";
 import { WhatIfPanel } from "@/components/home/what-if-panel";
 import type { FinlandMapArea } from "@/components/map/finland-map";
-import { buildPathwaySteps, PathwaySteps } from "@/components/pathway/pathway-steps";
+import { PathwayLine } from "@/components/pathway/pathway-line";
 import { SourceChip } from "@/components/source-chip";
-import { TextLink } from "@/components/ui/text-link";
 import { bottleneckLede, bottleneckStatus, getBottleneck, pickActions } from "@/lib/act";
 import { indicators, LATEST_YEAR, type County, type Stage } from "@/lib/data";
 import { getStageGap, GP_WAIT_ID, REFERRAL_ID, STATUS_LABEL, type RankingRow } from "@/lib/ranking";
@@ -50,7 +49,7 @@ export function HomeTool({
     );
 
   const areas: PickerArea[] = [];
-  const steps: Record<string, ReactNode> = {};
+  const lines: Record<string, ReactNode> = {};
   const whatIfs: Record<string, ReactNode> = {};
   const actions: Record<string, ReactNode> = {};
   const leads: Record<string, ReactNode> = {};
@@ -63,19 +62,10 @@ export function HomeTool({
     const actionKey = `${top?.id}:${bottleneck.anyRed}`;
     if (top && !actions[actionKey]) actions[actionKey] = <TopAction action={top} keepLevel={!bottleneck.anyRed} />;
 
-    // A step without data points to the next useful thing: the red-flag helper for step 2.
-    steps[county.id] = (
-      <PathwaySteps
-        steps={buildPathwaySteps(county.id)}
-        density="compact"
-        renderExtra={(step) =>
-          step.stage === "gp_recognition" ? (
-            <TextLink kind="nav" href={`/county/${county.id}/act#red-flags`} className="type-caption sm:min-h-6">
-              Red-flag helper
-            </TextLink>
-          ) : null
-        }
-      />
+    // The signature: the whole pathway as one line, the step where it breaks lit. Step 2 (no
+    // data anywhere) points to the next useful thing, the red-flag helper.
+    lines[county.id] = (
+      <PathwayLine countyId={county.id} size="lg" redFlagHref={`/county/${county.id}/act#red-flags`} />
     );
 
     const gap = bottleneck.focus[0];
@@ -133,14 +123,14 @@ export function HomeTool({
       defaultId={defaultId}
       year={LATEST_YEAR}
       totalAreas={all.length}
-      steps={steps}
+      lines={lines}
       leads={leads}
       whatIfs={whatIfs}
       actions={actions}
       mapChip={
-        <span className="flex items-center gap-1.5">
-          <SourceChip sourceId={rows[0]?.gpWait.source_id ?? `sotkanet-${GP_WAIT_ID}`} year={LATEST_YEAR} />
-          <SourceChip sourceId={`sotkanet-${REFERRAL_ID}`} year={LATEST_YEAR} />
+        <span className="flex flex-wrap items-center gap-1.5">
+          <SourceChip sourceId={rows[0]?.gpWait.source_id ?? `sotkanet-${GP_WAIT_ID}`} />
+          <SourceChip sourceId={`sotkanet-${REFERRAL_ID}`} />
         </span>
       }
     />

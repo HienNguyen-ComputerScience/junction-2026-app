@@ -282,15 +282,26 @@ export function FinlandMap({
               </Link>
             );
           })}
-          {/* The selected area's outline: 2px accent, drawn over every neighbour so none covers it. */}
+          {/* The selected area's outline, drawn over every neighbour so none covers it: a dark
+              casing first, then a 2.5px accent line on it, so the outline stands clear of the red
+              and slate fills on both sides of the border. */}
           {selectedId !== undefined && FINLAND_PATHS[selectedId] && (
-            <use
-              href={`#${pathId(selectedId)}`}
-              fill="none"
-              strokeWidth={2}
-              strokeLinejoin="round"
-              className="pointer-events-none stroke-brand"
-            />
+            <>
+              <use
+                href={`#${pathId(selectedId)}`}
+                fill="none"
+                strokeWidth={5.5}
+                strokeLinejoin="round"
+                className="pointer-events-none stroke-background"
+              />
+              <use
+                href={`#${pathId(selectedId)}`}
+                fill="none"
+                strokeWidth={2.5}
+                strokeLinejoin="round"
+                className="pointer-events-none stroke-brand"
+              />
+            </>
           )}
         </svg>
 

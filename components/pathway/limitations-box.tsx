@@ -5,6 +5,9 @@ import { SourceChip } from "@/components/source-chip";
 import { Disclosure } from "@/components/ui/disclosure";
 
 export type LimitationItem = {
+  /** One short line, in bold: what the limitation is about. */
+  title?: string;
+  /** The limitation in full, in the secondary grey under the title. Never cut. */
   text: string;
   sourceId?: string;
 };
@@ -117,28 +120,24 @@ function withFigures(text: string): ReactNode {
 
 const BODY = "text-[0.8125rem] leading-[1.6] text-pretty text-muted-foreground";
 
+/**
+ * One limitation: a bold short line (its source at the right end), then the detail in the
+ * secondary grey. An item without a title is the detail alone.
+ */
 function Limitation({ item }: { item: LimitationItem }) {
-  // Indicator items read "Short name: limitation". The name becomes the item's first line with
-  // its source at the right end, the limitation sits under it; the words stay the same.
-  const split = item.sourceId ? item.text.indexOf(": ") : -1;
-  if (split <= 0) {
-    return (
-      <li className="flex flex-col gap-0.5">
-        <p className={BODY}>{withFigures(item.text)}</p>
-        {item.sourceId && <SourceChip sourceId={item.sourceId} />}
-      </li>
-    );
-  }
   return (
     <li className="flex flex-col gap-0.5">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-[0.8125rem] leading-5 font-medium text-foreground">
-          {item.text.slice(0, split)}
-          <span className="sr-only">:</span>
-        </p>
-        {item.sourceId && <SourceChip sourceId={item.sourceId} />}
-      </div>
-      <p className={BODY}>{withFigures(item.text.slice(split + 2))}</p>
+      {item.title ? (
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-[0.8125rem] leading-5 font-semibold text-foreground">
+            {item.title}
+            <span className="sr-only">:</span>
+          </p>
+          {item.sourceId && <SourceChip sourceId={item.sourceId} />}
+        </div>
+      ) : null}
+      <p className={BODY}>{withFigures(item.text)}</p>
+      {!item.title && item.sourceId && <SourceChip sourceId={item.sourceId} />}
     </li>
   );
 }

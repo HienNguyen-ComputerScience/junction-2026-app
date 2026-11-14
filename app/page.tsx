@@ -114,7 +114,8 @@ export default function CountyRankingPage({ searchParams }: PageProps<"/">) {
             Compare all {totalAreas} areas
           </FrameTitle>
           <FrameDescription>
-            Longest GP waits first. 21 wellbeing services counties and the City of Helsinki. Gaps to Finland are in percentage points (pts).
+            Longest GP waits first. 21 wellbeing services counties and the City of Helsinki. Gaps to Finland are in
+            percentage points. Referral values marked HUS-wide are for HUS (Helsinki University Hospital region).
           </FrameDescription>
         </FrameHeader>
         <FramePanel padding="none">
@@ -138,7 +139,7 @@ export default function CountyRankingPage({ searchParams }: PageProps<"/">) {
               Referrals: the share processed within 3 days (Sotkanet {REFERRAL_ID}). Higher is
               faster; Finland {formatPct(nationalReferral.value)}.
             </span>{" "}
-            HUS-wide: one shared figure for the hospital district (HUS) that serves these areas.
+            HUS-wide value: one shared figure for HUS, which handles these areas&apos; hospital referrals.
           </p>
         </FrameFooter>
       </Frame>

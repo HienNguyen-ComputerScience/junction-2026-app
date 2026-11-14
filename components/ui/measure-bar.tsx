@@ -204,7 +204,7 @@ const KEY_ITEMS: KeyKind[] = ["finland", "red", "short", "amber", "no_data"];
  * The key for reading the bars and the map: one row of swatches, drawn like the marks they
  * name. One key per page, and nothing else in it.
  *  - `items`: which swatches to show, when a view has no hatched track or names the Finland
- *    line elsewhere. Default: all five ("Short of Finland's level" names the faded shortfall of a referral bar).
+ *    line elsewhere. Default: all five ("Gap to Finland's level" names the faded shortfall of a referral bar).
  * One item per line on a phone, one wrapping row from `sm`.
  */
 export function BarKey({ className, items = KEY_ITEMS }: { className?: string; items?: KeyKind[] }) {
@@ -246,7 +246,7 @@ export function BarKey({ className, items = KEY_ITEMS }: { className?: string; i
             </>
           }
         >
-          Short of Finland&apos;s level
+          Gap to Finland&apos;s level
         </KeyItem>
       )}
       {items.includes("amber") && (

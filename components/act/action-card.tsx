@@ -103,9 +103,6 @@ function statisticLine({ value, unit, metric }: Effect): string {
   return `${figure}, ${metric}`;
 }
 
-/** The precedent is one line (two at most) on the card; a longer text opens in full behind a disclosure. */
-const PRECEDENT_LONG = 120;
-
 /**
  * One recommended action from data/evidence.json, as a panel inside a Frame.
  * Label row: the action's place in the list, its pathway stage, and its checked source.
@@ -142,15 +139,13 @@ export function ActionCard({
         </span>
       </div>
 
-      <div className="mt-3 grid gap-x-10 gap-y-4 @3xl:grid-cols-2">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <h3 className="font-heading text-[1.625rem] leading-[1.2] font-semibold tracking-[-0.01em] text-pretty">
-              {plainTitle(action.action)}
-            </h3>
-          </div>
+      {/* The action column is the wider one, so its title and First step stay short. */}
+      <div className="mt-3 grid gap-x-10 gap-y-4 @3xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+        <div className="flex flex-col gap-3">
+          <h3 className="font-heading text-[1.625rem] leading-[1.2] font-semibold tracking-[-0.01em] text-pretty">
+            {plainTitle(action.action)}
+          </h3>
           <FirstStep>{action.first_step}</FirstStep>
-          <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
           <dl>
             <Field label="Owner">{action.who_implements}</Field>
           </dl>
@@ -162,20 +157,20 @@ export function ActionCard({
             {stat ? <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p> : null}
             <p className="text-sm leading-relaxed text-pretty text-foreground tabular-nums">{action.effect_text}</p>
           </div>
-          <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-muted-foreground">
-            <span className="font-medium">Precedent: </span>
-            {action.precedent}
-          </p>
-          {/* One stack with one left edge: the one disclosure, then the secondary action. */}
-          <div className="flex flex-col items-start">
-            <Disclosure summary="Evidence details">
+          {/* Collapsed, the one disclosure and the secondary action share a row, so the card stays
+              short; open, each takes the full width (the how, the precedent and the limitations
+              open in place, and the live results open under their button). */}
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Disclosure summary="How, precedent and limitations" className="open:basis-full">
               <div className="flex flex-col gap-3 pb-2 pl-[1.375rem]">
-                {action.precedent.length > PRECEDENT_LONG ? (
-                  <div className="flex flex-col gap-1">
-                    <p className="type-caption font-medium text-muted-foreground">Full precedent</p>
-                    <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.precedent}</p>
-                  </div>
-                ) : null}
+                <div className="flex flex-col gap-1">
+                  <p className="type-caption font-medium text-muted-foreground">How</p>
+                  <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <p className="type-caption font-medium text-muted-foreground">Precedent</p>
+                  <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.precedent}</p>
+                </div>
                 {action.effect_size || !action.source_id.startsWith("ev-nice") ? (
                   <div className="flex flex-col gap-1">
                     <p className="type-caption font-medium text-muted-foreground">Quote and page in the source</p>
@@ -198,7 +193,9 @@ export function ActionCard({
                 </div>
               </div>
             </Disclosure>
-            {children ? <div className="w-full pt-2">{children}</div> : null}
+            {children ? (
+              <div className="min-w-0 has-[[aria-expanded=true]]:basis-full">{children}</div>
+            ) : null}
           </div>
         </div>
       </div>

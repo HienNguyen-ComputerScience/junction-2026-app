@@ -62,7 +62,7 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
         </FrameMeta>
         <FrameDescription>
           Non-urgent GP visits waiting over 7 days: the {list.length === 1 ? "largest rise" : `${list.length} largest rises`}{" "}
-          since {FIRST_YEAR}, in percentage points (pts).
+          since {FIRST_YEAR}, in percentage points.
           {finland !== null && (
             <>
               {" "}
@@ -83,7 +83,7 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
                 >
                   <span className="text-[0.9375rem] font-semibold text-foreground">{row.name}</span>
                   <span className="text-[0.9375rem] leading-snug font-medium text-foreground">
-                    <span className="figure">{formatAmount(row.change)} pts</span> worse since {FIRST_YEAR}
+                    <span className="figure">{formatAmount(row.change)} points</span> worse since {FIRST_YEAR}
                   </span>
                   <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                     <span className="type-caption text-muted-foreground">

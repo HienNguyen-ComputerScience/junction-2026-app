@@ -37,7 +37,10 @@ export function AskBox() {
   const [question, setQuestion] = useState("");
   const [state, setState] = useState<State>({ kind: "idle" });
   const ctrlRef = useRef<AbortController | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [nudge, setNudge] = useState(false);
   const loading = state.kind === "loading";
+  const ready = question.trim().length >= 3;
 
   useEffect(() => () => ctrlRef.current?.abort(), []);
 
@@ -90,6 +93,11 @@ export function AskBox() {
         className="flex flex-col gap-2 rounded-xl border border-input bg-muted p-1.5 transition-[border-color,box-shadow] focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/25 sm:flex-row sm:items-center"
         onSubmit={(e) => {
           e.preventDefault();
+          if (!ready) {
+            setNudge(true);
+            inputRef.current?.focus();
+            return;
+          }
           ask(question);
         }}
       >
@@ -100,6 +108,7 @@ export function AskBox() {
           <Search aria-hidden strokeWidth={1.75} className="hidden size-[1.125rem] shrink-0 text-muted-foreground sm:block" />
           <input
             id="ask-box-input"
+            ref={inputRef}
             type="text"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
@@ -110,16 +119,24 @@ export function AskBox() {
             className="h-11 w-full min-w-0 bg-transparent text-[0.9375rem] outline-none placeholder:text-faint disabled:opacity-60"
           />
         </div>
+        {/* Idle (nothing typed yet): a quiet outline button that still works and says what to do;
+            it becomes the filled primary once there is a question to send. */}
         <Button
           type="submit"
           size="lg"
+          variant={ready || loading ? "default" : "outline"}
           className="h-11 px-5"
-          disabled={loading || question.trim().length < 3}
+          disabled={loading}
         >
           {loading ? "Searching…" : "Ask"}
           {!loading && <ArrowUp aria-hidden data-icon="inline-end" />}
         </Button>
       </form>
+      {nudge && !ready && (
+        <p role="status" className="-mt-3 type-caption text-muted-foreground">
+          Type a question of three letters or more, or pick one of the examples below.
+        </p>
+      )}
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3" role="group" aria-label="Example questions">
         <span aria-hidden className="type-caption text-muted-foreground sm:pt-2">Try</span>
