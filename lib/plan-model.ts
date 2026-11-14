@@ -8,6 +8,7 @@
 import { STAGE_LABELS, bottleneckLede, getBottleneck, pickActions } from "@/lib/act";
 import { plainTitle } from "@/lib/action-title";
 import {
+  evidence,
   getCounty,
   getDataGaps,
   getMeasure,
@@ -53,6 +54,8 @@ export type PlanInput = {
   cost: string[];
   approvedBy: string;
   decisionDate: string;
+  /** Evidence ids chosen for the plan, in order (the `actions` parameter). Empty: the recommended ones. */
+  actions: string[];
 };
 
 /** What each step's share counts, in the SPEC's wording: visits and referrals, never people. */
@@ -154,11 +157,21 @@ export function readPlanInput(params: URLSearchParams, anyRed: boolean): PlanInp
     cost: list("cost"),
     approvedBy: cleanField(params.get("approved")),
     decisionDate: cleanField(params.get("decided")),
+    actions: chosenActionIds(params.get("actions")),
   };
+}
+
+/** The `actions` parameter: comma-separated evidence ids. Unknown ids and repeats are dropped; at most three. */
+function chosenActionIds(value: string | null): string[] {
+  if (!value) return [];
+  const known = new Set(evidence.map((row) => row.id));
+  const ids = value.split(",").map((id) => id.trim()).filter((id) => known.has(id));
+  return [...new Set(ids)].slice(0, MAX_ACTIONS);
 }
 
 function planQuery(input: PlanInput): string {
   const params = new URLSearchParams({ target: input.target, year: String(input.year) });
+  if (input.actions.length > 0) params.set("actions", input.actions.join(","));
   input.person.forEach((value, i) => value && params.set(`person${i + 1}`, value));
   input.review.forEach((value, i) => value && params.set(`review${i + 1}`, value));
   input.cost.forEach((value, i) => value && params.set(`cost${i + 1}`, value));
@@ -268,7 +281,9 @@ export function buildPlan(countyId: string, params: URLSearchParams, today: Date
   const steps = STAGES.map((stage) => buildStep(county.id, stage, input));
   const reason = getMainReason(county.id);
 
-  const actions: PlanAction[] = pickActions(bottleneck).map((action, i) => {
+  // The actions chosen in the link (the briefing's hand-off), else the recommended ones.
+  const chosen = input.actions.flatMap((id) => evidence.filter((row) => row.id === id));
+  const actions: PlanAction[] = (chosen.length > 0 ? chosen : pickActions(bottleneck)).map((action, i) => {
     const step = steps.find((candidate) => candidate.stage === action.stage);
     return {
       number: i + 1,
