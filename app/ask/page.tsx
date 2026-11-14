@@ -9,7 +9,6 @@ export const metadata: Metadata = { title: "Ask the evidence | FirstLine" };
 export default function AskPage() {
   return (
     <main className="page-container flex flex-col gap-10 pt-4 sm:gap-14 sm:pt-6">
-      <h1 className="sr-only">Ask the evidence</h1>
       <AskBox />
       <NationalNews />
     </main>

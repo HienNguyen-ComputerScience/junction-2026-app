@@ -130,6 +130,7 @@ export function ScrollStory({
                 stepRefs.current[index] = el;
               }}
               data-story-block={index}
+              data-focus-item=""
               data-active={step === index ? "" : undefined}
               className="scroll-story-step flex flex-col justify-center lg:min-h-[75vh]"
             >

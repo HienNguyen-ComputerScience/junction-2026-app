@@ -1,11 +1,11 @@
-import { ArrowDown, FileSpreadsheet } from "lucide-react";
+import { FileSpreadsheet } from "lucide-react";
 import type { Metadata } from "next";
 
 import { CompareTable } from "@/components/compare/compare-table";
 import { EarlyWarning } from "@/components/home/early-warning";
 import { CompareBars } from "@/components/compare/compare-story";
 import { StoryFact } from "@/components/compare/story-fact";
-import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, MoreCard, PrintButton, Reveal, ScrollStory } from "@/components/motion";
+import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, FocusGroup, MoreCard, PrintButton, Reveal, ScrollStory } from "@/components/motion";
 import { SourceChip } from "@/components/source-chip";
 import { buttonVariants } from "@/components/ui/button";
 import { FramePanel } from "@/components/ui/frame";
@@ -31,6 +31,7 @@ export default function ComparePage() {
 
   return (
     <main className="page-container print-wide flex max-w-[1200px] flex-col pt-6 sm:pt-8 print:pt-0">
+      <FocusGroup>
       <Chunk
         lead
         as="h1"
@@ -51,11 +52,7 @@ export default function ComparePage() {
         caveat={{ short: "counts visits, not people, and every non-urgent GP visit, not only possible cancer", why: gpIndicator?.limitation }}
       >
         <div data-print="hide" className="flex flex-wrap gap-2.5 pt-2">
-          <a href="#table-heading" className={buttonVariants({ size: "lg" })}>
-            Go to the full table
-            <ArrowDown aria-hidden data-icon="inline-end" />
-          </a>
-          <a href="/compare/export" download className={buttonVariants({ variant: "outline", size: "lg" })}>
+          <a href="/compare/export" download className={buttonVariants({ size: "lg" })}>
             <FileSpreadsheet aria-hidden strokeWidth={1.75} data-icon="inline-start" />
             Download the table for Excel
           </a>
@@ -178,6 +175,7 @@ export default function ComparePage() {
           },
         ]}
       />
+      </FocusGroup>
     </main>
   );
 }
