@@ -104,13 +104,32 @@ export const TIERS: Record<Urgency, Tier> = {
   },
 };
 
+/** Filled by `fi()` below: which keywords are Finnish. Used to pair a negation with its own language. */
+const FINNISH_KEYWORDS = new Set<string>();
+
+/**
+ * Marks keywords as Finnish. Finnish stems change when a word is inflected
+ * (veri, veren, verta; ääni, äänen, ääntä; kipu, kivun), and matching is by
+ * prefix, so every stem that occurs has to be listed.
+ */
+function fi(...stems: string[]): string[] {
+  for (const stem of stems) FINNISH_KEYWORDS.add(stem);
+  return stems;
+}
+
 export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
   {
     id: "bleeding",
     label: "Bleeding that has no clear reason",
     examples: "blood in stool, urine or when coughing; unexpected bleeding",
     urgency: "urgent",
-    keywords: ["blood", "bleed", "bloody", "veri", "verta", "vuoto", "verenvuoto"],
+    keywords: [
+      "blood",
+      "bleed",
+      "bled",
+      "bloody",
+      ...fi("veri", "vere", "verta", "vuoto", "vuota", "vuodo", "verenvuoto"),
+    ],
     links: [NICE_BY_SYMPTOM, NICE_BY_SITE, KAYPA_HOITO],
   },
   {
@@ -118,7 +137,7 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
     label: "A new lump or swelling that doesn't go away",
     examples: "a lump in the breast, neck, armpit or elsewhere",
     urgency: "urgent",
-    keywords: ["lump", "swelling", "swollen", "kyhmy", "patti", "turvotus", "turpoa"],
+    keywords: ["lump", "swell", "swollen", ...fi("kyhmy", "patti", "turvo", "turpo")],
     links: [NICE_BY_SYMPTOM, NICE_BY_SITE, KAYPA_HOITO],
   },
   {
@@ -126,7 +145,7 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
     label: "Trouble swallowing",
     examples: "food sticking, pain when swallowing",
     urgency: "urgent",
-    keywords: ["swallow", "food stick", "choking", "nielemi", "nielu"],
+    keywords: ["swallow", "food stick", "food stuck", "food gets stuck", "chok", ...fi("niel")],
     links: [NICE_BY_SYMPTOM, NICE_BY_SITE, KAYPA_HOITO],
   },
   {
@@ -139,19 +158,40 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
       "tired",
       "fatigue",
       "exhaust",
-      "nausea",
+      "nause",
       "sick",
       "pain",
+      "pained", // listed separately because the stop "paine" (Finnish: pressure) would hide it
       "ache",
+      "aching",
+      "achy",
       "appetite",
       "sweat",
-      "laihtu",
-      "laihdu",
-      "väsy",
-      "uupu",
-      "pahoinvoin",
-      "kipu",
-      "ruokahalu",
+      // Not being able to eat. Whole phrases only: "eat" alone is not a symptom.
+      "can't eat",
+      "cant eat",
+      "cannot eat",
+      "can not eat",
+      "couldn't eat",
+      "couldnt eat",
+      "could not eat",
+      "unable to eat",
+      "not able to eat",
+      ...fi(
+        "laihtu",
+        "laihdu",
+        "paino", // weight: "paino laskenut", "painonlasku"
+        "väsy",
+        "uupu",
+        "pahoinvoi",
+        "kipu",
+        "kivu",
+        "kipe",
+        "ruokahalu",
+        "pysty syömään", // only ever negative: "en/ei pysty syömään"
+        "en voi syödä",
+        "ei voi syödä",
+      ),
     ],
     links: [DANISH_THREE_LEGGED, UK_RDC, NICE_BY_SYMPTOM],
   },
@@ -173,13 +213,26 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
       "healing",
       "n't heal",
       "not heal",
-      "yskä",
-      "käheä",
-      "ääni",
-      "suoli",
-      "luomi",
-      "haava",
-      "iho",
+      "cannot heal",
+      "doesnt heal",
+      "didnt heal",
+      "hasnt heal",
+      "wont heal",
+      ...fi(
+        "ysk",
+        "käheä",
+        "kähey",
+        "ääni",
+        "ääne",
+        "ääntä",
+        "suoli",
+        "suole",
+        "suolta",
+        "luomi",
+        "luome",
+        "haava",
+        "iho",
+      ),
     ],
     links: [NICE_BY_SYMPTOM, NICE_SAFETY_NETTING, KAYPA_HOITO],
   },
@@ -189,47 +242,117 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
 export const NO_MATCH_LINKS: GuidelineLink[] = [NICE_SAFETY_NETTING, NICE_NG12, KAYPA_HOITO];
 
 /**
- * Words that start like a keyword but mean something else ("iho" vs "ihminen",
- * "veri" vs "verenpaine", "pain" vs "painting"). A word starting with one of
- * these never matches.
+ * Words that start like a keyword but mean something else, listed under the
+ * keyword they would wrongly match. A word starting with one of these does not
+ * match that keyword (it can still match another: "painonlasku" is not "pain"
+ * but is "paino", weight). Every entry must start with its keyword, otherwise it
+ * can never fire; tests/red-flags.test.mjs checks this.
  */
-const STOP_PREFIXES = ["ihmi", "verenpain", "paint", "voicemail"];
+export const STOP_PREFIXES = new Map<string, string[]>([
+  // "painting", and Finnish paine (pressure), paino (weight, its own keyword) and
+  // painajainen (nightmare). Kept short on purpose: "paining" and "painaa" still match.
+  ["pain", ["paint", "paine", "paino", "painaj"]],
+  // verenpaine (blood pressure), verensokeri, verenkierto, verenluovutus.
+  ["vere", ["verenpain", "verensok", "verenkier", "verenluov"]],
+  ["veri", ["verif"]], // verify, verification
+  ["voice", ["voicemail"]],
+  ["mole", ["molem"]], // Finnish molemmat (both)
+  ["ääne", ["äänest", "äänek"]], // äänestää (to vote), äänekäs (loud)
+  ["sweat", ["sweater"]],
+]);
 
 /** Everyday phrases that contain a keyword but are not a symptom. Removed before matching. */
-const STOP_PHRASES = /\bsick (leave|note|day|days|pay)\b/g;
+const STOP_PHRASES = /\b(sick (leave|note|day|days|pay)|blood (pressure|sugar))\b/g;
 
-/** A keyword directly after one of these words is not counted ("no blood", "ei verta"). */
-const NEGATIONS = new Set(["no", "not", "without", "never", "ei", "eikä", "ilman"]);
+/**
+ * A keyword directly after one of these words is a symptom being denied and is
+ * not counted ("no blood", "ei verta"). Do not widen these lists or their reach:
+ * a missed red flag is worse than a false one.
+ *
+ * A negation only counts in front of a keyword of its own language. "No" is
+ * also a Finnish filler word ("No verta tuli" means "well, there was blood").
+ */
+const NEGATIONS_EN = new Set(["no", "not", "without", "never"]);
+const NEGATIONS_FI = new Set(["ei", "eikä", "ilman"]);
 
-/** Keywords where the absence is the symptom ("no appetite", "ei ruokahalua"). */
-const ABSENCE_IS_SYMPTOM = new Set(["appetite", "ruokahalu", "healing"]);
+/**
+ * Keywords a negation never cancels, because losing the function is the symptom:
+ * "can not swallow", "no voice", "ei ääntä", "no appetite", "not healing",
+ * "no bowel movement". Keyed by keyword, so every stem of such a word in
+ * RED_FLAG_CATEGORIES has to be listed here too.
+ */
+export const LOSS_IS_SYMPTOM = new Set([
+  "swallow",
+  "niel",
+  "voice",
+  "ääni",
+  "ääne",
+  "ääntä",
+  "appetite",
+  "ruokahalu",
+  "healing",
+  "bowel",
+  "suoli",
+  "suole",
+  "suolta",
+]);
+
+/** "can not X" / "could not X" is an inability, never a denial, whatever X is. */
+const ABILITY = new Set(["can", "could"]);
 
 /**
  * Local, in-browser keyword match. Nothing is sent or stored.
+ *
  * Single-word keywords match the start of a word ("tired" matches "tiredness",
- * not "retired"), except words on the stop-list, and not when the word directly
- * before is a negation ("no blood"). Keywords with a space or apostrophe match
- * as phrases.
+ * not "retired"), except words on that keyword's stop-list.
+ *
+ * Negation: a keyword is dropped only when the word directly before it, in the
+ * same clause, is a negation in the keyword's language ("no blood", "ei
+ * verta"). It is kept when the keyword is in LOSS_IS_SYMPTOM ("no voice") or
+ * the negation follows "can"/"could" ("can not swallow"). When in doubt the
+ * keyword counts.
+ *
+ * Keywords with a space or apostrophe match as phrases inside one clause, from
+ * the start of a word ("en voi syödä" must not match "ihminen voi syödä"). Only
+ * the "n't ..." phrases start inside a word ("doesn't heal"). Phrases ignore
+ * negation.
  */
 export function matchCategories(text: string): string[] {
-  const normalised = text.toLowerCase().replace(/[‘’]/g, "'").replace(STOP_PHRASES, " ");
+  const normalised = text
+    .normalize("NFC") // pasted text can carry "ä" as "a" plus a combining mark
+    .toLowerCase()
+    .replace(/[‘’´`]/g, "'")
+    .replace(STOP_PHRASES, " ");
   // Words per clause, so a negation never reaches across punctuation ("Pain? No. Blood").
   const clauses = normalised
     .split(/[.,;:!?\n]+/)
     .map((clause) => clause.split(/[^\p{L}']+/u).filter(Boolean))
     .filter((words) => words.length > 0);
   if (clauses.length === 0) return [];
-  const hit = (keyword: string) =>
-    /[\s']/.test(keyword)
-      ? normalised.includes(keyword)
-      : clauses.some((words) =>
-          words.some(
-            (word, i) =>
-              word.startsWith(keyword) &&
-              !STOP_PREFIXES.some((stop) => word.startsWith(stop)) &&
-              (ABSENCE_IS_SYMPTOM.has(keyword) || !NEGATIONS.has(words[i - 1] ?? "")),
-          ),
-        );
+  // The same clauses as text with single spaces and a leading space, for phrases.
+  const clauseTexts = clauses.map((words) => ` ${words.join(" ")}`);
+
+  const denied = (keyword: string, words: string[], i: number) =>
+    (FINNISH_KEYWORDS.has(keyword) ? NEGATIONS_FI : NEGATIONS_EN).has(words[i - 1] ?? "") &&
+    !LOSS_IS_SYMPTOM.has(keyword) &&
+    !ABILITY.has(words[i - 2] ?? "");
+
+  const hit = (keyword: string) => {
+    if (/[\s']/.test(keyword)) {
+      const phrase = keyword.startsWith("n't") ? keyword : ` ${keyword}`;
+      return clauseTexts.some((clause) => clause.includes(phrase));
+    }
+    const stops = STOP_PREFIXES.get(keyword) ?? [];
+    return clauses.some((words) =>
+      words.some(
+        (word, i) =>
+          word.startsWith(keyword) &&
+          !stops.some((stop) => word.startsWith(stop)) &&
+          !denied(keyword, words, i),
+      ),
+    );
+  };
+
   return RED_FLAG_CATEGORIES.filter((category) => category.keywords.some(hit)).map(
     (category) => category.id,
   );
