@@ -14,7 +14,9 @@
 1. **The picture is on the first screen.**
    - From 1024px wide, the hero (claim, **14**, Finland overall, chip, caveat, Save or share) sits in the left 5/12 and the 22-bar chart in the right 7/12.
    - At 1366×768 the first screen shows the headline, the 14 and 18 of the 22 bars, including all 14 rust bars and the dashed Finland overall line (`pass2-d-first.png`; before: `pass2-before-d-first.png`).
-   - The h1 is set smaller in that column (a local `lg:[&_h1]` size; `Chunk` is not edited). Measured: two lines at 1024, 1280 and 1366, no sideways scroll. At 1024 the first screen still shows all 14 rust bars and the Finland line (`pass2-1024-first.png`).
+   - The h1 keeps the site's own size, which a global rule in `globals.css` sets to 40px. Measured: two lines at 1024, 1280 and 1366, and no sideways scroll. At 1024 the first screen still shows all 14 rust bars and the Finland line (`pass2-1024-first.png`).
+   - Save or share now starts 27px below the fold at 1366×768, so the shared `Reveal` shows it after a small scroll (opacity 0.99 one second later). It was further down before.
+   - Opened, its panel stays in flow inside the hero column, ends 48px before the chart and adds no sideways scroll, at 1366, 1024 and 390 (`pass2-share-1366.png`).
    - Phones, print and narrower screens stack as before. Print forces one column (`print:block`).
    - The h2 "Where you live decides how long a visit waits" is cut. The h1 makes the claim, and the chart's own caption names what it shows.
 2. **The chart key comes before the bars** (the R4-06 lesson): the two statuses, then Finland overall.
@@ -24,7 +26,9 @@
    - Each heading now reads "Compared with Finland overall: 54.7%" (or 76.8% for referrals), so the comparison is named once per column. Screen readers still get the full label in every cell (`sr-only`).
    - The phone list keeps the full labels, because it has no column headings.
    - On the desktop table, the HUS cells read "HUS-wide: 74.1%, not its own". The phone list keeps "No figure of its own. HUS-wide: 74.1%".
-   - The table body fell from 1,572px to 1,117px. Table `scrollWidth` equals its wrapper at 1024, 1280, 1366, 1440 and 1920 (932/932, 1060/1060).
+   - The table body fell from 1,572px to 1,117px.
+   - Table `scrollWidth` equals its wrapper at 640, 768, 1024, 1280, 1366, 1440 and 1920 (548/548, 676/676, 932/932, 1060/1060).
+   - Only the "Change since 2023" heading note is capped at 15rem, so it can't take the spare width.
 5. **A dashed "Finland overall: 54.7%" row** sits between rank 14 and rank 15 in the default order, on the desktop table and the phone list (`pass2-m-line.png`). It is the chart's line, repeated where the table splits the same way. The line is computed from the rows' status, and other sort orders have no line.
 6. **The `*` key says what it means where you meet it:** "* Read with care: recorded visits changed by more than 20% since 2023". It appears under the "Change since 2023" heading and in the phone key. The text is built from `RECORDING_CHANGE_ABOVE` and `FIRST_YEAR`, not typed in.
 7. **One unit under the table.** The `*` note, the status and brackets note, and the sources line are now one framed unit with hairlines between them, where there were three. The unit is `print-flow`, because opened on paper it is tall.
@@ -62,7 +66,8 @@ Compared `main.innerText` before and after, with every "Show …" open: at 1366 
 | Sorting | The select reorders both views ("Slowest referrals first" puts South Ostrobothnia, North Savo, Central Ostrobothnia first). Clicking the "Area" heading sets `aria-sort="ascending"` and the select follows (`name`). There is no Finland line outside the default order. |
 | Reduced motion | Same 795 words, 0 reveals left hidden, bars at full value from the first frame |
 | No JavaScript | Same 795 words, same 3,287px height; the "Show …" are native `<details>` |
-| Print | One column; all 4 `<details>` open; the paper table is shown and the screen table and phone list are hidden; 6 pages, none blank (`pass2-print.pdf`) |
+| Print | One column; all 4 `<details>` open; the paper table is shown and the screen table and phone list are hidden. 6 pages, the same breaks as before: the hero, the chart, the table, the 12 areas, the rises, then 20 words. Words per page, read from the PDF: 77 / 97 / 416 / 181 / 188 / 20, so none is blank (`pass2-print.pdf`). |
+| Save or share open | Inside the hero column at 1366, 1024 and 390. It doesn't overlap the chart and adds no sideways scroll. |
 | `npm test && npm run brief:check && npm run typecheck && npm run lint && npm run build` | 517 pass, 0 fail; the brief check, types, lint and build are clean |
 | `check-insights.mjs`, `check-hardcoded.mjs` | OK (930 rows; 3 anchors, 4 computed claims) |
 
@@ -75,7 +80,12 @@ Compared `main.innerText` before and after, with every "Show …" open: at 1366 
 - **Clarity and ease go up because of the first screen.** The claim, the 14 and the rust bars that are those 14 areas are now together, and the table repeats the chart's split with the same line.
 - **Hierarchy stays at 8.5.** "Worse than in 2023" still gives a serif h2 to one sentence, and the nav lights "Areas" on this page (see below).
 - **The phone page is about the same height** (6,668px). Its gain is the Finland line and the self-contained `*` key, not length.
-- I don't claim 9.0. A judge who weighs the phone first would land nearer 8.7.
+- **8.8 is under the 9.0 target.** The gap is the near-unchanged phone list and the serif h2 over one sentence. A judge who weighs the phone first would land nearer 8.7.
+
+### For the lead to veto (each a one-line revert)
+- **The short status words in the wide table.** They lean on the heading for "Finland overall"; the wording rule is the lead's call.
+- **The bar growth.** Pass 1 made the chart deliberately static.
+- **The desktop HUS cell:** "HUS-wide: 74.1%, not its own", against "No figure of its own. HUS-wide: 74.1%".
 
 ### Needed from others
 
