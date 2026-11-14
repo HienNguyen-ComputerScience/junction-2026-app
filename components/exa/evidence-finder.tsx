@@ -68,7 +68,7 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="secondary">Found live — unverified</Badge>
                 <span className="type-note text-muted-foreground">via Exa</span>
-                {data && <Badge variant="outline">{STATUS_LABEL[data.freshness]}</Badge>}
+                {data && <Badge variant="secondary">{STATUS_LABEL[data.freshness]}</Badge>}
               </div>
               <p className="type-micro text-muted-foreground">
                 Not checked by the team, unlike this action&apos;s own source. Read before relying on it.
