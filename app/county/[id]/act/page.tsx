@@ -178,6 +178,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
                     id={`unmeasured-${group.stage}`}
                     title={`${STAGE_LABELS[group.stage]}: can't be measured here yet`}
                     noData
+                    badge={bottleneck.noData.find((gap) => gap.stage === group.stage)?.shared ? "No county figure" : undefined}
                   />
                   <SummaryGrid actions={group.actions} />
                 </section>
@@ -232,13 +233,13 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   );
 }
 
-function GroupHead({ id, title, noData = false }: { id: string; title: string; noData?: boolean }) {
+function GroupHead({ id, title, noData = false, badge }: { id: string; title: string; noData?: boolean; badge?: string }) {
   return (
     <h3 id={id} className="type-heading flex flex-wrap items-center gap-2 px-1 pt-3 pb-3">
       {title}
       {noData ? (
         <StatusBadge status="no_data" size="xs">
-          {STATUS_LABEL.no_data}
+          {badge ?? STATUS_LABEL.no_data}
         </StatusBadge>
       ) : null}
     </h3>
