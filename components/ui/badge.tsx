@@ -2,7 +2,7 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
-import { CircleDashed, Database, ShieldCheck } from "lucide-react"
+import { Database, Globe, ShieldCheck } from "lucide-react"
 import type { ReactNode } from "react"
 
 const QUIET_TAG =
@@ -11,7 +11,7 @@ const QUIET_TAG =
 const PROVENANCE = "gap-1.5 px-0 text-[0.8125rem] font-normal text-muted-foreground"
 
 /** Provenance is an icon plus muted text, never the 8px square (that is for data status only). */
-const PROVENANCE_ICON = { unverified: CircleDashed, provenance: CircleDashed, checked: ShieldCheck } as const
+const PROVENANCE_ICON = { unverified: Globe, provenance: Globe, checked: ShieldCheck } as const
 
 const badgeVariants = cva(
   "group/badge inline-flex h-6 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-sm border border-transparent px-2 py-0.5 text-[0.75rem] leading-none font-medium whitespace-nowrap transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 [&>svg]:pointer-events-none [&>svg]:size-3!",
@@ -25,7 +25,7 @@ const badgeVariants = cva(
         brand: QUIET_TAG,
         secondary: QUIET_TAG,
         // Provenance: where a piece of content comes from. A 14px icon plus 13px muted text, no
-        // box: a dashed circle for content nobody has checked ("Found live — unverified"), a
+        // box: a globe for content nobody has checked ("Found live — unverified"), a
         // shield (or the database, `source="snapshot"`) for content the team checked or computed
         // ("Source checked", "From the published figures").
         unverified: PROVENANCE,

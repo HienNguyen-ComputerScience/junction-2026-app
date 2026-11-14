@@ -73,18 +73,18 @@ export default function CountyRankingPage({ searchParams }: PageProps<"/">) {
       {/* A short headline, then the tool: pick an area, see where its pathway breaks and what to
           do first. The ranking is further down, for comparing. */}
       <div className="flex flex-col gap-5">
-      <header className="flex flex-col gap-1.5">
-        <p className="flex items-center gap-2.5 text-sm leading-6 font-medium text-foreground sm:text-[0.9375rem]">
-          <span aria-hidden className="h-4 w-0.5 shrink-0 bg-foreground" />
-          First step to early cancer care: getting to a GP
-        </p>
-        <h1 className="type-display max-w-[56rem] text-[1.375rem] text-foreground sm:text-[1.625rem] lg:text-[1.75rem]">
-          Across Finland, {formatPct(lowestWait)} to {formatPct(highestWait)} of non-urgent GP visits wait over 7
-          days, depending on the area
-          <span className="ml-3 inline-flex align-middle">
-            <SourceChip sourceId={nationalGpWait.source_id} year={LATEST_YEAR} />
-          </span>
+      <header className="flex flex-col gap-2">
+        <h1 className="type-display text-[1.375rem] text-foreground sm:text-[1.75rem] lg:whitespace-nowrap">
+          In Finland, your area decides how long a non-urgent GP visit waits
         </h1>
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-base text-pretty text-muted-foreground">
+          <span>
+            From <span className="figure">{formatPct(lowestWait)}</span> to{" "}
+            <span className="figure">{formatPct(highestWait)}</span> of non-urgent GP visits wait over 7 days,
+            depending on the area
+          </span>
+          <SourceChip sourceId={nationalGpWait.source_id} year={LATEST_YEAR} />
+        </p>
       </header>
 
       {/* The one request-time part: the server render of /?area=<id> already shows that area. The

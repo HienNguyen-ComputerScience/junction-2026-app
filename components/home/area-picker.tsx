@@ -98,7 +98,7 @@ export function AreaPicker({
     // No outer frame: the panels sit on the page, so the deepest nesting is panel > First step box.
     <section
       aria-label="Pick an area"
-      className="grid gap-2 lg:grid-cols-[21rem_minmax(0,1fr)] lg:grid-rows-[auto_minmax(0,1fr)]"
+      className="grid gap-2 lg:grid-cols-[21rem_minmax(0,1fr)] lg:grid-rows-[auto_minmax(0,1fr)_auto]"
     >
       {/* The picker. */}
       <FramePanel padding="none" className="px-5 pt-5 pb-4 sm:px-6 lg:col-start-1 lg:row-start-1">
@@ -164,18 +164,18 @@ export function AreaPicker({
 
         {action && <div className="md:col-span-2">{action}</div>}
         {what && <div className="md:col-span-2">{what}</div>}
-
-
-        {/* The three steps come after the answer and the action, so both fit the first screen. */}
-        <FramePanel padding="none" className="md:col-span-2">
-          <FramePanelLabel>
-            <h3 className="font-sans type-caption font-medium text-muted-foreground">
-              The three steps to a specialist ({year})
-            </h3>
-          </FramePanelLabel>
-          {steps[area.id]}
-        </FramePanel>
       </div>
+
+      {/* The three steps sit under the answer and the map, the full width of the tool, so each
+          step has room for its status and source on one row. */}
+      <FramePanel padding="none" className="lg:col-span-2 lg:row-start-3">
+        <FramePanelLabel>
+          <h3 className="font-sans type-caption font-medium text-muted-foreground">
+            The three steps to a specialist ({year})
+          </h3>
+        </FramePanelLabel>
+        {steps[area.id]}
+      </FramePanel>
 
       {/* The map: last on a phone, under the picker from lg. */}
       <FramePanel padding="none" className="max-lg:order-last lg:col-start-1 lg:row-start-2 lg:self-start">

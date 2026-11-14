@@ -1,4 +1,4 @@
-import { FirstStep } from "@/components/act/action-card";
+import { FirstStep, plainTitle } from "@/components/act/action-card";
 import { SourceChip } from "@/components/source-chip";
 import { FramePanel } from "@/components/ui/frame";
 import type { Evidence } from "@/lib/data";
@@ -21,7 +21,7 @@ export function TopAction({ action, keepLevel = false }: { action: Evidence; kee
         <h3 className="font-sans type-caption font-medium text-muted-foreground">
           {keepLevel ? "Action to keep this level" : "Recommended action 1"}
         </h3>
-        <p className="text-base leading-snug font-semibold text-pretty text-foreground">{action.action}</p>
+        <p className="text-base leading-snug font-semibold text-pretty text-foreground">{plainTitle(action.action)}</p>
         <dl className="mt-1 flex flex-col gap-1 type-caption text-muted-foreground">
           <dt>Owner</dt>
           <dd className="text-pretty text-foreground/90">{action.who_implements}</dd>

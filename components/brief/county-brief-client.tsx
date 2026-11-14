@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 
+import { FirstStep, plainTitle } from "@/components/act/action-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -119,21 +120,20 @@ function ActionRow({
   sourceIds: string[];
 }) {
   return (
-    <li className="grid gap-y-3 border-b border-border px-5 py-4 last:border-b-0 sm:px-6 lg:col-span-3 lg:grid-cols-subgrid lg:items-start">
+    <li className="grid gap-x-8 gap-y-3 border-b border-border px-5 py-4 last:border-b-0 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
       <div className="flex min-w-0 flex-col gap-1.5">
-        <h4 className="type-heading text-pretty">{layout.action}</h4>
+        <div className="flex items-start justify-between gap-x-4">
+          <h4 className="type-heading min-w-0 text-pretty">{plainTitle(layout.action)}</h4>
+          <span className="flex shrink-0 flex-wrap items-center justify-end gap-1.5">
+            <Chips ids={sourceIds} chips={chips} />
+          </span>
+        </div>
         <dl className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-3 type-caption text-muted-foreground">
           <dt>Owner</dt>
           <dd className="text-pretty">{layout.who}</dd>
         </dl>
       </div>
-      <div className="rounded-lg border border-input bg-muted px-4 py-3">
-        <p className="type-caption font-medium text-muted-foreground">First step</p>
-        <p className="mt-1 text-sm leading-relaxed font-medium text-pretty text-foreground">{layout.firstStep}</p>
-      </div>
-      <span className="flex min-w-0 flex-wrap items-center gap-1.5 lg:justify-end">
-        <Chips ids={sourceIds} chips={chips} />
-      </span>
+      <FirstStep compact>{layout.firstStep}</FirstStep>
     </li>
   );
 }
@@ -208,8 +208,7 @@ function Claims({
                 See the evidence and limitations
               </TextLink>
             </FramePanelLabel>
-            {/* One grid for the section, so every row has the same three columns. */}
-            <ul className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)_auto] lg:gap-x-8">
+                        <ul>
               {segment.items.map(({ claim, layout }, i) => (
                 <ActionRow
                   key={`${i}-${claim.text.slice(0, 24)}`}
