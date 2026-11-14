@@ -103,9 +103,6 @@ function statisticLine({ value, unit, metric }: Effect): string {
   return `${figure}, ${metric}`;
 }
 
-/** The precedent is one line (two at most) on the card; a longer text opens in full behind a disclosure. */
-const PRECEDENT_LONG = 120;
-
 /**
  * One recommended action from data/evidence.json, as a panel inside a Frame.
  * Label row: the action's place in the list, its pathway stage, and its checked source.
@@ -129,7 +126,7 @@ export function ActionCard({
       id={index !== undefined ? `action-${index}` : undefined}
       className="@container scroll-mt-20 px-4 py-4 sm:px-6"
     >
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         {index !== undefined && (
           <span className="type-caption font-medium text-muted-foreground tabular-nums">Action {index}</span>
         )}
@@ -142,40 +139,40 @@ export function ActionCard({
         </span>
       </div>
 
+      {/* The title runs the card's full width, so it takes one line and the card stays short. */}
+      <h3 className="mt-2 font-heading text-[1.625rem] leading-[1.2] font-semibold tracking-[-0.01em] text-pretty">
+        {plainTitle(action.action)}
+      </h3>
+
+      {/* Collapsed, the card is about 300px tall: the First step, the owner and the live search
+          on the left; the evidence headline and the one disclosure (how it works, precedent,
+          quote, limitations) on the right. */}
       <div className="mt-3 grid gap-x-10 gap-y-4 @3xl:grid-cols-2">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <h3 className="font-heading text-[1.625rem] leading-[1.2] font-semibold tracking-[-0.01em] text-pretty">
-              {plainTitle(action.action)}
-            </h3>
-          </div>
-          <FirstStep>{action.first_step}</FirstStep>
-          <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
+        <div className="flex flex-col gap-2.5">
+          <FirstStep compact>{action.first_step}</FirstStep>
           <dl>
             <Field label="Owner">{action.who_implements}</Field>
           </dl>
+          {children ? <div className="w-full">{children}</div> : null}
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2.5">
           <div className="flex flex-col gap-1.5">
             <p className="type-caption font-medium text-muted-foreground">Evidence</p>
             {stat ? <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p> : null}
             <p className="text-sm leading-relaxed text-pretty text-foreground tabular-nums">{action.effect_text}</p>
           </div>
-          <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-muted-foreground">
-            <span className="font-medium">Precedent: </span>
-            {action.precedent}
-          </p>
-          {/* One stack with one left edge: the one disclosure, then the secondary action. */}
           <div className="flex flex-col items-start">
             <Disclosure summary="Evidence details">
               <div className="flex flex-col gap-3 pb-2 pl-[1.375rem]">
-                {action.precedent.length > PRECEDENT_LONG ? (
-                  <div className="flex flex-col gap-1">
-                    <p className="type-caption font-medium text-muted-foreground">Full precedent</p>
-                    <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.precedent}</p>
-                  </div>
-                ) : null}
+                <div className="flex flex-col gap-1">
+                  <p className="type-caption font-medium text-muted-foreground">How it works</p>
+                  <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <p className="type-caption font-medium text-muted-foreground">Precedent</p>
+                  <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.precedent}</p>
+                </div>
                 {action.effect_size || !action.source_id.startsWith("ev-nice") ? (
                   <div className="flex flex-col gap-1">
                     <p className="type-caption font-medium text-muted-foreground">Quote and page in the source</p>
@@ -198,7 +195,6 @@ export function ActionCard({
                 </div>
               </div>
             </Disclosure>
-            {children ? <div className="w-full pt-2">{children}</div> : null}
           </div>
         </div>
       </div>

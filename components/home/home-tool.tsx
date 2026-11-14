@@ -25,10 +25,13 @@ function betterFor(indicatorId: string): Better {
  * pre-rendered parts. No API route, no fetch.
  */
 export function HomeTool({
+  header,
   rows,
   unranked,
   initialAreaId,
 }: {
+  /** The page's headline, composed into the tool's first block. */
+  header: ReactNode;
   rows: RankingRow[];
   unranked: County[];
   /** The area named by ?area= on this request, if any. Unknown ids fall back to the default. */
@@ -128,6 +131,7 @@ export function HomeTool({
 
   return (
     <AreaPicker
+      header={header}
       areas={areas.sort((a, b) => a.name.localeCompare(b.name, "en"))}
       mapAreas={mapAreas}
       defaultId={defaultId}
@@ -138,7 +142,7 @@ export function HomeTool({
       whatIfs={whatIfs}
       actions={actions}
       mapChip={
-        <span className="flex items-center gap-1.5">
+        <span className="flex flex-wrap items-center gap-1.5">
           <SourceChip sourceId={rows[0]?.gpWait.source_id ?? `sotkanet-${GP_WAIT_ID}`} year={LATEST_YEAR} />
           <SourceChip sourceId={`sotkanet-${REFERRAL_ID}`} year={LATEST_YEAR} />
         </span>

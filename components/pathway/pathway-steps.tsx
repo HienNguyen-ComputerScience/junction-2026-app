@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { cn } from "cn";
 
-import { gapToFinland } from "@/components/ranking/ranking-list";
 import { SourceChip } from "@/components/source-chip";
+import { explainHus, gapInWords } from "@/components/ui/gap-words";
 import { MeasureBar } from "@/components/ui/measure-bar";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import { STAGE_LABELS } from "@/lib/act";
@@ -162,8 +162,8 @@ export function PathwaySteps({
       className={cn(
         "grid divide-y divide-border",
         compact
-          ? "md:grid-cols-3 md:grid-rows-[repeat(5,auto)] md:divide-x md:divide-y-0"
-          : "lg:grid-cols-3 lg:grid-rows-[repeat(6,auto)] lg:divide-x lg:divide-y-0",
+          ? "md:grid-cols-3 md:grid-rows-[repeat(6,auto)] md:divide-x md:divide-y-0"
+          : "lg:grid-cols-3 lg:grid-rows-[repeat(7,auto)] lg:divide-x lg:divide-y-0",
         className,
       )}
     >
@@ -177,18 +177,22 @@ export function PathwaySteps({
 /** What a step without any measure says (step 2: no public statistic exists). */
 const NO_STATISTIC = "No public statistic shows how often GPs spot possible cancer at the first visit.";
 
-/** The same, in one short line for the compact strip. */
-const NO_STATISTIC_SHORT = "No public statistic measures this step";
+/** What the step would count, in one short line for the compact strip. */
+const NO_STATISTIC_SHORT = "Whether GPs spot possible cancer at the first visit";
+
+/** The comparison line of a step that no statistic measures, in any area. */
+const NOT_MEASURED = "Not measured anywhere in Finland";
 
 /** The label that always stands with a wider value shown in place of an area's own. */
 const sharedLabel = (name: string) => `${name}-wide value, not a county figure`;
 
 /**
- * One step card, the same six parts in the same order at both densities (the steps share the
- * six subgrid rows, so every part lines up across the three): title; value with its gap to
- * Finland (or the hospital group's note) beside it; one description line; the bar with
- * "Finland xx.x%" under its tick; the status and source chips on one row; and, for a step
- * with one, a link on its own line (compact: on the chips' row).
+ * One step card, the same parts in the same order at both densities (the steps share subgrid
+ * rows, so every part lines up across the three): title; the value alone on its row, so the
+ * three figures share one baseline; the comparison in words ("13.1 points slower than
+ * Finland", the hospital group's label, or "Not measured anywhere in Finland"); one
+ * description line; the bar with "Finland xx.x%" under its tick; the status and source chips;
+ * and, for a step with one, a link (compact: on the chips' row).
  */
 function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; extra?: ReactNode }) {
   const { measure, status } = step;
@@ -196,20 +200,42 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
   const shared = value === null ? measure?.shared : undefined;
   const shown = value ?? shared?.value ?? null;
   const description =
-    shown !== null && measure ? measure.counts : measure ? measure.note : compact ? NO_STATISTIC_SHORT : NO_STATISTIC;
+    shown !== null && measure
+      ? shared
+        ? `${measure.counts} across ${explainHus(shared.name)}`
+        : measure.counts
+      : measure
+        ? measure.note
+        : compact
+          ? NO_STATISTIC_SHORT
+          : NO_STATISTIC;
+  const comparison =
+    value !== null && measure ? (
+      <span className={cn("figure font-medium", STATUS_FIGURE[status])}>
+        {gapInWords(value, measure.finland, {
+          higherIsFaster: step.stage === "referral",
+          unit: compact ? "points" : "percentage points",
+        })}
+      </span>
+    ) : shared ? (
+      sharedLabel(shared.name)
+    ) : !measure ? (
+      NOT_MEASURED
+    ) : null;
   return (
     <li
       className={cn(
         "flex min-w-0 flex-col px-4",
         compact ? "" : "sm:px-6",
         compact
-          ? "pt-3 pb-3.5 md:row-span-5 md:grid md:grid-rows-subgrid"
-          : "pt-4 pb-5 lg:row-span-6 lg:grid lg:grid-rows-subgrid",
+          ? "pt-3 pb-3 md:row-span-6 md:grid md:grid-rows-subgrid"
+          : "pt-4 pb-5 lg:row-span-7 lg:grid lg:grid-rows-subgrid",
       )}
     >
       <StepTitle step={step} compact={compact} />
 
-      <div className={cn("flex flex-wrap items-end gap-x-2.5 gap-y-1", compact ? "pt-1.5" : "min-h-[3.75rem] pt-3")}>
+      {/* The value alone on its row, bottom-aligned in a fixed box: one baseline across the steps. */}
+      <div className={cn("flex items-end", compact ? "h-9" : "h-[3.25rem]")}>
         {shown !== null ? (
           <span
             className={cn(
@@ -225,23 +251,16 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
             –
           </span>
         )}
-        {value !== null && measure && (
-          <span className="pb-px type-caption whitespace-nowrap text-muted-foreground">
-            <span className={cn("figure font-medium", STATUS_FIGURE[status])}>
-              {gapToFinland(value, measure.finland)}
-            </span>{" "}
-            vs Finland
-          </span>
-        )}
-        {shared && (
-          <span className="pb-px type-caption text-pretty text-muted-foreground">{sharedLabel(shared.name)}</span>
-        )}
       </div>
 
-      <p className={cn("type-caption text-pretty text-muted-foreground", compact ? "pt-0.5" : "pt-2")}>{description}</p>
+      <p className={cn("type-caption text-pretty text-muted-foreground", compact ? "pt-1" : "pt-1.5")}>
+        {comparison}
+      </p>
+
+      <p className="type-caption text-pretty text-muted-foreground">{description}</p>
 
       <MeasureBar
-        className={compact ? "pt-2.5" : "pt-3"}
+        className={compact ? "pt-2" : "pt-3"}
         size={compact ? "sm" : "md"}
         value={value}
         finland={measure ? measure.finland : null}
@@ -260,7 +279,7 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
           <div className="pt-3">
             <StepStatus step={step} />
           </div>
-          {extra ? <div className="pt-2">{extra}</div> : null}
+          {extra ? <div className="pt-2">{extra}</div> : <div aria-hidden />}
         </>
       )}
     </li>

@@ -12,7 +12,9 @@ import { TrendStrip, type TrendStage } from "@/components/pathway/trend-strip";
 import { SourceChip } from "@/components/source-chip";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import { BackLink } from "@/components/ui/back-link";
+import { explainHus } from "@/components/ui/gap-words";
 import { BarKey } from "@/components/ui/measure-bar";
+import { TextLink } from "@/components/ui/text-link";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Frame,
@@ -70,7 +72,8 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   // The verdict is shown as written, split where it is displayed: its first sentence is the lead
   // line, the rest a quieter line under it. The hospital group's referral figure (Sotkanet 13)
   // gets its chip right after the sentence that states it.
-  const [leadSentence, ...restSentences] = verdict.split(/(?<=\.)\s+/);
+  // "HUS" is spelled out at its first use on the page (display only; the words come from lib/).
+  const [leadSentence, ...restSentences] = explainHus(verdict).split(/(?<=\.)\s+/);
   const husText = hus ? formatPct(hus.value) : null;
   const husChip = <SourceChip sourceId="sotkanet-13" year={LATEST_YEAR} />;
   const chipAfter = (sentence: string) => (husText && sentence.includes(husText) ? husChip : null);
@@ -125,11 +128,21 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           <FrameTitle id="pathway-heading" className="type-title">
             The first steps, compared with Finland ({LATEST_YEAR})
           </FrameTitle>
-          <FrameDescription>Gaps to Finland are in percentage points (pts).</FrameDescription>
+          <FrameDescription>Gaps to Finland are in percentage points: the difference between two shares.</FrameDescription>
         </FrameHeader>
         <div className="flex flex-col gap-1.5">
           <FramePanel padding="none">
-            <PathwaySteps steps={steps} density="full" />
+            <PathwaySteps
+              steps={steps}
+              density="full"
+              renderExtra={(step) =>
+                step.stage === "gp_recognition" ? (
+                  <TextLink kind="nav" href={`/county/${county.id}/act#red-flags`} className="text-sm">
+                    Use the red-flag helper
+                  </TextLink>
+                ) : null
+              }
+            />
           </FramePanel>
           <TrendStrip
             stages={buildTrendStages(county, steps)}
@@ -265,6 +278,7 @@ function buildLimitations(county: County): LimitationItem[] {
   if (occupational && publicVisits && occupationalFinland && publicFinland) {
     const n = (value: number) => Math.round(value).toLocaleString("en-GB");
     items.push({
+      title: "Occupational health visits are outside the GP wait",
       text: `Working-age people (15-64) in ${county.name} made ${n(occupational.value)} occupational-health doctor visits per 1,000 residents in ${occupational.year}, against ${n(publicVisits.value)} public primary-care doctor visits (Finland ${n(occupationalFinland.value)} and ${n(publicFinland.value)}). These are visits, not people. Occupational visits are outside the public queue the GP wait measures. People over 64, who are most cancer patients, are not in these numbers.`,
       sourceId: "sotkanet-2371",
     });
@@ -278,12 +292,14 @@ function buildLimitations(county: County): LimitationItem[] {
   const breastFinland = getValue("finland", "3625", 2024);
   if (bowel && breast && bowelFinland && breastFinland) {
     items.push({
+      title: "Survival is published by county; cancer stage is not",
       text: `In ${county.name}, 5-year relative survival was ${bowel.value}% for bowel cancer and ${breast.value}% for breast cancer (Finland ${bowelFinland.value}% and ${breastFinland.value}%), for patients diagnosed ${bowel.year - 9}-${bowel.year}. Cancer stage by county is not published, and survival mixes how early cancer is found with how well it is treated. Small counties vary from year to year.`,
       sourceId: "sotkanet-3627",
     });
   }
 
   items.push({
+    title: "Step 2 has no public indicator",
     text: "GP recognition of possible cancer has no public indicator, so step 2 is grey for every county. No public county data shows it yet; one candidate would be the share of cancers first found through an emergency visit.",
   });
 
@@ -291,6 +307,7 @@ function buildLimitations(county: County): LimitationItem[] {
   const husWide = gaps.find((gap) => gap.shared)?.shared;
   if (shared) {
     items.push({
+      title: `The referral step shows a ${shared.name}-wide value`,
       text: `The referral step shows the ${shared.name}-wide value, not a figure for ${county.name}. ${shared.name} handles hospital referrals from East, Central and West Uusimaa and Vantaa and Kerava, and THL publishes one ${shared.name}-wide number for them, not one per county. So the step stays grey, and it is not used to rank or to pick actions. THL or ${shared.name} could publish it by the patient's home county. The link shows the ${shared.name} report we used to check that the number is ${shared.name}'s.`,
       sourceId: shared.confirmed_by,
     });

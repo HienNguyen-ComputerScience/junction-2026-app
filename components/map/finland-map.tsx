@@ -5,38 +5,36 @@ import { cn } from "cn";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { GapStatus } from "@/lib/data";
 
-import {
-  ALAND_PATH,
-  FINLAND_PATHS,
-  FINLAND_VIEWBOX,
-  LABEL_SIDE,
-  SMALL_AREA_IDS,
-  type AreaShape,
-} from "./finland-paths";
+import { FINLAND_PATHS, FINLAND_VIEWBOX, LABEL_SIDE, SMALL_AREA_IDS, type AreaShape } from "./finland-paths";
 
 /**
  * Map of Finland's 22 areas (21 wellbeing services counties and the City of Helsinki), filled
- * by data status. Presentational and server-rendered: no client JavaScript, hover and focus
- * are CSS only. Boundaries: Statistics Finland, CC BY 4.0 (see finland-paths.ts). The borders
- * between areas are drawn in the panel colour, so the map belongs on a panel (`bg-card`).
+ * by data status. Presentational: hover and focus are CSS only. Boundaries: Statistics Finland,
+ * CC BY 4.0 (see finland-paths.ts). The borders between areas are drawn in the panel colour, so
+ * the map belongs on a panel (`bg-card`).
  *
- * Give the figure a height through `className` (200px to 420px, e.g. `h-80`) and room for the
- * one-line Åland note under it (about 18px, e.g. `mb-5`); the map takes
- * its width from that height (0.574 of it). Each highlighted area adds a label column beside
- * the map, about 115px wide, on the side where its leader crosses less land.
+ * Give the figure a height through `className` (200px and up, e.g. `h-full` inside a flex
+ * column); the map takes its width from that height (0.574 of it). Each highlighted area adds a
+ * label column beside the map, about 115px wide, on the side where its leader crosses less land.
  *
- * Åland is part of Finland but not one of the app's 22 areas: it is drawn as a neutral
- * outline (a hairline and a faint ground, its two largest islands), with no link and no
- * status, so the country keeps its shape and nothing suggests a value that does not exist.
+ * Åland is not one of the app's 22 areas and has no figure: it is not drawn, so no shape
+ * suggests a value that does not exist.
+ *
+ * `inset`: the Helsinki region (Helsinki, Vantaa and Kerava, Central Uusimaa and the edges of
+ * West and East Uusimaa) drawn again about four times larger in the map's empty north-east
+ * corner, so the small southern areas are big enough to click. The main map marks the enlarged
+ * box with a hairline. The inset's links repeat the main map's, so they are hidden from
+ * assistive technology and out of the tab order; the main map keeps the accessible ones.
  *
  * Status is never colour alone: every area's link is named "Name: 85.4%, Worse than Finland's level"
- * (shown as a tooltip too), and highlighted areas carry a text label. The page's own legend
- * names the colours.
+ * (shown as a tooltip too), and highlighted areas carry a text label. The page's own key names
+ * the colours.
  *
  * Picker mode (`onSelect`): a plain click on an area selects it instead of following its link
- * (a modified click still opens the link), and `selectedId` gets an accent outline inside the
- * area and `aria-current`. The component imports nothing from the snapshot at runtime (the
- * status label comes with each area), so it can render inside a client component.
+ * (a modified click still opens the link), and `selectedId` gets a 3px accent outline over a
+ * panel-coloured under-stroke (clear on red and on slate), drawn on top of every neighbour, and
+ * `aria-current`. The component imports nothing from the snapshot at runtime (the status label
+ * comes with each area), so it can render inside a client component.
  */
 
 export type FinlandMapArea = {
@@ -63,7 +61,13 @@ type Props = {
   selectedId?: string;
   /** Picker mode: called instead of following the link on a plain click. */
   onSelect?: (id: string) => void;
+  /** Draw the enlarged Helsinki region in the map's north-east corner. */
+  inset?: boolean;
 };
+
+// The enlarged box, in FINLAND_VIEWBOX units: Central Uusimaa, Vantaa and Kerava and Helsinki
+// whole, with the edges of West and East Uusimaa around them.
+const INSET = { x: 226, y: 896, width: 84, height: 80 } as const;
 
 // The fills of the bars, at the strength of the bars: an area that is worse than Finland is the
 // solid red of a bar's gap, an area at or better is the slate of a bar. The map's key and the
@@ -160,6 +164,29 @@ function placeLabels(items: { area: FinlandMapArea; shape: AreaShape }[]): Place
   return placed;
 }
 
+/** A plain click selects in picker mode; a modified or middle click keeps the link's own behaviour. */
+function selectHandler(onSelect: ((id: string) => void) | undefined, id: string) {
+  if (!onSelect) return undefined;
+  return (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    onSelect(id);
+  };
+}
+
+const accessibleName = (area: FinlandMapArea) =>
+  area.valueLabel ? `${area.name}: ${area.valueLabel}, ${area.statusLabel}` : `${area.name}: ${area.statusLabel}`;
+
+/** The selected area's outline: a panel-coloured under-stroke, then the 3px accent on top. */
+function SelectedOutline({ href }: { href: string }) {
+  return (
+    <g className="pointer-events-none">
+      <use href={href} fill="none" strokeWidth={6} strokeLinejoin="round" className="stroke-card" />
+      <use href={href} fill="none" strokeWidth={3} strokeLinejoin="round" className="stroke-brand" />
+    </g>
+  );
+}
+
 export function FinlandMap({
   areas,
   highlight = [],
@@ -167,6 +194,7 @@ export function FinlandMap({
   className,
   selectedId,
   onSelect,
+  inset = false,
 }: Props) {
   const uid = useId();
   // In picker mode the selected area's figure is shown beside the map, so its label is the name only.
@@ -192,23 +220,25 @@ export function FinlandMap({
   const rightLabels = labels.filter((item) => item.side === "right");
 
   const { width, height } = FINLAND_VIEWBOX;
+  // On the figure, so the inset's fills find the same patterns.
   const hatchVars = {
     "--hatch": `url(#${hatchId})`,
     "--hatch-lift": `url(#${hatchLiftId})`,
   } as CSSProperties;
+  const selectedShape = selectedId !== undefined ? FINLAND_PATHS[selectedId] : undefined;
 
   return (
     // No role="img" here: it would hide the 22 links inside from assistive technology. A
     // figure with a name keeps the summary and the links.
-    <figure aria-label={label} className={cn("flex items-stretch justify-center", className)}>
+    <figure
+      aria-label={label}
+      className={cn("relative flex items-stretch", inset ? "justify-start" : "justify-center", className)}
+      style={hatchVars}
+    >
       <LabelColumn side="left" labels={leftLabels} nameOnly={picker} />
 
       <div className="relative h-full shrink-0" style={{ aspectRatio: `${width} / ${height}` }}>
-        <svg
-          viewBox={`0 0 ${width} ${height}`}
-          className="absolute inset-0 size-full"
-          style={hatchVars}
-        >
+        <svg viewBox={`0 0 ${width} ${height}`} className="absolute inset-0 size-full">
           <defs>
             {hasNoData && (
               <>
@@ -228,29 +258,9 @@ export function FinlandMap({
             ))}
           </defs>
 
-          {/* Åland: a neutral outline, not a data area (see the file comment). */}
-          <path
-            d={ALAND_PATH}
-            vectorEffect="non-scaling-stroke"
-            strokeWidth={1}
-            className="fill-foreground/5 stroke-foreground/25"
-          >
-            <title>Åland: not one of the 22 areas in this data</title>
-          </path>
-
           {drawn.map(({ area, small }) => {
-            const name = area.valueLabel
-              ? `${area.name}: ${area.valueLabel}, ${area.statusLabel}`
-              : `${area.name}: ${area.statusLabel}`;
+            const name = accessibleName(area);
             const selected = area.id === selectedId;
-            const select = onSelect
-              ? (event: MouseEvent<HTMLAnchorElement>) => {
-                  // A modified or middle click keeps the link's own behaviour (a new tab).
-                  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-                  event.preventDefault();
-                  onSelect(area.id);
-                }
-              : undefined;
             return (
               <Link
                 key={area.id}
@@ -259,7 +269,7 @@ export function FinlandMap({
                 aria-current={selected ? "true" : undefined}
                 data-status={area.status}
                 data-area={area.id}
-                onClick={select}
+                onClick={selectHandler(onSelect, area.id)}
                 className="group outline-none"
               >
                 <title>{name}</title>
@@ -282,14 +292,20 @@ export function FinlandMap({
               </Link>
             );
           })}
-          {/* The selected area's outline: 2px accent, drawn over every neighbour so none covers it. */}
-          {selectedId !== undefined && FINLAND_PATHS[selectedId] && (
-            <use
-              href={`#${pathId(selectedId)}`}
+          {/* The selected area's outline, drawn over every neighbour so none covers it. */}
+          {selectedShape && selectedId && <SelectedOutline href={`#${pathId(selectedId)}`} />}
+          {/* The box the inset enlarges. */}
+          {inset && (
+            <rect
+              x={INSET.x}
+              y={INSET.y}
+              width={INSET.width}
+              height={INSET.height}
               fill="none"
-              strokeWidth={2}
-              strokeLinejoin="round"
-              className="pointer-events-none stroke-brand"
+              vectorEffect="non-scaling-stroke"
+              strokeWidth={1}
+              strokeDasharray="3 2"
+              className="pointer-events-none stroke-foreground/70"
             />
           )}
         </svg>
@@ -298,20 +314,86 @@ export function FinlandMap({
           <Leader key={item.area.id} item={item} ring={picker} />
         ))}
 
-        {/* Åland is drawn but has no data: said in words just under it (below the map's box, so
-            it never covers an area), so the shape is not a puzzle. */}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute top-full left-0 mt-0.5 whitespace-nowrap type-note text-muted-foreground"
-        >
-          Åland: not in the data
-        </span>
+        {/* Placed against the map itself, so it sits east of Lapland at any map height. */}
+        {inset && <MapInset drawn={drawn} selectedId={selectedId} onSelect={onSelect} pathId={pathId} />}
       </div>
 
       <LabelColumn side="right" labels={rightLabels} nameOnly={picker} />
     </figure>
   );
 }
+
+/**
+ * The Helsinki region, enlarged, in the map's empty north-east corner: the same areas, fills and
+ * outline, about four times larger. Mouse and touch only (see the file comment).
+ */
+function MapInset({
+  drawn,
+  selectedId,
+  onSelect,
+  pathId,
+}: {
+  drawn: { area: FinlandMapArea; shape: AreaShape; small: boolean }[];
+  selectedId?: string;
+  onSelect?: (id: string) => void;
+  pathId: (id: string) => string;
+}) {
+  // Only the areas that reach into the box; the svg's viewport clips the rest.
+  const inBox = drawn.filter(({ shape }) => {
+    const pad = 60;
+    return (
+      shape.cx > INSET.x - pad &&
+      shape.cx < INSET.x + INSET.width + pad &&
+      shape.cy > INSET.y - pad &&
+      shape.cy < INSET.y + INSET.height + pad
+    );
+  });
+  const selectedInBox = inBox.some(({ area }) => area.id === selectedId);
+  return (
+    <div
+      aria-hidden
+      className="absolute top-0 left-[79%] flex w-[8.5rem] flex-col gap-1.5"
+    >
+      <span className="type-note text-muted-foreground">Helsinki region, enlarged</span>
+      <div
+        className="relative overflow-hidden rounded-sm border border-foreground/25 bg-card"
+        style={{ aspectRatio: `${INSET.width} / ${INSET.height}` }}
+      >
+        <svg
+          viewBox={`${INSET.x} ${INSET.y} ${INSET.width} ${INSET.height}`}
+          className="absolute inset-0 size-full"
+        >
+          {inBox.map(({ area }) => {
+            const selected = area.id === selectedId;
+            return (
+              <Link
+                key={area.id}
+                href={area.href}
+                tabIndex={-1}
+                data-inset-area={area.id}
+                onClick={selectHandler(onSelect, area.id)}
+                className="group outline-none"
+              >
+                <title>{accessibleName(area)}</title>
+                <use
+                  href={`#${pathId(area.id)}`}
+                  strokeWidth={1}
+                  className={cn(
+                    "stroke-card transition-colors",
+                    selectedId !== undefined && !selected && "opacity-[0.72] group-hover:opacity-100",
+                    selected ? SELECTED_FILL[area.status] : AREA_FILL[area.status],
+                  )}
+                />
+              </Link>
+            );
+          })}
+          {selectedInBox && selectedId && <SelectedOutline href={`#${pathId(selectedId)}`} />}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 
 /** The hatch of "no public data", the same mark as the empty bar track (`bg-hatch`). */
 function HatchPattern({ id, ground }: { id: string; ground: string }) {

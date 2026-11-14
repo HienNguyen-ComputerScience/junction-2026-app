@@ -59,8 +59,8 @@ export function StatusBadge({
         "inline-flex w-fit shrink-0 items-center gap-1.5 rounded-sm font-medium whitespace-nowrap",
         // Quiet is a line of secondary text (13px), not a tag: it has one size.
         variant === "quiet" && "h-5 text-[0.8125rem] leading-5",
-        // xs is as tall as the source chip it sits beside.
-        variant !== "quiet" && size === "xs" && "h-6 text-[0.6875rem]",
+        // xs is as tall as the (quiet) source chip it sits beside.
+        variant !== "quiet" && size === "xs" && "h-5 text-[0.6875rem]",
         variant !== "quiet" && size === "sm" && "h-6 text-[0.75rem]",
         variant !== "quiet" && size === "md" && "h-7 text-[0.8125rem]",
         variant === "chip" && [

@@ -21,6 +21,11 @@ const STEPS: { label: string; group: Group; stage?: Stage }[] = [
   { label: "Treatment starts", group: "hospital" },
 ];
 
+// Median days from first symptoms to treatment in the lymphoma study (Kuitunen 2026), by where
+// the first contact was. The difference is computed from these two, never written by hand.
+const PUBLIC_DAYS = 127;
+const PRIVATE_DAYS = 76;
+
 const GROUPS: { group: Group; label: string; from: number; span: number }[] = [
   { group: "patient", label: "Patient", from: 1, span: 2 },
   { group: "county", label: "Where a county can act", from: 3, span: 3 },
@@ -148,25 +153,21 @@ export function PathwayStrip({ countyId }: { countyId: string }) {
             <p className="type-caption text-muted-foreground">
               Why the first contact matters: median days from first symptoms to treatment, lymphoma
             </p>
-            <dl className="flex flex-wrap items-end gap-x-6 gap-y-2">
-              <div className="flex flex-col">
-                <dt className="order-2 type-caption text-muted-foreground">First contact public</dt>
-                <dd className="numeral text-[1.75rem] leading-tight text-foreground">
-                  127 <span className="text-base text-muted-foreground">days</span>
-                </dd>
-              </div>
-              <span aria-hidden className="pb-6 type-caption text-faint">
-                vs
+            {/* The comparison first, in words; the two medians it comes from under it. */}
+            <p className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+              <span className="numeral text-[1.75rem] leading-tight text-foreground">
+                {PUBLIC_DAYS - PRIVATE_DAYS} <span className="text-base text-muted-foreground">days</span>
               </span>
-              <div className="flex flex-col">
-                <dt className="order-2 type-caption text-muted-foreground">Private or occupational</dt>
-                <dd className="numeral text-[1.75rem] leading-tight text-foreground">
-                  76 <span className="text-base text-muted-foreground">days</span>
-                </dd>
-              </div>
-              <span className="pb-1">
-                <SourceChip sourceId="kuitunen-2026" />
+              <span className="text-[0.9375rem] text-foreground">
+                longer to treatment when the first contact was public primary care
               </span>
+              <SourceChip sourceId="kuitunen-2026" />
+            </p>
+            <dl className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1 type-caption text-muted-foreground">
+              <dt>Public first contact</dt>
+              <dd className="figure text-foreground">{PUBLIC_DAYS} days</dd>
+              <dt className="before:mr-1.5 before:content-['·']">private or occupational</dt>
+              <dd className="figure text-foreground">{PRIVATE_DAYS} days</dd>
             </dl>
           </div>
           <p className="type-caption text-muted-foreground md:max-w-[22rem] md:text-right">

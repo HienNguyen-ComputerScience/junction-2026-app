@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 
 import { SourceChip } from "@/components/source-chip";
+import { gapInWords } from "@/components/ui/gap-words";
 import { BarFill, FinlandTick, withFigures } from "@/components/ui/measure-bar";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { LATEST_YEAR, type County, type GapStatus } from "@/lib/data";
@@ -29,7 +30,7 @@ type Props = {
 // of a group. It is drawn through bar rows only: a group heading has no bar and no line.
 // Below lg: area (rank inline before the name) | value, then the change and gap line, the bar, and the referral line.
 const ROW_GRID =
-  "grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 lg:grid-cols-[2rem_minmax(0,12rem)_minmax(0,1fr)_10.5rem_15.5rem] lg:gap-x-5";
+  "grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 lg:grid-cols-[2rem_minmax(0,12rem)_minmax(0,1fr)_10.5rem_17.5rem] lg:gap-x-5";
 
 // The referral column is a second indicator, not a detail of the GP wait: a hairline with 24px
 // on each side separates the two, in the header, the group headings and every row alike.
@@ -46,22 +47,21 @@ const ROW_LINK =
 const ROW_DIVIDER =
   "before:absolute before:inset-x-2.5 before:top-0 before:h-px before:bg-foreground/[0.06] lg:before:inset-x-0";
 
-// Referral column: one short tag per state, so every cell has the same shape.
-const REFERRAL_TAG: Record<GapStatus, string> = {
-  red: "Slower than Finland",
-  amber: "At least as fast",
-  no_data: "No public data",
-};
+// Referral column: one tag per state, in the one set of status words used everywhere.
+const REFERRAL_TAG: Record<GapStatus, string> = STATUS_LABEL;
 
-/**
- * The gap to Finland in percentage points, for display: the difference of the two one-decimal
- * figures shown on screen, with a real minus sign. "+" means a larger share than Finland.
- */
-export function gapToFinland(value: number, finland: number): string {
-  const diff = Number(value.toFixed(1)) - Number(finland.toFixed(1));
-  const abs = Math.abs(diff).toFixed(1);
-  if (abs === "0.0") return "0.0 pts";
-  return `${diff > 0 ? "+" : "−"}${abs} pts`;
+const THAN_FINLAND = " than Finland";
+
+/** "18.8 points slower" in a row: the column header names what it is measured against. */
+function GapShort({ value, finland }: { value: number; finland: number }) {
+  const words = gapInWords(value, finland);
+  const short = words.endsWith(THAN_FINLAND) ? words.slice(0, -THAN_FINLAND.length) : words;
+  return (
+    <>
+      <span className="figure">{short}</span>
+      {short !== words && <span className="sr-only">{THAN_FINLAND}</span>}
+    </>
+  );
 }
 
 export function RankingList({
@@ -90,7 +90,7 @@ export function RankingList({
           </span>
           <BarAxis finlandX={finlandX} finlandLabel={finlandLabel} />
         </div>
-        <HeadCell line1="GP wait" className="items-end text-right" />
+        <HeadCell line1="GP wait" line2="Gap in percentage points" className="items-end text-right" />
         <HeadCell
           line1="Referrals processed within 3 days"
           line2={
@@ -370,9 +370,8 @@ function RankingRowLink({
           <StatusBadge status={row.gpStatus} variant="quiet">
             <span>
               <span className="sr-only">{STATUS_LABEL[row.gpStatus]}: </span>
-              <span className="figure">{gapToFinland(row.gpWait.value, nationalGpWait)}</span>
-              {/* On a phone the line above the list says what the gap is measured against. */}
-              <span className="max-lg:sr-only"> vs Finland</span>
+              {/* "18.8 points slower": the column header says what it is measured against. */}
+              <GapShort value={row.gpWait.value} finland={nationalGpWait} />
             </span>
           </StatusBadge>
         </span>
@@ -437,7 +436,7 @@ function RankingRowLink({
               )}
               {referralStatus !== "no_data" && (
                 <span className="sr-only">
-                  {referralStatus === "amber" && !cityUnitsOnly ? " as Finland" : ""} (Finland{" "}
+                  {" "}(Finland{" "}
                   {formatPct(nationalReferral)})
                 </span>
               )}
@@ -453,7 +452,7 @@ function RankingRowLink({
 }
 
 /**
- * Change in percentage points since FIRST_YEAR, in words: "27.4 pts worse since 2023". No arrow
+ * Change in percentage points since FIRST_YEAR, in words: "27.4 points worse since 2023". No arrow
  * and no sign (a rising arrow reads as good news), and no colour: colour is for status.
  */
 function ChangeSince({ change }: { change: number | null }) {
@@ -465,7 +464,7 @@ function ChangeSince({ change }: { change: number | null }) {
         "No change"
       ) : (
         <>
-          <span className="figure">{size} pts</span> {change > 0 ? "worse" : "better"}
+          <span className="figure">{size} points</span> {change > 0 ? "worse" : "better"}
         </>
       )}{" "}
       since {FIRST_YEAR}

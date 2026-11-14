@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 
 import { AskBox } from "@/components/exa/ask-box";
 import { NationalNews } from "@/components/exa/national-news";
 import { EarlyWarning } from "@/components/home/early-warning";
 import { HomeTool } from "@/components/home/home-tool";
 import { RankingList } from "@/components/ranking/ranking-list";
-import { SourceChip } from "@/components/source-chip";
 import {
   Frame,
   FrameDescription,
@@ -15,7 +14,7 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
-import { getCounty, LATEST_YEAR, type County } from "@/lib/data";
+import { getCounty, type County } from "@/lib/data";
 import {
   formatPct,
   getNationalValue,
@@ -44,12 +43,14 @@ async function Tool({
   searchParams,
   rows,
   unranked,
+  header,
 }: {
   searchParams: PageProps<"/">["searchParams"];
   rows: RankingRow[];
   unranked: County[];
+  header: ReactNode;
 }) {
-  return <HomeTool rows={rows} unranked={unranked} initialAreaId={await areaFrom(searchParams)} />;
+  return <HomeTool header={header} rows={rows} unranked={unranked} initialAreaId={await areaFrom(searchParams)} />;
 }
 
 export default function CountyRankingPage({ searchParams }: PageProps<"/">) {
@@ -63,45 +64,39 @@ export default function CountyRankingPage({ searchParams }: PageProps<"/">) {
   }
 
   const totalAreas = rows.length + unranked.length;
-  // The h1's two numbers: the shortest and the longest 2025 GP wait share across the areas.
-  const waitValues = rows.map((row) => row.gpWait.value);
-  const lowestWait = Math.min(...waitValues);
-  const highestWait = Math.max(...waitValues);
+
+  // The headline opens the composed first block (headline, answer, map). No figure in it: the
+  // selected area's figure is the one number of the first screen.
+  const header = (
+    <header className="flex flex-col gap-2.5">
+      <h1 className="type-display text-[1.75rem] text-pretty text-foreground sm:text-[2.5rem] sm:leading-[1.1]">
+        In Finland, your area decides how long a non-urgent GP visit waits
+      </h1>
+      <p className="max-w-[40rem] text-base text-pretty text-muted-foreground">
+        Pick your area to see which step to a specialist is slowest, and what to do about it first.
+      </p>
+    </header>
+  );
 
   return (
     <main className="page-container flex flex-col gap-10 pt-3 sm:gap-14 sm:pt-6">
-      {/* A short headline, then the tool: pick an area, see where its pathway breaks and what to
-          do first. The ranking is further down, for comparing. */}
-      <div className="flex flex-col gap-5">
-      <header className="flex flex-col gap-2">
-        <h1 className="type-display text-[1.375rem] text-foreground sm:text-[1.75rem] lg:whitespace-nowrap">
-          In Finland, your area decides how long a non-urgent GP visit waits
-        </h1>
-        <p className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-base text-pretty text-muted-foreground">
-          <span>
-            From <span className="figure">{formatPct(lowestWait)}</span> to{" "}
-            <span className="figure">{formatPct(highestWait)}</span> of non-urgent GP visits wait over 7 days,
-            depending on the area
-          </span>
-          <SourceChip sourceId={nationalGpWait.source_id} year={LATEST_YEAR} />
-        </p>
-      </header>
-
       {/* The one request-time part: the server render of /?area=<id> already shows that area. The
           rest of the page is prerendered. */}
       <Suspense
         fallback={
-          <div
-            aria-busy
-            className="min-h-[36rem] rounded-panel border border-border bg-card p-6 type-caption text-muted-foreground"
-          >
-            Loading the areas…
+          <div className="flex flex-col gap-5">
+            {header}
+            <div
+              aria-busy
+              className="min-h-[36rem] rounded-panel border border-border bg-card p-6 type-caption text-muted-foreground"
+            >
+              Loading the areas…
+            </div>
           </div>
         }
       >
-        <Tool searchParams={searchParams} rows={rows} unranked={unranked} />
+        <Tool header={header} searchParams={searchParams} rows={rows} unranked={unranked} />
       </Suspense>
-      </div>
 
       <EarlyWarning
         areas={[...rows.map((row) => row.county), ...unranked]}
@@ -114,7 +109,7 @@ export default function CountyRankingPage({ searchParams }: PageProps<"/">) {
             Compare all {totalAreas} areas
           </FrameTitle>
           <FrameDescription>
-            Longest GP waits first. 21 wellbeing services counties and the City of Helsinki. Gaps to Finland are in percentage points (pts).
+            Longest GP waits first. 21 wellbeing services counties and the City of Helsinki. Gaps to Finland are in percentage points.
           </FrameDescription>
         </FrameHeader>
         <FramePanel padding="none">
@@ -138,7 +133,8 @@ export default function CountyRankingPage({ searchParams }: PageProps<"/">) {
               Referrals: the share processed within 3 days (Sotkanet {REFERRAL_ID}). Higher is
               faster; Finland {formatPct(nationalReferral.value)}.
             </span>{" "}
-            HUS-wide: one shared figure for the hospital district (HUS) that serves these areas.
+            HUS-wide: one shared figure for HUS (Helsinki University Hospital region), the hospital district that
+            serves these areas.
           </p>
         </FrameFooter>
       </Frame>

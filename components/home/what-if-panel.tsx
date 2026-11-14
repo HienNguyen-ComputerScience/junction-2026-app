@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import { SourceChip } from "@/components/source-chip";
 import { FramePanel } from "@/components/ui/frame";
@@ -125,20 +125,6 @@ export function WhatIfPanel({
   );
 }
 
-/**
- * Where a label over a span of the bar sits, without measuring it: centred on the span when the
- * span is in the middle of the track (the box reaches the nearer end, as FinlandAxis does),
- * otherwise starting at the span's left end or ending at its right end, so it never runs past
- * the bar.
- */
-function labelOver(lo: number, hi: number): CSSProperties {
-  const centre = (lo + hi) / 2;
-  if (centre < 30) return { left: `${lo}%`, right: 0, justifyContent: "flex-start" };
-  if (centre > 70) return { left: 0, right: `${100 - hi}%`, justifyContent: "flex-end" };
-  const reach = Math.min(centre, 100 - centre);
-  return { left: `${centre - reach}%`, right: `${100 - centre - reach}%`, justifyContent: "center" };
-}
-
 function WhatIfBar({
   value,
   status,
@@ -161,15 +147,53 @@ function WhatIfBar({
   const bestX = best ? clamp(best.value) : null;
   const valueX = clamp(value);
 
+  // Every mark is named once, in 12px, on one baseline under the bar: left to right in the order
+  // the marks sit on the bar, each label led by the glyph of its mark.
+  const labels: { x: number; key: string; label: ReactNode }[] = [
+    {
+      x: valueX,
+      key: "now",
+      label: (
+        <>
+          <span aria-hidden className={`h-3 w-[3px] rounded-[1px] ${status === "red" ? "bg-status-red" : "bg-status-amber-bar"}`} />
+          <span>
+            Now <span className="figure text-foreground">{formatPct(value)}</span>
+          </span>
+        </>
+      ),
+    },
+    {
+      x: clamp(finland),
+      key: "finland",
+      label: (
+        <>
+          <span aria-hidden className="h-3 w-0.5 bg-foreground" />
+          <span className="font-medium">
+            Finland <span className="figure text-foreground">{formatPct(finland)}</span>
+          </span>
+        </>
+      ),
+    },
+  ];
+  if (best && bestX !== null) {
+    labels.push({
+      x: bestX,
+      key: "best",
+      label: (
+        <>
+          <span aria-hidden className="h-3 w-0 border-l-2 border-dotted border-foreground/80" />
+          <span>
+            Best: {best.name} <span className="figure text-foreground">{formatPct(best.value)}</span>
+          </span>
+        </>
+      ),
+    });
+  }
+  labels.sort((a, b) => a.x - b.x);
+
   return (
-    <figure className="flex flex-col gap-1.5">
-      {/* Every mark is named on the bar, in 12px: the area's end above, Finland and the best area below. */}
-      <div aria-hidden className="relative h-5 type-note text-muted-foreground">
-        <span className="absolute inset-y-0 flex items-center whitespace-nowrap" style={labelOver(valueX, valueX)}>
-          Now <span className="ml-1 figure text-foreground">{formatPct(value)}</span>
-        </span>
-      </div>
-      <div aria-hidden className="relative h-4 rounded-[2px] bg-track">
+    <figure className="flex flex-col gap-2.5">
+      <div aria-hidden className="relative mt-2 h-4 rounded-[2px] bg-track">
         {/* The bracket: a dimension line over exactly the span the amount counts. */}
         {lo !== null && hi !== null && amount !== null && (
           <span
@@ -186,27 +210,13 @@ function WhatIfBar({
           />
         )}
       </div>
-      <div aria-hidden className="relative h-4 type-note text-muted-foreground">
-        <span
-          className="absolute inset-y-0 flex font-medium whitespace-nowrap"
-          style={labelOver(clamp(finland), clamp(finland))}
-        >
-          Finland <span className="ml-1 figure text-foreground">{formatPct(finland)}</span>
-        </span>
-      </div>
-      {best && bestX !== null && (
-        <div aria-hidden className="relative h-4 type-note text-muted-foreground">
-          <span
-            className="absolute inset-y-0 flex items-center gap-1.5 whitespace-nowrap"
-            style={bestX < 50 ? { left: `${bestX}%`, marginLeft: -1 } : { right: `${100 - bestX}%`, marginRight: -1 }}
-          >
-            <span className="h-3 w-0 border-l-2 border-dotted border-foreground/80" />
-            <span>
-              Best: {best.name} <span className="figure text-foreground">{formatPct(best.value)}</span>
-            </span>
-          </span>
-        </div>
-      )}
+      <ul aria-hidden className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 type-note text-muted-foreground">
+        {labels.map((item) => (
+          <li key={item.key} className="flex items-center gap-1.5 whitespace-nowrap">
+            {item.label}
+          </li>
+        ))}
+      </ul>
       <figcaption className="sr-only">
         {amount !== null && `${amount} ${word} of every 100. `}
         {best &&

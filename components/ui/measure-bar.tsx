@@ -204,7 +204,8 @@ const KEY_ITEMS: KeyKind[] = ["finland", "red", "short", "amber", "no_data"];
  * The key for reading the bars and the map: one row of swatches, drawn like the marks they
  * name. One key per page, and nothing else in it.
  *  - `items`: which swatches to show, when a view has no hatched track or names the Finland
- *    line elsewhere. Default: all five ("Short of Finland's level" names the faded shortfall of a referral bar).
+ *    line elsewhere. Default: all five ("Gap to Finland's level" names the faded shortfall of a referral bar;
+ *    it is a mark, not a status: the status words stay "Worse than Finland's level").
  * One item per line on a phone, one wrapping row from `sm`.
  */
 export function BarKey({ className, items = KEY_ITEMS }: { className?: string; items?: KeyKind[] }) {
@@ -246,7 +247,7 @@ export function BarKey({ className, items = KEY_ITEMS }: { className?: string; i
             </>
           }
         >
-          Short of Finland&apos;s level
+          Gap to Finland&apos;s level
         </KeyItem>
       )}
       {items.includes("amber") && (
@@ -273,7 +274,7 @@ export function BarKey({ className, items = KEY_ITEMS }: { className?: string; i
  *  - higherIsBetter: optional override of the inferred direction (see BarFill).
  *  - size "lg": the tall bar of the home comparison card (16px on a phone, 20px from sm);
  *    size "sm": the 6px bar of the compact step strip.
- *  - gapLabel: the distance to Finland in words ("+30.7 pts", "−7.9 pts"; use `gapToFinland`),
+ *  - gapLabel: the distance to Finland in words ("13.1 points slower than Finland"; use `gapInWords`),
  *    for wait bars and referral bars alike. With size "lg" it is written inside the span between
  *    the bar's end and the Finland line, i.e. on the distance it measures (hidden if that span
  *    is too short). With the default size it sits just above the bar, against the Finland line

@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { Check, ListChecks, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Check, ListChecks, ShieldAlert } from "lucide-react";
 import { cn } from "cn";
 
 import { FramePanel, FramePanelLabel } from "@/components/ui/frame";
@@ -59,7 +59,15 @@ function EmptyResult() {
       <div className="flex flex-col items-start gap-2 px-5 py-5 sm:px-6">
         <ListChecks aria-hidden className="size-4 text-muted-foreground" strokeWidth={1.75} />
         <p className="type-heading">No concern picked yet</p>
-        <p className="type-caption text-muted-foreground">Pick a concern on the left, or type a few words.</p>
+        <p className="text-sm text-pretty text-muted-foreground">
+          Tick a concern on the left, or type the symptoms in a few words, in English or Finnish:
+        </p>
+        {/* What to type, anchored where the answer will appear. */}
+        <p className="flex items-center gap-2 rounded-lg border border-dashed border-input px-3 py-2 text-sm text-foreground">
+          <ArrowLeft aria-hidden className="size-4 text-muted-foreground" strokeWidth={1.75} />
+          for example <span className="font-medium">weight loss, tiredness</span>
+        </p>
+        <p className="type-caption text-muted-foreground">The referral route and the guideline links show here.</p>
       </div>
     </FramePanel>
   );

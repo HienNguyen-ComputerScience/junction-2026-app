@@ -5,6 +5,8 @@ import { SourceChip } from "@/components/source-chip";
 import { Disclosure } from "@/components/ui/disclosure";
 
 export type LimitationItem = {
+  /** One short line naming the limitation, shown bold above the full text. */
+  title?: string;
   text: string;
   sourceId?: string;
 };
@@ -115,30 +117,36 @@ function withFigures(text: string): ReactNode {
   );
 }
 
-const BODY = "text-[0.8125rem] leading-[1.6] text-pretty text-muted-foreground";
+// Two tones per item: one bold short line in the text colour, then the detail, lighter, in the
+// secondary grey.
+const HEAD = "text-[0.8125rem] leading-5 font-semibold text-foreground";
+const BODY = "text-[0.8125rem] leading-[1.55] font-normal text-pretty text-muted-foreground";
+
+/**
+ * Every item is one bold short line plus its detail. The line is the item's own title, else the
+ * short name of an indicator item ("Short name: limitation"), else its first sentence. The
+ * words stay the same; only where they break changes.
+ */
+function splitItem(item: LimitationItem): { head: string; body: string; colon: boolean } {
+  if (item.title) return { head: item.title, body: item.text, colon: false };
+  const named = item.sourceId ? item.text.indexOf(": ") : -1;
+  if (named > 0) return { head: item.text.slice(0, named), body: item.text.slice(named + 2), colon: true };
+  const sentence = item.text.match(/^([\s\S]+?\.)\s+([\s\S]+)$/);
+  return sentence ? { head: sentence[1], body: sentence[2], colon: false } : { head: item.text, body: "", colon: false };
+}
 
 function Limitation({ item }: { item: LimitationItem }) {
-  // Indicator items read "Short name: limitation". The name becomes the item's first line with
-  // its source at the right end, the limitation sits under it; the words stay the same.
-  const split = item.sourceId ? item.text.indexOf(": ") : -1;
-  if (split <= 0) {
-    return (
-      <li className="flex flex-col gap-0.5">
-        <p className={BODY}>{withFigures(item.text)}</p>
-        {item.sourceId && <SourceChip sourceId={item.sourceId} />}
-      </li>
-    );
-  }
+  const { head, body, colon } = splitItem(item);
   return (
     <li className="flex flex-col gap-0.5">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-[0.8125rem] leading-5 font-medium text-foreground">
-          {item.text.slice(0, split)}
-          <span className="sr-only">:</span>
+      <div className="flex items-start justify-between gap-3">
+        <p className={HEAD}>
+          {withFigures(head)}
+          {colon && <span className="sr-only">:</span>}
         </p>
         {item.sourceId && <SourceChip sourceId={item.sourceId} />}
       </div>
-      <p className={BODY}>{withFigures(item.text.slice(split + 2))}</p>
+      {body && <p className={BODY}>{withFigures(body)}</p>}
     </li>
   );
 }

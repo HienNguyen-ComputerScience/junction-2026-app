@@ -110,11 +110,15 @@ export function AskBox() {
             className="h-11 w-full min-w-0 bg-transparent text-[0.9375rem] outline-none placeholder:text-faint disabled:opacity-60"
           />
         </div>
+        {/* Idle (nothing typed yet): a neutral outline with readable text, so it reads as waiting
+            for a question, not as broken. It turns into the filled primary once there is one. */}
         <Button
           type="submit"
           size="lg"
-          className="h-11 px-5"
+          variant={question.trim().length < 3 && !loading ? "outline" : "default"}
+          className="h-11 px-5 disabled:text-muted-foreground"
           disabled={loading || question.trim().length < 3}
+          title={question.trim().length < 3 && !loading ? "Type a question first, or try an example" : undefined}
         >
           {loading ? "Searching…" : "Ask"}
           {!loading && <ArrowUp aria-hidden data-icon="inline-end" />}
