@@ -9,7 +9,7 @@ import { AreaTable, NO_WAY_ROUND_CAVEATS, TestsTable } from "@/components/insigh
 import { NoWayRoundTiles, type TileLevel } from "@/components/insights/no-way-round-tiles";
 import { PathwayRow } from "@/components/insights/pathway-row";
 import { StarterDownload } from "@/components/insights/starter-dataset";
-import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, Reveal, ScrollStory } from "@/components/motion";
+import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, FocusGroup, Reveal, ScrollStory } from "@/components/motion";
 import { SourceChip } from "@/components/source-chip";
 import {
   earlyWarning,
@@ -119,7 +119,8 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
   const notPublished = steps.filter((s) => !s.published).length;
 
   return (
-    <main className="page-container flex flex-col pt-4 pb-16 sm:pt-6">
+    <main className="page-container pt-4 pb-16 sm:pt-6">
+      <FocusGroup>
       {/* 1. The finding. */}
       <Chunk
         lead
@@ -297,6 +298,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
           </div>
         </div>
       </Chunk>
+      </FocusGroup>
     </main>
   );
 }
