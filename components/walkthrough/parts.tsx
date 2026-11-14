@@ -17,11 +17,3 @@ export function ForwardLink({ href, children }: { href: string; children: ReactN
     </Link>
   );
 }
-
-const DATE = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
-
-/** "13 May 2026" from an ISO date, or "not stated". */
-export function longDate(iso: string | null): string {
-  if (!iso) return "not stated";
-  return DATE.format(new Date(`${iso}T00:00:00Z`));
-}

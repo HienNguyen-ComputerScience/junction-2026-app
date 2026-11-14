@@ -3,71 +3,13 @@
 // value (data/values.json, data/gaps.json), a grade or count already in data/insights/, or a
 // count of rows in the snapshot. The page and its tests read only this model.
 
-import { counties, dataGaps, getSource, indicators, sources, type Source } from "@/lib/data";
+import { counties, dataGaps, indicators } from "@/lib/data";
 import { getGrade, getPathwayRow, rules, starterDataset, type GradeBrief, type GradeLevel, type PathwayStepId } from "@/lib/insights";
-import { GP_WAIT_ID, REFERRAL_ID, formatPct, getNationalValue, getRanking, getStageGap } from "@/lib/ranking";
+import { GP_WAIT_ID, formatPct, getRanking } from "@/lib/ranking";
 
 export const YEAR = 2025;
 
-// ---- 1. Where the numbers come from -------------------------------------------------------
-
-export type SourceGroup = {
-  id: string;
-  /** Who publishes, in plain words. */
-  who: string;
-  /** What we take from them. */
-  what: string;
-  sources: Pick<Source, "source_id" | "name" | "publisher" | "url" | "retrieved" | "data_updated">[];
-};
-
-const GROUPS: { id: string; who: string; what: string; ids: string[] }[] = [
-  {
-    id: "thl",
-    who: "THL, the Finnish Institute for Health and Welfare, on its Sotkanet service",
-    what: "Waits for a GP (a health-centre doctor), referral speed and doctor visits.",
-    ids: ["sotkanet-6411", "sotkanet-13", "sotkanet-5033", "sotkanet-293", "sotkanet-2371"],
-  },
-  {
-    id: "registry",
-    who: "The Finnish Cancer Registry, also on Sotkanet",
-    what: "Cancer screening attendance, and survival for breast and bowel cancer.",
-    ids: ["sotkanet-3621", "sotkanet-3620", "sotkanet-6103", "sotkanet-3625", "sotkanet-3627"],
-  },
-  {
-    id: "kela",
-    who: "Kela, the Social Insurance Institution, also on Sotkanet",
-    what: "How many people claimed back part of a private doctor visit.",
-    ids: ["sotkanet-692"],
-  },
-  {
-    id: "hus",
-    who: "HUS, the Helsinki University Hospital group",
-    what: "Its own report on referrals and how fast it processed them.",
-    ids: ["hus-referrals-2024"],
-  },
-];
-
-function pickSource(id: string): SourceGroup["sources"][number] {
-  const source = getSource(id);
-  if (!source) throw new Error(`walkthrough: source ${id} is missing from data/sources.json`);
-  const { source_id, name, publisher, url, retrieved, data_updated } = source;
-  return { source_id, name, publisher, url, retrieved, data_updated };
-}
-
-export const sourceGroups: SourceGroup[] = GROUPS.map((group) => ({
-  id: group.id,
-  who: group.who,
-  what: group.what,
-  sources: group.ids.map(pickSource),
-}));
-
-/** Studies and national documents: the evidence behind the recommended actions. */
-export const studyCount = sources.filter((source) => source.kind === "evidence").length;
-export const sourceCount = sources.length;
-/** The day our copy of the data was taken (the same for every source in the snapshot). */
-export const retrieved = sources[0]?.retrieved ?? "";
-
-// ---- 2. What one figure really counts -----------------------------------------------------
+// ---- 1. What one figure really counts -----------------------------------------------------
 
 export type AreaFigure = {
   id: string;
@@ -100,41 +42,7 @@ export const gpDefinition = {
   limitation: gpIndicator?.limitation ?? "",
 };
 
-// ---- 3. Why some areas share a number -----------------------------------------------------
-
-export type SharedReferral = {
-  areas: { id: string; name: string }[];
-  hospital: string;
-  value: number;
-  text: string;
-  confirmedBy: string | null;
-  finland: string | null;
-  gap: { missing: string; today: string; couldPublish: string } | null;
-};
-
-function buildShared(): SharedReferral | null {
-  const rows = counties.flatMap((county) => {
-    const gap = getStageGap(county.id, "referral");
-    return gap?.shared ? [{ county, shared: gap.shared }] : [];
-  });
-  const first = rows[0];
-  if (!first) return null;
-  const finland = getNationalValue(REFERRAL_ID, YEAR);
-  const gap = dataGaps.find((row) => row.id === "hus-area-referrals");
-  return {
-    areas: rows.map(({ county }) => ({ id: county.id, name: county.name })),
-    hospital: first.shared.name,
-    value: first.shared.value,
-    text: formatPct(first.shared.value),
-    confirmedBy: first.shared.confirmed_by ?? null,
-    finland: finland ? formatPct(finland.value) : null,
-    gap: gap ? { missing: gap.missing, today: gap.today, couldPublish: gap.could_publish } : null,
-  };
-}
-
-export const sharedReferral = buildShared();
-
-// ---- 4. How much to trust a figure --------------------------------------------------------
+// ---- 2. How much to trust a figure --------------------------------------------------------
 
 export const gradeLevels = rules.levels;
 export const gradeRules = rules.grade_rules;
@@ -169,7 +77,7 @@ function buildRecordingExample() {
 
 export const recordingExample = buildRecordingExample();
 
-// ---- 5. What Finland does not publish -----------------------------------------------------
+// ---- 3. What Finland does not publish -----------------------------------------------------
 
 const STEP_TITLE: Record<PathwayStepId, string> = {
   detection: "Screening",
@@ -221,10 +129,7 @@ function buildPathway(): PathwaySlot[] {
 export const pathway = buildPathway();
 export const pathwayGapCount = pathway.filter((slot) => !slot.published).length;
 
-/** The other unpublished figures in data/data-gaps.json that sit on a published step. */
-export const suspectedCancerGap = dataGaps.find((gap) => gap.id === "suspected-cancer-gp-wait") ?? null;
-
-// ---- 7. What a county can do --------------------------------------------------
+// ---- 4. What a county can do --------------------------------------------------
 
 export const starter = {
   sections: starterDataset.sections.map((section) => ({
