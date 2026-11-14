@@ -1,39 +1,15 @@
-/* "How to read these numbers": a long page that reveals itself as it is read.
-   The shared pieces do most of it (Reveal, AnimatedNumber, AnimatedBar, animate-line-in, with the
-   loud timings: the root carries `motion-loud`). This file adds only:
-   - the sticky "story" pictures, whose parts appear as the text beside them scrolls past;
-   - the thin top bar with the way to the full list of sources;
-   - print.
-   Rules: only opacity and transform move; the finished state is each element's own style, so the
-   server HTML, a page without script, reduced motion and print all show everything. Scrolling is
-   never captured or changed: no scroll-snap, no wheel or touch handlers, no parallax. */
+/* "How to read these numbers": told on scroll with the shared pieces (Chunk, ScrollStory,
+   CaveatNote, Reveal, AnimatedNumber, AnimatedBar; contract in docs/audit/contract.md). This
+   file adds only what is the page's own. Scrolling is never captured or changed. */
 
 /* Anchors and focused controls land below the page's sticky top bar. */
 :root:has(.htr-root) {
   scroll-padding-top: 5.5rem;
 }
 
-/* A part of a story picture that appears when its text block is reached. With no data-story-stage
-   (server HTML, no script, reduced motion, phone, print) every part is simply there. */
-.htr-story [data-at] {
-  transition:
-    opacity 560ms var(--motion-ease),
-    transform 560ms var(--motion-ease);
-}
-.htr-story[data-story-stage="0"] :is([data-at="1"], [data-at="2"], [data-at="3"], [data-at="4"]),
-.htr-story[data-story-stage="1"] :is([data-at="2"], [data-at="3"], [data-at="4"]),
-.htr-story[data-story-stage="2"] :is([data-at="3"], [data-at="4"]),
-.htr-story[data-story-stage="3"] [data-at="4"] {
-  opacity: 0;
-  transform: translateY(14px);
-}
-/* A slot that is "not published": it draws as an empty dashed box, never as a zero. */
+/* A slot that is "not published": hatched, never drawn as a zero. */
 .htr-hatch {
   background-image: repeating-linear-gradient(135deg, rgb(104 110 105 / 0.28) 0 1px, transparent 1px 8px);
-}
-/* The text block the reader has reached is at full strength; the others stay readable. */
-.htr-story [data-block] {
-  transition: opacity 400ms var(--motion-ease);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -49,20 +25,6 @@
   .htr-root * {
     animation: none !important;
     transition: none !important;
-  }
-  .htr-story [data-at] {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-  .htr-sticky {
-    position: static !important;
-  }
-  .htr-section {
-    padding-block: 12pt !important;
-    min-height: 0 !important;
-  }
-  .htr-section h2 {
-    break-after: avoid;
   }
   .htr-root p,
   .htr-root li {

@@ -3,18 +3,17 @@
 import { Check } from "lucide-react";
 import { useId, useState, type ReactNode } from "react";
 
-import { AnimatedBar, AnimatedNumber, Disclosure } from "@/components/motion";
+import { AnimatedNumber, Disclosure } from "@/components/motion";
 import type { GradeLevel } from "@/lib/insights";
 import type { AreaFigure } from "@/lib/walkthrough/model";
 
 /**
- * The picture beside "What one figure really counts": one area's GP-wait share, counted up, with
- * Finland's level, then what it counts and what it does not. Parts marked data-at appear as the
- * text beside them is reached (components/walkthrough/story.tsx). The area can be changed.
+ * The picture beside "What one figure really counts": one area's GP-wait share, counted up, then
+ * what it counts and what it does not. Parts marked data-story-step are picked out as the
+ * text beside them is read (ScrollStory in components/motion). The area can be changed.
  */
 export function FigurePicture({
   areas,
-  finland,
   year,
   glyphs,
   source,
@@ -24,7 +23,6 @@ export function FigurePicture({
   glyphs: Record<GradeLevel, ReactNode>;
   /** The figure's source chip, drawn on the server. */
   source: ReactNode;
-  finland: { value: number; text: string } | null;
   year: number;
 }) {
   const selectId = useId();
@@ -75,22 +73,11 @@ export function FigurePicture({
         </div>
       ) : null}
 
-      {finland ? (
-        <AnimatedBar
-          key={`bar-${area.id}`}
-          value={area.value}
-          marker={finland.value}
-          markerLabel={`Finland ${finland.text}`}
-          tone={area.value > finland.value ? "red" : "slate"}
-          label={`${area.name} ${area.text}, Finland ${finland.text}`}
-        />
-      ) : null}
-
-      <div className="grid gap-3 sm:grid-cols-2" data-at="1">
+      <div className="grid gap-3 sm:grid-cols-2" data-story-step="0">
         <Counted>Counted: visits</Counted>
         <NotCounted>Not counted: people</NotCounted>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2" data-at="2">
+      <div className="grid gap-3 sm:grid-cols-2" data-story-step="1">
         <Counted>Counted: every non-urgent GP visit</Counted>
         <NotCounted>Not published: cancer-related visits alone</NotCounted>
       </div>

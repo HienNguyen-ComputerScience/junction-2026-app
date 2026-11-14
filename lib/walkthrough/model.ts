@@ -94,9 +94,6 @@ export const gpWaitAreas: AreaFigure[] = getRanking().flatMap((row) => {
   ];
 });
 
-const finlandGp = getNationalValue(GP_WAIT_ID, YEAR);
-export const finlandGpWait = finlandGp ? { value: finlandGp.value, text: formatPct(finlandGp.value) } : null;
-
 const gpIndicator = indicators.find((indicator) => indicator.indicator_id === GP_WAIT_ID);
 export const gpDefinition = {
   officialName: gpIndicator?.name ?? "",
