@@ -79,7 +79,8 @@ export function AskBox() {
           <h3 id="ask-box-title" className="font-sans text-sm font-semibold tracking-normal">
             Ask a question
           </h3>
-          <Badge variant="secondary">Found live — unverified</Badge>
+          {/* Provenance, not a pill: quiet text with a hollow mark (nobody has checked it). */}
+          <Badge variant="unverified">Found live — unverified</Badge>
           <span className="type-note text-muted-foreground">via Exa</span>
         </div>
         <p className="max-w-2xl type-caption text-muted-foreground">
@@ -148,10 +149,11 @@ export function AskBox() {
           {unavailable && <Unavailable />}
           {data && data.freshness !== "unavailable" && (
             <div className="space-y-5 border-t border-border pt-5">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="secondary">{STATUS_LABEL[data.freshness]}</Badge>
-                <span className="type-micro text-muted-foreground">Answered only from these Exa results.</span>
-              </div>
+              {/* Freshness is one quiet line of text, not another tag. */}
+              <p className="type-note text-muted-foreground">
+                <span className="font-medium text-foreground">{STATUS_LABEL[data.freshness]}.</span>{" "}
+                Answered only from these Exa results.
+              </p>
 
               {answered && data.answer && (
                 <div className="space-y-2 rounded-lg border border-dashed border-input bg-muted/40 p-4">

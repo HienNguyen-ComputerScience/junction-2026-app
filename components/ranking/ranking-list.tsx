@@ -1,9 +1,9 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 import { SourceChip } from "@/components/source-chip";
-import { BarFill, FinlandTick } from "@/components/ui/measure-bar";
+import { BarFill, FinlandTick, withFigures } from "@/components/ui/measure-bar";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { LATEST_YEAR, type County, type GapStatus } from "@/lib/data";
 import {
@@ -27,7 +27,11 @@ type Props = {
 // The bar cell spans the row's full height, so the Finland line runs unbroken from row to row.
 // Below lg: rank | area | value, then the change and gap line, the bar, and the referral line.
 const ROW_GRID =
-  "grid grid-cols-[1.75rem_minmax(0,1fr)_auto] gap-x-3 lg:grid-cols-[2rem_minmax(0,10.5rem)_minmax(0,1fr)_8.5rem_14.25rem] lg:gap-x-5";
+  "grid grid-cols-[1.75rem_minmax(0,1fr)_auto] gap-x-3 lg:grid-cols-[2rem_minmax(0,10.5rem)_minmax(0,1fr)_8.5rem_15.5rem] lg:gap-x-5";
+
+// The referral column is a second indicator, not a detail of the GP wait: a hairline with 24px
+// on each side separates the two, in the header, the group headings and every row alike.
+const REFERRAL_COL = "lg:col-start-5 lg:ml-1 lg:border-l lg:border-border lg:pl-6";
 
 // Every row is the same link: a lighter surface on hover and on keyboard focus, with an inset
 // focus ring so the panel's rounded corners never clip it. The hover is bg-accent, two steps
@@ -69,10 +73,10 @@ export function RankingList({
       {/* Column header, desktop. Not sticky: a sticky header slices the row passing under it.
           No source chips here: each group heading carries one per column, so a chip is in view
           wherever the list is scrolled. The bar column's second line is its axis. */}
-      <div className={`${ROW_GRID} hidden border-b border-border px-5 pt-3 lg:grid`}>
+      <div className={`${ROW_GRID} hidden border-b border-border px-5 lg:grid`}>
         <HeadCell line1="#" />
         <HeadCell line1="Area" line2={`change since ${FIRST_YEAR}`} />
-        <div className="flex flex-col">
+        <div className="flex flex-col pt-3">
           <span className="flex h-6 items-center truncate type-caption font-medium text-foreground">
             Non-urgent GP visits waiting over 7 days
           </span>
@@ -81,7 +85,13 @@ export function RankingList({
         <HeadCell line1="GP wait" line2="gap to Finland" className="items-end text-right" />
         <HeadCell
           line1="Referrals processed within 3 days"
-          line2={`Finland ${formatPct(nationalReferral)}, higher is faster`}
+          line2={
+            <>
+              Finland&nbsp;<span className="figure">{formatPct(nationalReferral)}</span>, higher
+              is faster
+            </>
+          }
+          className={REFERRAL_COL}
         />
       </div>
 
@@ -94,7 +104,7 @@ export function RankingList({
         </span>
         <span className="flex items-center gap-2">
           <span aria-hidden className="h-3.5 w-0.5 shrink-0 bg-foreground" />
-          Line: {finlandLabel}
+          <span>Line: {withFigures(finlandLabel)}</span>
         </span>
       </p>
 
@@ -111,8 +121,6 @@ export function RankingList({
                   count={groupSize}
                   first={i === 0}
                   finlandX={finlandX}
-                  finlandLabel={finlandLabel}
-                  nationalGpWait={nationalGpWait}
                   gpWaitSourceId={gpWaitSourceId}
                   referralSourceId={referralSourceId}
                 />
@@ -134,8 +142,6 @@ export function RankingList({
               count={unranked.length}
               first={false}
               finlandX={finlandX}
-              finlandLabel={finlandLabel}
-              nationalGpWait={nationalGpWait}
             />
           </li>
         )}
@@ -155,7 +161,7 @@ export function RankingList({
                 </StatusBadge>
                 <RowChevron className="lg:hidden" />
               </span>
-              <span className="hidden items-center justify-end lg:col-start-5 lg:flex">
+              <span className={`hidden items-center justify-end lg:flex ${REFERRAL_COL}`}>
                 <RowChevron />
               </span>
             </Link>
@@ -164,10 +170,11 @@ export function RankingList({
       </ol>
 
       {/* The chart's base, desktop: the line ends on the axis it started from. */}
-      <div aria-hidden className={`${ROW_GRID} hidden px-5 pb-3 lg:grid`}>
-        <div className="col-start-3">
+      <div aria-hidden className={`${ROW_GRID} hidden px-5 lg:grid`}>
+        <div className="col-start-3 pb-3">
           <BarAxis finlandX={finlandX} finlandLabel={finlandLabel} tick="top" />
         </div>
+        <span className={REFERRAL_COL} />
       </div>
     </div>
   );
@@ -179,11 +186,11 @@ function HeadCell({
   className = "",
 }: {
   line1: string;
-  line2?: string;
+  line2?: ReactNode;
   className?: string;
 }) {
   return (
-    <span className={`flex flex-col pb-2 ${className}`}>
+    <span className={`flex flex-col pt-3 pb-2 ${className}`}>
       <span className="flex h-6 items-center type-caption font-medium text-foreground">{line1}</span>
       {line2 && (
         <span className="flex h-5 items-center type-micro text-muted-foreground">{line2}</span>
@@ -215,7 +222,7 @@ function BarAxis({
         className={`absolute -translate-x-1/2 type-note font-medium whitespace-nowrap text-foreground ${labelY}`}
         style={finlandX}
       >
-        {finlandLabel}
+        {withFigures(finlandLabel)}
       </span>
       <span
         className={`absolute h-2 w-px bg-foreground ${tick === "bottom" ? "-bottom-px" : "top-0"}`}
@@ -241,13 +248,15 @@ function countRun(rows: RankingRow[], start: number): number {
   return n;
 }
 
+/**
+ * Group heading. Every group has the same structure: the status badge and its count, then one
+ * source chip over each figure column. The Finland line passes through it unbroken.
+ */
 function GroupDivider({
   status,
   count,
   first,
   finlandX,
-  finlandLabel,
-  nationalGpWait,
   gpWaitSourceId,
   referralSourceId,
 }: {
@@ -255,8 +264,6 @@ function GroupDivider({
   count: number;
   first: boolean;
   finlandX: CSSProperties;
-  finlandLabel: string;
-  nationalGpWait: number;
   /** Given for the groups that show figures: one chip per column, per group heading. */
   gpWaitSourceId?: string;
   referralSourceId?: string;
@@ -269,47 +276,61 @@ function GroupDivider({
         <StatusBadge status={status} size="sm">
           {STATUS_LABEL[status]}
         </StatusBadge>
-        <span className="shrink-0 type-micro text-muted-foreground tabular-nums">
-          {count} {count === 1 ? "area" : "areas"}
+        <span className="shrink-0 type-micro text-muted-foreground">
+          <span className="figure">{count}</span> {count === 1 ? "area" : "areas"}
         </span>
       </div>
       <div aria-hidden className="relative hidden lg:block">
-        {/* The key for the two-tone red bars, written on the chart next to the line it refers to. */}
-        {status === "red" && (
-          <span
-            className="absolute inset-y-0 flex items-center pt-2 pr-2.5 type-note whitespace-nowrap text-muted-foreground"
-            style={{ right: `${100 - nationalGpWait}%` }}
-          >
-            Solid red: beyond Finland&apos;s line
-          </span>
-        )}
-        {/* Lower groups: the column header has scrolled away, so the line is named again. */}
-        {status !== "red" && (
-          <span
-            className="absolute inset-y-0 flex items-center pt-2 pl-2.5 type-note font-medium whitespace-nowrap text-foreground"
-            style={finlandX}
-          >
-            {finlandLabel}
-          </span>
-        )}
         <span className="absolute -top-px bottom-0 w-px bg-foreground" style={finlandX} />
       </div>
       {/* Source chips, siblings of the row links (never inside one). Desktop: one over each
           figure column, the GP wait chip ending on the figures' right edge. Below lg: both on
           one row under the label. */}
-      {gpWaitSourceId && referralSourceId && (
-        <div className="col-span-3 flex flex-wrap items-center gap-1.5 pb-2 lg:contents">
+      {gpWaitSourceId && referralSourceId ? (
+        <div className="col-span-3 flex flex-wrap items-center gap-2 pb-2 lg:contents">
           <span className="flex shrink-0 lg:col-start-4 lg:justify-end lg:pt-4 lg:pb-2">
             <span className="flex shrink-0">
               <SourceChip sourceId={gpWaitSourceId} year={LATEST_YEAR} />
             </span>
           </span>
-          <span className="flex shrink-0 lg:col-start-5 lg:pt-4 lg:pb-2">
+          <span className={`flex shrink-0 lg:pt-4 lg:pb-2 ${REFERRAL_COL}`}>
             <SourceChip sourceId={referralSourceId} year={LATEST_YEAR} />
           </span>
         </div>
+      ) : (
+        <span aria-hidden className={`hidden lg:block ${REFERRAL_COL}`} />
       )}
     </div>
+  );
+}
+
+/**
+ * The referral share as a 48px bar with its own Finland tick: the same higher-is-better bar as
+ * everywhere else, small. No value draws the hatched track alone, never a zero-length bar.
+ */
+function ReferralMiniBar({
+  value,
+  finland,
+  status,
+  index,
+}: {
+  value: number | null;
+  finland: number;
+  status: GapStatus;
+  index: number;
+}) {
+  return (
+    <span
+      aria-hidden
+      className={`relative hidden h-2 w-12 shrink-0 rounded-[2px] sm:block ${
+        value === null ? "bg-hatch ring-1 ring-status-grey-border ring-inset" : "bg-track"
+      }`}
+    >
+      {value !== null && (
+        <BarFill value={value} finland={finland} status={status} index={index} higherIsBetter />
+      )}
+      {value !== null && <FinlandTick finland={finland} className="-inset-y-1 w-px" />}
+    </span>
   );
 }
 
@@ -331,7 +352,7 @@ function RankingRowLink({
 
   return (
     <Link href={`/county/${row.county.id}`} className={`${ROW_GRID} ${ROW_LINK}`}>
-      <span className="row-span-4 pt-3 text-[0.8125rem] leading-6 text-faint tabular-nums lg:row-span-2 lg:flex lg:items-center lg:pt-0">
+      <span className="row-span-4 pt-3 figure text-[0.8125rem] leading-6 text-faint lg:row-span-2 lg:flex lg:items-center lg:pt-0">
         <span className="sr-only">Rank </span>
         {row.rank}
       </span>
@@ -354,10 +375,10 @@ function RankingRowLink({
           <ChangeSince change={row.gpWaitChange} />
         </span>
         <span className="flex justify-end lg:col-start-4 lg:row-start-2 lg:pt-0.5 lg:pb-2">
-          <StatusBadge status={row.gpStatus} size="xs" variant="quiet" className="h-4 tabular-nums">
+          <StatusBadge status={row.gpStatus} size="xs" variant="quiet" className="h-4">
             <span>
               <span className="sr-only">{STATUS_LABEL[row.gpStatus]}: </span>
-              <span className="font-medium text-foreground/80">
+              <span className="figure font-medium text-foreground/80">
                 {gapToFinland(row.gpWait.value, nationalGpWait)}
               </span>{" "}
               vs Finland
@@ -382,31 +403,45 @@ function RankingRowLink({
         />
       </div>
 
-      {/* Referral: value in one tabular column, then one quiet tag for every state. */}
-      <span className="col-span-2 col-start-2 row-start-4 flex items-center gap-x-2 pt-1 pb-3 lg:col-span-1 lg:col-start-5 lg:row-span-2 lg:row-start-1 lg:py-0">
+      {/* Referral, a second indicator behind its own divider: the value with a small bar of
+          its own (Finland tick included), then one quiet text tag for every state. One line
+          below lg, two lines on desktop, like the GP wait column next to it. */}
+      <span
+        className={`col-span-2 col-start-2 row-start-4 flex items-center gap-x-2 pt-1 pb-3 lg:col-span-1 lg:row-span-2 lg:row-start-1 lg:py-0 ${REFERRAL_COL}`}
+      >
         <span className="type-caption text-muted-foreground lg:sr-only">
           Referrals<span className="sr-only"> processed within 3 days:</span>
         </span>
-        <span className="w-11 shrink-0 text-[0.8125rem] font-medium text-foreground tabular-nums lg:w-12 lg:text-sm">
-          {row.referral === null ? (
-            <span aria-hidden className="text-faint">
-              –
+        <span className="flex min-w-0 items-center gap-x-2 lg:flex-col lg:items-start lg:gap-y-1.5">
+          <span className="flex h-5 items-center gap-x-2.5">
+            <span className="w-11 shrink-0 figure text-[0.8125rem] font-medium text-foreground lg:w-12 lg:text-sm">
+              {row.referral === null ? (
+                <span aria-hidden className="text-faint">
+                  –
+                </span>
+              ) : (
+                formatPct(row.referral.value)
+              )}
             </span>
-          ) : (
-            formatPct(row.referral.value)
-          )}
-        </span>
-        <StatusBadge status={referralStatus} size="xs" variant="quiet">
-          <span>
-            {REFERRAL_TAG[referralStatus]}
-            {referralStatus !== "no_data" && (
-              <span className="sr-only">
-                {referralStatus === "amber" ? " as Finland" : ""} (Finland{" "}
-                {formatPct(nationalReferral)})
-              </span>
-            )}
+            <ReferralMiniBar
+              value={row.referral === null ? null : row.referral.value}
+              finland={nationalReferral}
+              status={referralStatus}
+              index={index}
+            />
           </span>
-        </StatusBadge>
+          <StatusBadge status={referralStatus} size="xs" variant="quiet" className="lg:h-4">
+            <span>
+              {REFERRAL_TAG[referralStatus]}
+              {referralStatus !== "no_data" && (
+                <span className="sr-only">
+                  {referralStatus === "amber" ? " as Finland" : ""} (Finland{" "}
+                  {formatPct(nationalReferral)})
+                </span>
+              )}
+            </span>
+          </StatusBadge>
+        </span>
         <RowChevron className="ml-auto" />
       </span>
     </Link>
@@ -423,9 +458,9 @@ function ChangeSince({ change }: { change: number | null }) {
   }
   const up = change > 0;
   return (
-    <span className="type-micro text-muted-foreground tabular-nums">
+    <span className="type-micro text-muted-foreground">
       <span className="sr-only">{up ? "Up" : "Down"} </span>
-      <span className="font-medium text-foreground/80">
+      <span className="figure font-medium text-foreground/80">
         <span aria-hidden>{up ? "+" : "−"}</span>
         {Math.abs(change).toFixed(1)} pts
       </span>{" "}
