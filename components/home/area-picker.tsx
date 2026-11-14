@@ -34,8 +34,8 @@ const readUrlArea = () => new URLSearchParams(window.location.search).get("area"
 const noUrlArea = () => null;
 
 /**
- * The home page. First screen: the area list and the one filled button ("Start the 2-minute
- * briefing for …") beside the briefing's step 1 for that area. Below a divider, one link per
+ * The home page. First screen: the area list and the one filled button ("Start the briefing
+ * for …") beside the briefing's step 1 for that area. Below a divider, one link per
  * place to look through the data: the briefing and the area page show the rest.
  */
 export function AreaPicker({ areas, defaultId, totalAreas, previews }: Props) {
@@ -69,8 +69,8 @@ export function AreaPicker({ areas, defaultId, totalAreas, previews }: Props) {
 
   return (
     <>
-      <section aria-label="Guided briefing" className="grid gap-3 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
-        <FramePanel padding="none" className="flex flex-col gap-5 p-5 sm:p-7 print:hidden">
+      <section aria-label="Guided briefing" className="grid gap-3 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        <FramePanel padding="none" className="flex flex-col gap-5 p-5 sm:p-7 lg:justify-center lg:gap-7 print:hidden">
           <div className="flex flex-col gap-2">
             <label htmlFor={selectId} className="type-heading text-forest-ink">
               Choose your area
@@ -97,7 +97,7 @@ export function AreaPicker({ areas, defaultId, totalAreas, previews }: Props) {
           </div>
           <div className="flex flex-col gap-3">
             <Link href={startHref} onClick={markArrival} className={cn(PRIMARY_BUTTON, "w-full text-[1.0625rem]")}>
-              <span>Start the 2-minute briefing for {area.name}</span>
+              <span>Start the briefing for {area.name}</span>
               <ArrowRight aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />
             </Link>
             <p className="text-base leading-6 text-pretty text-charcoal">
