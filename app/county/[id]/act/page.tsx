@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { ActionCard, ActionSummary } from "@/components/act/action-card";
+import { ActionCard, ActionSummary, plainTitle } from "@/components/act/action-card";
 import { RedFlagHelper } from "@/components/act/red-flag-helper";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
 import { WhatIfForArea } from "@/components/home/what-if-panel";
 import { buildPathwaySteps, PathwaySteps } from "@/components/pathway/pathway-steps";
 import { BackLink } from "@/components/ui/back-link";
+import { CardCarousel } from "@/components/ui/card-carousel";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Disclosure } from "@/components/ui/disclosure";
 import {
@@ -76,13 +77,21 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
             {bottleneck.anyRed ? "Ordered by where the pathway breaks" : "Ordered by closeness to Finland's level"}
           </FrameMeta>
         </FrameHeader>
-        <div className="flex flex-col gap-3">
-          {recommended.map((action, index) => (
-            <ActionCard key={action.id} action={action} index={index + 1}>
-              <EvidenceFinder actionId={action.id} actionTitle={action.action} />
-            </ActionCard>
-          ))}
-        </div>
+        {/* One action at a time, a peek of the next; the same height for all. */}
+        <CardCarousel
+          label={`Recommended actions for ${county.name}`}
+          noun="action"
+          showSteps
+          items={recommended.map((action, index) => ({
+            id: action.id,
+            label: plainTitle(action.action),
+            node: (
+              <ActionCard action={action} index={index + 1}>
+                <EvidenceFinder actionId={action.id} actionTitle={action.action} />
+              </ActionCard>
+            ),
+          }))}
+        />
 
         {otherCount > 0 ? (
           <Disclosure
@@ -151,7 +160,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
             renderExtra={(step) =>
               step.stage === "gp_recognition" ? (
                 <TextLink kind="jump" href="#red-flags" className="type-caption sm:min-h-6">
-                  Red-flag helper
+                  Which referral route fits a concern?
                 </TextLink>
               ) : null
             }
@@ -164,7 +173,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
       <Frame aria-labelledby="red-flags">
         <FrameHeader>
           <FrameTitle id="red-flags" className="type-title scroll-mt-24">
-            Red-flag helper for GPs
+            Which referral route fits a concern?
           </FrameTitle>
           <FrameDescription>
             For the &ldquo;GP recognises warning signs&rdquo; step: a concern in, the referral route out.

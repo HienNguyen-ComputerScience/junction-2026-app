@@ -144,7 +144,7 @@ export function ActionCard({
     <FramePanel
       padding="none"
       id={index !== undefined ? `action-${index}` : undefined}
-      className="@container scroll-mt-20 px-4 py-3.5 sm:px-6"
+      className="@container w-full min-w-0 scroll-mt-20 px-4 py-3.5 sm:px-6"
     >
       <div className="grid gap-x-10 gap-y-2.5 @3xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-3">
