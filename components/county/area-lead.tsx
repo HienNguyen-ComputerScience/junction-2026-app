@@ -17,7 +17,7 @@ const LEAD_UNIT: Partial<Record<Stage, string>> = {
 
 /** The headline figure's one main caveat: a few words always visible, the indicator's own text behind "Why?". */
 const LEAD_CAVEAT: Partial<Record<Stage, string>> = {
-  gp_access: "counts visits, not people, and all non-urgent visits, not only possible cancer",
+  gp_access: "counts visits, not people; not only cancer",
   referral: "measures when assessment starts, not when a specialist is seen",
 };
 
