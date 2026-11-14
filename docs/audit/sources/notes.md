@@ -2,7 +2,7 @@
 
 ## Third pass (design polish, branch `t3/polish-sources-page-design`)
 
-Built on `t3/post-freeze-build-integration` (merged at the start and again before the final checks, which include the in-place Save or share and the static numbers). Checked on a production build (`npm run start -- -p 3112`) with playwright-core and its bundled Chromium.
+Built on `t3/post-freeze-build-integration`, merged three times: at the start, after the first commit, and again at the end. The integration branch was rewritten mid-task, so the final merge needed one shared conflict (`components/motion/animated-number.tsx`) and one stray line (`components/compare/compare-table.tsx`) set to the integration branch's version. After that, the tree differs from the integration branch only in `app/sources`, `components/sources` and `docs/audit/sources`. The final numbers below were re-measured on that tree and match the earlier run exactly (fact-diff after3 → final: 0 missing, 0 added). Checked on a production build (`npm run start -- -p 3112`) with playwright-core and its bundled Chromium.
 
 What the judges marked down (rounds 1–4: 6.5 → 8.0, motion 7.5) and what changed:
 
@@ -39,6 +39,16 @@ Print render after `beforeprint` (PrintExpand opened all 23 panels, 0 closed), s
 - **Links:** all 34 before links are present; one added (`/compare`, in Read next, screen only). That covers all 31 `data/sources.json` URLs and the map boundaries link.
 - **No new numbers.** "7 days" and "3 days" come from the indicators' own short names, already on the page.
 - "Finland's level" and a bare "worse than Finland" do not appear.
+- **Added (screen only, so not in the print diff):** the Read next card's three rows: "Three things to know before you read any figure", "Every area side by side, against Finland overall", and "One area's figures and what it can do". "Three" is typed by hand: it repeats the /how-to-read headline and is not data. If /how-to-read changes its count, change this line too.
+- **All panels open (390 and 1366):** 23 of 23 open, no sideways scroll, nothing under 16px except the eyebrows, and no element past the right edge.
+
+### Self-score (after, against the judges' rubric)
+
+| Clarity 25% | Ease 25% | Hierarchy 20% | Type & spacing 15% | Motion 10% | Accessibility 5% | Weighted |
+|---|---|---|---|---|---|---|
+| 8.5 | 8.5 | 8.5 | 8.5 | 8.0 | 8.5 | **8.45** (was 8.0) |
+
+This is not 9.0. The judge's best page, the briefing, scores 8.9, and this page does not beat it. What still holds it back: nine identical "Show definition and scope" buttons (`Disclosure` has no accessible-name prop; that is a shared change); the evidence list, which is the heart of the transparency story, sits behind one closed button; the phone page is 350px longer; and the motion is plain by design.
 
 ### Screenshots (third pass)
 
