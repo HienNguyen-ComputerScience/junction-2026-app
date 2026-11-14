@@ -200,7 +200,7 @@ function Claims({
           </ul>
         ) : (
           <section key={segment.key} aria-label="Recommended actions" className="border-t border-border">
-            <FramePanelLabel>
+            <FramePanelLabel divider>
               <h3 className="font-sans type-caption font-medium tracking-normal">
                 Recommended {segment.items.length === 1 ? "action" : "actions"}
               </h3>
@@ -306,7 +306,7 @@ export function CountyBriefClient({
           className={`transition-opacity duration-150 ${status === "loading" ? "opacity-50" : ""}`}
         >
           {/* Label strip: where the brief comes from on the left, its sources on the right. */}
-          <FramePanelLabel>
+          <FramePanelLabel divider>
             <span className="flex flex-wrap items-center gap-x-2 gap-y-1 font-normal">
               <Badge variant="checked" source={brief.mode === "fallback" ? "snapshot" : undefined}>
                 {brief.mode === "ai" && brief.headline_precomputed ? AI_PRECOMPUTED_HEADLINE_LABEL : MODE_LABEL[brief.mode]}

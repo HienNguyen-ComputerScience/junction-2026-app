@@ -73,7 +73,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   const otherCount = others.reduce((total, group) => total + group.actions.length, 0);
 
   return (
-    <main className="page-container flex flex-col gap-6 pt-4 sm:pt-6">
+    <main className="page-container flex flex-col gap-8 pt-4 sm:pt-6">
       <header className="flex flex-col items-start gap-2">
         <BackLink href={`/county/${county.id}`}>Back to {county.name} pathway</BackLink>
         <div className="flex flex-col gap-2">
@@ -121,7 +121,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
             Worst step first: one action per step, then up to three in all
           </FrameMeta>
         </FrameHeader>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-3">
           {recommended.map((action, index) => (
             <ActionCard key={action.id} action={action} index={index + 1}>
               <EvidenceFinder actionId={action.id} actionTitle={action.action} />
