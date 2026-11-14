@@ -18,6 +18,7 @@ import { plainTitle } from "@/lib/action-title";
 import { counties, getCounty, type Evidence } from "@/lib/data";
 import { MOTION_LOUD_CLASS } from "@/lib/motion";
 import { STATUS_LABEL, formatPct, getIndicator } from "@/lib/ranking";
+import { statusLabel } from "@/lib/status-label";
 
 // Counties are a fixed, known set, so a blocking route is fine here.
 export const instant = false;
@@ -121,8 +122,8 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
               </p>
               <p className="text-lg text-foreground">{FIGURE_CAPTION[lead.indicator_id] ?? getIndicator(lead.indicator_id)?.short_name}</p>
               <span className="flex flex-wrap items-center gap-2 pt-1">
-                <span className="inline-flex min-h-8 items-center rounded-full bg-border-mist px-3.5 text-base text-forest-ink">
-                  Finland overall: {formatPct(lead.national_value)}
+                <span className="inline-flex min-h-8 items-center rounded-2xl bg-border-mist px-3.5 py-1 text-base text-forest-ink">
+                  {statusLabel(lead.status, lead.stage)} ({formatPct(lead.national_value)})
                 </span>
                 <SourceChip sourceId={lead.source_id} year={lead.year} />
               </span>
