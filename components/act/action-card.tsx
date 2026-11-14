@@ -131,9 +131,7 @@ export function ActionCard({
     >
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         {index !== undefined && (
-          <span className="type-caption font-medium text-muted-foreground tabular-nums">
-            Action {index}
-          </span>
+          <span className="type-caption font-medium text-muted-foreground tabular-nums">Action {index}</span>
         )}
         <span className={`${TAG} gap-1`}>
           <span>Step:</span>
@@ -150,9 +148,9 @@ export function ActionCard({
             <h3 className="font-heading text-[1.625rem] leading-[1.2] font-semibold tracking-[-0.01em] text-pretty">
               {plainTitle(action.action)}
             </h3>
-            <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
           </div>
           <FirstStep>{action.first_step}</FirstStep>
+          <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
           <dl>
             <Field label="Owner">{action.who_implements}</Field>
           </dl>
@@ -161,39 +159,44 @@ export function ActionCard({
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
             <p className="type-caption font-medium text-muted-foreground">Evidence</p>
-            {stat && action.effect_size ? (
-              <>
-                <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p>
-                <p className="type-caption text-pretty text-muted-foreground">{statisticLine(action.effect_size)}</p>
-              </>
-            ) : null}
+            {stat ? <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p> : null}
             <p className="text-sm leading-relaxed text-pretty text-foreground tabular-nums">{action.effect_text}</p>
           </div>
           <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-muted-foreground">
             <span className="font-medium">Precedent: </span>
             {action.precedent}
           </p>
-          {/* One stack with one left edge: the disclosures, then the secondary action. */}
+          {/* One stack with one left edge: the one disclosure, then the secondary action. */}
           <div className="flex flex-col items-start">
-            {action.precedent.length > PRECEDENT_LONG ? (
-              <Disclosure summary="Full precedent">
-                <p className="pb-2 pl-[1.375rem] text-sm leading-relaxed text-pretty text-muted-foreground">
-                  {action.precedent}
-                </p>
-              </Disclosure>
-            ) : null}
-            {/* NICE content may not be reproduced outside the UK: link only, never the quote. */}
-            {action.source_id.startsWith("ev-nice") ? null : (
-              <Disclosure summary="Quote and page in the source">
-                <p className="mb-2 ml-[1.375rem] border-l-2 border-border pl-3 type-caption text-muted-foreground">
-                  {action.quote_or_page}
-                </p>
-              </Disclosure>
-            )}
-            <Disclosure summary="Limitations">
-              <p className="pb-2 pl-[1.375rem] text-sm leading-relaxed text-pretty text-muted-foreground">
-                {action.limitations}
-              </p>
+            <Disclosure summary="Evidence details">
+              <div className="flex flex-col gap-3 pb-2 pl-[1.375rem]">
+                {action.precedent.length > PRECEDENT_LONG ? (
+                  <div className="flex flex-col gap-1">
+                    <p className="type-caption font-medium text-muted-foreground">Full precedent</p>
+                    <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.precedent}</p>
+                  </div>
+                ) : null}
+                {action.effect_size || !action.source_id.startsWith("ev-nice") ? (
+                  <div className="flex flex-col gap-1">
+                    <p className="type-caption font-medium text-muted-foreground">Quote and page in the source</p>
+                    {action.effect_size ? (
+                      <p className="type-caption text-pretty text-muted-foreground">
+                        Original statistic: {statisticLine(action.effect_size)}
+                      </p>
+                    ) : null}
+                    {/* NICE content may not be reproduced outside the UK: link only, never the quote. */}
+                    {action.source_id.startsWith("ev-nice") ? null : (
+                      <p className="border-l-2 border-border pl-3 type-caption text-muted-foreground">
+                        {action.quote_or_page}
+                      </p>
+                    )}
+                  </div>
+                ) : null}
+                <div className="flex flex-col gap-1">
+                  <p className="type-caption font-medium text-muted-foreground">Limitations</p>
+                  <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.limitations}</p>
+                </div>
+              </div>
             </Disclosure>
             {children ? <div className="w-full pt-2">{children}</div> : null}
           </div>
