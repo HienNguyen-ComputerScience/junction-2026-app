@@ -75,6 +75,8 @@ export function HomeTool({ rows, unranked }: { rows: RankingRow[]; unranked: Cou
           areaName={county.name}
           stage={gap.stage}
           better={better}
+          value={gap.value}
+          status={gap.status}
           finland={gap.national_value}
           sourceId={gap.source_id}
           year={gap.year}

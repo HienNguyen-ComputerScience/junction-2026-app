@@ -11,22 +11,29 @@ const CAPTION: Record<Gap["stage"], string> = {
 };
 
 /**
- * The home card's focal number: the bottleneck step's share, its status and source on one row,
- * and what it counts with Finland's value. Nothing for a step without a value.
+ * The home tool's focal number: the bottleneck step's share as the page's largest mark, its
+ * status and source beside it, and one caption with what it counts and Finland's value.
+ * Nothing for a step without a value.
  */
 export function LeadFigure({ gap }: { gap: Gap }) {
   if (gap.value === null || !CAPTION[gap.stage]) return null;
   return (
-    <div className="mt-2 flex flex-col gap-1.5">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-        <p className={`numeral text-[3rem] leading-none ${STATUS_FIGURE[gap.status]}`}>{formatPct(gap.value)}</p>
-        <StatusBadge status={gap.status} size="sm">
-          {STATUS_LABEL[gap.status]}
-        </StatusBadge>
-        <SourceChip sourceId={gap.source_id} year={gap.year} />
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <p
+          className={`numeral text-[3.5rem] leading-[0.95] sm:text-[4.75rem] ${STATUS_FIGURE[gap.status]}`}
+        >
+          {formatPct(gap.value)}
+        </p>
+        <div className="flex flex-col items-start gap-1.5">
+          <StatusBadge status={gap.status} size="md">
+            {STATUS_LABEL[gap.status]}
+          </StatusBadge>
+          <SourceChip sourceId={gap.source_id} year={gap.year} />
+        </div>
       </div>
-      <p className="type-caption text-muted-foreground">
-        {CAPTION[gap.stage]} · Finland <span className="figure">{formatPct(gap.national_value)}</span>
+      <p className="text-sm text-pretty text-muted-foreground">
+        {CAPTION[gap.stage]} · Finland <span className="figure text-foreground">{formatPct(gap.national_value)}</span>
       </p>
     </div>
   );

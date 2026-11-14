@@ -33,20 +33,22 @@ export default function CountyRankingPage() {
   const totalAreas = rows.length + unranked.length;
 
   return (
-    <main className="page-container flex flex-col gap-6 pt-3 sm:pt-6">
+    <main className="page-container flex flex-col gap-10 pt-3 sm:gap-14 sm:pt-6">
       {/* A short headline, then the tool: pick an area, see where its pathway breaks and what to
           do first. The ranking is further down, for comparing. */}
+      <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-1.5">
         <p className="flex items-center gap-2.5 text-sm leading-6 font-medium text-foreground sm:text-[0.9375rem]">
           <span aria-hidden className="h-4 w-0.5 shrink-0 bg-foreground" />
           First step to early cancer care: getting to a GP
         </p>
-        <h1 className="type-display text-[1.75rem] text-foreground sm:text-[2.25rem] lg:text-[2.375rem]">
+        <h1 className="type-display text-[1.5rem] text-foreground sm:text-[1.75rem] lg:text-[2rem]">
           In Finland, where you live decides how fast you get to see a GP
         </h1>
       </header>
 
       <HomeTool rows={rows} unranked={unranked} />
+      </div>
 
       <EarlyWarning
         areas={[...rows.map((row) => row.county), ...unranked]}
@@ -58,9 +60,8 @@ export default function CountyRankingPage() {
           <FrameTitle id="ranking-heading" className="type-title">
             Compare all {totalAreas} areas
           </FrameTitle>
-          <FrameDescription className="max-w-none">
-            Longest GP waits first. 21 wellbeing services counties and the City of Helsinki. Select
-            an area to see where its delay sits.
+          <FrameDescription>
+            Longest GP waits first. 21 wellbeing services counties and the City of Helsinki.
           </FrameDescription>
         </FrameHeader>
         <FramePanel padding="none">

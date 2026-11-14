@@ -20,7 +20,8 @@ import {
  * are CSS only. Boundaries: Statistics Finland, CC BY 4.0 (see finland-paths.ts). The borders
  * between areas are drawn in the panel colour, so the map belongs on a panel (`bg-card`).
  *
- * Give the figure a height through `className` (200px to 420px, e.g. `h-80`); the map takes
+ * Give the figure a height through `className` (200px to 420px, e.g. `h-80`) and room for the
+ * one-line Åland note under it (about 18px, e.g. `mb-5`); the map takes
  * its width from that height (0.574 of it). Each highlighted area adds a label column beside
  * the map, about 115px wide, on the side where its leader crosses less land.
  *
@@ -263,7 +264,10 @@ export function FinlandMap({
                   strokeWidth={small ? 0.75 : 1}
                   className={cn(
                     "transition-colors group-focus-visible:stroke-ring group-focus-visible:[stroke-width:4px]",
-                    selected ? (small ? "stroke-brand [stroke-width:2px]" : "stroke-brand [stroke-width:5px]") : "stroke-card",
+                    // Selected: a 2px accent outline inside the area (the stroke is clipped to it).
+                    // While one area is selected the others step back a little.
+                    selected ? (small ? "stroke-brand [stroke-width:2px]" : "stroke-brand [stroke-width:4px]") : "stroke-card",
+                    selectedId !== undefined && !selected && "opacity-[0.72] group-hover:opacity-100 group-focus-visible:opacity-100",
                     small ? SMALL_AREA[area.status] : AREA_FILL[area.status],
                   )}
                 />
@@ -275,6 +279,15 @@ export function FinlandMap({
         {labels.map((item) => (
           <Leader key={item.area.id} item={item} />
         ))}
+
+        {/* Åland is drawn but has no data: said in words just under it (below the map's box, so
+            it never covers an area), so the shape is not a puzzle. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute top-full left-0 mt-0.5 whitespace-nowrap type-note text-faint"
+        >
+          Åland: not in the data
+        </span>
       </div>
 
       <LabelColumn side="right" labels={rightLabels} nameOnly={picker} />
