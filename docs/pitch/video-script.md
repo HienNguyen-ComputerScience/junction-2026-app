@@ -59,6 +59,11 @@ If the Exa strip shows a newer Vantaa–Kerava item on recording day, say that o
 - *"Did these actions really work?"* We show the honest result. Sweden cut waits but regional gaps stayed. Denmark's direct CT alone didn't help significantly. Both are in the evidence table with sources.
 - *"How is Exa different from the checked table?"* Exa results are labelled "found live — unverified" and never mixed into the checked evidence. The validator drops any sentence whose number isn't in a returned source.
 
-## Screen recording
+## Screen recording and draft cut
 
-Take 1 (14 Nov, live site, silent, 1920×1080, 66 s) covers shots 3–7: ranking → Vantaa–Kerava page → named-GP card → South Ostrobothnia Denmark card → red-flag helper ("weight loss, tiredness") → Local news. Saved outside the repo as `Junction 2026/firstline-screens-take1.mp4`. Re-record with `docs/pitch/record-screens.js` (run it in a folder with `npm i playwright@1.49.1 && npx playwright install chromium`; not a project dependency). Still to add: title and close slides, the 0:12 pathway slide, and the voice-over.
+Draft cut (14 Nov): **1:43**, 1920×1080 MP4. Slides 1, 2 and 9, the live-site screen take with captions, and a **draft robot voice** (Windows built-in speech) reading the `video-shot-script.md` lines. Saved outside the repo as `Junction 2026/firstline-video-draft.mp4`. Replace the voice with a human one if there's time: it mispronounces "Päijät-Häme".
+
+Rebuild in a scratch folder with `npm i playwright@1.49.1 && npx playwright install chromium` (not a project dependency) and ffmpeg, using the scripts in `docs/pitch/video-build/`:
+1. `node record-screens.js`: records the app shots from the live site into `take1/`. If the page timings change, update the take start times in `build.py`.
+2. `node frames.js`: renders the slides and caption PNGs.
+3. `python build.py`: voice per shot, then cut, caption and join into `firstline-video-draft.mp4`.
