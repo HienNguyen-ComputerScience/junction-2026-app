@@ -165,7 +165,7 @@ So a reader who reads every word, captions and caveats included, needs about two
 - **Choices are not in the address.** The action chosen on step 4 and the year chosen on step 5 are lost on a refresh (the step itself is kept).
 - **The edge lines are desktop only** and purely decorative.
 - **Motion was recorded as frames, not as video.**
-- **`package-lock.json` shows as modified in this worktree** (three added lines from `npm install`, there before this work started). It is not part of any commit here; the verify command ran with it.
+- **No Vercel preview.** The project hit its free-tier limit of 100 deployments a day, so the preview build of this branch fails with "Resource is limited" / "Deployment rate limited". Everything here was verified locally, on `next build` and `next start`.
 
 ## Needed from the foundation agent
 
