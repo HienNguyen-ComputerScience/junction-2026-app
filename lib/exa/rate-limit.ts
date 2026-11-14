@@ -14,8 +14,8 @@ const WINDOW_MS = 60_000;
 const LIMITS: Record<Bucket, { perIp: number; global: number }> = {
   news: { perIp: 60, global: 600 }, // county + national strips: cheap, mostly cached
   evidence: { perIp: 40, global: 200 }, // up to ~6 panels per action page
-  // ask: the route counts only requests that will search (cache hits, the off-topic gate and 400s are
-  // free). Judges at the venue share one public IP, so per IP is 40 (two thirds of the global cap: the
+  // ask: the route counts a request only just before it spends (a live Exa search or a Claude call),
+  // at most once; cache hits, merged duplicate asks, the off-topic gate and 400s are free. Judges at the venue share one public IP, so per IP is 40 (two thirds of the global cap: the
   // venue can't be locked out by its own clicks, and other visitors keep 20). The global 60 per minute
   // per instance is the spend cap and is unchanged.
   ask: { perIp: 40, global: 60 },
@@ -52,21 +52,30 @@ export function hit(bucket: Bucket, ip: string): number | null {
 }
 
 /**
- * Applies the limit. Returns a 429 response to send, or null to continue.
- * The body also carries `freshness: "unavailable"` and empty `items`, so clients that only read
- * those fields show the normal "unavailable" state.
+ * The 429 as plain data (body + init), so one outcome can become several responses: POST /api/ask
+ * hands the same outcome to every request merged into one computation, and a Response body is
+ * single-use. The body also carries `freshness: "unavailable"` and empty `items`, so clients that
+ * only read those fields show the normal "unavailable" state.
  */
+export function limitedReply(retryAfter: number) {
+  return {
+    body: {
+      message: "Live search is busy. Try again in a minute.",
+      freshness: "unavailable" as const,
+      items: [] as never[],
+      nothingFound: false as const,
+      answer: null,
+    },
+    init: { status: 429, headers: { "retry-after": String(retryAfter) } },
+  };
+}
+
+export type LimitedReply = ReturnType<typeof limitedReply>;
+
+/** Applies the limit. Returns a 429 response to send, or null to continue. */
 export function rateLimit(request: Request, bucket: Bucket): NextResponse | null {
   const retryAfter = hit(bucket, clientIp(request));
   if (retryAfter === null) return null;
-  return NextResponse.json(
-    {
-      message: "Live search is busy. Try again in a minute.",
-      freshness: "unavailable",
-      items: [],
-      nothingFound: false,
-      answer: null,
-    },
-    { status: 429, headers: { "retry-after": String(retryAfter) } },
-  );
+  const { body, init } = limitedReply(retryAfter);
+  return NextResponse.json(body, init);
 }

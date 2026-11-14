@@ -196,9 +196,21 @@ export type SearchOptions = {
   snippetChars?: number;
 };
 
+const searchKey = (body: SearchRequest, opts: SearchOptions) =>
+  `search:${opts.cacheKey ?? JSON.stringify(body)}:${opts.snippetChars ?? 400}`;
+
+/**
+ * True when `search(body, opts)` called now would be served from the fresh cache without calling Exa.
+ * Lets a route count a request against the rate limit only when it is about to spend. Synchronous, so
+ * nothing can change the cache between this check and a `search()` call made right after it.
+ */
+export function searchCached(body: SearchRequest, opts: SearchOptions): boolean {
+  return cacheGet(searchKey(body, opts), opts.ttlMs)?.fresh ?? false;
+}
+
 /** Search Exa and return normalised items. Never throws: on failure it serves stale cache or an empty list. */
 export async function search(body: SearchRequest, opts: SearchOptions): Promise<ItemsResult> {
-  const key = `search:${opts.cacheKey ?? JSON.stringify(body)}:${opts.snippetChars ?? 400}`;
+  const key = searchKey(body, opts);
   const hit = cacheGet<Item[]>(key, opts.ttlMs);
   if (hit?.fresh) return { items: hit.value, freshness: "cache", retrievedAt: hit.retrievedAt };
 

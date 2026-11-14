@@ -2,10 +2,21 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { writeAnswer, type Answer } from "@/lib/exa/answer";
 import { askTtl, shouldCacheAsk, type AskTtl } from "@/lib/exa/ask-cache";
-import { cacheGet, cacheSet, search, simulateOutage, isoDaysAgo, type Freshness, type Item } from "@/lib/exa/client";
+import {
+  cacheGet,
+  cacheSet,
+  search,
+  searchCached,
+  simulateOutage,
+  isoDaysAgo,
+  type Freshness,
+  type Item,
+  type SearchOptions,
+  type SearchRequest,
+} from "@/lib/exa/client";
 import { ASK_DOMAINS, ASK_EXAMPLES, COUNTIES, GOV_FI, TTL } from "@/lib/exa/config";
 import { demoCacheGet } from "@/lib/exa/demo-cache";
-import { rateLimit } from "@/lib/exa/rate-limit";
+import { clientIp, hit, limitedReply, type LimitedReply } from "@/lib/exa/rate-limit";
 import { detectCounty, filterRelevant, isOnTopic, namesOtherCountry } from "@/lib/exa/relevance";
 
 // POST /api/ask  { "question": "..." }
@@ -17,9 +28,18 @@ import { detectCounty, filterRelevant, isOnTopic, namesOtherCountry } from "@/li
 //     domains, last 12 months only;
 //   - other questions → health-care domains only, framed "Finland, health care";
 //   - results with no topic term and no question word are dropped; none left → nothingFound.
-// Order: 400s and the off-topic gate (free), then the answer cache (free), then the rate limit, so
-// only requests that will search (and maybe call Claude) count. The venue shares one IP; a room of
-// judges clicking the same example chips must never see a 429.
+// Order: 400s and the off-topic gate (free), then the answer cache (free), then the in-flight merge
+// (free), then the work. The venue shares one IP; a room of judges clicking the same example chips
+// must never see a 429.
+// Rate limit: a request is counted only just before it spends, at most once: before a live Exa search
+// (search-cache miss), else before the Claude call. A search-cache hit that leaves nothing to answer
+// spends nothing and is not counted. Limited at either step: the expired cached answer if there is
+// one, else the 429.
+// In-flight merge: identical asks (same normalised question) arriving while one is being computed
+// await that computation and get its outcome as their own response (header `x-ask-shared: 1`); only
+// the first (the leader) is counted and spends, so if the leader is limited they all are. Per server
+// instance, like the cache and the limiter: on Vercel each instance merges only its own requests.
+// Simulated-outage requests bypass the merge.
 // Cache: answers keep TTL.ask (24 h); every nothing-found keeps TTL.askNothingFound (5 min) and then
 // re-runs the search too; "unavailable" is never cached (lib/exa/ask-cache.ts).
 
@@ -44,6 +64,18 @@ type AskResponse = {
   /** Set only on the off-topic gate reply: no search ran, so the UI hides the freshness badge. */
   offTopic?: true;
 };
+
+/**
+ * What a computation produces, as plain data: a Response body is single-use, so each merged request
+ * builds its own response from this.
+ */
+type Outcome = { body: AskResponse | LimitedReply["body"]; init?: { status: number; headers: Record<string, string> } };
+
+/** Computations in progress, by answer-cache key. Per server instance (see the header comment). */
+const inflight = new Map<string, Promise<Outcome>>();
+
+const respond = (o: Outcome, shared = false) =>
+  NextResponse.json(o.body, shared ? { ...o.init, headers: { ...o.init?.headers, "x-ask-shared": "1" } } : o.init);
 
 export async function POST(request: NextRequest) {
   let body: unknown;
@@ -85,103 +117,136 @@ export async function POST(request: NextRequest) {
   if (cached && cached.ageMs < ttlMs) {
     return NextResponse.json({ ...cached.value, freshness: "cache", retrievedAt: cached.retrievedAt });
   }
-  const stale = () =>
-    cached && NextResponse.json({ ...cached.value, freshness: "stale-cache", retrievedAt: cached.retrievedAt });
+  if (outage) return respond(await compute());
+  const running = inflight.get(cacheKey);
+  if (running) return respond(await running, true);
+  // Set synchronously after the cache lookup (no await in between), so concurrent duplicates find it.
+  const computation = compute();
+  inflight.set(cacheKey, computation);
+  try {
+    return respond(await computation);
+  } finally {
+    // Always cleared once settled (answer, nothing-found, unavailable, limited or a thrown error), so a
+    // failure never wedges a question: the next ask starts a new computation.
+    inflight.delete(cacheKey);
+  }
 
-  // Counted only from here on: this request will search, and may call Claude.
-  const limited = rateLimit(request, "ask");
-  if (limited) return stale() ?? limited;
+  async function compute(): Promise<Outcome> {
+    const stale = (): Outcome | null =>
+      cached ? { body: { ...cached.value, freshness: "stale-cache", retrievedAt: cached.retrievedAt } } : null;
 
-  const since = isoDaysAgo(365);
-  const result = county
-    ? await search(
-        {
-          // The question keeps its meaning; the county's Finnish query terms pull local sources.
-          query: `${question} — ${county.query}`,
-          type: "auto",
-          numResults: 6,
-          userLocation: "FI",
-          startPublishedDate: since,
-          includeDomains: [...new Set([...county.includeDomains, ...GOV_FI])],
-          contents: { highlights: { maxCharacters: 800 } },
-        },
-        { ttlMs, simulateOutage: outage, snippetChars: 800, cacheKey: `askq:${county.id}:${key}`, pin },
-      )
-    : await search(
-        {
-          // Keep retrieval on topic: "GP queue in Kainuu" alone returns gaming sites (probe F4).
-          query: `${question} — ${namesOtherCountry(question) ? "health care" : "Finland, health care"}`,
-          type: "auto",
-          numResults: 6,
-          userLocation: "FI",
-          includeDomains: ASK_DOMAINS,
-          contents: { highlights: { maxCharacters: 800 } },
-        },
-        { ttlMs, simulateOutage: outage, snippetChars: 800, cacheKey: `askq:${key}`, pin },
-      );
-
-  const reply = (r: Omit<AskResponse, "question" | "freshness">) => {
-    const response: AskResponse = {
-      question,
-      freshness: result.freshness,
-      ...scope,
-      ...(result.retrievedAt && { retrievedAt: result.retrievedAt }),
-      ...r,
+    // Counts this request once, just before it first spends. Returns what to send if over the limit.
+    let counted = false;
+    const overLimit = (): Outcome | null => {
+      if (counted) return null;
+      counted = true;
+      const retryAfter = hit("ask", clientIp(request));
+      return retryAfter === null ? null : (stale() ?? limitedReply(retryAfter));
     };
-    if (shouldCacheAsk(result.freshness, r)) cacheSet(cacheKey, response, pin);
-    return NextResponse.json(response);
-  };
 
-  // Exa is down: serve the expired answer if there is one, rather than paying Claude again per click.
-  if (result.freshness === "unavailable" || result.freshness === "stale-cache") {
-    const old = stale();
-    if (old) return old;
-  }
-  if (result.freshness === "unavailable") {
-    const saved = demoCacheGet("ask", key);
-    if (saved) {
-      return NextResponse.json({
-        question,
-        items: saved.items,
-        answer: null,
-        nothingFound: false,
-        message: `Live search unavailable. Showing saved sources from ${saved.retrievedAt}, without a written answer.`,
-        freshness: "stale-cache",
-        retrievedAt: saved.retrievedAt,
-        ...scope,
-      } satisfies AskResponse);
+    const since = isoDaysAgo(365);
+    const [searchBody, searchOpts]: [SearchRequest, SearchOptions] = county
+      ? [
+          {
+            // The question keeps its meaning; the county's Finnish query terms pull local sources.
+            query: `${question} — ${county.query}`,
+            type: "auto",
+            numResults: 6,
+            userLocation: "FI",
+            startPublishedDate: since,
+            includeDomains: [...new Set([...county.includeDomains, ...GOV_FI])],
+            contents: { highlights: { maxCharacters: 800 } },
+          },
+          { ttlMs, simulateOutage: outage, snippetChars: 800, cacheKey: `askq:${county.id}:${key}`, pin },
+        ]
+      : [
+          {
+            // Keep retrieval on topic: "GP queue in Kainuu" alone returns gaming sites (probe F4).
+            query: `${question} — ${namesOtherCountry(question) ? "health care" : "Finland, health care"}`,
+            type: "auto",
+            numResults: 6,
+            userLocation: "FI",
+            includeDomains: ASK_DOMAINS,
+            contents: { highlights: { maxCharacters: 800 } },
+          },
+          { ttlMs, simulateOutage: outage, snippetChars: 800, cacheKey: `askq:${key}`, pin },
+        ];
+    // A live Exa call spends: count it now (a simulated outage counts too: the call is attempted).
+    if (!searchCached(searchBody, searchOpts)) {
+      const limited = overLimit();
+      if (limited) return limited;
     }
-    return reply({ items: [], answer: null, nothingFound: false, message: "Live search unavailable." });
-  }
+    const result = await search(searchBody, searchOpts);
 
-  const items = filterRelevant(question, result.items, countyId);
-  if (items.length === 0) {
-    const message = county ? `Nothing found for ${county.name} in the last 12 months.` : "Nothing found.";
-    return reply({ items: [], answer: null, nothingFound: true, message });
-  }
-
-  const twoYearsAgo = isoDaysAgo(730);
-  if (!county && RECENCY.test(question) && !items.some((i) => i.publishedDate && i.publishedDate >= twoYearsAgo)) {
-    return reply({ items, answer: null, nothingFound: true, message: "No recent results found." });
-  }
-
-  const written = await writeAnswer(question, items);
-  switch (written.status) {
-    case "answered":
-      return reply({ items, answer: written.answer, nothingFound: false });
-    case "nothing-found":
-      return reply({ items, answer: null, nothingFound: true, message: "Nothing found in the sources." });
-    case "unavailable":
-      console.warn(`[ask] answer unavailable: ${written.reason}`);
-      return NextResponse.json({
+    const reply = (r: Omit<AskResponse, "question" | "freshness">): Outcome => {
+      const response: AskResponse = {
         question,
-        items,
-        answer: null,
-        nothingFound: false,
-        message: "Sources only: the written answer is unavailable.",
         freshness: result.freshness,
         ...scope,
         ...(result.retrievedAt && { retrievedAt: result.retrievedAt }),
-      } satisfies AskResponse);
+        ...r,
+      };
+      if (shouldCacheAsk(result.freshness, r)) cacheSet(cacheKey, response, pin);
+      return { body: response };
+    };
+
+    // Exa is down: serve the expired answer if there is one, rather than paying Claude again per click.
+    if (result.freshness === "unavailable" || result.freshness === "stale-cache") {
+      const old = stale();
+      if (old) return old;
+    }
+    if (result.freshness === "unavailable") {
+      const saved = demoCacheGet("ask", key);
+      if (saved) {
+        const body: AskResponse = {
+          question,
+          items: saved.items,
+          answer: null,
+          nothingFound: false,
+          message: `Live search unavailable. Showing saved sources from ${saved.retrievedAt}, without a written answer.`,
+          freshness: "stale-cache",
+          retrievedAt: saved.retrievedAt,
+          ...scope,
+        };
+        return { body };
+      }
+      return reply({ items: [], answer: null, nothingFound: false, message: "Live search unavailable." });
+    }
+
+    const items = filterRelevant(question, result.items, countyId);
+    if (items.length === 0) {
+      const message = county ? `Nothing found for ${county.name} in the last 12 months.` : "Nothing found.";
+      return reply({ items: [], answer: null, nothingFound: true, message });
+    }
+
+    const twoYearsAgo = isoDaysAgo(730);
+    if (!county && RECENCY.test(question) && !items.some((i) => i.publishedDate && i.publishedDate >= twoYearsAgo)) {
+      return reply({ items, answer: null, nothingFound: true, message: "No recent results found." });
+    }
+
+    // The Claude call spends: count it now, unless the live search above was already counted.
+    const limitedAtClaude = overLimit();
+    if (limitedAtClaude) return limitedAtClaude;
+    const written = await writeAnswer(question, items);
+    switch (written.status) {
+      case "answered":
+        return reply({ items, answer: written.answer, nothingFound: false });
+      case "nothing-found":
+        return reply({ items, answer: null, nothingFound: true, message: "Nothing found in the sources." });
+      case "unavailable":
+        console.warn(`[ask] answer unavailable: ${written.reason}`);
+        return {
+          body: {
+            question,
+            items,
+            answer: null,
+            nothingFound: false,
+            message: "Sources only: the written answer is unavailable.",
+            freshness: result.freshness,
+            ...scope,
+            ...(result.retrievedAt && { retrievedAt: result.retrievedAt }),
+          },
+        };
+    }
   }
 }
