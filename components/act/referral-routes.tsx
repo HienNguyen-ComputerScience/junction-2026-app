@@ -17,7 +17,7 @@ import {
 const ROUTES: { urgency: Urgency; label: string }[] = [
   { urgency: "urgent", label: "Fast track" },
   { urgency: "vague", label: "Vague-symptoms work-up" },
-  { urgency: "prompt", label: "Prompt GP check" },
+  { urgency: "prompt", label: "GP check within two weeks" },
   { urgency: "safety_net", label: "Safety-net and recheck" },
 ];
 

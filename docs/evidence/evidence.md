@@ -127,7 +127,7 @@ Clear symptom-based criteria that, when met, send the patient straight to the ri
 
 Each cancer type gets a pathway with maximum waits for each step from referral to treatment. Denmark introduced these nationally in 2007-2009.
 
-- **Who does it:** Wellbeing services county: specialist care director reserves diagnostic slots; pathway rules are national
+- **Who does it:** Wellbeing services county: specialist care director
 - **First step:** Measure the county's current time from GP referral to first specialist test for 2-3 cancers to set a baseline.
 - **Precedent:** Denmark's cancer patient pathways (Kræftpakkeforløb), 2007-2009.
 - **Effect:** The median diagnostic interval was 17 days shorter after the pathways than before (49 to 32 days unadjusted). Three-year relative survival for patients diagnosed via primary care rose from 45% to 54%. — *effect size: -17 days (median diagnostic interval, after vs before pathways (adjusted))*
