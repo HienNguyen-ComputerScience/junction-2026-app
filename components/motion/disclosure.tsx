@@ -52,10 +52,11 @@ export function Disclosure({
             : "underline decoration-forest-ink/40 underline-offset-4 hover:decoration-forest-ink",
         )}
       >
-        <Plus aria-hidden strokeWidth={1.75} className="size-4 shrink-0 group-open/show:hidden" />
-        <Minus aria-hidden strokeWidth={1.75} className="hidden size-4 shrink-0 group-open/show:block" />
-        <span className="group-open/show:hidden">{closed}</span>
-        <span className="hidden group-open/show:inline">{open}</span>
+        {/* data-when, not group-open: a Disclosure inside an open one must follow its own <details>. */}
+        <Plus aria-hidden data-when="closed" strokeWidth={1.75} className="size-4 shrink-0" />
+        <Minus aria-hidden data-when="open" strokeWidth={1.75} className="size-4 shrink-0" />
+        <span data-when="closed">{closed}</span>
+        <span data-when="open">{open}</span>
       </summary>
       <div data-slot="disclosure-content" className={cn("pt-4", contentClassName)}>
         {children}

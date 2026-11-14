@@ -11,7 +11,7 @@ export function BackLink({ className, children, ...props }: ComponentProps<typeo
   return (
     <Link
       className={cn(
-        "inline-flex h-9 w-fit items-center gap-1.5 rounded-sm type-caption font-medium text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
+        "inline-flex h-9 w-fit items-center gap-1.5 rounded-sm text-base font-medium text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
         className,
       )}
       {...props}

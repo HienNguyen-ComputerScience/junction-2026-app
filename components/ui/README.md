@@ -46,7 +46,7 @@ Every bar is zero-based (0 to 100%) and carries a thin off-white marker at Finla
 ## Buttons and links
 
 - **Primary**: `Button` (default), the filled accent. At most one per viewport: the main action of the view ("See all actions", "Ask"). Disabled, it is a flat neutral block with faint text: clearly switched off.
-- **Secondary**: `Button variant="outline"`, a neutral outline on the raised surface ("Rewrite with AI (checked against the figures)", "Show 4 more", "Find more evidence live").
+- **Secondary**: `Button variant="outline"`, a neutral outline on the raised surface ("Rewrite with AI (checked against the figures)", "Show 4 more", "Search for newer studies").
 - **Tertiary**: a text link. `Button` has no other variants; sizes are default (36px) and `lg` (44px).
 - **Links**: `TextLink` (`text-link.tsx`) is the one text link: accent text, no underline until hover, and an icon that says where it goes. `kind="jump"` (further down this page, arrow down), `kind="nav"` (another page of the app, arrow right), `kind="external"` (another site, new tab, the small up-right arrow the source chips use). `inline` sets it in running text. No other link style, and no underlined links.
 - `BackLink`: the only back-link pattern (arrow + text, starts on the page edge). Same names for the same destinations everywhere: "Back to all areas" (to `/`), "Back to <area>" (to the county page; the act page has both), and "See all actions" for the button to the act page.

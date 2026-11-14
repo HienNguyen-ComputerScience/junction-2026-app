@@ -530,6 +530,12 @@ h2:not([class*="type-"], .font-sans) {
   }
 }
 
+/* Open/closed wording of a summary follows its own <details> only (nested disclosures included). */
+details:not([open]) > summary [data-when="open"],
+details[open] > summary [data-when="closed"] {
+  display: none;
+}
+
 /* Disclosure (components/motion/disclosure.tsx): a native <details> that eases open where the
    browser can animate one, and simply opens elsewhere. */
 @supports (interpolate-size: allow-keywords) {

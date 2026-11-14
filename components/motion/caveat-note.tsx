@@ -39,8 +39,8 @@ export function CaveatNote({
       <summary className="flex cursor-pointer list-none flex-wrap items-baseline gap-x-3 gap-y-1 outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
         <span className="text-pretty">{label}</span>
         <span className="inline-flex min-h-8 items-center rounded-full border border-forest-ink bg-cream-paper px-3 text-base font-semibold text-forest-ink hover:bg-keylime-wash print:hidden">
-          <span className="group-open/why:hidden">Why?</span>
-          <span className="hidden group-open/why:inline">Hide why</span>
+          <span data-when="closed">Why?</span>
+          <span data-when="open">Hide why</span>
         </span>
       </summary>
       <div data-slot="disclosure-content" className="max-w-[64ch] pt-2 pb-1 text-base text-pretty">
