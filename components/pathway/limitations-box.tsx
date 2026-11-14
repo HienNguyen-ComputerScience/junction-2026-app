@@ -5,6 +5,8 @@ import { SourceChip } from "@/components/source-chip";
 import { Disclosure } from "@/components/ui/disclosure";
 
 export type LimitationItem = {
+  /** One short line in bold: the point of the limitation. The text under it is its detail. */
+  title?: string;
   text: string;
   sourceId?: string;
 };
@@ -115,13 +117,16 @@ function withFigures(text: string): ReactNode {
   );
 }
 
-const BODY = "text-[0.8125rem] leading-[1.6] text-pretty text-muted-foreground";
+const BODY = "text-[0.8125rem] leading-[1.5] text-pretty text-muted-foreground";
 
 function Limitation({ item }: { item: LimitationItem }) {
-  // Indicator items read "Short name: limitation". The name becomes the item's first line with
-  // its source at the right end, the limitation sits under it; the words stay the same.
-  const split = item.sourceId ? item.text.indexOf(": ") : -1;
-  if (split <= 0) {
+  // An item with a title: the title in bold with its source at the right end, the detail under
+  // it in the secondary grey. Indicator items without one read "Short name: limitation", and the
+  // name becomes the first line the same way; the words stay the same.
+  const split = item.title ? -1 : item.sourceId ? item.text.indexOf(": ") : -1;
+  const title = item.title ?? (split > 0 ? item.text.slice(0, split) : null);
+  const detail = split > 0 ? item.text.slice(split + 2) : item.text;
+  if (title === null) {
     return (
       <li className="flex flex-col gap-0.5">
         <p className={BODY}>{withFigures(item.text)}</p>
@@ -131,14 +136,14 @@ function Limitation({ item }: { item: LimitationItem }) {
   }
   return (
     <li className="flex flex-col gap-0.5">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-[0.8125rem] leading-5 font-medium text-foreground">
-          {item.text.slice(0, split)}
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-[0.8125rem] leading-5 font-semibold text-pretty text-foreground">
+          {title}
           <span className="sr-only">:</span>
         </p>
         {item.sourceId && <SourceChip sourceId={item.sourceId} />}
       </div>
-      <p className={BODY}>{withFigures(item.text.slice(split + 2))}</p>
+      <p className={BODY}>{withFigures(detail)}</p>
     </li>
   );
 }

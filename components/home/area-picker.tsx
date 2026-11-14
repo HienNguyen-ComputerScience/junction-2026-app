@@ -32,15 +32,15 @@ type Props = {
   defaultId: string;
   year: number;
   totalAreas: number;
-  /** Server-rendered parts, so no snapshot data is shipped to the browser. */
-  steps: Record<string, ReactNode>;
-  /** Per area: the bottleneck step's focal figure (absent when it has no value). */
+  /** Per area: the bottleneck step's focal figure (absent when it has no value). Server-rendered. */
   leads: Record<string, ReactNode>;
   whatIfs: Record<string, ReactNode>;
   actions: Record<string, ReactNode>;
   mapChip: ReactNode;
-  /** One line under the map: what red means and the benchmark, with its figures. */
+  /** One short line under the map: what the colours are and the map's source. */
   mapNote: ReactNode;
+  /** The key's states: only those that appear on the map. */
+  mapKey: ("red" | "amber" | "no_data")[];
 };
 
 // The selection is mirrored in the URL (?area=), read after hydration so the page stays static.
@@ -62,12 +62,12 @@ export function AreaPicker({
   defaultId,
   year,
   totalAreas,
-  steps,
   leads,
   whatIfs,
   actions,
   mapChip,
   mapNote,
+  mapKey,
 }: Props) {
   const selectId = useId();
   const answerRef = useRef<HTMLDivElement>(null);
@@ -140,7 +140,7 @@ export function AreaPicker({
       </FramePanel>
 
       {/* The answer for the selected area: the hero card (figure, verdict, the way to the actions,
-          and the top action as its second row), then the what-if, then the three steps. */}
+          and the top action as its second row), then the what-if. */}
       <div ref={answerRef} className="grid scroll-mt-4 content-start gap-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
         <FramePanel padding="none">
           <div className="flex flex-col gap-5 px-5 pt-5 pb-5 sm:px-6">
@@ -165,15 +165,6 @@ export function AreaPicker({
         </FramePanel>
 
         {what}
-
-        <FramePanel padding="none">
-          <FramePanelLabel>
-            <h3 className="font-sans type-caption font-medium text-muted-foreground">
-              The three steps to a specialist ({year})
-            </h3>
-          </FramePanelLabel>
-          {steps[area.id]}
-        </FramePanel>
       </div>
 
       {/* The map: last on a phone, under the picker from lg. */}
@@ -195,8 +186,8 @@ export function AreaPicker({
             {mapNote}
           </p>
         </div>
-        {/* The page's one key: the map's fills and the steps' bars use the same marks. */}
-        <BarKey className="px-5 pt-1 pb-5 sm:px-6" />
+        {/* The map's key: only the states drawn on it. */}
+        <BarKey items={mapKey} className="px-5 pt-1 pb-5 sm:px-6" />
       </FramePanel>
     </section>
   );

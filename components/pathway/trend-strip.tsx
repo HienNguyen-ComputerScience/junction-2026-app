@@ -138,9 +138,9 @@ function TrendRow({ stage }: { stage: TrendStage }) {
   const last = points[points.length - 1];
   const latestIndex = stage.trend.findIndex((point) => point.year === last.year);
   const change = Math.round((last.value - first.value) * 10) / 10;
-  // In words, never an arrow or a sign: a rising wait share is worse, a rising referral share faster.
+  // In words, never an arrow or a sign: a rising wait share is worse, a rising referral share better.
   const faster = stage.direction === "higher is faster";
-  const word = change > 0 ? (faster ? "faster" : "worse") : faster ? "slower" : "better";
+  const word = change > 0 ? (faster ? "better" : "worse") : faster ? "worse" : "better";
 
   return (
     <li className="grid gap-x-10 gap-y-5 py-5 first:pt-0 last:pb-0 lg:grid-cols-[15rem_minmax(0,1fr)]">
@@ -163,7 +163,7 @@ function TrendRow({ stage }: { stage: TrendStage }) {
                   <span className="numeral text-[2.25rem] leading-none text-foreground">
                     {Math.abs(change).toFixed(1)}
                   </span>
-                  <span className="text-sm text-muted-foreground">pts {word}</span>
+                  <span className="text-sm text-muted-foreground">percentage points {word}</span>
                 </>
               )}
             </dd>

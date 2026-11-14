@@ -5,8 +5,9 @@ import { AskBox } from "@/components/exa/ask-box";
 import { NationalNews } from "@/components/exa/national-news";
 import { EarlyWarning } from "@/components/home/early-warning";
 import { HomeTool } from "@/components/home/home-tool";
+import { HUS_FULL } from "@/components/pathway/wording";
 import { RankingList } from "@/components/ranking/ranking-list";
-import { SourceChip } from "@/components/source-chip";
+import { RankingTabs } from "@/components/ranking/ranking-tabs";
 import {
   Frame,
   FrameDescription,
@@ -15,7 +16,7 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
-import { getCounty, LATEST_YEAR, type County } from "@/lib/data";
+import { getCounty, type County } from "@/lib/data";
 import {
   formatPct,
   getNationalValue,
@@ -63,10 +64,6 @@ export default function CountyRankingPage({ searchParams }: PageProps<"/">) {
   }
 
   const totalAreas = rows.length + unranked.length;
-  // The h1's two numbers: the shortest and the longest 2025 GP wait share across the areas.
-  const waitValues = rows.map((row) => row.gpWait.value);
-  const lowestWait = Math.min(...waitValues);
-  const highestWait = Math.max(...waitValues);
 
   return (
     <main className="page-container flex flex-col gap-10 pt-3 sm:gap-14 sm:pt-6">
@@ -77,13 +74,9 @@ export default function CountyRankingPage({ searchParams }: PageProps<"/">) {
         <h1 className="type-display text-[1.375rem] text-foreground sm:text-[1.75rem] lg:whitespace-nowrap">
           In Finland, your area decides how long a non-urgent GP visit waits
         </h1>
-        <p className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-base text-pretty text-muted-foreground">
-          <span>
-            From <span className="figure">{formatPct(lowestWait)}</span> to{" "}
-            <span className="figure">{formatPct(highestWait)}</span> of non-urgent GP visits wait over 7 days,
-            depending on the area
-          </span>
-          <SourceChip sourceId={nationalGpWait.source_id} year={LATEST_YEAR} />
+        <p className="text-base text-pretty text-muted-foreground">
+          For wellbeing services county directors: see where the path to early cancer care is slow, and what
+          to do about it.
         </p>
       </header>
 
@@ -103,42 +96,54 @@ export default function CountyRankingPage({ searchParams }: PageProps<"/">) {
       </Suspense>
       </div>
 
-      <EarlyWarning
-        areas={[...rows.map((row) => row.county), ...unranked]}
-        sourceId={nationalGpWait.source_id}
-      />
-
       <Frame id="ranking" aria-labelledby="ranking-heading" className="scroll-mt-4">
         <FrameHeader>
           <FrameTitle id="ranking-heading" className="type-title">
             Compare all {totalAreas} areas
           </FrameTitle>
           <FrameDescription>
-            Longest GP waits first. 21 wellbeing services counties and the City of Helsinki. Gaps to Finland are in percentage points (pts).
+            Four Uusimaa areas share one referral figure from {HUS_FULL}.
           </FrameDescription>
         </FrameHeader>
-        <FramePanel padding="none">
-          <RankingList
-            rows={rows}
-            unranked={unranked}
-            nationalGpWait={nationalGpWait.value}
-            nationalReferral={nationalReferral.value}
-            gpWaitSourceId={nationalGpWait.source_id}
-            referralSourceId={nationalReferral.source_id}
-          />
-        </FramePanel>
-        {/* No key here: each group names its colour, each row its gap, and the column header
-            the Finland line. The page has one key, under the map in the tool above. */}
+        <RankingTabs
+          label="Order of the areas"
+          tabs={[
+            {
+              id: "longest",
+              label: "Longest GP waits",
+              panel: (
+                <FramePanel padding="none">
+                  <RankingList
+                    rows={rows}
+                    unranked={unranked}
+                    nationalGpWait={nationalGpWait.value}
+                    nationalReferral={nationalReferral.value}
+                    gpWaitSourceId={nationalGpWait.source_id}
+                    referralSourceId={nationalReferral.source_id}
+                  />
+                </FramePanel>
+              ),
+            },
+            {
+              id: "worsening",
+              label: "Getting worse fastest",
+              panel: (
+                <EarlyWarning
+                  areas={[...rows.map((row) => row.county), ...unranked]}
+                  sourceId={nationalGpWait.source_id}
+                />
+              ),
+            },
+          ]}
+        />
         <FrameFooter>
           <p className="max-w-[52rem] text-pretty">
-            Waits are counted from the day the need for care was assessed, for GP (physician)
-            visits in primary care.
+            Waits count from the day the need for care was assessed, in public primary care.
             <span className="lg:hidden">
               {" "}
-              Referrals: the share processed within 3 days (Sotkanet {REFERRAL_ID}). Higher is
-              faster; Finland {formatPct(nationalReferral.value)}.
-            </span>{" "}
-            HUS-wide: one shared figure for the hospital district (HUS) that serves these areas.
+              Referrals: share processed within 3 days, higher is better; Finland{" "}
+              {formatPct(nationalReferral.value)} (Sotkanet {REFERRAL_ID}).
+            </span>
           </p>
         </FrameFooter>
       </Frame>

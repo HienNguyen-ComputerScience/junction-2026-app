@@ -159,16 +159,12 @@ function WhatIfBar({
   const lo = target === null ? null : clamp(Math.min(value, target));
   const hi = target === null ? null : clamp(Math.max(value, target));
   const bestX = best ? clamp(best.value) : null;
-  const valueX = clamp(value);
 
   return (
     <figure className="flex flex-col gap-1.5">
-      {/* Every mark is named on the bar, in 12px: the area's end above, Finland and the best area below. */}
-      <div aria-hidden className="relative h-5 type-note text-muted-foreground">
-        <span className="absolute inset-y-0 flex items-center whitespace-nowrap" style={labelOver(valueX, valueX)}>
-          Now <span className="ml-1 figure text-foreground">{formatPct(value)}</span>
-        </span>
-      </div>
+      {/* Finland and the best area are named under the bar in 12px. The area's own value is the
+          hero figure above, so it is not printed again here. */}
+      <div aria-hidden className="h-2" />
       <div aria-hidden className="relative h-4 rounded-[2px] bg-track">
         {/* The bracket: a dimension line over exactly the span the amount counts. */}
         {lo !== null && hi !== null && amount !== null && (

@@ -8,7 +8,6 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { LATEST_YEAR, type County, type GapStatus } from "@/lib/data";
 import {
   CITY_UNITS_ONLY_REFERRAL,
-  FIRST_YEAR,
   formatPct,
   STATUS_LABEL,
   type RankingRow,
@@ -29,7 +28,7 @@ type Props = {
 // of a group. It is drawn through bar rows only: a group heading has no bar and no line.
 // Below lg: area (rank inline before the name) | value, then the change and gap line, the bar, and the referral line.
 const ROW_GRID =
-  "grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 lg:grid-cols-[2rem_minmax(0,12rem)_minmax(0,1fr)_10.5rem_15.5rem] lg:gap-x-5";
+  "grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 lg:grid-cols-[2rem_minmax(0,12rem)_minmax(0,1fr)_11.5rem_17.5rem] lg:gap-x-5";
 
 // The referral column is a second indicator, not a detail of the GP wait: a hairline with 24px
 // on each side separates the two, in the header, the group headings and every row alike.
@@ -48,8 +47,8 @@ const ROW_DIVIDER =
 
 // Referral column: one short tag per state, so every cell has the same shape.
 const REFERRAL_TAG: Record<GapStatus, string> = {
-  red: "Slower than Finland",
-  amber: "At least as fast",
+  red: "Worse than Finland's level",
+  amber: "At or better than Finland's level",
   no_data: "No public data",
 };
 
@@ -90,13 +89,13 @@ export function RankingList({
           </span>
           <BarAxis finlandX={finlandX} finlandLabel={finlandLabel} />
         </div>
-        <HeadCell line1="GP wait" className="items-end text-right" />
+        <HeadCell line1="GP wait" line2="Gap in percentage points" className="items-end text-right" />
         <HeadCell
           line1="Referrals processed within 3 days"
           line2={
             <>
               Finland&nbsp;<span className="figure">{formatPct(nationalReferral)}</span>, higher
-              is faster
+              is better
             </>
           }
           className={REFERRAL_COL}
@@ -360,19 +359,14 @@ function RankingRowLink({
         </span>
       </span>
 
-      {/* Second line: the change since FIRST_YEAR and the gap to Finland. One flex line below lg,
-          two cells of the grid on desktop. */}
-      <span className="col-span-2 col-start-1 row-start-2 flex items-center justify-between gap-x-3 pt-0.5 lg:contents">
-        <span className="flex h-5 min-w-0 items-center lg:col-start-2 lg:row-start-2 lg:h-[1.625rem] lg:items-start">
-          <ChangeSince change={row.gpWaitChange} />
-        </span>
+      {/* Second line: the gap to Finland, in words (the column header gives the unit). The
+          change over time is the "Getting worse fastest" tab. */}
+      <span className="col-span-2 col-start-1 row-start-2 flex items-center justify-end gap-x-3 pt-0.5 lg:contents">
         <span className="flex h-5 items-center justify-end lg:col-start-4 lg:row-start-2 lg:h-[1.625rem] lg:items-start">
           <StatusBadge status={row.gpStatus} variant="quiet">
             <span>
               <span className="sr-only">{STATUS_LABEL[row.gpStatus]}: </span>
-              <span className="figure">{gapToFinland(row.gpWait.value, nationalGpWait)}</span>
-              {/* On a phone the line above the list says what the gap is measured against. */}
-              <span className="max-lg:sr-only"> vs Finland</span>
+              <GapShort value={row.gpWait.value} finland={nationalGpWait} />
             </span>
           </StatusBadge>
         </span>
@@ -453,22 +447,16 @@ function RankingRowLink({
 }
 
 /**
- * Change in percentage points since FIRST_YEAR, in words: "27.4 pts worse since 2023". No arrow
- * and no sign (a rising arrow reads as good news), and no colour: colour is for status.
+ * The gap to Finland in a row, in words and without a sign: "30.7 above Finland". The column
+ * header says the unit (percentage points); the screen-reader text says it in full.
  */
-function ChangeSince({ change }: { change: number | null }) {
-  if (change === null) return null;
-  const size = Math.abs(change).toFixed(1);
+function GapShort({ value, finland }: { value: number; finland: number }) {
+  const diff = Math.round((Number(value.toFixed(1)) - Number(finland.toFixed(1))) * 10) / 10;
+  if (diff === 0) return <>Level with Finland</>;
   return (
-    <span className="truncate type-caption text-muted-foreground">
-      {size === "0.0" ? (
-        "No change"
-      ) : (
-        <>
-          <span className="figure">{size} pts</span> {change > 0 ? "worse" : "better"}
-        </>
-      )}{" "}
-      since {FIRST_YEAR}
-    </span>
+    <>
+      <span className="figure">{Math.abs(diff).toFixed(1)}</span>
+      <span className="sr-only"> percentage points</span> {diff > 0 ? "above" : "below"} Finland
+    </>
   );
 }

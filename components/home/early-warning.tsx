@@ -4,7 +4,7 @@ import { cn } from "cn";
 
 import { TREND_FILL, TREND_PAST_FILL, WorseColumn } from "@/components/pathway/trend-strip";
 import { SourceChip } from "@/components/source-chip";
-import { Frame, FrameDescription, FrameHeader, FrameMeta, FramePanel, FrameTitle } from "@/components/ui/frame";
+import { FramePanel, FramePanelLabel } from "@/components/ui/frame";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { County, GapStatus } from "@/lib/data";
 import {
@@ -52,26 +52,19 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
   const finland = getNationalValue(GP_WAIT_ID)?.value ?? null;
 
   return (
-    <Frame aria-labelledby="warning-heading">
-      <FrameHeader>
-        <FrameTitle id="warning-heading">
-          Getting worse fastest, {FIRST_YEAR}–{LAST_YEAR}
-        </FrameTitle>
-        <FrameMeta>
+      <FramePanel padding="none" className="pb-1">
+        <FramePanelLabel>
+          <h3 className="font-sans type-caption font-medium tracking-normal text-muted-foreground">
+            Largest rises in non-urgent GP visits waiting over 7 days, {FIRST_YEAR}–{LAST_YEAR}
+            {finland !== null && (
+              <>
+                {" "}
+                · White line: Finland <span className="figure text-foreground">{formatPct(finland)}</span>
+              </>
+            )}
+          </h3>
           <SourceChip sourceId={sourceId} />
-        </FrameMeta>
-        <FrameDescription>
-          Non-urgent GP visits waiting over 7 days: the {list.length === 1 ? "largest rise" : `${list.length} largest rises`}{" "}
-          since {FIRST_YEAR}, in percentage points (pts).
-          {finland !== null && (
-            <>
-              {" "}
-              White line on the bars: Finland <span className="figure">{formatPct(finland)}</span> in {LAST_YEAR}.
-            </>
-          )}
-        </FrameDescription>
-      </FrameHeader>
-      <FramePanel padding="none" className="py-1">
+        </FramePanelLabel>
         <ol>
           {list.map((row, index) => {
             const status = stageStatus(row.id, "gp_access");
@@ -83,7 +76,7 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
                 >
                   <span className="text-[0.9375rem] font-semibold text-foreground">{row.name}</span>
                   <span className="text-[0.9375rem] leading-snug font-medium text-foreground">
-                    <span className="figure">{formatAmount(row.change)} pts</span> worse since {FIRST_YEAR}
+                    <span className="figure">{formatAmount(row.change)} percentage points</span> worse since {FIRST_YEAR}
                   </span>
                   <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                     <span className="type-caption text-muted-foreground">
@@ -110,7 +103,6 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
           })}
         </ol>
       </FramePanel>
-    </Frame>
   );
 }
 
