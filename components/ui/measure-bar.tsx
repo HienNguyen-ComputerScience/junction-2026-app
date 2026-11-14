@@ -12,10 +12,29 @@ import type { GapStatus } from "@/lib/data";
  *  - a wait share (lower is better) is worse when it runs PAST the line: tinted red up to the
  *    line, solid red beyond it;
  *  - a referral share (higher is faster) is worse when it stops SHORT of the line: a neutral
- *    fill up to the value, then a red outlined segment from the value to the line.
+ *    fill up to the value, then solid red from the value to the line.
+ * Either way the solid red part is the gap to Finland, drawn at the full height of the bar.
  */
 
 const clamp = (n: number) => Math.min(100, Math.max(0, n));
+
+const NUMBER = /([+−-]?\d+(?:\.\d+)?%?(?:\spts)?)/;
+
+/**
+ * Sets the numbers in a short label in the numeral face (`figure`) and leaves the words in the
+ * text face: "Finland 54.7%" keeps "Finland" in the sans. For labels that arrive as one string.
+ */
+export function withFigures(text: string): ReactNode {
+  return text.split(NUMBER).map((part, i) =>
+    i % 2 === 1 ? (
+      <span key={i} className="figure">
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
 
 /** Bar fills. Amber is quieter as a bar than as a marker, so the calm end of a chart stays calm. */
 const BAR_FILL: Record<GapStatus, string> = {
@@ -65,7 +84,8 @@ export function BarFill({
   const referral = readsHigherIsBetter(value, finland, status, higherIsBetter);
 
   // Referral share that stops short of Finland: the missing part is the problem, so it is the
-  // red part. Outlined, not hatched: hatching already means "no public data".
+  // red part, in the same solid red and at the same height as the part of a wait bar that runs
+  // past the line. The value itself is a neutral fill.
   if (referral && status === "red" && finland != null && value < finland) {
     const f = clamp(finland);
     return (
@@ -78,7 +98,7 @@ export function BarFill({
           style={{ width: `${v}%`, ...grow }}
         />
         <span
-          className="animate-bar-grow absolute inset-y-0 rounded-r-[2px] border border-l-0 border-status-red bg-status-red/25"
+          className="animate-bar-grow absolute inset-y-0 rounded-r-[2px] bg-status-red"
           style={{ left: `${v}%`, width: `${f - v}%`, "--i": index + 14 } as CSSProperties}
         />
       </>
@@ -149,18 +169,17 @@ export function FinlandAxis({
         className={cn("absolute inset-y-0 flex justify-center", x > 50 && "flex-row-reverse")}
         style={box}
       >
-        <span className="font-medium whitespace-nowrap text-foreground">{label}</span>
+        <span className="font-medium whitespace-nowrap text-foreground">{withFigures(label)}</span>
       </span>
     </div>
   );
 }
 
-const SWATCH = "h-2.5 shrink-0";
-
+/** Every swatch sits in the same 24px slot, so the labels of a key share one left edge. */
 function KeyItem({ swatch, children }: { swatch: ReactNode; children: ReactNode }) {
   return (
     <li className="flex items-center gap-2">
-      <span aria-hidden className="flex shrink-0 items-center">
+      <span aria-hidden className="relative flex h-2.5 w-6 shrink-0 overflow-visible rounded-[2px]">
         {swatch}
       </span>
       <span>{children}</span>
@@ -169,11 +188,14 @@ function KeyItem({ swatch, children }: { swatch: ReactNode; children: ReactNode 
 }
 
 /**
- * The key for reading the bars: a row of swatches drawn exactly like the marks they name.
- *  - `kinds="both"` (default): true wherever wait bars and referral bars sit together.
- *  - `kinds="wait"`: a chart of wait bars only (the ranking).
+ * The key for reading the bars: four swatches in plain words, drawn like the marks they name.
+ *  - `kinds="both"` (default): wherever wait bars and referral bars sit together. Red is the
+ *    solid part of either bar, i.e. the gap to Finland.
+ *  - `kinds="wait"`: a chart of wait bars only (the ranking). Red is drawn as on those bars,
+ *    tinted then solid.
  *  - `finlandLabel`: names the line with its value ("Finland 54.7%") when one value applies to
  *    every bar in view; leave it out where bars have different Finland values.
+ * One item per line on a phone, one wrapping row from `sm`.
  */
 export function BarKey({
   className,
@@ -184,80 +206,48 @@ export function BarKey({
   kinds?: "both" | "wait";
   finlandLabel?: string;
 }) {
-  const line = (
-    <KeyItem
-      swatch={<span className="h-3.5 w-0.5 bg-foreground" />}
-    >
-      {finlandLabel ?? "Finland's value"}
-    </KeyItem>
-  );
-  const amber = (
-    <KeyItem swatch={<span className={cn(SWATCH, "w-5 rounded-[2px] bg-status-amber-bar")} />}>
-      at or better than Finland&apos;s level{" "}
-      {kinds === "wait" ? "(still a delay)" : "(not the same as good)"}
-    </KeyItem>
-  );
-  const noData = (
-    <KeyItem
-      swatch={
-        <span
-          className={cn(SWATCH, "w-5 rounded-[2px] bg-hatch ring-1 ring-status-grey-border ring-inset")}
-        />
-      }
-    >
-      no public data
-    </KeyItem>
-  );
-
   return (
     <ul
       data-slot="bar-key"
-      className={cn("flex flex-wrap items-center gap-x-5 gap-y-1.5 type-legend", className)}
-    >
-      {kinds === "wait" ? (
-        <>
-          <KeyItem
-            swatch={<span className={cn(SWATCH, "w-5 rounded-[2px] bg-status-red opacity-55")} />}
-          >
-            up to Finland&apos;s level
-          </KeyItem>
-          <KeyItem swatch={<span className={cn(SWATCH, "w-5 rounded-[2px] bg-status-red")} />}>
-            beyond Finland&apos;s level
-          </KeyItem>
-          {line}
-        </>
-      ) : (
-        <>
-          {line}
-          <KeyItem
-            swatch={
-              <>
-                <span className={cn(SWATCH, "w-3 rounded-l-[2px] bg-status-red opacity-55")} />
-                <span className={cn(SWATCH, "w-3 rounded-r-[2px] bg-status-red")} />
-              </>
-            }
-          >
-            GP wait: tinted up to Finland&apos;s level, solid beyond it
-          </KeyItem>
-          <KeyItem
-            swatch={
-              <>
-                <span className={cn(SWATCH, "w-3 rounded-l-[2px]", NEUTRAL_FILL)} />
-                <span
-                  className={cn(
-                    SWATCH,
-                    "w-3 rounded-r-[2px] border border-l-0 border-status-red bg-status-red/25",
-                  )}
-                />
-              </>
-            }
-          >
-            Referrals, higher is faster: outlined where short of Finland&apos;s level
-          </KeyItem>
-        </>
+      className={cn(
+        "flex flex-col gap-x-6 gap-y-1.5 type-legend sm:flex-row sm:flex-wrap sm:items-center",
+        className,
       )}
-      {amber}
-      {noData}
+    >
+      <KeyItem
+        swatch={
+          <>
+            <span className="h-full w-full rounded-[2px] bg-track" />
+            <span className="absolute -inset-y-0.5 left-1/2 w-0.5 -translate-x-1/2 bg-foreground" />
+          </>
+        }
+      >
+        {finlandLabel ? withFigures(finlandLabel) : "Finland's value"}
+      </KeyItem>
+      <KeyItem
+        swatch={
+          kinds === "wait" ? (
+            <>
+              <span className="h-full w-1/2 rounded-l-[2px] bg-status-red opacity-55" />
+              <span className="h-full w-1/2 rounded-r-[2px] bg-status-red" />
+            </>
+          ) : (
+            <span className="h-full w-full rounded-[2px] bg-status-red" />
+          )
+        }
+      >
+        Worse than Finland
+      </KeyItem>
+      <KeyItem swatch={<span className="h-full w-full rounded-[2px] bg-status-amber-bar" />}>
+        At or better than Finland&apos;s level
+      </KeyItem>
+      <KeyItem
+        swatch={
+          <span className="h-full w-full rounded-[2px] bg-hatch ring-1 ring-status-grey-border ring-inset" />
+        }
+      >
+        No public data
+      </KeyItem>
     </ul>
   );
 }
@@ -269,8 +259,11 @@ export function BarKey({
  *  - finland null: no line (there is no indicator to compare).
  *  - higherIsBetter: optional override of the inferred direction (see BarFill).
  *  - size "lg": the tall bar of the home comparison card (16px on a phone, 20px from sm).
- *  - gapLabel: with size "lg", written inside the span between the bar's end and the Finland
- *    line, i.e. on the distance it measures ("+30.7 pts"). Hidden if the span is too short.
+ *  - gapLabel: the distance to Finland in words ("+30.7 pts", "−7.9 pts"; use `gapToFinland`),
+ *    for wait bars and referral bars alike. With size "lg" it is written inside the span between
+ *    the bar's end and the Finland line, i.e. on the distance it measures (hidden if that span
+ *    is too short). With the default size it sits just above the bar, against the Finland line
+ *    on the side of the gap, in the status ink.
  */
 export function MeasureBar({
   value,
@@ -293,9 +286,34 @@ export function MeasureBar({
   size?: "md" | "lg";
   gapLabel?: string;
 }) {
-  const showGap = size === "lg" && gapLabel && value !== null && finland !== null && value !== finland;
+  const hasGap = Boolean(gapLabel) && value !== null && finland !== null && value !== finland;
+  const below = value !== null && finland !== null && value < finland;
+  // The gap span is solid red for a wait bar past the line and for a referral bar short of it.
+  const onRed =
+    status === "red" &&
+    value !== null &&
+    finland !== null &&
+    readsHigherIsBetter(value, finland, status, higherIsBetter) === below;
   return (
     <div aria-hidden className={cn("flex flex-col gap-2", className)}>
+      {hasGap && size === "md" && finland !== null && (
+        <div className="relative -mb-1 h-4">
+          <span
+            className={cn(
+              "absolute inset-y-0 flex items-center figure type-note font-medium whitespace-nowrap",
+              below ? "justify-end pr-1.5" : "justify-start pl-1.5",
+              status === "red" ? "text-status-red-ink" : "text-muted-foreground",
+            )}
+            style={
+              below
+                ? { left: 0, right: `${100 - clamp(finland)}%` }
+                : { left: `${clamp(finland)}%`, right: 0 }
+            }
+          >
+            {gapLabel}
+          </span>
+        </div>
+      )}
       <div
         className={cn(
           "relative rounded-[2px]",
@@ -312,7 +330,7 @@ export function MeasureBar({
             higherIsBetter={higherIsBetter}
           />
         )}
-        {showGap && (
+        {hasGap && size === "lg" && value !== null && finland !== null && (
           <span
             className="@container absolute inset-y-0 flex items-center justify-center"
             style={{
@@ -322,9 +340,9 @@ export function MeasureBar({
           >
             <span
               className={cn(
-                "invisible type-note font-semibold whitespace-nowrap @min-[3.75rem]:visible",
-                // On the solid red tip the label is dark; on the track or the outline it is light.
-                status === "red" && value > finland ? "text-background" : "text-foreground/90",
+                "invisible figure type-note font-semibold whitespace-nowrap @min-[4rem]:visible",
+                // On solid red the label is dark; on the empty track it is light.
+                onRed ? "text-background" : "text-foreground/90",
               )}
             >
               {gapLabel}

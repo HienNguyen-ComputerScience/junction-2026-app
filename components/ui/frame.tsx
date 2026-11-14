@@ -57,10 +57,14 @@ function FrameTitle({
   className,
   ...props
 }: Omit<React.ComponentProps<"h2">, "ref"> & { as?: HeadingTag }) {
+  // A frame title is a section title (type-title, 22px). A caller's own type-* class replaces
+  // the default instead of being added to it: two type utilities on one element would be
+  // settled by their order in the stylesheet, not by the caller.
+  const hasType = /(^|\s)type-/.test(className ?? "");
   return (
     <Comp
       data-slot="frame-title"
-      className={cn("col-start-1 type-heading text-foreground", className)}
+      className={cn("col-start-1 text-foreground", !hasType && "type-title", className)}
       {...props}
     />
   );

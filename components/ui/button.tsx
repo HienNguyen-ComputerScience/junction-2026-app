@@ -7,8 +7,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        // The one primary style: the solid accent. Disabled, it is the same fill at a lower
+        // opacity, so it still reads as the primary action, only not available yet.
         default:
-          "bg-primary text-primary-foreground hover:bg-[color-mix(in_oklch,var(--primary),black_12%)] disabled:border-brand/25 disabled:bg-brand-soft disabled:text-brand-ink/80 disabled:opacity-100",
+          "bg-primary text-primary-foreground hover:bg-[color-mix(in_oklch,var(--primary),black_12%)] disabled:opacity-45",
         outline:
           "border-input bg-muted text-foreground hover:bg-accent aria-expanded:bg-accent",
         secondary:

@@ -243,12 +243,14 @@ h2:not([class*="type-"], .font-sans) {
   font-weight: 500;
   text-wrap: balance;
 }
+/* Section titles (frame headers): 22px. Item titles inside a section use type-heading (17px),
+   so a section always outranks what it holds. */
 @utility type-title {
   font-family: var(--font-bricolage), var(--font-sans), sans-serif;
-  font-size: 1.25rem;
-  line-height: 1.25;
-  letter-spacing: -0.015em;
-  font-weight: 560;
+  font-size: 1.375rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 600;
   text-wrap: balance;
 }
 @utility type-heading {
@@ -271,15 +273,15 @@ h2:not([class*="type-"], .font-sans) {
   font-size: 0.75rem;
   line-height: 1rem;
 }
-/* Notes on a chart or a card ("via Exa", "Solid red: beyond Finland's line", dates): the text
-   face, 12px. Pair with text-muted-foreground. Captions are never mono. */
+/* Notes on a chart or a card ("via Exa", "No indicator, so nothing to draw", dates): the text
+   face, 12px. Pair with text-muted-foreground. Words are never mono; a number inside a note
+   takes `figure`. */
 @utility type-note {
   font-size: 0.75rem;
   line-height: 1rem;
   font-variant-numeric: tabular-nums;
 }
-/* Mono, 11px: source chips and bare axis numerals (0%, 100%, years, tick values). Nothing with
-   words in it is mono except a source chip. */
+/* Mono, 11px: source chips and bare axis numerals (0%, 100%, years, tick values). */
 @utility type-mark {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 0.6875rem;
@@ -288,13 +290,26 @@ h2:not([class*="type-"], .font-sans) {
   word-spacing: -0.25em;
   font-variant-numeric: tabular-nums;
 }
-/* Big figures: display face, tabular, tight. Pair with a text-* size. */
+/* Every data number is Geist Mono, tabular: one numeral face on every screen.
+   `numeral`: key figures. Pair with a text-* size (20px to 80px). The tracking tightens with
+   the size, so "85.4%" at 60px is set tight (-0.06em) and a 20px figure stays open (-0.02em). */
 @utility numeral {
-  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.035em;
-  font-weight: 540;
+  font-feature-settings: normal;
+  letter-spacing: calc(-0.08em + 1.2px);
+  font-weight: 500;
   line-height: 0.95;
+}
+/* `figure`: a data number at text size (table values, deltas, "54.7%" in a label, trend values).
+   Sets the face only: size, weight and colour come from where it sits. Wrap the number and its
+   unit ("+30.7 pts", "76.8%"), never the words around it. */
+@utility figure {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: normal;
+  letter-spacing: -0.02em;
+  word-spacing: -0.3em;
 }
 
 /* Legend labels (BarKey) and the short notes under a chart: 13px, one step up from muted. */

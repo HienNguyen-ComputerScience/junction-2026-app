@@ -6,8 +6,9 @@ import { getSource, type Source } from "@/lib/data";
 /**
  * Readable publisher names for the hosts the snapshot cites (data/sources.json). The data keeps
  * the bare hostname as `publisher`; a chip shows who that is, and the hostname stays in the
- * tooltip. files.hackjunction.app is the hackathon's own file server, so it is named as that
- * and not as the author of the document it hosts.
+ * tooltip. files.hackjunction.app is the hackathon's own file server, not the author of what it
+ * hosts: such a chip shows the document's own title in short form (see shortTitle), and only
+ * falls back to the name below when the title has no short form.
  */
 const HOST_NAME: Record<string, string> = {
   "pmc.ncbi.nlm.nih.gov": "PubMed Central",
@@ -17,7 +18,7 @@ const HOST_NAME: Record<string, string> = {
   "riksdagen.se": "Sveriges riksdag",
   "thl.fi": "THL",
   "sotkanet.fi": "Sotkanet",
-  "files.hackjunction.app": "Junction challenge file",
+  "files.hackjunction.app": "Challenge brief (Junction)",
 };
 
 const HOSTNAME = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i;
@@ -28,6 +29,23 @@ function publisherHost(source: Source): string | null {
   return HOSTNAME.test(publisher) ? publisher.toLowerCase() : null;
 }
 
+/** Hosts that only store a file: the chip names the document, not the file server. */
+const FILE_HOSTS = new Set(["files.hackjunction.app"]);
+const MAX_TITLE = 30;
+
+/**
+ * A short form of a document's own title: its opening words, word for word, up to the first
+ * colon and to what fits a chip ("Kansallinen syöpästrategia 2026-2035: Toimeenpanon…" gives
+ * "Kansallinen syöpästrategia"). Never a translation or a rewording; the full title stays in
+ * the tooltip and the aria-label. Null when fewer than two words fit.
+ */
+function shortTitle(name: string): string | null {
+  const words = name.split(":")[0].trim().split(/\s+/);
+  while (words.length > 2 && words.join(" ").length > MAX_TITLE) words.pop();
+  const lead = words.join(" ");
+  return words.length >= 2 && lead.length <= MAX_TITLE ? lead : null;
+}
+
 /** Visible chip text. Must make sense on its own: touch screens never show the title tooltip. */
 export function sourceLabel(source: Source): string {
   if (source.source_id === "sotkanet-regions") return "Sotkanet regions";
@@ -35,6 +53,7 @@ export function sourceLabel(source: Source): string {
   if (match) return `Sotkanet ${match[1]}`;
   const host = publisherHost(source);
   if (host === null) return source.publisher;
+  if (FILE_HOSTS.has(host)) return shortTitle(source.name) ?? HOST_NAME[host] ?? host;
   return HOST_NAME[host] ?? host;
 }
 
