@@ -161,6 +161,7 @@ export const RED_FLAG_CATEGORIES: RedFlagCategory[] = [
       "nause",
       "sick",
       "pain",
+      "pained", // listed separately because the stop "paine" (Finnish: pressure) would hide it
       "ache",
       "aching",
       "achy",
@@ -248,8 +249,9 @@ export const NO_MATCH_LINKS: GuidelineLink[] = [NICE_SAFETY_NETTING, NICE_NG12, 
  * can never fire; tests/red-flags.test.mjs checks this.
  */
 export const STOP_PREFIXES = new Map<string, string[]>([
-  // "painting", and the Finnish words paine (pressure), painaa, paini, paino, painua.
-  ["pain", ["paint", "paina", "paine", "paini", "paino", "painu"]],
+  // "painting", and Finnish paine (pressure), paino (weight, its own keyword) and
+  // painajainen (nightmare). Kept short on purpose: "paining" and "painaa" still match.
+  ["pain", ["paint", "paine", "paino", "painaj"]],
   // verenpaine (blood pressure), verensokeri, verenkierto, verenluovutus.
   ["vere", ["verenpain", "verensok", "verenkier", "verenluov"]],
   ["veri", ["verif"]], // verify, verification
