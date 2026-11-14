@@ -8,26 +8,10 @@ import type { FinlandMapArea } from "@/components/map/finland-map";
 import { buildPathwaySteps, PathwaySteps } from "@/components/pathway/pathway-steps";
 import { SourceChip } from "@/components/source-chip";
 import { TextLink } from "@/components/ui/text-link";
-import { getBottleneck, pickActions, type Bottleneck } from "@/lib/act";
+import { bottleneckLede, bottleneckStatus, getBottleneck, pickActions } from "@/lib/act";
 import { indicators, LATEST_YEAR, type County, type Stage } from "@/lib/data";
-import { formatPct, getStageGap, GP_WAIT_ID, STATUS_LABEL, type RankingRow } from "@/lib/ranking";
+import { getStageGap, GP_WAIT_ID, REFERRAL_ID, STATUS_LABEL, type RankingRow } from "@/lib/ranking";
 import { bestArea, whatIf, type Better } from "@/lib/what-if";
-
-/** Stages as they read inside a sentence (the act page's wording). */
-const STAGE_IN_SENTENCE: Record<Stage, string> = {
-  gp_access: "getting to a GP",
-  gp_recognition: "whether the GP recognises warning signs",
-  referral: "the GP to specialist referral",
-};
-
-/** Where the pathway breaks, in one line: the act page's answer, from lib/act's bottleneck. */
-function verdictLine({ focus, anyRed }: Bottleneck): string {
-  if (focus.length === 0) return `No ${LATEST_YEAR} pathway data is published for this area.`;
-  const worst = STAGE_IN_SENTENCE[focus[0].stage];
-  if (!anyRed) return `No measured step is worse than Finland. Closest to Finland's level: ${worst}.`;
-  if (focus.length === 1) return `The delay sits at ${worst}, which is worse than Finland.`;
-  return `${focus.length === 2 ? "Both" : "All"} measured steps are worse than Finland. Worst is ${worst}.`;
-}
 
 /** Which way the stage's share is better, read from the indicator's direction. */
 function betterFor(indicatorId: string): Better {
@@ -40,9 +24,20 @@ function betterFor(indicatorId: string): Better {
  * top action and the what-if, and hands them to the client picker as plain data and
  * pre-rendered parts. No API route, no fetch.
  */
-export function HomeTool({ rows, unranked }: { rows: RankingRow[]; unranked: County[] }) {
+export function HomeTool({
+  rows,
+  unranked,
+  initialAreaId,
+}: {
+  rows: RankingRow[];
+  unranked: County[];
+  /** The area named by ?area= on this request, if any. Unknown ids fall back to the default. */
+  initialAreaId?: string;
+}) {
   const all: County[] = [...rows.map((row) => row.county), ...unranked];
-  const defaultId = rows[0]?.county.id ?? all[0].id;
+  const defaultId = all.some((county) => county.id === initialAreaId)
+    ? (initialAreaId as string)
+    : (rows[0]?.county.id ?? all[0].id);
 
   // The best published share per stage, among the areas with a value of their own.
   const best = (stage: Stage, better: Better) =>
@@ -63,7 +58,10 @@ export function HomeTool({ rows, unranked }: { rows: RankingRow[]; unranked: Cou
   for (const county of all) {
     const bottleneck = getBottleneck(county.id);
     const top = pickActions(bottleneck)[0] ?? null;
-    if (top && !actions[top.id]) actions[top.id] = <TopAction action={top} />;
+    // One node per action and per label: an area with a break reads "Recommended action 1", one
+    // without reads as keeping its level.
+    const actionKey = `${top?.id}:${bottleneck.anyRed}`;
+    if (top && !actions[actionKey]) actions[actionKey] = <TopAction action={top} keepLevel={!bottleneck.anyRed} />;
 
     // A step without data points to the next useful thing: the red-flag helper for step 2.
     steps[county.id] = (
@@ -105,27 +103,28 @@ export function HomeTool({ rows, unranked }: { rows: RankingRow[]; unranked: Cou
       );
     }
 
-    areas.push({ id: county.id, name: county.name, verdict: verdictLine(bottleneck), actionId: top?.id ?? null });
+    areas.push({
+      id: county.id,
+      name: county.name,
+      verdict: bottleneckLede(bottleneck),
+      status: bottleneckStatus(bottleneck),
+      actionId: top ? actionKey : null,
+    });
   }
 
-  const mapAreas: FinlandMapArea[] = [
-    ...rows.map((row) => ({
-      id: row.county.id,
-      name: row.county.name,
-      href: `/county/${row.county.id}`,
-      status: row.gpStatus,
-      statusLabel: STATUS_LABEL[row.gpStatus],
-      valueLabel: formatPct(row.gpWait.value),
-    })),
-    ...unranked.map((county) => ({
+  // The map is coloured by the same status as the card's verdict (getBottleneck: the worst
+  // measured step), never by one step alone. No figure on the map: the card has the figures.
+  const mapAreas: FinlandMapArea[] = all.map((county) => {
+    const status = bottleneckStatus(getBottleneck(county.id));
+    return {
       id: county.id,
       name: county.name,
       href: `/county/${county.id}`,
-      status: "no_data" as const,
-      statusLabel: STATUS_LABEL.no_data,
+      status,
+      statusLabel: STATUS_LABEL[status],
       valueLabel: null,
-    })),
-  ];
+    };
+  });
 
   return (
     <AreaPicker
@@ -138,7 +137,12 @@ export function HomeTool({ rows, unranked }: { rows: RankingRow[]; unranked: Cou
       leads={leads}
       whatIfs={whatIfs}
       actions={actions}
-      mapChip={<SourceChip sourceId={rows[0]?.gpWait.source_id ?? `sotkanet-${GP_WAIT_ID}`} year={LATEST_YEAR} />}
+      mapChip={
+        <span className="flex items-center gap-1.5">
+          <SourceChip sourceId={rows[0]?.gpWait.source_id ?? `sotkanet-${GP_WAIT_ID}`} year={LATEST_YEAR} />
+          <SourceChip sourceId={`sotkanet-${REFERRAL_ID}`} year={LATEST_YEAR} />
+        </span>
+      }
     />
   );
 }
