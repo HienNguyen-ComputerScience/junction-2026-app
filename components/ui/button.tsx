@@ -9,10 +9,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Primary: the solid accent, at most one per viewport. Disabled, it is a flat neutral
-        // block with faint text and no edge: clearly switched off, never a dim accent.
+        // Primary: the solid accent, at most one per viewport. Disabled (nothing to act on yet),
+        // it is drawn as the outline button with its normal label; the accent returns with input.
         default:
-          "bg-primary text-primary-foreground hover:bg-[color-mix(in_oklch,var(--primary),black_12%)] disabled:bg-foreground/[0.07] disabled:text-faint disabled:opacity-100",
+          "bg-primary text-primary-foreground hover:bg-[color-mix(in_oklch,var(--primary),black_12%)] disabled:border-input disabled:bg-muted disabled:text-foreground disabled:opacity-100",
         // Secondary: a neutral outline on the raised surface.
         outline:
           "border-input bg-muted text-foreground hover:border-foreground/25 hover:bg-accent aria-expanded:bg-accent disabled:text-faint disabled:opacity-100",

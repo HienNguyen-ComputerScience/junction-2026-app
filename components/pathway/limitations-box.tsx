@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import { cn } from "cn";
 
 import { SourceChip } from "@/components/source-chip";
 import { Disclosure } from "@/components/ui/disclosure";
+import { Frame, FramePanel, FramePanelLabel } from "@/components/ui/frame";
 
 export type LimitationItem = {
   text: string;
@@ -37,9 +37,16 @@ export function LimitationsBox({
           className="rounded-panel border border-frame-border bg-frame"
           summaryClassName="min-h-11 w-full gap-1.5 px-3.5 py-2.5 hover:no-underline"
           summary={
-            <span>
-              {TITLE} <span className="font-normal text-muted-foreground tabular-nums">({items.length})</span>
-            </span>
+            <>
+              {/* A phone gets the short label, so the count never wraps alone. */}
+              <span className="sm:hidden">
+                Limitations <span className="font-normal text-muted-foreground tabular-nums">({items.length})</span>
+                : read before acting
+              </span>
+              <span className="max-sm:hidden">
+                {TITLE} <span className="font-normal text-muted-foreground tabular-nums">({items.length})</span>
+              </span>
+            </>
           }
         >
           <ul className="flex flex-col gap-3 border-t border-frame-border px-3.5 pt-3 pb-4">
@@ -56,41 +63,41 @@ export function LimitationsBox({
   const rest = items.slice(visibleCount);
 
   return (
-    <aside
-      aria-labelledby="limitations-heading"
-      className={cn(
-        "flex flex-col gap-2.5 rounded-panel border border-frame-border px-4 pt-3.5 pb-2 sm:px-5",
-        className,
-      )}
-    >
-      <h2 id="limitations-heading" className="font-sans text-[0.8125rem] leading-snug font-medium tracking-normal">
-        {TITLE}
-      </h2>
-      <ul className="flex flex-col gap-2.5">
-        {first.map((item) => (
-          <Limitation key={item.text} item={item} />
-        ))}
-      </ul>
-      {rest.length > 0 && (
-        <Disclosure
-          summary={
-            <>
-              <span className="group-open/disc:hidden">
-                Show {rest.length} more {rest.length === 1 ? "limitation" : "limitations"}
-              </span>
-              <span className="hidden group-open/disc:inline">Show fewer</span>
-            </>
-          }
-          className="-mt-1"
-        >
-          <ul className="flex flex-col gap-2.5 pt-1 pb-2">
-            {rest.map((item) => (
+    <Frame as="aside" aria-labelledby="limitations-heading" className={className}>
+      <FramePanel padding="none">
+        <FramePanelLabel>
+          <h2 id="limitations-heading" className="font-sans type-caption font-medium tracking-normal">
+            {TITLE}
+          </h2>
+        </FramePanelLabel>
+        <div className="flex flex-col gap-2.5 px-4 pt-3 pb-2 sm:px-6">
+          <ul className="flex flex-col gap-2.5">
+            {first.map((item) => (
               <Limitation key={item.text} item={item} />
             ))}
           </ul>
-        </Disclosure>
-      )}
-    </aside>
+          {rest.length > 0 && (
+            <Disclosure
+              summary={
+                <>
+                  <span className="group-open/disc:hidden">
+                    Show {rest.length} more {rest.length === 1 ? "limitation" : "limitations"}
+                  </span>
+                  <span className="hidden group-open/disc:inline">Show fewer</span>
+                </>
+              }
+              className="-mt-1"
+            >
+              <ul className="flex flex-col gap-2.5 pt-1 pb-2">
+                {rest.map((item) => (
+                  <Limitation key={item.text} item={item} />
+                ))}
+              </ul>
+            </Disclosure>
+          )}
+        </div>
+      </FramePanel>
+    </Frame>
   );
 }
 

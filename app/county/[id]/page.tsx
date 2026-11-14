@@ -10,6 +10,7 @@ import { TrendStrip, type TrendStage } from "@/components/pathway/trend-strip";
 import { SourceChip } from "@/components/source-chip";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import { BackLink } from "@/components/ui/back-link";
+import { TextLink } from "@/components/ui/text-link";
 import { BarKey } from "@/components/ui/measure-bar";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -95,31 +96,45 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           {/* The key figure above is this step's value, so its slot here shows the gap instead:
               one number, once per screen. */}
           <FramePanel padding="none">
-            <PathwaySteps steps={steps} density="full" ledStage={keyGap?.stage} />
+            <PathwaySteps
+              steps={steps}
+              density="full"
+              ledStage={keyGap?.stage}
+              renderExtra={(step) =>
+                step.stage === "gp_recognition" ? (
+                  <TextLink kind="nav" href={`/county/${county.id}/act#red-flags`} className="type-caption sm:min-h-6">
+                    Red-flag helper
+                  </TextLink>
+                ) : null
+              }
+            />
           </FramePanel>
           <TrendStrip stages={buildTrendStages(county, steps)} areaName={county.name} />
         </div>
-        <FrameFooter className="flex flex-col gap-2.5">
+        <FrameFooter className="flex flex-col gap-3">
           <BarKey />
-          <p className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-            <span>Context only, not used for status: referrals still unprocessed after 21 days.</span>
-            {lateReferrals ? (
+          {/* One labelled row, like a limitation: what it is, then this area's value, Finland's, the source. */}
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 border-t border-border pt-3">
+            <span>Context only, not used for status: referrals still unprocessed after 21 days</span>
+            <span className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
               <span>
-                <span className="figure text-foreground">{lateReferrals.value}%</span> here
+                This area:{" "}
+                {lateReferrals ? <span className="figure text-foreground">{lateReferrals.value}%</span> : "no public data"}
               </span>
-            ) : (
-              <span>No public data here</span>
-            )}
-            {lateReferralsFinland && (
-              <span>
-                Finland <span className="figure text-foreground">{lateReferralsFinland.value}%</span>
-              </span>
-            )}
-            <SourceChip
-              sourceId={lateReferrals?.source_id ?? lateReferralsFinland?.source_id ?? "sotkanet-5033"}
-              year={LATEST_YEAR}
-            />
-          </p>
+              {lateReferralsFinland && (
+                <>
+                  <span aria-hidden>·</span>
+                  <span>
+                    Finland <span className="figure text-foreground">{lateReferralsFinland.value}%</span>
+                  </span>
+                </>
+              )}
+              <SourceChip
+                sourceId={lateReferrals?.source_id ?? lateReferralsFinland?.source_id ?? "sotkanet-5033"}
+                year={LATEST_YEAR}
+              />
+            </span>
+          </div>
         </FrameFooter>
       </Frame>
 

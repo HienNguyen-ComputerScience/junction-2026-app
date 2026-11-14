@@ -9,7 +9,7 @@
 `components/pathway/pathway-steps.tsx` is the only component for the three steps, on every page: `buildPathwaySteps(countyId)` reads them from the snapshot, `<PathwaySteps steps density />` draws them.
 
 - Every step has the same parts in the same order: mark and title · status badge and source chip on one row · the value slot · the comparison line · one caption · the bar with the Finland line.
-- The value slot has a fixed height. A step without a value shows a muted "No public data" on the baseline of the figures beside it, never a hole, and keeps every other part (the hatched bar included).
+- The value slot has a minimum height. A step without a value says it once, in the status badge; the one sentence that explains it sits in the slot (muted caption), so the columns keep their rows. It keeps every other part (the hatched bar included, with the axis row reserved). Step 2 carries the "Red-flag helper" link on both pages.
 - Two densities. `density="full"` (county page): three divided columns on shared rows (subgrid). `density="compact"` (act page): one short strip, per step its name and value, what the value counts, a thin bar, the badge and the chip.
 - The section title gives the year ("… (2025)"), so the chip in a step leaves it out and the status row stays one row.
 - `ledStage`: the step whose figure already leads the page shows its gap to Finland in the slot instead, so **one number is on screen once per viewport**.
@@ -33,7 +33,7 @@ Every bar is zero-based (0 to 100%) and carries a thin off-white marker at Finla
 
 ## Buttons and links
 
-- **Primary**: `Button` (default), the filled accent. At most one per viewport: the main action of the view ("What to do about it", "Ask"). Disabled, it is a flat neutral block with faint text: clearly switched off.
+- **Primary**: `Button` (default), the filled accent. At most one per viewport: the main action of the view ("What to do about it", "Ask"). Idle (disabled, nothing to act on yet) it is drawn as the outline button with its normal label; with input it is the filled accent.
 - **Secondary**: `Button variant="outline"`, a neutral outline on the raised surface ("Write AI brief", "Show 4 more", "Find more evidence live").
 - **Tertiary**: a text link. `Button` has no other variants; sizes are default (36px) and `lg` (44px).
 - **Links**: `TextLink` (`text-link.tsx`) is the one text link: accent text, no underline until hover, and an icon that says where it goes. `kind="jump"` (further down this page, arrow down), `kind="nav"` (another page of the app, arrow right), `kind="external"` (another site, new tab, the small up-right arrow the source chips use). `inline` sets it in running text. No other link style, and no underlined links.
@@ -51,7 +51,7 @@ Bricolage Grotesque for headlines, Geist for text and numbers, Geist Mono for so
 - 12px and 11px are for marks only: `type-note` (labels drawn on a chart or an axis), `type-mark` (mono source chips), badges.
 - `type-legend`: 13px, for the labels of `BarKey` (it sets it itself).
 - **Numbers: one face, Geist with tabular figures.** `numeral` for standalone key figures, with a size (`numeral text-[2.25rem]`), coloured with `STATUS_FIGURE[status]` (red ink only when worse than Finland). `figure` for a number inside a line of text; wrap the number with its unit and nothing else.
-- Gaps to Finland: "+30.7 pts vs Finland" / "−21.9 pts vs Finland", one decimal, a true minus sign (`gapToFinland`). Change over time is written in words, with no arrow and no colour: "27.4 pts worse since 2023".
+- Gaps to Finland: "+30.7 pts vs Finland" / "−21.9 pts vs Finland", one decimal, a true minus sign (`gapToFinland`). Change over time is written in words, with no arrow and no colour: "27.4 pts worse since 2023" (the number and worse/better in the text colour, the rest secondary).
 - Always "non-urgent GP visits"; never people or patients "waiting", and the app never does a "diagnosis".
 
 ## Surfaces and frames
@@ -72,7 +72,7 @@ Bricolage Grotesque for headlines, Geist for text and numbers, Geist Mono for so
 - `StatusBadge`: an 8px square mark plus a text label, never colour alone. `variant="chip"` (tag; `size="xs"` is as tall as a source chip), `"plain"` (coloured text), `"quiet"` (the mark plus a 13px caption, for dense rows). Take status from the data. In a list, the group heading carries the status label once, with its count and its source chips.
 - `SourceChip` (`components/source-chip.tsx`): mono tag with an arrow. Every number has one, or a source line, near it. One format: "Sotkanet 6411" or, where no title gives the year, "Sotkanet 6411 · 2025"; evidence sources show the publisher's name.
 - Provenance is quiet: `<Badge variant="unverified">Found live — unverified</Badge>` (hollow 8px mark) and `<Badge variant="checked">Precomputed from the snapshot</Badge>` / "Source checked" (solid 8px mark). Muted text, no box.
-- Live content (`components/exa/result-list.tsx`): `LiveMark` is the one provenance and freshness line, in the frame header: the unverified badge plus "via Exa · live" or "via Exa · cached · saved 2026-11-14". Rows have one minimum height, with or without a snippet.
+- Live content (`components/exa/result-list.tsx`): `LiveMark` is the one provenance and freshness line, in the frame header: the unverified badge plus "via Exa · live" or "via Exa · cached · saved 2026-11-14". Rows are auto-height: a result without a snippet is its title row alone.
 - Icons: lucide only, 16px (the up-right arrow of an external link or a chip is 14px), stroke 1.75, in the colour of the text beside them.
 
 ## Pages
@@ -80,7 +80,7 @@ Bricolage Grotesque for headlines, Geist for text and numbers, Geist Mono for so
 - Page pattern: `BackLink`, a one-line context caption, `type-page` h1, then Frames.
 - Act: the compact steps, then Action 1 with its "First step" box inside the first 1280×800 screen.
 - County: the limitations box (title and content) is inside the first 1280×800 screen, never clipped.
-- A recommended action in the county brief is one row (title and "Who", the First step box, the source chip); the section has one link, "See the evidence and limitations", to the act page.
+- A recommended action in the county brief is one row (title with its source chip and "Who" on the left, the First step box on the right); the section has one link, "See the evidence and limitations", to the act page.
 - Phone (390px): one-row 56px header, stacked columns, tap targets 36px or more, no horizontal scroll, a source line directly under the figures it sources.
 
 **Motion**: `animate-bar-grow` (bars, staggered with `--i`) and `animate-fade-up`, one curve, under 0.6s, off with `prefers-reduced-motion`. Hover is a surface step or a text-colour change only.

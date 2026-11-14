@@ -170,9 +170,8 @@ export function ResultList({ items, numbered = false, idPrefix = "exa-src" }: { 
                   </>
                 )}
               </p>
-              {/* Every row is at least a title and two snippet lines tall, so a result that came
-                  without a snippet keeps the pitch of the list. */}
-              <div className="flex min-h-16 min-w-0 max-w-[46rem] flex-col gap-1">
+              {/* Auto height: a result without a snippet is its title row alone. */}
+              <div className="flex min-w-0 max-w-[46rem] flex-col gap-1">
                 <a
                   href={item.url}
                   target="_blank"
@@ -189,7 +188,7 @@ export function ResultList({ items, numbered = false, idPrefix = "exa-src" }: { 
                   />
                   <span className="sr-only"> (opens in a new tab)</span>
                 </a>
-                {snippet && <p className="line-clamp-2 type-caption break-words text-muted-foreground">{snippet}</p>}
+                {snippet && <p className="line-clamp-2 max-w-[72ch] type-caption break-words text-muted-foreground">{snippet}</p>}
               </div>
             </li>
           );

@@ -119,20 +119,24 @@ function ActionRow({
   sourceIds: string[];
 }) {
   return (
-    <li className="grid gap-y-3 border-b border-border px-4 py-4 last:border-b-0 sm:px-6 lg:col-span-3 lg:grid-cols-subgrid lg:items-start">
-      <div className="flex min-w-0 flex-col gap-1.5">
-        <h4 className="type-heading text-pretty">{layout.action}</h4>
+    <li className="grid gap-x-8 gap-y-3 border-b border-border px-4 py-4 last:border-b-0 sm:px-6 lg:grid-cols-12 lg:items-start">
+      <div className="flex min-w-0 flex-col gap-1.5 lg:col-span-7">
+        <div className="min-w-0">
+          {/* The claim's own sentence ends with a full stop; a title does not show it. The chip
+              follows the last word. */}
+          <h4 className="inline type-heading text-pretty">{layout.action.replace(/\.$/, "")}</h4>{" "}
+          <span className="ml-1 inline-flex flex-wrap items-center gap-2 align-middle">
+            <Chips ids={sourceIds} chips={chips} />
+          </span>
+        </div>
         <p className="type-caption text-pretty text-muted-foreground">
           <span className="font-medium">Who</span> · {layout.who}
         </p>
       </div>
-      <div className="rounded-lg border border-input bg-muted px-4 py-3">
+      <div className="rounded-lg border border-input bg-muted px-4 py-3 lg:col-span-5">
         <p className="type-caption font-medium text-muted-foreground">First step</p>
         <p className="mt-1 text-sm leading-relaxed font-medium text-pretty text-foreground">{layout.firstStep}</p>
       </div>
-      <span className="flex min-w-0 flex-wrap items-center gap-1.5 lg:justify-end">
-        <Chips ids={sourceIds} chips={chips} />
-      </span>
     </li>
   );
 }
@@ -153,7 +157,7 @@ function ClaimRow({ claim, chips }: { claim: BriefClaim; chips: Record<string, R
         // No label to show: the sentence takes the label column too, so the row has no hole.
         <p className={`${DD} sm:col-span-2 sm:col-start-1`}>{withFigures(claim.text)}</p>
       )}
-      <span className="flex min-w-0 flex-wrap content-start items-start gap-1.5 pt-2.5 sm:col-start-2 md:col-start-3 md:row-start-1 md:justify-end md:pt-0">
+      <span className="flex min-w-0 flex-wrap content-start items-start gap-2 pt-2.5 sm:col-start-2 md:col-start-3 md:row-start-1 md:justify-end md:pt-0">
         <Chips ids={claim.source_ids} chips={chips} />
       </span>
     </li>
@@ -207,8 +211,7 @@ function Claims({
                 See the evidence and limitations
               </TextLink>
             </FramePanelLabel>
-            {/* One grid for the section, so every row has the same three columns. */}
-            <ul className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)_auto] lg:gap-x-8">
+            <ul>
               {segment.items.map(({ claim, layout }, i) => (
                 <ActionRow
                   key={`${i}-${claim.text.slice(0, 24)}`}
@@ -313,7 +316,7 @@ export function CountyBriefClient({
               {brief.mode === "ai" && brief.model && <span className="text-muted-foreground">{brief.model}</span>}
             </span>
             {foldedSources.length > 0 && (
-              <span className="flex flex-wrap items-center gap-1.5 font-normal">
+              <span className="flex flex-wrap items-center gap-2 font-normal">
                 <span className="mr-0.5 text-muted-foreground">Numbers from</span>
                 <Chips ids={foldedSources} chips={chips} />
               </span>

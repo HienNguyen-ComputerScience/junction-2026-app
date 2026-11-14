@@ -113,7 +113,7 @@ function TrendRow({ stage }: { stage: TrendStage }) {
   const word = change > 0 ? (faster ? "faster" : "worse") : faster ? "slower" : "better";
 
   return (
-    <li className="grid gap-x-10 gap-y-5 py-5 first:pt-0 last:pb-0 lg:grid-cols-[17rem_minmax(0,1fr)]">
+    <li className="grid gap-x-8 gap-y-5 py-5 first:pt-0 last:pb-0 lg:grid-cols-[13rem_minmax(0,1fr)]">
       <div className="flex flex-col gap-3">
         <p className="flex items-center gap-2 text-[0.9375rem] leading-snug font-semibold">
           <StepMark step={stage.step} status={stage.status} className="size-5 text-[0.6875rem]" />
@@ -158,7 +158,7 @@ function TrendRow({ stage }: { stage: TrendStage }) {
  * Columns by year on a zero-based 0 to 100% scale, so 58.0 and 85.4 look as different as they
  * are. Only the latest year is judged and drawn in its status colour; earlier years are neutral
  * grey. Finland is drawn per year: a short white tick at that year's own Finland value on that
- * year's bar, with a small label beside it (below the year on a phone). A year without a
+ * year's bar; its value is the muted second line under the year label. A year without a
  * published Finland value has no tick, and the line under the chart says so.
  */
 function TrendChart({
@@ -202,10 +202,10 @@ function TrendChart({
         : `Finland's value is published for ${ticks.map((point) => point.year).join(", ")} only.`;
 
   return (
-    <figure className="flex min-w-0 flex-col gap-3">
+    <figure className="flex min-w-0 flex-col gap-3 lg:max-w-[38rem]">
       <div aria-hidden className="flex flex-col gap-2 pt-5">
         <div className="relative h-32 border-b border-foreground/40">
-          <div className="absolute inset-0 flex gap-3 px-1 sm:gap-6 sm:px-3">
+          <div className="absolute inset-0 flex gap-3 px-1 sm:gap-6">
             {trend.map((point, i) => {
               const finland = finlandOf(point.year);
               const worse =
@@ -216,7 +216,7 @@ function TrendChart({
                     <span className="pb-1 type-caption text-faint">No data</span>
                   ) : (
                     <>
-                      <div className="relative h-full w-full max-w-24">
+                      <div className="relative h-full w-full max-w-[8.5rem]">
                         {worse ? (
                           <WorseColumn value={clamp(point.value)} finland={clamp(finland)} />
                         ) : (
@@ -234,13 +234,6 @@ function TrendChart({
                               className="absolute -inset-x-1 h-0.5 bg-foreground"
                               style={{ bottom: `calc(${clamp(finland)}% - 1px)` }}
                             />
-                            <span
-                              className="absolute left-full ml-2.5 flex translate-y-1/2 flex-col whitespace-nowrap type-note leading-4 text-muted-foreground max-sm:hidden"
-                              style={{ bottom: `${clamp(finland)}%` }}
-                            >
-                              <span>Finland</span>
-                              <span className="figure text-foreground">{formatPct(finland)}</span>
-                            </span>
                           </>
                         )}
                       </div>
@@ -260,14 +253,14 @@ function TrendChart({
             })}
           </div>
         </div>
-        <div className="flex gap-3 px-1 sm:gap-6 sm:px-3">
+        <div className="flex gap-3 px-1 sm:gap-6">
           {trend.map((point) => {
             const finland = finlandOf(point.year);
             return (
               <span key={point.year} className="flex flex-1 flex-col items-center text-center">
                 <span className="figure text-[0.8125rem] text-muted-foreground">{point.year}</span>
                 {finland !== null && point.value !== null && (
-                  <span className="type-note text-muted-foreground sm:hidden">
+                  <span className="type-note text-muted-foreground">
                     Finland <span className="figure">{formatPct(finland)}</span>
                   </span>
                 )}

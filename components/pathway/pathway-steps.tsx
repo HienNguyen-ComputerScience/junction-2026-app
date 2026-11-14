@@ -133,7 +133,7 @@ function StepTitle({ step, compact = false }: { step: PathwayStep; compact?: boo
 /** Status and source on one row. The section title gives the year, so the chip leaves it out. */
 function StepStatus({ step, children }: { step: PathwayStep; children?: ReactNode }) {
   return (
-    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-2">
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
       <StatusBadge status={step.status} size="xs">
         {STATUS_LABEL[step.status]}
       </StatusBadge>
@@ -157,7 +157,7 @@ export function PathwaySteps({
    * shows the gap to Finland instead, so one number is on screen once.
    */
   ledStage?: Stage;
-  /** Compact only: a link for a step, beside its status (the red-flag helper for step 2). */
+  /** A link for a step, beside its status (the red-flag helper for step 2). */
   renderExtra?: (step: PathwayStep) => ReactNode;
   className?: string;
 }) {
@@ -178,24 +178,24 @@ export function PathwaySteps({
       )}
     >
       {steps.map((step) => (
-        <FullStep key={step.stage} step={step} led={step.stage === ledStage} />
+        <FullStep key={step.stage} step={step} led={step.stage === ledStage} extra={renderExtra?.(step)} />
       ))}
     </ol>
   );
 }
 
-/** Height of the value slot: the figure, or the statement that stands in for it. */
+/** Height of the value slot: the figure, or the one sentence that stands in for it. */
 const SLOT = "flex h-11 items-end";
 const SLOT_FIGURE = "numeral text-[2.25rem] leading-none";
 
-function FullStep({ step, led }: { step: PathwayStep; led: boolean }) {
+function FullStep({ step, led, extra }: { step: PathwayStep; led: boolean; extra?: ReactNode }) {
   const { measure, status } = step;
   const value = measure?.value ?? null;
   return (
     <li className="flex min-w-0 flex-col px-4 pt-4 pb-5 sm:px-6 lg:row-span-6 lg:grid lg:grid-rows-subgrid">
       <StepTitle step={step} />
       <div className="pt-3">
-        <StepStatus step={step} />
+        <StepStatus step={step}>{extra}</StepStatus>
       </div>
 
       {measure && value !== null ? (
@@ -217,21 +217,21 @@ function FullStep({ step, led }: { step: PathwayStep; led: boolean }) {
         </>
       ) : (
         <>
-          <NoValue />
-          <p className="pt-2 type-caption text-muted-foreground">
-            {measure ? (
-              <>
-                Finland <span className="figure">{formatPct(measure.finland)}</span>, {measure.direction}
-              </>
-            ) : (
-              "No public indicator in any county"
-            )}
-          </p>
-          <p className="pt-1 type-caption text-pretty text-muted-foreground">
+          {/* No value: the one sentence sits in the value slot, so the columns keep their rows
+              and the status badge is the only "No public data". */}
+          <p className="flex min-h-11 items-start pt-3 type-caption text-pretty text-muted-foreground">
             {measure
               ? measure.note
               : "No public statistic shows how often GPs spot possible cancer at the first visit."}
           </p>
+          {measure ? (
+            <p className="pt-2 type-caption text-muted-foreground">
+              Finland <span className="figure">{formatPct(measure.finland)}</span>, {measure.direction}
+            </p>
+          ) : (
+            <span aria-hidden />
+          )}
+          <span aria-hidden />
         </>
       )}
 
@@ -241,25 +241,9 @@ function FullStep({ step, led }: { step: PathwayStep; led: boolean }) {
         finland={measure ? measure.finland : null}
         finlandLabel={measure ? `Finland ${formatPct(measure.finland)}` : undefined}
         status={status}
+        reserveAxis
       />
     </li>
-  );
-}
-
-/**
- * The value slot of a step with no value: the statement sits on the baseline of the figures
- * beside it. The hidden figure is a strut of the same size, so the alignment is exact.
- */
-function NoValue() {
-  return (
-    <p className={cn(SLOT, "pt-3")}>
-      <span className="flex items-baseline">
-        <span aria-hidden className={cn(SLOT_FIGURE, "invisible w-0")}>
-          0
-        </span>
-        <span className="text-[1.0625rem] leading-none font-medium text-muted-foreground">No public data</span>
-      </span>
-    </p>
   );
 }
 

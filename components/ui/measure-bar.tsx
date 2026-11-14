@@ -266,6 +266,7 @@ export function MeasureBar({
   higherIsBetter,
   size = "md",
   gapLabel,
+  reserveAxis = false,
 }: {
   value: number | null;
   finland: number | null;
@@ -276,6 +277,8 @@ export function MeasureBar({
   higherIsBetter?: boolean;
   size?: "sm" | "md" | "lg";
   gapLabel?: string;
+  /** Without a Finland line there is no axis; keep its height so bars in a row line up. */
+  reserveAxis?: boolean;
 }) {
   const hasGap = Boolean(gapLabel) && value !== null && finland !== null && value !== finland;
   const below = value !== null && finland !== null && value < finland;
@@ -331,7 +334,7 @@ export function MeasureBar({
           >
             <span
               className={cn(
-                "invisible figure type-note font-semibold whitespace-nowrap @min-[4rem]:visible",
+                "invisible figure type-note font-semibold whitespace-nowrap @min-[3.5rem]:visible",
                 // On solid red the label is dark; on the empty track it is light.
                 onRed ? "text-background" : "text-foreground/90",
               )}
@@ -343,6 +346,7 @@ export function MeasureBar({
         {finland !== null && <FinlandTick finland={finland} className={size === "sm" ? "-inset-y-1" : undefined} />}
       </div>
       {finland !== null && finlandLabel && <FinlandAxis finland={finland} label={finlandLabel} />}
+      {reserveAxis && finland === null && <div aria-hidden className="h-4" />}
     </div>
   );
 }

@@ -93,8 +93,8 @@ export default function CountyRankingPage() {
             Sotkanet indicator {GP_WAIT_ID}, {LATEST_YEAR}. Not specific to cancer: it covers
             all non-urgent GP visits.
           </p>
-          {/* In-page anchor, not a route change. Phones have the list right under the card. */}
-          <TextLink kind="jump" href="#ranking" className="mt-2 text-sm max-sm:hidden">
+          {/* In-page anchor, not a route change. */}
+          <TextLink kind="jump" href="#ranking" className="mt-2 text-sm">
             See all {rows.length + unranked.length} areas
           </TextLink>
         </div>
@@ -109,15 +109,16 @@ export default function CountyRankingPage() {
             </FramePanelLabel>
             <div className="grid sm:grid-cols-[auto_minmax(0,1fr)]">
               {/* The map, with the worst and the best area named beside it at every width. */}
-              <div className="flex flex-col items-center justify-center gap-2 border-b border-border px-4 py-4 sm:items-start sm:border-r sm:border-b-0 sm:pr-2 sm:pl-5">
+              {/* On a phone the three comparison rows come first and the map follows. */}
+              <div className="flex flex-col items-center justify-center gap-2 px-4 py-4 max-sm:order-2 sm:items-start sm:border-r sm:pr-2 sm:pl-5">
                 <FinlandMap
                   areas={mapAreas}
                   highlight={[worst.county.id, best.county.id]}
-                  className="h-[17.5rem] sm:h-[18.5rem]"
+                  className="h-[16.25rem] sm:h-[18.5rem]"
                 />
                 <p className="type-caption text-muted-foreground">Map: Statistics Finland, CC BY 4.0</p>
               </div>
-              <ul className="flex flex-col justify-between gap-3 px-4 pt-3 pb-3 sm:gap-4 sm:pt-4 sm:pr-5 sm:pb-4 sm:pl-4">
+              <ul className="flex flex-col justify-between gap-3 border-border px-4 pt-3 pb-3 max-sm:order-1 max-sm:border-b sm:gap-4 sm:pt-4 sm:pr-5 sm:pb-4 sm:pl-4">
                 <CompareRow
                   name={worst.county.name}
                   value={worst.gpWait.value}
