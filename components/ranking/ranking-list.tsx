@@ -49,7 +49,7 @@ export function RankingList({
   return (
     <div className="flex flex-col">
       {/* Column header, desktop. Not sticky: a sticky header slices the row passing under it.
-          The Finland label is repeated on the line at each lower group heading instead.
+          Each group heading repeats the source chips instead, and the lower ones the Finland label.
           Two fixed lines, so no cell can push the Finland label off its line. */}
       <div
         className={`${ROW_GRID} hidden border-b border-border px-5 pt-3 type-micro text-muted-foreground lg:grid`}
@@ -122,6 +122,8 @@ export function RankingList({
                   first={i === 0}
                   finlandX={finlandX}
                   nationalGpWait={nationalGpWait}
+                  gpWaitSourceId={gpWaitSourceId}
+                  referralSourceId={referralSourceId}
                 />
               )}
               <RankingRowLink
@@ -198,12 +200,17 @@ function GroupDivider({
   first,
   finlandX,
   nationalGpWait,
+  gpWaitSourceId,
+  referralSourceId,
 }: {
   status: GapStatus;
   count: number;
   first: boolean;
   finlandX: CSSProperties;
   nationalGpWait: number;
+  /** Given for the groups that show figures, so a source chip is in view wherever the list is scrolled. */
+  gpWaitSourceId?: string;
+  referralSourceId?: string;
 }) {
   return (
     <div
@@ -238,6 +245,23 @@ function GroupDivider({
         )}
         <span className="absolute inset-y-0 w-px bg-foreground" style={finlandX} />
       </div>
+      {/* Source chips, a sibling of the row links (never inside one). Desktop: each over its own
+          column, the GP wait chip ending on the figures' right edge. Below lg: a line under the
+          label that wraps. The inner wrappers size to the chip, so its text is never truncated. */}
+      {gpWaitSourceId && referralSourceId && (
+        <div className="col-span-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 pb-2 lg:contents">
+          <span className="flex lg:col-start-4 lg:justify-end lg:pt-4 lg:pb-2">
+            <span className="flex shrink-0">
+              <SourceChip sourceId={gpWaitSourceId} year={LATEST_YEAR} />
+            </span>
+          </span>
+          <span className="flex lg:col-start-5 lg:pt-4 lg:pb-2">
+            <span className="flex shrink-0">
+              <SourceChip sourceId={referralSourceId} year={LATEST_YEAR} />
+            </span>
+          </span>
+        </div>
+      )}
     </div>
   );
 }
