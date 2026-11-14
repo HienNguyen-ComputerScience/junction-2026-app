@@ -98,12 +98,16 @@ export function RankingList({
       {/* Below lg: one line that says what the bar and the line are. The rest is in the key
           under the list, so the first rows start high on a phone. */}
       <p className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-border px-4 py-3 type-micro text-muted-foreground sm:px-5 lg:hidden">
+        {/* Both swatches sit in the same 24px slot as the key under the list (BarKey), so the
+            two labels share one left edge. */}
         <span className="flex items-center gap-2">
-          <span aria-hidden className="h-2 w-4 shrink-0 rounded-[2px] bg-foreground/45" />
+          <span aria-hidden className="h-2.5 w-6 shrink-0 rounded-[2px] bg-foreground/45" />
           Bar: non-urgent GP visits waiting over 7 days
         </span>
         <span className="flex items-center gap-2">
-          <span aria-hidden className="h-3.5 w-0.5 shrink-0 bg-foreground" />
+          <span aria-hidden className="relative h-2.5 w-6 shrink-0 rounded-[2px] bg-track">
+            <span className="absolute -inset-y-0.5 left-1/2 w-0.5 -translate-x-1/2 bg-foreground" />
+          </span>
           <span>Line: {withFigures(finlandLabel)}</span>
         </span>
       </p>
