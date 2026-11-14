@@ -111,7 +111,7 @@ function EvidenceStat({ action, children }: { action: Evidence; children?: React
           {/* A figure with no stated comparison in the data is labelled as a study result. */}
           {qualifier ? null : <p className="text-[0.8125rem] leading-4 text-muted-foreground">Study finding:</p>}
           <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p>
-          {qualifier ? <p className="text-[0.8125rem] leading-snug text-pretty text-muted-foreground">{qualifier}</p> : null}
+          {qualifier ? <p className="text-[0.8125rem] leading-snug text-pretty text-muted-foreground first-letter:uppercase">{qualifier}</p> : null}
         </>
       ) : (
         <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-foreground tabular-nums">

@@ -55,7 +55,7 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
       <FramePanel padding="none" className="pb-1">
         <FramePanelLabel>
           <h3 className="font-sans type-caption font-medium tracking-normal text-muted-foreground">
-            Largest rises in non-urgent GP visits waiting over 7 days, {FIRST_YEAR}–{LAST_YEAR}
+            Largest rises, in percentage points, in non-urgent GP visits waiting over 7 days, {FIRST_YEAR}–{LAST_YEAR}
             {finland !== null && (
               <>
                 {" "}
@@ -72,11 +72,11 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
               <li key={row.id}>
                 <Link
                   href={`/county/${row.id}`}
-                  className={`group relative grid min-h-16 grid-cols-1 items-center gap-x-5 gap-y-1.5 py-3 pr-10 pl-4 transition-colors outline-none hover:bg-accent focus-visible:z-[1] focus-visible:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset sm:pl-5 lg:grid-cols-[11rem_13.5rem_minmax(0,1fr)_13.75rem] ${index > 0 ? "before:absolute before:inset-x-4 before:top-0 before:h-px before:bg-foreground/[0.06] sm:before:inset-x-5" : ""}`}
+                  className={`group relative grid min-h-16 grid-cols-1 items-center gap-x-5 gap-y-1.5 py-3 pr-10 pl-4 transition-colors outline-none hover:bg-accent focus-visible:z-[1] focus-visible:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset sm:pl-5 lg:grid-cols-[11rem_14rem_minmax(0,1fr)_13.75rem] ${index > 0 ? "before:absolute before:inset-x-4 before:top-0 before:h-px before:bg-foreground/[0.06] sm:before:inset-x-5" : ""}`}
                 >
                   <span className="text-[0.9375rem] font-semibold text-foreground">{row.name}</span>
-                  <span className="text-[0.9375rem] leading-snug font-medium text-foreground">
-                    <span className="figure">{formatAmount(row.change)} percentage points</span> worse since {FIRST_YEAR}
+                  <span className="text-[0.9375rem] leading-snug font-medium whitespace-nowrap text-foreground">
+                    <span className="figure">{formatAmount(row.change)}</span> points worse since {FIRST_YEAR}
                   </span>
                   <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                     <span className="type-caption text-muted-foreground">
