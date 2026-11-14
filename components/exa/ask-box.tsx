@@ -84,7 +84,7 @@ export function AskBox() {
   return (
     <Frame id="ask" aria-labelledby="ask-heading" className="scroll-mt-4">
       <FrameHeader>
-        <FrameTitle as="h1" id="ask-heading" className="type-display">
+        <FrameTitle as="h1" id="ask-heading" className="type-page text-forest-ink">
           Ask the evidence
         </FrameTitle>
         {/* Only once there are live results to mark; before that the page's one mark is the news'. */}
