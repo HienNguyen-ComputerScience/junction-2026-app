@@ -8,13 +8,14 @@ import { NextResponse } from "next/server";
 // script loop from burning Exa credits; it is not a security boundary.
 // Per-IP caps are generous because judges at the venue likely share one public IP.
 
-export type Bucket = "news" | "evidence" | "ask";
+export type Bucket = "news" | "evidence" | "ask" | "brief";
 
 const WINDOW_MS = 60_000;
 const LIMITS: Record<Bucket, { perIp: number; global: number }> = {
   news: { perIp: 60, global: 600 }, // county + national strips: cheap, mostly cached
   evidence: { perIp: 40, global: 200 }, // up to ~6 panels per action page
   ask: { perIp: 20, global: 60 }, // free text: every new question is a paid call
+  brief: { perIp: 20, global: 60 }, // each uncached request is one Claude call
 };
 const MAX_TRACKED_IPS = 5_000;
 

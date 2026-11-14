@@ -6,13 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isItemsResponse, STATUS_LABEL, type ItemsResponse } from "./types";
+import { isItemsResponse, STATUS_LABEL, TOO_MANY, type ItemsResponse } from "./types";
 
 type State =
   | { kind: "idle" }
   | { kind: "loading" }
   | { kind: "done"; data: ItemsResponse }
-  | { kind: "error" };
+  | { kind: "error"; limited: boolean };
 
 // actionTitle is sent as free text; the route also accepts preset keys, but action ids are not presets.
 export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; actionTitle: string }) {
@@ -30,16 +30,17 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
     fetch(`/api/evidence?action=${encodeURIComponent(actionTitle)}`, { signal: ctrl.signal })
       .then(async (res) => {
         const json: unknown = await res.json();
-        setState(res.ok && isItemsResponse(json) ? { kind: "done", data: json } : { kind: "error" });
+        setState(res.ok && isItemsResponse(json) ? { kind: "done", data: json } : { kind: "error", limited: res.status === 429 });
       })
       .catch((err: unknown) => {
         if (err instanceof DOMException && err.name === "AbortError") return;
-        setState({ kind: "error" });
+        setState({ kind: "error", limited: false });
       });
   }
 
   const data = state.kind === "done" ? state.data : null;
-  const unavailable = state.kind === "error" || data?.freshness === "unavailable";
+  const limited = state.kind === "error" && state.limited;
+  const unavailable = (state.kind === "error" && !state.limited) || data?.freshness === "unavailable";
 
   return (
     <section aria-label={`Live evidence search for: ${actionTitle}`} className="mt-3 space-y-3">
@@ -65,6 +66,7 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
       </div>
       <div id={panelId}>
         {state.kind === "loading" && <LoadingRows label="Searching for more evidence with Exa" rows={2} />}
+        {limited && <p role="status" className="text-sm text-muted-foreground">{TOO_MANY}</p>}
         {unavailable && <Unavailable />}
         {data && !unavailable && (
           <div className="space-y-3 rounded-lg border border-dashed bg-muted/30 p-3">

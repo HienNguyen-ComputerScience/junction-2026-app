@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isAskResponse, STATUS_LABEL, type AskResponse } from "./types";
+import { isAskResponse, STATUS_LABEL, TOO_MANY, type AskResponse } from "./types";
 
 const MAX_QUESTION = 300;
 
@@ -47,6 +47,7 @@ export function AskBox() {
       .then(async (res) => {
         const json: unknown = await res.json();
         if (res.ok && isAskResponse(json)) setState({ kind: "done", data: json });
+        else if (res.status === 429) setState({ kind: "error", message: TOO_MANY });
         else if (res.status === 400) setState({ kind: "error", message: "Type a question about health care in Finland." });
         else setState({ kind: "error", message: "" });
       })
