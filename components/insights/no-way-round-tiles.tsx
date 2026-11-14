@@ -79,7 +79,8 @@ export function NoWayRoundTiles({
           );
         })}
       </ul>
-      <ul aria-hidden className="flex flex-col gap-1.5 text-base">
+      {/* Without counts the legend only repeats each box's own screen-reader text; with counts it adds facts, so it is read. */}
+      <ul aria-hidden={counts ? undefined : true} aria-label={counts ? "Legend" : undefined} className="flex flex-col gap-1.5 text-base">
         {([1, 2, 3] as const).map((level) => (
           <li key={level} className="flex items-center gap-2.5">
             <span className={cn("inline-flex h-6 w-10 items-center justify-center rounded-sm border-2", FILL[level])}>

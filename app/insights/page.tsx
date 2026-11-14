@@ -219,7 +219,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
       {/* The finding: one serif statement, the two figures, source and main caveat. */}
       <header className="flex flex-col items-start gap-6 *:max-w-full">
         <Reveal className="flex max-w-[52rem] flex-col gap-3">
-          <p className="type-eyebrow">Where access is hardest · GP wait, {noWayRound.year}</p>
+          <p className="type-eyebrow">GP wait, {noWayRound.year}</p>
           <h1 className="font-display text-[2.5rem] leading-[1.1] font-light text-balance text-forest-ink sm:text-[3.5rem]">
             In {word(robust.length)} areas the GP queue is long, with no way round it.
           </h1>
@@ -259,7 +259,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
       <InsightCard
         id="no-way-round"
         eyebrow={`All ${c.areas} areas, ${noWayRound.year}`}
-        title={`${c.wait_above_finland} areas wait longer than Finland overall, but only ${word(c.long_few_every_test)} have no way round it in all ${word(TESTS)} tests.`}
+        title={`Of the ${c.wait_above_finland} areas that wait longer than Finland overall, only ${word(c.long_few_every_test)} also make few private or work-health doctor visits in all ${word(TESTS)} tests.`}
         visual={<NoWayRoundTiles areas={tiles} counts />}
         split
         source={
@@ -294,7 +294,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
                 <AnimatedNumber value={last.value ?? 0} from={first.value ?? 0} final={formatValue("6411", last.value ?? 0)} level="loud" />
               </span>
               <span className="max-w-[26ch] text-base text-pretty text-foreground">
-                of non-urgent GP visits in {warning.name} waited over 7 days, {first.year} → {last.year}
+                of non-urgent GP visits waited over 7 days, {first.year} → {last.year}
               </span>
             </p>
           }

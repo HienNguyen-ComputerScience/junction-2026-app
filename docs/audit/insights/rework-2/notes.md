@@ -19,8 +19,8 @@ The judge's `insights-d-full.png` shows the cause. The `ScrollStory` reserved ab
 
 | # | Anchor | Finding (one sentence) | Visual | Always visible | Behind "Show …" |
 |---|---|---|---|---|---|
-| 1 | `#no-way-round` | "14 areas wait longer than Finland overall, but only two have no way round it in all six tests." | The 22-area grid (the "grades grid"). The legend now carries the counts: **14** longer GP wait, **8** and few private or work-health doctor visits, **2** in every one of the six tests. On desktop the grid sits beside the text. | Chips: Sotkanet 6411, 2371 and 692 (2025) | "Show how we tested this" (the six tests), "Show the figures for all 22 areas" (sortable table) |
-| 2 | `#early-warning` | "Only South Karelia's GP wait is plainly getting worse." | 53.3% → 60.3%, "of non-urgent GP visits in South Karelia waited over 7 days, 2023 → 2025"; "15 more look worse, but their recorded visits changed or are incomplete." | Chip 6411 · 2025, the "Solid" grade, caveat "three years only: a direction, not a forecast" | "Show how we flag and grade a change" (the flag rule with its thresholds read from `rules.json`, the recording-change and publisher-gap rules, then the grading rules), "Show all 22 areas" |
+| 1 | `#no-way-round` | "Of the 14 areas that wait longer than Finland overall, only two also make few private or work-health doctor visits in all six tests." | The 22-area grid (the "grades grid"). The legend now carries the counts: **14** longer GP wait, **8** and few private or work-health doctor visits, **2** in every one of the six tests. The legend is read by screen readers when it carries counts. On desktop the grid sits beside the text. | Chips: Sotkanet 6411, 2371 and 692 (2025) | "Show how we tested this" (the six tests), "Show the figures for all 22 areas" (sortable table) |
+| 2 | `#early-warning` | "Only South Karelia's GP wait is plainly getting worse." | 53.3% → 60.3%, "of non-urgent GP visits waited over 7 days, 2023 → 2025"; "15 more look worse, but their recorded visits changed or are incomplete." | Chip 6411 · 2025, the "Solid" grade, caveat "three years only: a direction, not a forecast" | "Show how we flag and grade a change" (the flag rule with its thresholds read from `rules.json`, the recording-change and publisher-gap rules, then the grading rules), "Show all 22 areas" |
 | 3 | `#pathway` | "Three of seven steps to cancer treatment are not published by area." | The seven-step row with the three gaps dashed and labelled "Not published" | One chip per gap, from that step's `data-gaps.json` row: NHS England Fingertips, PubMed Central, Kansallinen syöpästrategia (roadmap) | "Show one area's figures for each step" (picker and `PathwayRow`; opens by itself with `?area=<id>`) |
 | 4 | `#starter-dataset` | "18 quarterly counts let a county measure those steps itself." | The six groups of the template as tiles, each with its count (5, 2, 3, 3, 2, 3); "Two of them measure Goal 3 of the national cancer strategy directly." | Caveat "counts only, no patient data"; the **one primary button**, "Download the recording template (Excel)", with "Save or share" (Print, Email) beside it as an outline button | "Show the 18 fields", "Show the Goal 3 link" |
 
@@ -39,18 +39,18 @@ The count is visible words in `<main>` with every "Show …" closed and screen-r
 
 | | Before | After |
 |---|---|---|
-| Visible words, 1366×768 | 325 | 377 |
-| Page height, 1366×768 | **5,103px** | **3,333px** (−35%) |
-| Page height, 390×844 | 5,204px | 4,862px |
-| With `?area=vantaa-kerava`, 1366 | 6,720px | 4,942px |
-| With `?area=vantaa-kerava`, 390 | 8,953px | 8,620px |
-| Print: words, `<details>` (closed) | 3,302 words, 11 (0) | 3,437 words, 10 (0) |
+| Visible words, 1366×768 | 325 | 375 |
+| Page height, 1366×768 | **5,103px** | **3,309px** (−35%) |
+| Page height, 390×844 | 5,204px | 4,868px |
+| With `?area=vantaa-kerava`, 1366 | 6,720px | 4,918px |
+| With `?area=vantaa-kerava`, 390 | 8,953px | 8,626px |
+| Print: words, `<details>` (closed) | 3,302 words, 11 (0) | 3,434 words, 10 (0); with `?area=vantaa-kerava` 10 (0) |
 | A4 pages (Chromium PDF) | 22 | 20 |
 
-The word count rose by 52. The story's four one-line steps were cut (about 45 words), and these were added:
+The word count rose by 50. The story's four one-line steps and the "Where access is hardest" eyebrow were cut (about 50 words), and these were added:
 - the six group titles of the starter dataset (about 35 words): the starter card's visual, which before was only reachable by opening "Show the 18 fields";
 - three gap source chips on the pathway card: the unpublished steps had no visible source before;
-- two eyebrows, and "in South Karelia" in the early-warning unit line;
+- two card eyebrows, and a card-1 title that names both cut steps (other doctors, six tests) instead of repeating the h1;
 - the legend counts.
 
 The page is a third shorter, and the reader sees each insight's finding, visual and source in one frame.
@@ -69,14 +69,12 @@ Every changed line, and where its fact is now:
 
 | Before | After |
 |---|---|
-| "GP WAIT, 2025" | "Where access is hardest · GP wait, 2025" |
 | "… Finland: 54.7%." | "… Finland overall: 54.7%." |
-| "How the two stand out" / "All 22 areas, 2025." | Card 1's eyebrow "All 22 areas, 2025" and its title |
+| "How the two stand out" / "All 22 areas, 2025." | Card 1's eyebrow "All 22 areas, 2025" and its title "Of the 14 areas that wait longer than Finland overall, only two also make few private or work-health doctor visits in all six tests." |
 | "A longer GP wait than Finland overall (54.7%)." | Legend "14 · Longer GP wait than Finland overall"; 54.7% is in the statement line |
 | "8 of them also use occupational-health and private doctors less than Finland overall." | Legend "8 · … and few private or work-health doctor visits instead", with chips 2371 and 692 |
-| "Only Central Finland and South Savo stay there under all 6 cut-offs we tested." | Title "… only two have no way round it in all six tests"; legend "2 · … true in every one of the six tests we ran"; the two dark tiles carry the names |
+| "Only Central Finland and South Savo stay there under all 6 cut-offs we tested." | Card 1 title "… only two … in all six tests"; legend "2 · … true in every one of the six tests we ran"; the two dark tiles carry the names |
 | TestsTable "with Finland", "Finland 2025: …" and the test labels | "Finland overall" (same values) |
-| "of non-urgent GP visits waited over 7 days, 2023 → 2025" | Same, plus "in South Karelia" |
 | Flag rule "… moved by more than a fifth …" | "… more than 20% …" (from `recording_change_above`), plus the two full rule texts |
 | "Three of seven steps of the cancer pathway are not published by area." | "Three of seven steps to cancer treatment are not published by area." |
 | "18 quarterly counts let a county measure them itself." | "… measure those steps itself." |
@@ -89,12 +87,12 @@ Every changed line, and where its fact is now:
 | 1366×768 and 390×844, with and without `?area=vantaa-kerava` | No sideways scroll, closed or with every "Show …" open (scroll width 1366 / 390). The test and area tables scroll inside their own container. No console errors. |
 | `?area=vantaa-kerava#pathway` | Disclosure open on "The whole pathway in Vantaa and Kerava"; the pathway card scrolls into view |
 | Reduced motion | Complete static page; all screenshots above are taken under it |
-| Motion on | After a slow scroll, no Reveal is left below full opacity |
+| Motion on | After a slow scroll, no Reveal is left below full opacity (1366, and 1366 and 390 with `?area`). Landing on `?area=vantaa-kerava#pathway` without scrolling, the 2,038px (desktop) and 4,503px (390) pathway card is at opacity 1. |
 | No JavaScript | Complete page: the download link is in the HTML, and every "Show …" is a native `<details>`. See "Known limits" for `?area`. |
 | Print | `beforeprint` → all 10 `<details>` open, 0 closed; the picker and Save or share are hidden |
 | Font sizes | Nothing under 16px except the 11px eyebrows, closed or all open |
 | Excel download | Clicking the button downloads `firstline-cancer-pathway-starter-template.xlsx` (9,444 bytes, a valid zip) |
-| Finland wording | Rendered all-open text has no "Finland's level", no "worse than Finland", and no bare "Finland" except in area names and the email subject ("… in Finland") |
+| Finland wording | Print text, plain and with `?area`: no "Finland's level", no "worse than Finland". Every comparison says "Finland overall". The one other "Finland" outside area names is geographic, not a comparison: "Days from referral to diagnosis are not published by area in Finland." (`PathwayRow`). |
 | Contrast | Contract tokens only (charcoal, Forest Ink, muted text and status ink on cream, keylime and mint), all AA per the contract's measured pairs |
 
 ## Known limits
