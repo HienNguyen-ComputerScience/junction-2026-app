@@ -7,11 +7,16 @@ import { useStoryStep } from "@/components/motion";
 /** 0 other areas, 1 longer GP wait than Finland, 2 and few other routes, 3 and in every test. */
 export type TileLevel = 0 | 1 | 2 | 3;
 
+/**
+ * Each level a clear step on the palette: cream, mint, then sage with a Forest Ink edge, then
+ * Forest Ink. The edge (2px on every box, so nothing shifts) keeps level 2 apart from level 1
+ * even when a print drops the fills; the dots carry the level without colour.
+ */
 const FILL: Record<TileLevel, string> = {
   0: "border-border-mist bg-cream-paper text-charcoal",
-  1: "border-border bg-mint-veil text-charcoal",
-  2: "border-border bg-sage-mist text-charcoal",
-  3: "border-transparent bg-forest-ink text-cream-paper font-semibold",
+  1: "border-forest-ink/25 bg-mint-veil text-charcoal",
+  2: "border-forest-ink bg-sage-mist text-forest-ink font-semibold",
+  3: "border-forest-ink bg-forest-ink text-cream-paper font-semibold",
 };
 
 const SAYS: Record<TileLevel, string> = {
@@ -27,7 +32,7 @@ function Dots({ level }: { level: TileLevel }) {
   return (
     <span aria-hidden className="flex shrink-0 gap-0.5">
       {Array.from({ length: level }, (_, i) => (
-        <span key={i} className="size-1.5 rounded-full bg-current" />
+        <span key={i} className="size-2 rounded-full bg-current" />
       ))}
     </span>
   );
@@ -54,7 +59,7 @@ export function NoWayRoundTiles({ areas }: { areas: { id: string; name: string; 
             <li
               key={a.id}
               className={cn(
-                "flex min-h-11 items-center justify-between gap-2 rounded-sm border px-2.5 py-1.5 text-base leading-tight transition-colors duration-(--motion-rise) ease-(--motion-ease)",
+                "flex min-h-11 items-center justify-between gap-2 rounded-sm border-2 px-2.5 py-1.5 text-base leading-tight transition-colors duration-(--motion-rise) ease-(--motion-ease)",
                 FILL[level],
               )}
             >
@@ -70,7 +75,7 @@ export function NoWayRoundTiles({ areas }: { areas: { id: string; name: string; 
       <ul aria-hidden className="flex flex-col gap-1.5 text-base">
         {([1, 2, 3] as const).map((level) => (
           <li key={level} className="flex items-center gap-2.5">
-            <span className={cn("inline-flex h-6 w-10 items-center justify-center rounded-sm border", FILL[level])}>
+            <span className={cn("inline-flex h-6 w-10 items-center justify-center rounded-sm border-2", FILL[level])}>
               <Dots level={level} />
             </span>
             {level === 1 ? "Longer GP wait than Finland" : level === 2 ? "… and few other routes" : "… under all six cut-offs"}
