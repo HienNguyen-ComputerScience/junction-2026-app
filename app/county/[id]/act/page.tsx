@@ -121,7 +121,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
               </p>
               <p className="text-lg text-foreground">{FIGURE_CAPTION[lead.indicator_id] ?? getIndicator(lead.indicator_id)?.short_name}</p>
               <span className="flex flex-wrap items-center gap-2 pt-1">
-                <span className="inline-flex min-h-8 items-center rounded-full bg-cream-paper px-3.5 text-base text-forest-ink">
+                <span className="inline-flex min-h-8 items-center rounded-full bg-border-mist px-3.5 text-base text-forest-ink">
                   Finland overall: {formatPct(lead.national_value)}
                 </span>
                 <SourceChip sourceId={lead.source_id} year={lead.year} />
