@@ -223,7 +223,7 @@ function GroupDivider({
             className="absolute inset-y-0 flex items-center pt-2 pr-2.5 type-mark whitespace-nowrap text-muted-foreground"
             style={{ right: `${100 - nationalGpWait}%` }}
           >
-            solid red: beyond Finland&apos;s line
+            Solid red: beyond Finland&apos;s line
           </span>
         )}
         <span className="absolute inset-y-0 w-0.5 -translate-x-1/2 bg-foreground" style={finlandX} />

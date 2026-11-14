@@ -58,7 +58,7 @@ export function RedFlagHelper() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <>
       {/* Desktop: the question on the left; the note and the route on the right, so the answer
           appears beside the input. Neutral surfaces: red and amber are reserved for data status. */}
       <div className="grid gap-x-10 gap-y-5 lg:grid-cols-2">
@@ -106,6 +106,14 @@ export function RedFlagHelper() {
               className="h-11 rounded-lg border border-input bg-card px-3 text-[0.9375rem] transition-[border-color,box-shadow] outline-none placeholder:text-muted-foreground/80 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
             />
           </div>
+
+          <div className="flex flex-col gap-2 border-t border-border/80 pt-4 type-micro text-muted-foreground">
+            <p>
+              Our own plain-language categories, not guideline text. UK guideline, Finnish criteria pending
+              (roadmap 2.5.2). Exact criteria, ages and tests are in the guidelines:
+            </p>
+            <LinkList links={[NICE_NG12, KAYPA_HOITO, FINNISH_ROADMAP]} />
+          </div>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -119,9 +127,9 @@ export function RedFlagHelper() {
             </div>
           </div>
 
-          <div aria-live="polite" className="flex flex-1 flex-col">
+          <div aria-live="polite">
             {hasInput ? (
-              <div className="flex flex-1 flex-col gap-4 rounded-lg border border-input bg-card p-4 sm:p-5">
+              <div className="flex flex-col gap-4 rounded-lg border border-input bg-card p-4 sm:p-5">
                 <div className="flex flex-col gap-1.5">
                   <p className="type-caption text-muted-foreground">
                     {matched.length > 0
@@ -151,21 +159,13 @@ export function RedFlagHelper() {
                 </div>
               </div>
             ) : (
-              <p className="flex flex-1 items-center rounded-lg border border-dashed border-input p-4 text-sm text-muted-foreground sm:p-5 lg:min-h-40">
+              <p className="rounded-lg border border-dashed border-input p-4 text-sm text-muted-foreground">
                 Pick a category or type a few words to see the warning-sign category and the referral route.
               </p>
             )}
           </div>
         </div>
       </div>
-
-      <div className="flex flex-col gap-2 border-t border-border/80 pt-4 type-micro text-muted-foreground">
-        <p className="max-w-[46rem]">
-          Our own plain-language categories, not guideline text. UK guideline, Finnish criteria pending
-          (roadmap 2.5.2). Exact criteria, ages and tests are in the guidelines:
-        </p>
-        <LinkList links={[NICE_NG12, KAYPA_HOITO, FINNISH_ROADMAP]} />
-      </div>
-    </div>
+    </>
   );
 }

@@ -74,7 +74,11 @@ export function StageCard({ step, title, status, measure, emptyText }: StageCard
           <span className="sr-only">Step {step}: </span>
           {title}
         </h3>
-        <StatusBadge status={status}>{STATUS_LABEL[status]}</StatusBadge>
+        {/* The source sits with the status, so it is on screen with the number it backs. */}
+        <div className="flex flex-wrap items-center gap-2">
+          <StatusBadge status={status}>{STATUS_LABEL[status]}</StatusBadge>
+          {measure && <SourceChip sourceId={measure.sourceId} year={measure.year} />}
+        </div>
       </div>
 
       {measure && measure.value !== null ? (
@@ -131,11 +135,6 @@ export function StageCard({ step, title, status, measure, emptyText }: StageCard
         </div>
       )}
 
-      {measure && (
-        <div className="mt-auto pt-1">
-          <SourceChip sourceId={measure.sourceId} year={measure.year} />
-        </div>
-      )}
     </article>
   );
 }
@@ -161,21 +160,26 @@ function TrendChart({
       <figcaption className="type-micro text-muted-foreground">
         {trend[0].year} to {trend[lastIndex].year}, on a 0 to 100% scale
       </figcaption>
-      <div className="pt-5">
-        <div className="relative flex h-28 items-end gap-2 border-b border-foreground/40">
+      <div className="flex flex-col gap-1">
+        {/* Values sit in their own row above the plot, so the Finland line never crosses them. */}
+        <div className="flex gap-2">
+          {trend.map((point, i) => (
+            <span
+              key={point.year}
+              className={`flex-1 text-center type-mark ${i === lastIndex ? "font-semibold text-foreground" : "text-muted-foreground"}`}
+            >
+              {point.value === null ? "n/a" : formatPct(point.value)}
+            </span>
+          ))}
+        </div>
+        <div className="relative flex h-24 items-end gap-2 border-b border-foreground/40">
           {trend.map((point, i) => (
             <div key={point.year} className="flex h-full flex-1 items-end justify-center">
-              {point.value === null ? (
-                <span className="pb-1 type-mark text-muted-foreground">n/a</span>
-              ) : (
+              {point.value !== null && (
                 <div
-                  className={`relative w-full max-w-12 rounded-t-[2px] ${i === lastIndex ? STATUS_FILL[status] : "bg-foreground/25"}`}
+                  className={`w-full max-w-12 rounded-t-[2px] ${i === lastIndex ? STATUS_FILL[status] : "bg-foreground/25"}`}
                   style={{ height: `${Math.min(100, Math.max(0, point.value))}%` }}
-                >
-                  <span className="absolute inset-x-0 -top-5 text-center type-mark font-medium text-foreground">
-                    {formatPct(point.value)}
-                  </span>
-                </div>
+                />
               )}
             </div>
           ))}
@@ -185,7 +189,7 @@ function TrendChart({
             style={{ bottom: `${Math.min(100, Math.max(0, finland))}%` }}
           />
         </div>
-        <div className="mt-1 flex gap-2">
+        <div className="flex gap-2">
           {trend.map((point) => (
             <span key={point.year} className="flex-1 text-center type-mark text-muted-foreground">
               {point.year}
