@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 // Matches --background, so the browser chrome and form controls are dark too.
 export const viewport: Viewport = {
-  themeColor: "#0e0f11",
+  themeColor: "#050506",
   colorScheme: "dark",
 };
 

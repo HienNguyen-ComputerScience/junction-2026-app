@@ -17,6 +17,17 @@ export const STATUS_INK: Record<GapStatus, string> = {
   no_data: "text-status-grey-ink",
 };
 
+/**
+ * Colour for a big figure (`numeral`), by data status. Only "worse than Finland" colours the
+ * figure itself; an amber figure stays in the text colour, with the marker and the label
+ * carrying the amber, so a page keeps a calm end. Use this for numerals, STATUS_INK for labels.
+ */
+export const STATUS_FIGURE: Record<GapStatus, string> = {
+  red: "text-status-red-ink",
+  amber: "text-foreground",
+  no_data: "text-muted-foreground",
+};
+
 const CHIP: Record<GapStatus, string> = {
   red: "border-status-red-border bg-status-red-soft text-status-red-ink",
   amber: "border-status-amber-border bg-status-amber-soft text-status-amber-ink",

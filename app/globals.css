@@ -29,6 +29,7 @@
   --color-status-amber-soft: var(--status-amber-soft);
   --color-status-amber-border: var(--status-amber-border);
   --color-status-amber-ink: var(--status-amber-ink);
+  --color-status-amber-bar: var(--status-amber-bar);
   --color-status-grey: var(--status-grey);
   --color-status-grey-soft: var(--status-grey-soft);
   --color-status-grey-border: var(--status-grey-border);
@@ -87,13 +88,14 @@
   /* One dark theme, no toggle. Form controls and scrollbars follow it. */
   color-scheme: dark;
 
-  /* Surfaces, deepest to highest: a graphite ramp, only barely cool, so the page never reads
-     as blue. Depth comes from these steps and from hairlines, never from shadows. */
-  --background: oklch(0.17 0.004 255); /* page    #0e0f11 */
-  --frame: oklch(0.2 0.004 255); /*        frame   #151618 */
-  --card: oklch(0.228 0.004 255); /*       panel   #1b1d1e */
-  --muted: oklch(0.268 0.005 255); /*      raised  #242628: inputs, chips, inner blocks */
-  --accent: oklch(0.305 0.005 255); /*     raised, hovered #2d2f32 */
+  /* Surfaces, deepest to highest: near-black, neutral, only barely cool, so the page never
+     reads as blue. The steps are small on purpose; the hairlines below carry the edges. Depth
+     comes from these steps and from hairlines, never from shadows. */
+  --background: oklch(0.115 0.003 255); /* page    #050506 */
+  --frame: oklch(0.162 0.003 255); /*      frame   #0d0e0f */
+  --card: oklch(0.19 0.003 255); /*        panel   #131415 */
+  --muted: oklch(0.222 0.004 255); /*      raised  #1a1b1d: inputs, chips, inner blocks, row hover */
+  --accent: oklch(0.258 0.004 255); /*     raised, hovered #222425 */
   --popover: var(--muted);
   --secondary: var(--muted);
 
@@ -106,22 +108,26 @@
   --secondary-foreground: var(--foreground);
   --accent-foreground: var(--foreground);
 
-  /* Hairlines: the text colour at 7 to 10%. */
-  --frame-border: oklch(0.94 0.003 255 / 7%);
-  --border: oklch(0.94 0.003 255 / 8%);
+  /* Hairlines: the text colour at 8 to 10%. They do the work of the small surface steps. */
+  --frame-border: oklch(0.94 0.003 255 / 8%);
+  --border: oklch(0.94 0.003 255 / 9%);
   --input: oklch(0.94 0.003 255 / 10%);
-  /* Empty part of a bar, so the 100% end is visible on a panel. */
-  --track: oklch(0.94 0.003 255 / 10%);
+  /* Empty part of a bar, so the 100% end is visible on a panel (#2d2e2f on a panel). A tinted
+     red fill is 1.9:1 against it and the solid red 1.8:1 against the tint. */
+  --track: oklch(0.94 0.003 255 / 12%);
 
-  /* Primary action: off-white from the ramp with dark text. No brand colour in the chrome. */
-  --primary: var(--foreground);
-  --primary-foreground: oklch(0.17 0.004 255);
-
-  /* The one accent, pale glacier blue: links and focus rings only. Never a fill. */
-  --brand: oklch(0.84 0.04 228); /* #b0d0df */
-  --brand-ink: var(--brand);
-  --brand-soft: var(--muted);
+  /* The one accent, a cold glacier cyan. It is the identity colour and it is used for exactly
+     five things: the logo mark, the active nav underline, the primary button fill, text links
+     and the focus ring. Nothing else. It sits far from the red and amber status hues and is
+     blue-leaning (B above G in sRGB), so it can never read as "green = good". */
+  --brand: oklch(0.8 0.1 212); /*      #68cfe3, 11:1 on the page */
+  --brand-ink: oklch(0.85 0.085 212); /* #8adbea, link text */
+  --brand-soft: oklch(0.8 0.1 212 / 12%);
   --ring: var(--brand);
+
+  /* Primary action: the accent as a fill, with the page colour as its text (AA). */
+  --primary: var(--brand);
+  --primary-foreground: oklch(0.115 0.003 255);
 
   /* Data status, the only saturated colour on any screen, tuned to sit in the dark ramp.
      red = worse than Finland, amber = at or better than Finland's level, grey = no public data.
@@ -134,6 +140,9 @@
   --status-amber-soft: oklch(0.79 0.135 78 / 12%);
   --status-amber-border: oklch(0.79 0.135 78 / 32%);
   --status-amber-ink: oklch(0.85 0.105 82); /* #f0c77c */
+  /* Amber as a bar fill: quieter than the marker, so the calm end of a chart stays calm.
+     Markers and labels keep --status-amber. */
+  --status-amber-bar: oklch(0.72 0.095 78); /* #c59d5d */
   --status-grey: oklch(0.56 0.005 255); /*    #727577 */
   --status-grey-soft: oklch(0.94 0.003 255 / 5%);
   --status-grey-border: oklch(0.94 0.003 255 / 18%);
@@ -150,7 +159,7 @@
   --radius: 0.625rem;
   --sidebar: var(--frame);
   --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--foreground);
+  --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
   --sidebar-accent: var(--muted);
   --sidebar-accent-foreground: var(--foreground);
@@ -184,10 +193,32 @@
   summary::-webkit-details-marker {
     display: none;
   }
+  /* Text links: an underlined link with no colour of its own takes the accent. A colour
+     utility on the element still wins (utilities sit above this layer). */
+  a:where(.underline) {
+    color: var(--brand-ink);
+    text-decoration-color: color-mix(in oklch, var(--brand-ink), transparent 55%);
+    text-decoration-thickness: 1px;
+  }
   ::selection {
     background: oklch(0.94 0.003 255 / 22%);
     color: var(--foreground);
   }
+}
+
+/* Headings written without a type-* class (app/sources) take the system's weight and tracking,
+   so no page has a heavier h1 than the others. Unlayered on purpose: it has to beat the raw
+   font-semibold / tracking-tight utilities. Headings that opt into the text face keep theirs. */
+h1:not([class*="type-"], .font-sans) {
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+h2:not([class*="type-"], .font-sans) {
+  font-weight: 560;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
 }
 
 /* ---- Layout: one container for the header, the footer and every page. ---- */
@@ -240,7 +271,15 @@
   font-size: 0.75rem;
   line-height: 1rem;
 }
-/* Reference marks: source chips, axis labels, years. Mono, never below 11px. */
+/* Notes on a chart or a card ("via Exa", "Solid red: beyond Finland's line", dates): the text
+   face, 12px. Pair with text-muted-foreground. Captions are never mono. */
+@utility type-note {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+/* Mono, 11px: source chips and bare axis numerals (0%, 100%, years, tick values). Nothing with
+   words in it is mono except a source chip. */
 @utility type-mark {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 0.6875rem;
@@ -256,6 +295,13 @@
   letter-spacing: -0.035em;
   font-weight: 540;
   line-height: 0.95;
+}
+
+/* Legend labels (BarKey) and the short notes under a chart: 13px, one step up from muted. */
+@utility type-legend {
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  color: color-mix(in oklch, var(--foreground), var(--muted-foreground) 45%);
 }
 
 /* Empty measure track: "no public data" drawn as absence, not as a zero. */

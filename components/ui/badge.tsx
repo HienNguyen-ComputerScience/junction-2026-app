@@ -14,8 +14,10 @@ const badgeVariants = cva(
           "border-border bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
         destructive:
           "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 [a]:hover:bg-destructive/20",
+        // The reference tag: drawn exactly like SourceChip (components/source-chip.tsx), so a
+        // source reads the same whether it is a link or a plain tag.
         outline:
-          "border-input bg-transparent text-foreground [a]:hover:border-foreground/30",
+          "h-7 border-border bg-muted font-mono text-[0.6875rem] font-normal tracking-normal text-muted-foreground tabular-nums [word-spacing:-0.25em] sm:h-6 [a]:hover:border-foreground/30 [a]:hover:text-foreground",
         ghost:
           "hover:bg-muted hover:text-muted-foreground",
         link: "text-brand-ink underline-offset-4 hover:underline",

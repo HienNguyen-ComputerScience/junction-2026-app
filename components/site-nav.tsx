@@ -10,7 +10,7 @@ const LINKS = [
 ] as const;
 
 /**
- * Presentational nav: plain text links, the current page marked with an ink underline.
+ * Presentational nav: plain text links, the current page marked with an accent underline.
  * `pathname` null renders no active state (prerender fallback). Phones get short labels so
  * the header stays one 56px row; the full label is still read by screen readers.
  */
@@ -27,7 +27,7 @@ export function NavLinks({ pathname }: { pathname: string | null }) {
                 aria-current={active ? "page" : undefined}
                 className={`relative flex h-14 items-center px-2 type-caption font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset sm:px-2.5 ${
                   active
-                    ? "text-foreground after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:bg-foreground after:content-[''] sm:after:inset-x-2.5"
+                    ? "text-foreground after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:bg-brand after:content-[''] sm:after:inset-x-2.5"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
