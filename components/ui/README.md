@@ -9,11 +9,11 @@
 `components/pathway/pathway-steps.tsx` is the only component for the three steps, on every page: `buildPathwaySteps(countyId)` reads them from the snapshot, `<PathwaySteps steps density />` draws them.
 
 - Every step has the same parts in the same order: mark and title · status badge and source chip on one row · the value slot · the comparison line · one caption · the bar with the Finland line.
-- The value slot has a fixed height. A step without a value shows a muted "No public data" on the baseline of the figures beside it, never a hole, and keeps every other part (the hatched bar included).
+- A step with a figure uses the six shared rows (subgrid). A step without one omits what it has none of: the "No public data" badge and source chip, one caption (the data's own sentence), then the hatched bar. Its card is as tall as its content; there are no fixed-height rows that leave a blank band.
 - Two densities. `density="full"` (county page): three divided columns on shared rows (subgrid). `density="compact"` (act page): one short strip, per step its name and value, what the value counts, a thin bar, the badge and the chip.
 - The section title gives the year ("… (2025)"), so the chip in a step leaves it out and the status row stays one row.
 - `ledStage`: the step whose figure already leads the page shows its gap to Finland in the slot instead, so **one number is on screen once per viewport**.
-- `TrendStrip` (`components/pathway/trend-strip.tsx`) is the panel under the full steps: the change since 2023 in words and the three yearly columns. Only the latest year has a status, so it alone is drawn by the bar rule (upright); the earlier years are neutral grey, and the panel's label strip says so once.
+- `TrendStrip` (`components/pathway/trend-strip.tsx`) is the panel under the full steps: per step a figure block (the change since 2023 in words) and the chart, as a grid (1fr / 2fr, `gap-8`), the chart capped at 640px and left-aligned. Only the latest year has a status, so it alone is drawn by the bar rule (upright); the earlier years are neutral grey, and the label strip says "Only 2025 has a status" once. The source chips sit in the strip's right slot, not under the chart.
 
 ## Bars: the Finland line
 
@@ -28,7 +28,7 @@ Every bar is zero-based (0 to 100%) and carries a thin off-white marker at Finla
 - At or better than Finland: slate (`bg-status-amber-bar`; the token name is historical). Slate is not "good", and a slate figure stays in the text colour (`STATUS_FIGURE`).
 - Grey fill: only a mark without a status, i.e. the "Finland overall" bar and the earlier years of the trend. Hatched track: no public data.
 - The map of Finland (`components/map/finland-map.tsx`) fills its areas with the same tokens at the same strength as the bars: `status-red`, `status-amber-bar`, the hatch.
-- `<BarKey items />`: the key, one row of swatches drawn like the marks: "Finland's value", "Worse than Finland" (tint then solid), "At or better than Finland's level", "No public data". **One key per page** (home: in the hero card; county: under the steps; act: beside the strip's title), with `items` limited to the marks in view. No prose legends: a sentence under a chart is only for what a swatch cannot say.
+- `<BarKey items />`: the key, one row of swatches drawn like the marks: "Finland's value", "Worse than Finland's level" (tint then solid), "At or better than Finland's level", "No public data". **One key per page** (home: under the map; county: under the steps; act: beside the strip's title), with `items` limited to the marks in view. No prose legends: a sentence under a chart is only for what a swatch cannot say.
 - `withFigures("Finland 54.7%")` sets the numbers of a one-string label in the figure face.
 
 ## Buttons and links
@@ -71,8 +71,8 @@ Bricolage Grotesque for headlines, Geist for text and numbers, Geist Mono for so
 
 - `StatusBadge`: an 8px square mark plus a text label, never colour alone. `variant="chip"` (tag; `size="xs"` is as tall as a source chip), `"plain"` (coloured text), `"quiet"` (the mark plus a 13px caption, for dense rows). Take status from the data. In a list, the group heading carries the status label once, with its count and its source chips.
 - `SourceChip` (`components/source-chip.tsx`): mono tag with an arrow. Every number has one, or a source line, near it. One format: "Sotkanet 6411" or, where no title gives the year, "Sotkanet 6411 · 2025"; evidence sources show the publisher's name.
-- Provenance is quiet: `<Badge variant="unverified">Found live — unverified</Badge>` (hollow 8px mark) and `<Badge variant="checked">Precomputed from the snapshot</Badge>` / "Source checked" (solid 8px mark). Muted text, no box.
-- Live content (`components/exa/result-list.tsx`): `LiveMark` is the one provenance and freshness line, in the frame header: the unverified badge plus "via Exa · live" or "via Exa · cached · saved 2026-11-14". Rows have one minimum height, with or without a snippet.
+- **The 8px square is for data status only.** Provenance is a 14px lucide icon plus 13px muted text, no box: `<Badge variant="unverified">Found live — unverified</Badge>` (`CircleDashed`), `<Badge variant="checked">Source checked</Badge>` (`ShieldCheck`) and `<Badge variant="checked" source="snapshot">Precomputed from the snapshot</Badge>` (`Database`). Same muted colour, icon in the text colour.
+- Live content (`components/exa/result-list.tsx`): `LiveMark` is the one provenance and freshness line, in the frame header: the unverified badge plus "via Exa · live" or "via Exa · cached · saved 2026-11-14". Rows are two columns (`grid-cols-[1fr_auto]`): the title (link, two lines), the snippet if any (two lines), a caption "host · 12 Nov 2026" (absolute dates, ISO in the `title`; never "3 days ago"), and the external arrow top-aligned in the right column. A row without a snippet is the title and the caption.
 - Icons: lucide only, 16px (the up-right arrow of an external link or a chip is 14px), stroke 1.75, in the colour of the text beside them.
 
 ## Pages
@@ -80,6 +80,8 @@ Bricolage Grotesque for headlines, Geist for text and numbers, Geist Mono for so
 - Page pattern: `BackLink`, a one-line context caption, `type-page` h1, then Frames.
 - Act: the compact steps, then Action 1 with its "First step" box inside the first 1280×800 screen.
 - County: the limitations box (title and content) is inside the first 1280×800 screen, never clipped.
+- Action cards (act page and the county brief) use two tones: the action title in `text-foreground`; every other line (description, Owner, Precedent, Evidence, Who, labels) in `text-muted-foreground`, labels in `type-caption`. Only the "First step" box changes surface (`bg-muted`). No `text-faint` in body lines.
+- The red-flag helper before any input is one `FramePanel` with a label strip ("Warning-sign category"), a 16px icon, "No concern picked yet" and one caption. The result rows (how fast, what the GP does, the guideline links) appear only with a result.
 - A recommended action in the county brief is one row (title and "Who", the First step box, the source chip); the section has one link, "See the evidence and limitations", to the act page.
 - Phone (390px): one-row 56px header, stacked columns, tap targets 36px or more, no horizontal scroll, a source line directly under the figures it sources.
 

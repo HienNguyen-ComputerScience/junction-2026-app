@@ -43,16 +43,22 @@ export function TrendStrip({ stages, areaName }: { stages: TrendStage[]; areaNam
     const points = valued(stage.trend);
     return points[points.length - 1].year === stage.year;
   })?.year;
+  // The chips of the panel's numbers, once each, in the label strip.
+  const sourceIds = [...new Set(withTrend.map((stage) => stage.sourceId))];
 
   return (
     <FramePanel padding="none" role="group" aria-labelledby="trend-heading">
       <FramePanelLabel>
         <h3 id="trend-heading" className="font-sans type-caption font-medium tracking-normal">
           Trend, {span}
+          {judgedYear !== undefined && (
+            <span className="font-normal text-muted-foreground"> · Only {judgedYear} has a status</span>
+          )}
         </h3>
-        <span className="font-normal text-muted-foreground">
-          Share by year on a 0 to 100% scale.
-          {judgedYear !== undefined && ` Only ${judgedYear} has a status; earlier years are grey.`}
+        <span className="flex flex-wrap items-center gap-1.5 font-normal">
+          {sourceIds.map((id) => (
+            <SourceChip key={id} sourceId={id} />
+          ))}
         </span>
       </FramePanelLabel>
       <div className="flex flex-col gap-4 px-4 py-5 sm:px-6">
@@ -113,7 +119,7 @@ function TrendRow({ stage }: { stage: TrendStage }) {
   const word = change > 0 ? (faster ? "faster" : "worse") : faster ? "slower" : "better";
 
   return (
-    <li className="grid gap-x-10 gap-y-5 py-5 first:pt-0 last:pb-0 lg:grid-cols-[17rem_minmax(0,1fr)]">
+    <li className="grid gap-x-8 gap-y-5 py-5 first:pt-0 last:pb-0 lg:grid-cols-[1fr_2fr]">
       <div className="flex flex-col gap-3">
         <p className="flex items-center gap-2 text-[0.9375rem] leading-snug font-semibold">
           <StepMark step={stage.step} status={stage.status} className="size-5 text-[0.6875rem]" />
@@ -147,7 +153,6 @@ function TrendRow({ stage }: { stage: TrendStage }) {
         nationalTrend={stage.nationalTrend}
         latestIndex={latestIndex}
         latestYear={stage.year}
-        sourceId={stage.sourceId}
         status={stage.status}
       />
     </li>
@@ -166,14 +171,12 @@ function TrendChart({
   nationalTrend,
   latestIndex,
   latestYear,
-  sourceId,
   status,
 }: {
   trend: TrendPoint[];
   nationalTrend: TrendPoint[];
   latestIndex: number;
   latestYear: number;
-  sourceId: string;
   status: GapStatus;
 }) {
   const clamp = (n: number) => Math.min(100, Math.max(0, n));
@@ -202,7 +205,7 @@ function TrendChart({
         : `Finland's value is published for ${ticks.map((point) => point.year).join(", ")} only.`;
 
   return (
-    <figure className="flex min-w-0 flex-col gap-3">
+    <figure className="flex w-full max-w-[640px] min-w-0 flex-col gap-3">
       <div aria-hidden className="flex flex-col gap-2 pt-5">
         <div className="relative h-32 border-b border-foreground/40">
           <div className="absolute inset-0 flex gap-3 px-1 sm:gap-6 sm:px-3">
@@ -276,10 +279,7 @@ function TrendChart({
           })}
         </div>
       </div>
-      <figcaption className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 type-caption text-muted-foreground">
-        <span>{tickText}</span>
-        <SourceChip sourceId={sourceId} />
-      </figcaption>
+      {tickText && <figcaption className="type-caption text-muted-foreground">{tickText}</figcaption>}
       <p className="sr-only">
         {trend
           .map((point) => {

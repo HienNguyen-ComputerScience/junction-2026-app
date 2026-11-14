@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { useId, type CSSProperties } from "react";
+import { useId, type CSSProperties, type MouseEvent } from "react";
 import { cn } from "cn";
 
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { GapStatus } from "@/lib/data";
-import { STATUS_LABEL } from "@/lib/ranking";
 
 import {
   ALAND_PATH,
@@ -29,9 +28,14 @@ import {
  * outline (a hairline and a faint ground, its two largest islands), with no link and no
  * status, so the country keeps its shape and nothing suggests a value that does not exist.
  *
- * Status is never colour alone: every area's link is named "Name: 85.4%, Worse than Finland"
+ * Status is never colour alone: every area's link is named "Name: 85.4%, Worse than Finland's level"
  * (shown as a tooltip too), and highlighted areas carry a text label. The page's own legend
  * names the colours.
+ *
+ * Picker mode (`onSelect`): a plain click on an area selects it instead of following its link
+ * (a modified click still opens the link), and `selectedId` gets an accent outline inside the
+ * area and `aria-current`. The component imports nothing from the snapshot at runtime (the
+ * status label comes with each area), so it can render inside a client component.
  */
 
 export type FinlandMapArea = {
@@ -41,6 +45,8 @@ export type FinlandMapArea = {
   /** Where the area links to. Used as given. */
   href: string;
   status: GapStatus;
+  /** The status in words, STATUS_LABEL[status] from lib/ranking. */
+  statusLabel: string;
   /** The value as shown elsewhere on the page, e.g. "85.4%". null when there is no value. */
   valueLabel: string | null;
 };
@@ -52,6 +58,10 @@ type Props = {
   /** Accessible summary of the figure. */
   label?: string;
   className?: string;
+  /** Picker mode: the selected area, drawn with an accent outline. */
+  selectedId?: string;
+  /** Picker mode: called instead of following the link on a plain click. */
+  onSelect?: (id: string) => void;
 };
 
 // The fills of the bars, at the strength of the bars: an area that is worse than Finland is the
@@ -146,8 +156,12 @@ export function FinlandMap({
   highlight = [],
   label = `Map of Finland's ${areas.length} areas by non-urgent GP visits waiting over 7 days`,
   className,
+  selectedId,
+  onSelect,
 }: Props) {
   const uid = useId();
+  // In picker mode the selected area's figure is shown beside the map, so its label is the name only.
+  const picker = onSelect !== undefined;
   const pathId = (id: string) => `${uid}-p-${id}`;
   const clipId = (id: string) => `${uid}-c-${id}`;
   const hatchId = `${uid}-hatch`;
@@ -178,7 +192,7 @@ export function FinlandMap({
     // No role="img" here: it would hide the 22 links inside from assistive technology. A
     // figure with a name keeps the summary and the links.
     <figure aria-label={label} className={cn("flex items-stretch justify-center", className)}>
-      <LabelColumn side="left" labels={leftLabels} />
+      <LabelColumn side="left" labels={leftLabels} nameOnly={picker} />
 
       <div className="relative h-full shrink-0" style={{ aspectRatio: `${width} / ${height}` }}>
         <svg
@@ -217,14 +231,26 @@ export function FinlandMap({
 
           {drawn.map(({ area, small }) => {
             const name = area.valueLabel
-              ? `${area.name}: ${area.valueLabel}, ${STATUS_LABEL[area.status]}`
-              : `${area.name}: ${STATUS_LABEL[area.status]}`;
+              ? `${area.name}: ${area.valueLabel}, ${area.statusLabel}`
+              : `${area.name}: ${area.statusLabel}`;
+            const selected = area.id === selectedId;
+            const select = onSelect
+              ? (event: MouseEvent<HTMLAnchorElement>) => {
+                  // A modified or middle click keeps the link's own behaviour (a new tab).
+                  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                  event.preventDefault();
+                  onSelect(area.id);
+                }
+              : undefined;
             return (
               <Link
                 key={area.id}
                 href={area.href}
                 aria-label={name}
+                aria-current={selected ? "true" : undefined}
                 data-status={area.status}
+                data-area={area.id}
+                onClick={select}
                 className="group outline-none"
               >
                 <title>{name}</title>
@@ -237,7 +263,7 @@ export function FinlandMap({
                   strokeWidth={small ? 0.75 : 1}
                   className={cn(
                     "transition-colors group-focus-visible:stroke-ring group-focus-visible:[stroke-width:4px]",
-                    "stroke-card",
+                    selected ? (small ? "stroke-brand [stroke-width:2px]" : "stroke-brand [stroke-width:5px]") : "stroke-card",
                     small ? SMALL_AREA[area.status] : AREA_FILL[area.status],
                   )}
                 />
@@ -251,7 +277,7 @@ export function FinlandMap({
         ))}
       </div>
 
-      <LabelColumn side="right" labels={rightLabels} />
+      <LabelColumn side="right" labels={rightLabels} nameOnly={picker} />
     </figure>
   );
 }
@@ -316,7 +342,7 @@ function Leader({ item }: { item: Placed }) {
  * The labels of one side, in a column that takes its width from them. Decorative for
  * assistive technology: the same name, value and status are the accessible name of the link.
  */
-function LabelColumn({ side, labels }: { side: Side; labels: Placed[] }) {
+function LabelColumn({ side, labels, nameOnly }: { side: Side; labels: Placed[]; nameOnly: boolean }) {
   if (labels.length === 0) return null;
   return (
     <div
@@ -333,9 +359,11 @@ function LabelColumn({ side, labels }: { side: Side; labels: Placed[] }) {
           style={{ top: y }}
         >
           <span className="type-caption leading-4 font-medium text-foreground">{area.name}</span>
-          <StatusBadge status={area.status} variant="quiet" className="h-4 leading-4">
-            <span className="figure">{area.valueLabel ?? STATUS_LABEL[area.status]}</span>
-          </StatusBadge>
+          {!nameOnly && (
+            <StatusBadge status={area.status} variant="quiet" className="h-4 leading-4">
+              <span className="figure">{area.valueLabel ?? area.statusLabel}</span>
+            </StatusBadge>
+          )}
         </span>
       ))}
     </div>

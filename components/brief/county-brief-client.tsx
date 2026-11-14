@@ -145,7 +145,7 @@ function ClaimRow({ claim, chips }: { claim: BriefClaim; chips: Record<string, R
         <dl className="contents">
           <dt className={`${DT} flex flex-col`}>
             {layout.label}
-            {layout.status && <span className="type-caption text-faint">{layout.status}</span>}
+            {layout.status && <span className="type-caption text-muted-foreground">{layout.status}</span>}
           </dt>
           <dd className={DD}>{withFigures(layout.body)}</dd>
         </dl>
@@ -307,7 +307,7 @@ export function CountyBriefClient({
           {/* Label strip: where the brief comes from on the left, its sources on the right. */}
           <FramePanelLabel>
             <span className="flex flex-wrap items-center gap-x-2 gap-y-1 font-normal">
-              <Badge variant="checked">
+              <Badge variant="checked" source={brief.mode === "fallback" ? "snapshot" : undefined}>
                 {brief.mode === "ai" && brief.headline_precomputed ? AI_PRECOMPUTED_HEADLINE_LABEL : MODE_LABEL[brief.mode]}
               </Badge>
               {brief.mode === "ai" && brief.model && <span className="text-muted-foreground">{brief.model}</span>}

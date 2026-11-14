@@ -100,7 +100,7 @@ export function stageStatus(countyId: string, stage: Stage): GapStatus {
 }
 
 export const STATUS_LABEL: Record<GapStatus, string> = {
-  red: "Worse than Finland",
+  red: "Worse than Finland's level",
   amber: "At or better than Finland's level",
   no_data: "No public data",
 };
