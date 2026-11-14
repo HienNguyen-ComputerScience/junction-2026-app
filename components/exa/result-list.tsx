@@ -1,5 +1,4 @@
 import { ArrowUpRight } from "lucide-react";
-import { Fragment } from "react";
 
 import { Badge } from "@/components/ui/badge";
 
@@ -40,20 +39,17 @@ export function Unavailable({ children }: { children?: React.ReactNode }) {
 /** Placeholder rows in the shape of the result register. Static: no looping motion. */
 export function LoadingRows({ label, rows = 3 }: { label: string; rows?: number }) {
   return (
-    <div role="status" aria-live="polite" className="@container flex flex-col gap-4">
+    <div role="status" aria-live="polite" className="flex flex-col gap-4">
       <p className="type-caption text-muted-foreground">{label}…</p>
       <div aria-hidden className="flex flex-col divide-y divide-border/80">
         {Array.from({ length: rows }, (_, i) => (
-          <div key={i} className="grid gap-x-6 gap-y-2 py-3 first:pt-0 last:pb-0 @2xl:grid-cols-[7rem_minmax(0,1fr)]">
-            <div className="flex gap-2 @2xl:flex-col">
-              <div className="h-3 w-20 rounded-sm bg-muted" />
-              <div className="h-3 w-16 rounded-sm bg-muted" />
-            </div>
+          <div key={i} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-2 py-3.5 first:pt-0 last:pb-0">
             <div className="flex flex-col gap-2">
               <div className="h-3.5 w-3/5 rounded-sm bg-accent" />
               <div className="h-3 w-full max-w-xl rounded-sm bg-muted" />
-              <div className="h-3 w-4/5 max-w-md rounded-sm bg-muted" />
+              <div className="h-3 w-2/5 max-w-xs rounded-sm bg-muted" />
             </div>
+            <div className="size-3.5 rounded-sm bg-muted" />
           </div>
         ))}
       </div>
@@ -123,78 +119,74 @@ export function isMenuSnippet(snippet: string): boolean {
   return words.filter((w) => /^\p{Lu}/u.test(w)).length / Math.max(1, words.length) >= 0.4;
 }
 
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** "2026-11-12" (or a full ISO timestamp) as "12 Nov 2026". Anything else is shown as it came. */
+export function formatDate(iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  if (!m) return iso;
+  const month = MONTHS[Number(m[2]) - 1];
+  return month ? `${Number(m[3])} ${month} ${m[1]}` : iso;
+}
+
 /**
- * Live search results as a register: date and site in a narrow left column (when there is
- * room), title and a two-line snippet on the right. Snippets are clamped with an ellipsis,
- * never cut mid-word.
+ * Live search results as rows of two columns: the title (a two-line link), the snippet (two
+ * lines) and one caption "host · date" on the left; the external arrow, top-aligned, on the
+ * right. A row without a snippet is just the title and the caption. Dates come from a cache,
+ * so they are absolute, never "3 days ago".
  */
 export function ResultList({ items, numbered = false, idPrefix = "exa-src" }: { items: Item[]; numbered?: boolean; idPrefix?: string }) {
   return (
-    <div className="@container">
-      <ol className="divide-y divide-border/80">
-        {items.map((item, i) => {
-          const title = displayTitle(item.title, item.domain);
-          const snippet = item.snippet && !isMenuSnippet(item.snippet) ? item.snippet : null;
-          return (
-            <li
-              key={`${item.url}-${i}`}
-              id={numbered ? `${idPrefix}-${i + 1}` : undefined}
-              className="grid scroll-mt-20 gap-x-6 gap-y-1 py-3.5 first:pt-0 last:pb-0 @2xl:grid-cols-[7rem_minmax(0,1fr)]"
+    <ol className="divide-y divide-border/80">
+      {items.map((item, i) => {
+        const title = displayTitle(item.title, item.domain);
+        const snippet = item.snippet && !isMenuSnippet(item.snippet) ? item.snippet : null;
+        const host = item.domain.replace(/^www\./, "");
+        return (
+          <li
+            key={`${item.url}-${i}`}
+            id={numbered ? `${idPrefix}-${i + 1}` : undefined}
+            className="grid scroll-mt-20 grid-cols-[1fr_auto] gap-x-4 gap-y-1 py-3.5 first:pt-0 last:pb-0"
+          >
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={title === item.title ? undefined : item.title}
+              className="group/link col-start-1 row-start-1 line-clamp-2 min-w-0 rounded-sm text-sm leading-snug font-semibold text-pretty text-foreground outline-none transition-colors hover:text-brand-ink focus-visible:ring-3 focus-visible:ring-ring/50"
             >
-              <p className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 type-caption text-muted-foreground @2xl:flex-col @2xl:pt-px">
-                <span className="text-foreground/80">
-                  {item.publishedDate ? <time dateTime={item.publishedDate}>{item.publishedDate}</time> : "date unknown"}
-                </span>
-                <span className="@2xl:hidden" aria-hidden>
-                  ·
-                </span>
-                {/* Long hosts wrap after a dot, never mid-name. */}
-                <span className="min-w-0 break-words">
-                  {item.domain.split(".").map((part, j) => (
-                    <Fragment key={j}>
-                      {j > 0 && (
-                        <>
-                          .<wbr />
-                        </>
-                      )}
-                      {part}
-                    </Fragment>
-                  ))}
-                </span>
-                {item.maybePaywalled && (
-                  <>
-                    <span className="@2xl:hidden" aria-hidden>
-                      ·
-                    </span>
-                    <span className="text-faint">may be paywalled</span>
-                  </>
-                )}
-              </p>
-              {/* Every row is at least a title and two snippet lines tall, so a result that came
-                  without a snippet keeps the pitch of the list. */}
-              <div className="flex min-h-16 min-w-0 max-w-[46rem] flex-col gap-1">
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={title === item.title ? undefined : item.title}
-                  className="group/link w-fit rounded-sm text-sm leading-snug font-semibold text-pretty text-foreground outline-none transition-colors hover:text-brand-ink focus-visible:ring-3 focus-visible:ring-ring/50"
-                >
-                  {numbered && <span className="mr-1.5 font-medium text-muted-foreground tabular-nums">[{i + 1}]</span>}
-                  {title}
-                  <ArrowUpRight
-                    aria-hidden
-                    strokeWidth={1.75}
-                    className="ml-1 inline-block size-3.5 align-[-2px] text-muted-foreground transition-colors group-hover/link:text-brand-ink"
-                  />
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
-                {snippet && <p className="line-clamp-2 type-caption break-words text-muted-foreground">{snippet}</p>}
-              </div>
-            </li>
-          );
-        })}
-      </ol>
-    </div>
+              {numbered && <span className="mr-1.5 font-medium text-muted-foreground tabular-nums">[{i + 1}]</span>}
+              {title}
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+            <ArrowUpRight
+              aria-hidden
+              strokeWidth={1.75}
+              className="col-start-2 row-start-1 mt-0.5 size-3.5 shrink-0 whitespace-nowrap text-muted-foreground"
+            />
+            {snippet && (
+              <p className="col-start-1 line-clamp-2 type-caption break-words text-muted-foreground">{snippet}</p>
+            )}
+            <p className="col-start-1 flex min-w-0 flex-wrap items-baseline gap-x-1.5 type-caption text-muted-foreground">
+              <span className="min-w-0 break-words">{host}</span>
+              <span aria-hidden>·</span>
+              {item.publishedDate ? (
+                <time dateTime={item.publishedDate} title={item.publishedDate} className="whitespace-nowrap">
+                  {formatDate(item.publishedDate)}
+                </time>
+              ) : (
+                <span className="whitespace-nowrap">date unknown</span>
+              )}
+              {item.maybePaywalled && (
+                <>
+                  <span aria-hidden>·</span>
+                  <span className="whitespace-nowrap">may be paywalled</span>
+                </>
+              )}
+            </p>
+          </li>
+        );
+      })}
+    </ol>
   );
 }

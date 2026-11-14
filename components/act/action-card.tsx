@@ -8,31 +8,18 @@ import { STAGE_LABELS } from "@/lib/act";
 import type { Evidence } from "@/lib/data";
 
 /** Label and value. Side by side when the card has room, stacked on a phone. */
-function Field({
-  label,
-  children,
-  tone = "ink",
-}: {
-  label: string;
-  children: ReactNode;
-  /** `ink` for what the card argues from (the evidence); `quiet` for supporting context. */
-  tone?: "ink" | "quiet";
-}) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="grid gap-x-4 gap-y-1 @md:grid-cols-[6rem_minmax(0,1fr)]">
       <dt className="type-caption text-muted-foreground">{label}</dt>
-      <dd
-        className={`text-sm leading-relaxed text-pretty tabular-nums ${tone === "ink" ? "text-foreground" : "text-muted-foreground"}`}
-      >
-        {children}
-      </dd>
+      <dd className="text-sm leading-relaxed text-pretty tabular-nums text-muted-foreground">{children}</dd>
     </div>
   );
 }
 
 /** A plain text tag (stage, checked): the chip shape in the UI sans, so it never reads as a source. */
 const TAG =
-  "inline-flex h-6 w-fit shrink-0 items-center rounded-sm border border-input px-2 text-[0.75rem] leading-none font-medium text-foreground";
+  "inline-flex h-6 w-fit shrink-0 items-center rounded-sm border border-input px-2 text-[0.75rem] leading-none font-medium text-muted-foreground";
 
 /** "Source checked" (the quiet provenance mark, solid: the team checked it) plus the source chip. */
 function SourceMarks({ action }: { action: Evidence }) {
@@ -91,8 +78,8 @@ export function ActionCard({
           </span>
         )}
         <span className={`${TAG} gap-1`}>
-          <span className="text-muted-foreground">Stage:</span>
-          <span className="font-medium text-foreground">{STAGE_LABELS[action.stage]}</span>
+          <span>Stage:</span>
+          <span>{STAGE_LABELS[action.stage]}</span>
         </span>
         <span className="flex basis-full sm:ml-auto sm:basis-auto">
           <SourceMarks action={action} />
@@ -115,7 +102,7 @@ export function ActionCard({
 
         <div className="flex flex-col gap-3 @3xl:pt-1">
           <dl className="flex flex-col gap-3">
-            <Field label="Precedent" tone="quiet">
+            <Field label="Precedent">
               {action.precedent}
             </Field>
             <Field label="Evidence">{action.effect_text}</Field>

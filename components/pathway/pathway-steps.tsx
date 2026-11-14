@@ -197,8 +197,16 @@ const SLOT_FIGURE = "numeral text-[2.25rem] leading-none";
 function FullStep({ step, led }: { step: PathwayStep; led: boolean }) {
   const { measure, status } = step;
   const value = measure?.value ?? null;
+  // A step with a figure shares the six rows of its neighbours (subgrid). A step without one has
+  // fewer parts (title, status, one caption, the bar) and just stacks them: no blank rows.
+  const hasFigure = value !== null || Boolean(measure?.shared);
   return (
-    <li className="flex min-w-0 flex-col px-4 pt-4 pb-5 sm:px-6 lg:row-span-6 lg:grid lg:grid-rows-subgrid">
+    <li
+      className={cn(
+        "flex min-w-0 flex-col px-4 pt-4 pb-5 sm:px-6 lg:row-span-6",
+        hasFigure && "lg:grid lg:grid-rows-subgrid",
+      )}
+    >
       <StepTitle step={step} />
       <div className="pt-3">
         <StepStatus step={step} />
@@ -232,27 +240,13 @@ function FullStep({ step, led }: { step: PathwayStep; led: boolean }) {
           </p>
         </>
       ) : (
-        <>
-          <NoValue />
-          <p className="pt-2 type-caption text-muted-foreground">
-            {measure ? (
-              <>
-                Finland <span className="figure">{formatPct(measure.finland)}</span>, {measure.direction}
-              </>
-            ) : (
-              "No public indicator in any county"
-            )}
-          </p>
-          <p className="pt-1 type-caption text-pretty text-muted-foreground">
-            {measure
-              ? measure.note
-              : "No public statistic shows how often GPs spot possible cancer at the first visit."}
-          </p>
-        </>
+        <p className="pt-3 type-caption text-pretty text-muted-foreground">
+          {measure ? measure.note : "No public statistic shows how often GPs spot possible cancer at the first visit."}
+        </p>
       )}
 
       <MeasureBar
-        className="pt-4"
+        className={hasFigure ? "pt-4" : "pt-3"}
         value={value}
         finland={measure ? measure.finland : null}
         finlandLabel={measure ? `Finland ${formatPct(measure.finland)}` : undefined}
@@ -264,23 +258,6 @@ function FullStep({ step, led }: { step: PathwayStep; led: boolean }) {
 
 /** The label that always stands with a wider value shown in place of an area's own. */
 const sharedLabel = (name: string) => `${name}-wide value, not a county figure`;
-
-/**
- * The value slot of a step with no value: the statement sits on the baseline of the figures
- * beside it. The hidden figure is a strut of the same size, so the alignment is exact.
- */
-function NoValue() {
-  return (
-    <p className={cn(SLOT, "pt-3")}>
-      <span className="flex items-baseline">
-        <span aria-hidden className={cn(SLOT_FIGURE, "invisible w-0")}>
-          0
-        </span>
-        <span className="text-[1.0625rem] leading-none font-medium text-muted-foreground">No public data</span>
-      </span>
-    </p>
-  );
-}
 
 function CompactStep({ step, extra }: { step: PathwayStep; extra?: ReactNode }) {
   const { measure, status } = step;
