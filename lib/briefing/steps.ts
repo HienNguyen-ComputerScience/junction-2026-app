@@ -26,7 +26,7 @@ export const BRIEFING_STEPS: BriefingStep[] = [
   { id: "do", number: 4, slug: "what-to-do", label: "What to do on Monday", next: "what to do on Monday" },
   { id: "change", number: 5, slug: "what-it-could-change", label: "What it could change", next: "what it could change" },
   // The slug is older than the label; it stays because proxy.ts lists it (see docs/audit/export/notes.md).
-  { id: "share", number: 6, slug: "take-it-to-your-board", label: "Save or share this briefing", next: "save or share" },
+  { id: "share", number: 6, slug: "save-or-share", label: "Save or share this briefing", next: "save or share" },
 ];
 
 export const BRIEFING_STEP_COUNT = BRIEFING_STEPS.length;

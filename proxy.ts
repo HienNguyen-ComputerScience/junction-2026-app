@@ -16,11 +16,19 @@ const briefingSteps = new Set([
   "what-it-means",
   "what-to-do",
   "what-it-could-change",
-  "take-it-to-your-board",
+  "save-or-share",
 ]);
+
+// Step 6's old address, from before it was renamed; links already shared keep working.
+const OLD_SHARE_STEP = "take-it-to-your-board";
 
 export function proxy(request: NextRequest) {
   const [, section, id, step] = request.nextUrl.pathname.split("/");
+  if (section === "briefing" && step === OLD_SHARE_STEP && countyIds.has(id)) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/briefing/${id}/save-or-share`;
+    return NextResponse.redirect(url, 308);
+  }
   const known = id !== undefined && countyIds.has(id) && (section !== "briefing" || step === undefined || briefingSteps.has(step));
   if (known) return NextResponse.next();
   return NextResponse.rewrite(new URL("/county-not-found", request.url));
