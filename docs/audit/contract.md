@@ -209,6 +209,27 @@ Guardrails: normal scrolling only (no wheel or touch capture, no scroll-snap, no
 - A client picture can redraw per step with `useStoryStep()` (a number, or `null` for the final state).
 - Below 1024px, under reduced motion, without JavaScript and in print: picture above the text in its final state, nothing sticks. The picture's final state must read correctly on its own.
 
+#### `FocusGroup` (`components/motion/focus-group.tsx`)
+
+```tsx
+<main className="page-container …">
+  <FocusGroup>
+    <Chunk lead … />
+    <ScrollStory … />
+    …
+  </FocusGroup>
+</main>
+```
+
+- The focus effect: the item nearest the middle of the screen is at full strength; the others step back to opacity 0.8 and scale 0.98 (from 640px) or opacity 0.85 (phones). Focus moves as the reader scrolls (350 ms, opacity and transform only). The page scrolls normally.
+- Items: every `Chunk` and every `ScrollStory` text block inside the group carry `data-focus-item` already. Put `data-focus-item` on any other block that should take part. Sticky pictures never fade. Do not mark full tables, the county limitations box, or the `MoreCard`.
+- One IntersectionObserver per group, on a band through the middle of the viewport (`rootMargin: "-45% 0px -45% 0px"`). Between two items the last one keeps focus.
+- Never: scroll-snap, wheel or touch capture, a change of scroll speed, programmatic scrolling.
+- Dim, never hide: faded items stay readable, clickable and in the accessibility tree (no `display: none`, `visibility: hidden` or `aria-hidden`). An item holding keyboard focus (`:focus-within`) or an opened "Show …" (`:has(details[open])`) is at full strength.
+- Full strength everywhere: before script runs (the default state), under reduced motion, in print, and within 48px of the top or bottom of the page (so the first and last items of a short page come into focus).
+- **Why 0.8, not 0.3:** the floor is measured against WCAG AA on this palette, with the item faded over cream. At 0.3 every pair fails (about 1.7:1); at 0.5 too (2.3–3.2:1). At 0.8 they pass: charcoal on cream 8.3:1, Forest Ink 6.7:1, red ink 5.4:1, charcoal on mint 6.7:1, muted text on keylime 4.5:1 (the tightest). Don't lower it.
+- Used on: county and compare. Not on Ask, error pages or full tables.
+
 #### `CaveatNote` (`components/motion/caveat-note.tsx`)
 
 `<CaveatNote short="Counts visits, not people">Full explanation…</CaveatNote>`: the main caveat attached to the figure it qualifies, as a small mint pill-rounded note. The short form is always visible; the explanation sits behind a "Why?" button (native `<details>`, open on paper). Without children it is just the note.
