@@ -214,20 +214,21 @@ test("bug 5: an answer written from cached search items is cached too (Claude is
 
 // ---------- bug 2b: TTLs for answers and nothing-found ----------
 
-test("2b: Claude's 'Nothing found in the sources.' is cached, but only for a few minutes", async () => {
+test("2b: Claude's nothing-found over sources is retried once, then cached only for a few minutes", async () => {
   mode.claude = "nothing";
   const a = await ask(Q);
   assert.equal(a.json.nothingFound, true);
+  assert.equal(calls.claude, 2, "one retry: sources came back, so a nothing-found may be a sampling bail");
   const b = await ask(Q);
   assert.equal(b.json.freshness, "cache");
-  assert.equal(calls.claude, 1);
+  assert.equal(calls.claude, 2);
   advance(4 * MINUTE);
   await ask(Q);
-  assert.equal(calls.claude, 1, "still fresh at 4 minutes");
+  assert.equal(calls.claude, 2, "still fresh at 4 minutes");
   advance(2 * MINUTE);
   mode.claude = "answer";
   const c = await ask(Q);
-  assert.equal(calls.claude, 2, "expired at 6 minutes");
+  assert.equal(calls.claude, 3, "expired at 6 minutes; an answer needs no retry");
   assert.equal(calls.exa, 2, "an expired nothing-found re-runs the search too");
   assert.ok(c.json.answer);
 });
@@ -248,11 +249,12 @@ test("the checker removing every sentence says so, with the count, instead of a 
   assert.ok((await ask(Q)).json.answer, "still only cached for a few minutes");
 });
 
-test("Claude saying nothing found keeps the plain message and no dropped count", async () => {
+test("Claude saying nothing found with sources listed: says none answers directly, no dropped count", async () => {
   mode.claude = "nothing";
   const a = await ask(Q);
   assert.equal(a.json.nothingFound, true);
-  assert.equal(a.json.message, "Nothing found in the sources.");
+  assert.match(a.json.message, /^Nothing found that answers this question directly\. The sources below/);
+  assert.notEqual(a.json.message, "Nothing found in the sources.");
   assert.ok(a.json.dropped === undefined || a.json.dropped === 0);
 });
 
@@ -286,11 +288,11 @@ test("2b: a pinned example question with a nothing-found is not served forever",
   mode.claude = "nothing";
   await ask(example);
   await ask(example);
-  assert.equal(calls.claude, 1);
+  assert.equal(calls.claude, 2, "one call and one retry, then cached");
   advance(6 * MINUTE);
   mode.claude = "answer";
   await ask(example);
-  assert.equal(calls.claude, 2);
+  assert.equal(calls.claude, 3);
 });
 
 test("2b: 'unavailable' is never cached (Exa down, Claude down)", async () => {
@@ -596,7 +598,8 @@ test("an expired empty answer is never served again when Exa is down: the saved 
   assert.equal(r.json.freshness, "stale-cache", "old search items, labelled as such");
   assert.equal(r.json.nothingFound, false, "not the cached empty answer");
   assert.equal(r.json.answer.sentences.length, 3);
-  assert.equal(calls.claude, 2, "Claude asked again instead of replaying the empty answer");
+  // 2 for the first ask (a nothing-found over sources is retried once), then 1 more.
+  assert.equal(calls.claude, 3, "Claude asked again instead of replaying the empty answer");
 });
 
 test("an expired empty answer is not served to a rate-limited request either", async () => {

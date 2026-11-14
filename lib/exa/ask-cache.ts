@@ -16,7 +16,15 @@ type Cached = { answer: unknown; nothingFound: boolean };
  * day; an answer should.
  */
 export function askTtl(value: Cached, ttl: AskTtl): number {
-  return value.nothingFound ? ttl.nothingFound : ttl.answer;
+  return value.nothingFound || isIndirect(value.answer) ? ttl.nothingFound : ttl.answer;
+}
+
+/**
+ * An answer flagged `direct: false` only says what the sources report, not an answer to the question:
+ * it gets the short TTL too, so a weak reply is re-tried within minutes instead of sticking all day.
+ */
+export function isIndirect(answer: unknown): boolean {
+  return typeof answer === "object" && answer !== null && "direct" in answer && answer.direct === false;
 }
 
 /**

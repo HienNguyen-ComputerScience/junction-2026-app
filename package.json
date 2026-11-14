@@ -14,7 +14,8 @@
     "data:build": "node scripts/data/build-snapshot.mjs",
     "brief:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/brief/check-validator.mjs",
     "exa:prewarm": "node scripts/exa/prewarm.mjs",
-    "exa:live-check": "node scripts/exa/live-ask-check.mjs",
+    "exa:live-check": "node scripts/exa/live-check.mjs",
+    "live:check": "node scripts/exa/live-check.mjs",
     "test": "node --test --disable-warning=MODULE_TYPELESS_PACKAGE_JSON \"tests/*.test.mjs\""
   },
   "dependencies": {

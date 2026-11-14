@@ -41,10 +41,14 @@ import { getMainReason, reasonLinks } from "@/lib/main-reason";
 // the first (the leader) is counted and spends, so if the leader is limited they all are. Per server
 // instance, like the cache and the limiter: on Vercel each instance merges only its own requests.
 // Simulated-outage requests bypass the merge.
-// Cache: answers keep TTL.ask (24 h); every nothing-found keeps TTL.askNothingFound (5 min) and then
+// Cache: answers keep TTL.ask (24 h); every nothing-found, and an answer the model flags as not answering
+// the question directly (answer.direct === false), keeps TTL.askNothingFound (5 min) and then
 // re-runs the search too; "unavailable" is never cached (lib/exa/ask-cache.ts).
 
 const MAX_QUESTION = 300;
+// Starts with "Nothing found" so components/exa/ask-box.tsx shows it as is (no second prefix).
+const NO_DIRECT_ANSWER =
+  "Nothing found that answers this question directly. The sources below are the closest live results: read them to see what they cover.";
 const RECENCY = /\b(now|current(ly)?|latest|today|this (week|month|year)|recent(ly)?|nyt|nykyään|tällä hetkellä|uusin|uusimmat|viime aikoina)\b/i;
 const AREAS = [...COUNTIES.values()];
 const normalise = (q: string) => q.toLowerCase().replace(/\s+/g, " ").trim();
@@ -93,6 +97,11 @@ export async function POST(request: NextRequest) {
   const question = typeof raw === "string" ? raw.replace(/\s+/g, " ").trim().slice(0, MAX_QUESTION) : "";
   if (!/\p{L}{3,}/u.test(question)) {
     return NextResponse.json({ error: "Type a question." }, { status: 400 });
+  }
+  // A client that sent non-UTF-8 text ("P?ij?t-H?me" with U+FFFD): the area and topic can't be read, and the
+  // off-topic gate would wrongly refuse it. Say what went wrong instead.
+  if (question.includes(String.fromCharCode(0xfffd))) {
+    return NextResponse.json({ error: "Some characters could not be read. Send the question as UTF-8." }, { status: 400 });
   }
 
   const countyId = detectCounty(question, AREAS);
@@ -253,7 +262,8 @@ export async function POST(request: NextRequest) {
           const message = `The checker removed ${n} sentence${n === 1 ? "" : "s"} from the written answer: ${n === 1 ? "its numbers were" : "their numbers were"} not in the sources they cited. Read the sources below directly.`;
           return reply({ items, answer: null, nothingFound: true, dropped: n, message });
         }
-        return reply({ items, answer: null, nothingFound: true, message: "Nothing found in the sources." });
+        // Sources came back but none answers the question: say so, without "Nothing found" above six links.
+        return reply({ items, answer: null, nothingFound: true, message: NO_DIRECT_ANSWER });
       }
       case "unavailable":
         console.warn(`[ask] answer unavailable: ${written.reason}`);
