@@ -29,10 +29,11 @@ type Props = {
 const ROW_GRID =
   "grid grid-cols-[1.75rem_minmax(0,1fr)_auto] gap-x-3 lg:grid-cols-[2rem_minmax(0,10.5rem)_minmax(0,1fr)_8.5rem_14.25rem] lg:gap-x-5";
 
-// Every row is the same link: one surface step lighter on hover and on keyboard focus, with an
-// inset focus ring so the panel's rounded corners never clip it.
+// Every row is the same link: a lighter surface on hover and on keyboard focus, with an inset
+// focus ring so the panel's rounded corners never clip it. The hover is bg-accent, two steps
+// above the panel: on the near-black ramp a single step (bg-muted) is too faint to notice.
 const ROW_LINK =
-  "group relative rounded-lg px-2.5 transition-colors outline-none hover:bg-muted focus-visible:z-[1] focus-visible:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset lg:rounded-none lg:px-5";
+  "group relative rounded-lg px-2.5 transition-colors outline-none hover:bg-accent focus-visible:z-[1] focus-visible:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset lg:rounded-none lg:px-5";
 
 // Referral column: one short tag per state, so every cell has the same shape.
 const REFERRAL_TAG: Record<GapStatus, string> = {
