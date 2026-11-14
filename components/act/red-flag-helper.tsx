@@ -55,7 +55,7 @@ const SECTION_HINT = {
  */
 function EmptyResult() {
   return (
-    <div className="flex h-full flex-col gap-4 rounded-lg border border-dashed border-input p-4 sm:p-5">
+    <div className="flex h-full flex-col justify-between gap-4 rounded-lg border border-dashed border-input p-4 sm:p-5">
       <div className="flex flex-col gap-1.5">
         <p aria-hidden className="type-caption text-muted-foreground">
           {SECTION.category}

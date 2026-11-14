@@ -362,12 +362,17 @@ function StageStat({ step, gap }: { step: number; gap: Gap }) {
           </p>
         </>
       ) : (
+        // No county value: the data note says so in the figure's place; nothing to repeat below.
         <>
-          <NoFigure>No published value for this area</NoFigure>
+          <NoFigure>{gap.note}</NoFigure>
           <span aria-hidden className="max-md:hidden" />
         </>
       )}
-      <p className="pt-3 type-caption text-pretty text-muted-foreground">{withFigures(caption)}</p>
+      {gap.value !== null ? (
+        <p className="pt-3 type-caption text-pretty text-muted-foreground">{withFigures(caption)}</p>
+      ) : (
+        <span aria-hidden className="max-md:hidden" />
+      )}
       <MeasureBar
         className="pt-5 md:self-end"
         value={gap.value}
