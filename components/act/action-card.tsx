@@ -148,7 +148,7 @@ export function ActionCard({
     >
       <div className="grid gap-x-10 gap-y-2.5 @3xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-3">
-          <h3 className="font-heading text-[1.5rem] leading-[1.2] font-semibold tracking-[-0.01em] text-pretty">
+          <h3 className="font-display text-[1.75rem] leading-[1.2] font-light text-pretty text-forest-ink">
             {plainTitle(action.action)}
           </h3>
           <FirstStep compact>{action.first_step}</FirstStep>
