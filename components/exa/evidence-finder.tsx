@@ -43,7 +43,7 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
   const unavailable = (state.kind === "error" && !state.limited) || data?.freshness === "unavailable";
 
   return (
-    <section aria-label={`Live evidence search for: ${actionTitle}`} className="mt-3 space-y-3">
+    <section aria-label={`Live evidence search for: ${actionTitle}`} className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
         <Button
           type="button"
@@ -59,18 +59,18 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
         {state.kind !== "idle" && (
           <>
             <Badge variant="secondary">Found live — unverified</Badge>
-            <span className="text-xs text-muted-foreground">via Exa</span>
+            <span className="type-mark text-muted-foreground">via Exa</span>
           </>
         )}
         {data && !unavailable && <Badge variant="outline">{STATUS_LABEL[data.freshness]}</Badge>}
       </div>
-      <div id={panelId}>
+      <div id={panelId} className="empty:hidden">
         {state.kind === "loading" && <LoadingRows label="Searching for more evidence with Exa" rows={2} />}
         {limited && <p role="status" className="text-sm text-muted-foreground">{TOO_MANY}</p>}
         {unavailable && <Unavailable />}
         {data && !unavailable && (
-          <div className="space-y-3 rounded-lg border border-dashed bg-muted/30 p-3">
-            <p className="text-xs text-muted-foreground">
+          <div className="flex flex-col gap-3 rounded-lg border border-dashed border-input bg-muted/40 p-4">
+            <p className="type-micro text-muted-foreground">
               Not checked by the team, unlike this action&apos;s own source. Read before relying on it.
             </p>
             {data.items.length === 0 ? (
