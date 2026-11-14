@@ -247,7 +247,17 @@ export function CompareTable({ rows, finland, finlandReferral }: { rows: Compare
       </table>
       </div>
 
-      {/* The phone version: the same rows and order, one short block per area. */}
+      {/* The phone version: the same rows and order, one short block per area, under a key for its figures. */}
+      <div className="flex flex-col gap-1 border-b border-border pb-3 text-base text-pretty sm:hidden print:hidden">
+        <p>
+          <span className="font-semibold">Figure:</span> GP visits waiting over 7 days, 2025. Finland overall:{" "}
+          <span className="figure">{pct(finland)}</span>. In brackets: points above (+) or below (−) Finland overall.
+        </p>
+        <p>
+          <span className="font-semibold">Referrals:</span> handled within 3 days, 2025. Finland overall:{" "}
+          <span className="figure">{pct(finlandReferral)}</span>.
+        </p>
+      </div>
       <ol aria-label={`All areas. Order: ${current}.`} className="flex flex-col sm:hidden print:hidden">
         {sorted.map((row) => (
           <li key={row.id} className="flex flex-col gap-1 border-b border-border py-3 first:pt-0 last:border-b-0 last:pb-0">

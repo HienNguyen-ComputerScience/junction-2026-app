@@ -125,8 +125,8 @@ export default function ComparePage() {
         ) : null}
         <div className={cn(COMPARE_FRAME, "print-keep flex flex-col gap-1")}>
           <p className="text-base text-pretty text-foreground">
-            Status compares each area with Finland overall, not with a clinical standard. Changes under 1 point read &ldquo;About
-            the same&rdquo;.
+            Status compares each area with Finland overall, not with a clinical standard. The figure in brackets is points above (+)
+            or below (−) Finland overall. Changes under 1 point read &ldquo;About the same&rdquo;.
           </p>
           <Disclosure label="what the referral labels mean" tone="quiet" contentClassName="pt-2">
             <div className="flex max-w-[68ch] flex-col gap-2 text-base text-pretty">
@@ -148,9 +148,9 @@ export default function ComparePage() {
         </p>
       </section>
 
-      <section aria-labelledby="worse-heading" className="flex flex-col gap-5 print:break-before-page">
+      <section aria-labelledby="worse-heading" className="flex flex-col gap-5">
         <SectionHead id="worse-heading">Worse than in {FIRST_YEAR}</SectionHead>
-        <div className={cn(COMPARE_FRAME, "flex flex-col gap-1")}>
+        <div className={cn(COMPARE_FRAME, "print-flow flex flex-col gap-1")}>
           <p className="text-base text-pretty text-foreground">
             In <span className="figure font-semibold">{lead.rising}</span> of {lead.withTrend} areas the share waiting over 7 days
             rose by at least 1 point since {FIRST_YEAR}.
