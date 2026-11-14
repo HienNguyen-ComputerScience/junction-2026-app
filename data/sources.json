@@ -117,6 +117,15 @@
     "data_updated": null
   },
   {
+    "source_id": "stm-cancer-strategy-2026-2035",
+    "kind": "evidence",
+    "name": "Kansallinen syöpästrategia 2026–2035: Yhdessä syöpää vastaan, ihmislähtöistä syövän ehkäisyä ja hoitoa (STM 2025)",
+    "url": "https://files.hackjunction.app/resources/Kansallinen_syopastrategia_2026_2035_FINAL.pdf",
+    "publisher": "National cancer strategy 2026–2035",
+    "retrieved": "2026-11-14",
+    "data_updated": null
+  },
+  {
     "source_id": "hus-referrals-2024",
     "kind": "statistic",
     "name": "HUS: Hoitoa odottavat potilaat erikoisaloittain 31.12.2024 (table 3, referrals received and processing times)",

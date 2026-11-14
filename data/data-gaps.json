@@ -1,0 +1,73 @@
+[
+  {
+    "id": "suspected-cancer-gp-wait",
+    "step": "gp_access",
+    "missing": "How long people with possible cancer symptoms wait for a GP appointment",
+    "today": "Sotkanet 6411 counts all non-urgent GP visits, not only those where cancer is possible.",
+    "could_publish": "THL, which publishes Sotkanet 6411",
+    "measure_id": null,
+    "county_can": "Mark the contacts where cancer is suspected in the booking system and follow their wait separately.",
+    "applies_to": null,
+    "source_id": "sotkanet-6411"
+  },
+  {
+    "id": "route-to-diagnosis",
+    "step": "gp_recognition",
+    "missing": "How each cancer was first found (GP referral, screening or emergency visit), by area",
+    "today": "Not published in Finland. England publishes, by area, the share of cancers first found through an emergency visit.",
+    "could_publish": "THL / Finnish Cancer Registry, in the cancer care quality register",
+    "measure_id": "3.2.1",
+    "county_can": "For each new cancer diagnosis, record how it was found: GP referral, screening or emergency visit.",
+    "applies_to": null,
+    "source_id": "ndrs-emergency-presentations"
+  },
+  {
+    "id": "diagnostic-interval",
+    "step": "referral",
+    "missing": "Days from GP referral to diagnosis, by area",
+    "today": "Sotkanet 13 shows how fast a hospital starts handling a referral, not when the patient is seen or diagnosed. Denmark measured this interval before and after its fast-track pathways.",
+    "could_publish": "FICAN with THL, when the national indicators for the care pathways are defined",
+    "measure_id": "3.1.4",
+    "county_can": "Measure the time from GP referral to the first specialist test for 2–3 cancers, to set a baseline.",
+    "applies_to": null,
+    "source_id": "ev-pmc-pmc4412104"
+  },
+  {
+    "id": "hus-area-referrals",
+    "step": "referral",
+    "missing": "Referral handling for East, Central and West Uusimaa and for Vantaa and Kerava, each on its own",
+    "today": "Sotkanet 13 has one HUS-wide value for the four areas, so none of them has a referral figure of its own.",
+    "could_publish": "HUS and THL",
+    "measure_id": null,
+    "county_can": "Ask HUS for the area's own share of referrals processed within 3 days.",
+    "applies_to": [
+      "central-uusimaa",
+      "east-uusimaa",
+      "vantaa-kerava",
+      "west-uusimaa"
+    ],
+    "source_id": "sotkanet-13"
+  },
+  {
+    "id": "stage-by-area",
+    "step": "diagnosis",
+    "missing": "Cancer stage at diagnosis, by area",
+    "today": "The roadmap's target is that at least 70% of cancers are diagnosed at stages I–II by 2035. Stage by wellbeing services county is not published.",
+    "could_publish": "THL / Finnish Cancer Registry (the quality register's data are to include stage)",
+    "measure_id": "3.2.1",
+    "county_can": "Ask the Finnish Cancer Registry for the area's stage distribution for the most common cancers.",
+    "applies_to": null,
+    "source_id": "ev-files-kansallinen-syopastrategia-toimeenpanon-tiekartta-2"
+  },
+  {
+    "id": "treatment-within-target",
+    "step": "treatment",
+    "missing": "Share of patients who start treatment within the target time, by area",
+    "today": "This is the roadmap's indicator for Goal 3 (measure 3.1.2). The target times are due in 2026–2028; nothing is published by area yet.",
+    "could_publish": "FICAN, the wellbeing services counties and HUS",
+    "measure_id": "3.1.2",
+    "county_can": "Record the dates of referral, diagnosis and start of treatment for the most common cancers now, so the figure exists when the target times are set.",
+    "applies_to": null,
+    "source_id": "ev-files-kansallinen-syopastrategia-toimeenpanon-tiekartta-2"
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "measure_id": "2.5.1",
+    "goal": 2,
+    "goal_title": "Reduce the cancer burden through prevention and early detection",
+    "title": "Improve access to care by adding GP capacity in primary care, for example by extending the named-GP model nationwide",
+    "responsible": "STM (national named-GP programme: implementation, steering and funding); wellbeing services counties, HUS and the City of Helsinki (adopting the model)",
+    "funding": "Part of the national named-GP (omalääkäri) programme, which supports adoption with state grants. The roadmap gives no euro figure for this measure.",
+    "schedule": [
+      {
+        "period": "2026–2028",
+        "text": "The named-GP programme expands, and continuity-of-care models cover a growing share of the population in every wellbeing services county."
+      },
+      {
+        "period": "2028–2031",
+        "text": "Continuity-of-care models are in routine use in every county. GP capacity in primary care has grown and delays in access to care have shortened."
+      }
+    ],
+    "indicator": null,
+    "pages": "pp. 51–52",
+    "evidence_ids": [
+      "ev-gp-capacity-roadmap",
+      "ev-gp-continuity"
+    ],
+    "source_id": "ev-files-kansallinen-syopastrategia-toimeenpanon-tiekartta-2"
+  },
+  {
+    "measure_id": "2.5.2",
+    "goal": 2,
+    "goal_title": "Reduce the cancer burden through prevention and early detection",
+    "title": "Support a smooth move to specialist care with standardised referral criteria in the national care pathways, so that patients with possible cancer symptoms are sent quickly to the tests they need",
+    "responsible": "FICAN (coordination and roll-out) with the national multi-professional cancer groups",
+    "funding": "Part of the national care-pathway and guideline work (included in the funding need of measure 3.1.1: €5,000,000 a year nationally, shared with four other measures).",
+    "schedule": [
+      {
+        "period": "2026–2028",
+        "text": "Standardised referral criteria and symptom-based operating models are in the national care pathway descriptions of at least the five most common cancers. Piloting and adoption have started in the wellbeing services counties."
+      },
+      {
+        "period": "2029–2031",
+        "text": "The criteria are in all major cancer pathway descriptions. Adoption is nationwide and monitoring is a routine part of managing the pathways."
+      }
+    ],
+    "indicator": "At least 70% of cancers are diagnosed at stages I–II by 2035.",
+    "pages": "pp. 52–53",
+    "evidence_ids": [
+      "ev-ref-national-criteria",
+      "ev-rec-nice-threshold",
+      "ev-rec-direct-ct-training"
+    ],
+    "source_id": "ev-files-kansallinen-syopastrategia-toimeenpanon-tiekartta-2"
+  },
+  {
+    "measure_id": "3.1.2",
+    "goal": 3,
+    "goal_title": "Ensure equal and effective cancer care",
+    "title": "Write national care pathway descriptions for each cancer, with regional pathways based on them and a way to maintain and manage them",
+    "responsible": "FICAN (national coordination, regional adoption and monitoring) with the national multidisciplinary cancer groups (content); wellbeing services counties and HUS (carrying out the pathways)",
+    "funding": "Part of the resourcing of measure 3.1.1: €5,000,000 a year nationally, shared with four other measures.",
+    "schedule": [
+      {
+        "period": "2026–2028",
+        "text": "National care pathway descriptions exist for five cancers and the target times for access to care are set for each. The wellbeing services counties, HUS and the collaborative areas have agreed by contract who is responsible for the regional pathways."
+      },
+      {
+        "period": "2029–2031",
+        "text": "Pathway descriptions exist for all major cancers. Access to care and the effect of treatment are assessed continuously."
+      }
+    ],
+    "indicator": "Patients get to care within the target times.",
+    "pages": "pp. 56–57",
+    "evidence_ids": [
+      "ev-ref-denmark-cpp",
+      "ev-ref-sweden-svf"
+    ],
+    "source_id": "ev-files-kansallinen-syopastrategia-toimeenpanon-tiekartta-2"
+  },
+  {
+    "measure_id": "3.1.4",
+    "goal": 3,
+    "goal_title": "Ensure equal and effective cancer care",
+    "title": "Define national quality and effectiveness targets and the indicators for following the care pathways",
+    "responsible": "FICAN (coordination) with the national steering group for cancer diagnostics and treatment (shared indicators) and the national cancer groups (cancer-specific targets and indicators); THL (method support)",
+    "funding": "Part of the resourcing of measure 3.1.1: €5,000,000 a year nationally, shared with four other measures.",
+    "schedule": [
+      {
+        "period": "2026–2028",
+        "text": "National quality and effectiveness indicators and targets are defined for at least the five largest cancer groups."
+      },
+      {
+        "period": "2029–2031",
+        "text": "Indicators and targets are defined for all major cancer groups, are in use, and give comparable information for developing care and for decisions."
+      }
+    ],
+    "indicator": "National, uniform targets and the key effectiveness indicators are defined for the agreed cancers.",
+    "pages": "pp. 58–59",
+    "evidence_ids": [],
+    "source_id": "ev-files-kansallinen-syopastrategia-toimeenpanon-tiekartta-2"
+  },
+  {
+    "measure_id": "3.2.1",
+    "goal": 3,
+    "goal_title": "Ensure equal and effective cancer care",
+    "title": "Create the legal basis for a national cancer care quality register at THL's Finnish Cancer Registry",
+    "responsible": "STM (decree); THL / Finnish Cancer Registry (setting up and running the register); FICAN",
+    "funding": "Estimated national appropriation needed: €2,500,000.",
+    "schedule": [
+      {
+        "period": "2026–2028",
+        "text": "The quality-register decree is updated to cover cancer."
+      },
+      {
+        "period": "2029–2031",
+        "text": "The register produces yearly reports for at least five cancers, and the information steers national and regional cancer care."
+      }
+    ],
+    "indicator": "The register's data, including stage at diagnosis, allow quality and effectiveness to be assessed and compared reliably (coverage 90%).",
+    "pages": "pp. 59–60",
+    "evidence_ids": [],
+    "source_id": "ev-files-kansallinen-syopastrategia-toimeenpanon-tiekartta-2"
+  }
+]
