@@ -7,6 +7,7 @@ import { BarFill, FinlandTick, withFigures } from "@/components/ui/measure-bar";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { LATEST_YEAR, type County, type GapStatus } from "@/lib/data";
 import {
+  CITY_UNITS_ONLY_REFERRAL,
   FIRST_YEAR,
   formatPct,
   STATUS_LABEL,
@@ -330,6 +331,7 @@ function RankingRowLink({
 }) {
   // No referral value means no public data, whatever the stage status says.
   const referralStatus: GapStatus = row.referral === null ? "no_data" : row.referralStatus;
+  const cityUnitsOnly = CITY_UNITS_ONLY_REFERRAL.has(row.county.id);
 
   return (
     <Link
@@ -428,12 +430,14 @@ function RankingRowLink({
                   {row.sharedReferral.name}-wide
                   <span className="sr-only">, no figure for this area alone</span>
                 </>
+              ) : cityUnitsOnly ? (
+                "City units only"
               ) : (
                 REFERRAL_TAG[referralStatus]
               )}
               {referralStatus !== "no_data" && (
                 <span className="sr-only">
-                  {referralStatus === "amber" ? " as Finland" : ""} (Finland{" "}
+                  {referralStatus === "amber" && !cityUnitsOnly ? " as Finland" : ""} (Finland{" "}
                   {formatPct(nationalReferral)})
                 </span>
               )}

@@ -1,20 +1,30 @@
 import { SourceChip } from "@/components/source-chip";
 import { Frame, FrameHeader, FramePanel, FrameTitle } from "@/components/ui/frame";
 import { TextLink } from "@/components/ui/text-link";
+import type { Stage } from "@/lib/data";
+import { getStageGap, stageStatus } from "@/lib/ranking";
 import { cn } from "cn";
 
 // The eight steps as drawn in the challenge talk (slide 10). FirstLine covers steps 3 to 5;
-// `card` names the step on this page that shows it.
-const STEPS: { label: string; card?: string; tag: string }[] = [
+// `card` names the step on this page that shows it; `stage` marks the steps whose tag comes from the data.
+const STEPS: { label: string; card?: string; tag?: string; stage?: Stage }[] = [
   { label: "Symptoms begin", tag: "Patient" },
   { label: "Considering seeking care", tag: "Patient" },
-  { label: "First healthcare contact", card: "Getting to a GP", tag: "Measured" },
+  { label: "First healthcare contact", card: "Getting to a GP", stage: "gp_access" },
   { label: "Physician assessment", card: "GP recognises warning signs", tag: "No public data" },
-  { label: "Tests and referrals", card: "GP → specialist referral", tag: "Measured" },
+  { label: "Tests and referrals", card: "GP → specialist referral", stage: "referral" },
   { label: "Diagnosis", tag: "Hospital" },
   { label: "Treatment plan", tag: "Hospital" },
   { label: "Treatment starts", tag: "Hospital" },
 ];
+
+/** Tag for a measured step: "Measured" only when this county has its own value for the stage. */
+function stageTag(countyId: string, stage: Stage): string {
+  const status = stageStatus(countyId, stage);
+  if (status === "red" || status === "amber") return "Measured";
+  const shared = getStageGap(countyId, stage)?.shared;
+  return shared ? `${shared.name}-wide only` : "No public data";
+}
 
 /** Where FirstLine's three steps sit in the full pathway from symptoms to treatment. */
 export function PathwayStrip({ countyId }: { countyId: string }) {
@@ -38,7 +48,7 @@ export function PathwayStrip({ countyId }: { countyId: string }) {
               )}
             >
               <span className="type-caption">
-                <span className="figure">{index + 1}</span> · {step.tag}
+                <span className="figure">{index + 1}</span> · {step.stage ? stageTag(countyId, step.stage) : step.tag}
               </span>
               <span className={cn("text-sm", step.card && "font-semibold")}>{step.label}</span>
               {step.card && <span className="type-caption text-muted-foreground">Here: {step.card}</span>}
@@ -60,7 +70,7 @@ export function PathwayStrip({ countyId }: { countyId: string }) {
             those who first went to public primary care waited a median 127 days from first symptoms
             to treatment. Those who went through private or occupational care waited 76.
           </span>
-          <SourceChip sourceId="kuitunen-2026" year={2026} />
+          <SourceChip sourceId="kuitunen-2026" />
         </p>
       </FramePanel>
     </Frame>
