@@ -182,10 +182,10 @@ const STEP_TITLE: Record<PathwayStepId, string> = {
 };
 
 const STEP_PUBLISHED_AS: Partial<Record<PathwayStepId, string>> = {
-  detection: "Screening attendance, by area",
-  gp_access: "Share of GP visits waiting over 7 days, by area",
-  referral: "Share of referrals processed within 3 days, by hospital",
-  outcome: "Five-year survival, breast and bowel cancer",
+  detection: "Screening attendance",
+  gp_access: "GP visits waiting over 7 days",
+  referral: "Referrals processed in 3 days, by hospital",
+  outcome: "Breast and bowel cancer survival",
 };
 
 export type PathwaySlot = {

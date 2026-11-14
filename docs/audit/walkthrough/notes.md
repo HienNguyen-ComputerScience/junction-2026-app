@@ -39,7 +39,7 @@ The area chooser opens on Vantaa and Kerava (85.4%), so the first label a reader
 | What | Says | Source |
 |---|---|---|
 | Statement | "Every figure carries a label: how far to trust it." | — |
-| Figure | 16 of 22 areas' GP-wait figures for 2025 are labelled "read with care" (this counts both "Read with care" and "Read the trend with care") | Count of `level: "care"` for 6411, 2025, in `data/insights/grades.json` |
+| Figure | 16 of 22 areas' GP-wait figures for 2025 are marked to read with care (both "Read with care" and "Read the trend with care"; unquoted on the page, since 15 of the 16 are the second label) | Count of `level: "care"` for 6411, 2025, in `data/insights/grades.json` |
 | Sentence | "Most often because the way visits were recorded changed." | 15 of the 16 carry `recording-change` (`rule_ids`) |
 | "Show the labels and the rules behind them" | The four labels with their shapes and meanings, and the eight rules in the order they are applied | `rules.levels`, `rules.grade_rules` (`lib/insights`) |
 | Example: Ostrobothnia | A two-by-two table: waited over a week 43.8% → 56.7%; recorded visits 26,493 → 8,485 (2024 → 2025). Caveat: "part of the rise may be in what was recorded"; behind "Why?": the grade's reason, quoted as is ("fell 68% from 2024"), and how recorded visits are worked out | `getGrade("ostrobothnia", "6411", 2024 / 2025)`: `value` and `base`. Checked: `abs_value / (value / 100)` in `data/values.json` gives 26,493 and 8,485 |
@@ -52,7 +52,7 @@ The Ostrobothnia caveat quotes the year-on-year grade reason. It does not use `l
 | What | Says | Source |
 |---|---|---|
 | Statement | "Of 7 steps from screening to survival, 3 have no public figure by area." | `published` flags in `data/insights/pathway.json` (the same for every area) |
-| Picture | The seven steps. Published ones are filled, with what is published. The three gaps (GP recognition, diagnosis, treatment start) are hatched empty slots marked "Not published by area", never a zero | `getPathwayRow` |
+| Picture | The seven steps. Published ones are filled, with a tick and what is published ("Screening attendance", "Referrals processed in 3 days, by hospital"). The three gaps (GP recognition, diagnosis, treatment start) are hatched empty slots marked "Not published by area", never a zero | `getPathwayRow` |
 | Story steps | "4 steps are published." / "3 steps are empty." / "A gap stays a gap. We never fill one with an estimate." The picture marks the published slots, then the empty ones, then their labels | — |
 | "Show what is missing, and what exists instead" | For each gap, what is missing, what exists instead, and its source chip | `missing`, `today`, `source_id` in `data/data-gaps.json` |
 
@@ -89,6 +89,7 @@ The two checkers are described separately, as the code has them. The brief check
 | The Finland comparison bar in the GP-wait picture | That topic is about what the figure counts, not how the area compares. The briefing and county pages carry the comparison. |
 | The explanatory line under each "counted / not counted" box | Each box title says it all, and the story text beside the picture explains it. |
 | The source-publisher cards, replaced by one list split by hairlines | It is the same content without four boxes. |
+| The "Published: …" lines in the pathway picture, cut to a few words after a tick | At 1366×768 the picture must fit the window while it stays in place. |
 | The publishers table (four columns), replaced by a two-column list behind the button | "We copied it" was the same date on every row; it is now one sentence on the page. |
 | "Only published figures" in "What we did about it" | It repeated topic 1. |
 | The four "What we did" cards, replaced by three rows in one list | No boxes inside a box. |

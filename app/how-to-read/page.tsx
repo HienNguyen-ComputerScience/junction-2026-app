@@ -223,7 +223,7 @@ export default function HowToReadPage() {
           eyebrow={SECTIONS[2].name}
           statement="Every figure carries a label: how far to trust it."
           figure={
-            <ChunkFigure unit={`of ${gpGradeCounts.areas} areas' GP-wait figures for ${YEAR} are labelled "read with care"`}>
+            <ChunkFigure unit={`of ${gpGradeCounts.areas} areas' GP-wait figures for ${YEAR} are marked to read with care`}>
               <AnimatedNumber value={gpGradeCounts.care} final={String(gpGradeCounts.care)} decimals={0} level="loud" />
             </ChunkFigure>
           }
