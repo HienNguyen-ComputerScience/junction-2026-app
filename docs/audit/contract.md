@@ -171,6 +171,65 @@ Never put a headline figure, its source chip or its main limitation inside one.
 
 `<PrintButton label="Print or save as PDF" variant="outline" size="default" />` calls `window.print()`. `PrintExpand` (mounted once in the layout) opens every closed `<details>` for the print. The print stylesheet hides the header, the footer and anything marked `print:hidden` or `data-print="hide"`, shows every Reveal, and keeps colours. A new full-screen layout should mark its own chrome `print:hidden`. Panels may break across pages (a tall panel that may not break pushes a blank page ahead of itself); add `print-keep` to a small unit that must stay whole.
 
+### Scroll-driven pages (team lead, 14 Nov)
+
+Every page except home and the guided briefing is told as a sequence of small chunks, roughly one idea per screen-height, revealed on scroll like a product page. Lead with the page's single most important figure; full tables (sortable, downloadable) go at the end, open where the table is the point.
+
+Guardrails: normal scrolling only (no wheel or touch capture, no scroll-snap, no parallax); nothing on hover only; the headline figure, its source and its main caveat always visible; the county limitations box always visible; content in the HTML first; reduced motion or no JavaScript gives a plain static document with pictures in their final state; print shows everything, expanded and unstuck; WCAG AA and text of 16px or more.
+
+#### `Chunk` (`components/motion/chunk.tsx`)
+
+```tsx
+<Chunk
+  eyebrow="Getting to a GP, 2025"
+  statement="Most GP visits in Kainuu wait more than a week."
+  figure={<ChunkFigure tone="alarm" unit="of non-urgent GP visits waited over 7 days"><AnimatedNumber value={75.2} final="75.2%" /></ChunkFigure>}
+  meaning="That is 20.5 points worse than Finland's 54.7%."
+  source={<SourceChip sourceId="sotkanet-6411" year={2025} />}
+  caveat={{ short: "Counts visits, not people", why: "Sotkanet 6411 counts …" }}
+/>
+```
+
+- One idea: serif statement, then the figure (counting up or a bar growing to its exact value), one plain sentence on what it means, then source chip(s) and the one main caveat. Each piece fades and rises on entry (the `motion-loud` set, about 500 ms, short staggers) and stays.
+- `lead` for the page's opening chunk (no screen-height reserved, so the headline figure is above the fold). `as` sets the heading level (`h2` by default; the lead chunk is usually `h1`).
+- Unframed on purpose: space separates chunks. Prints at natural height.
+
+#### `ScrollStory` (`components/motion/scroll-story.tsx`)
+
+```tsx
+<ScrollStory
+  label="The first three steps in Kainuu"
+  picture={<div>…<div data-story-step="0">…</div><div data-story-step="1">…</div>…</div>}
+  steps={[<StepText key="0" />, <StepText key="1" />, <StepText key="2" />]}
+/>
+```
+
+- From 1024px the picture sticks beside the text while two or three short text blocks scroll past; the block crossing the middle of the screen sets the step (IntersectionObserver).
+- Picture parts marked `data-story-step="n"` get `data-story-state="future" | "current" | "past"`: future parts lose their colour (never their contrast), the current one gets a Forest Ink ring, past ones are normal. The text block being read gets a Forest Ink rule at its side.
+- A client picture can redraw per step with `useStoryStep()` (a number, or `null` for the final state).
+- Below 1024px, under reduced motion, without JavaScript and in print: picture above the text in its final state, nothing sticks. The picture's final state must read correctly on its own.
+
+#### `CaveatNote` (`components/motion/caveat-note.tsx`)
+
+`<CaveatNote short="Counts visits, not people">Full explanation…</CaveatNote>`: the main caveat attached to the figure it qualifies, as a small mint pill-rounded note. The short form is always visible; the explanation sits behind a "Why?" button (native `<details>`, open on paper). Without children it is just the note.
+
+#### `MoreCard` (`components/motion/more-card.tsx`)
+
+`<MoreCard title="More for Kainuu" rows={[{ key, label, action, children? }]} />`: the end of a page. The secondary things that survive the cut (more options, live search, related links) go in one card, one row each: a short label and its one button, rows separated by hairlines. Screen only.
+
+### Explanatory text: cut first (team lead, 14 Nov)
+
+For every explanatory sentence on a page:
+
+1. Would the reader decide or do anything differently without it? If not, delete it.
+2. If it is needed, is it needed before they act? If not, put it behind a button ("Why?", "Show …") or move it to the page where it is used.
+3. Only what passes both tests stays visible.
+
+- Sentences that describe the page itself ("Here are …", "In order of …", "This page shows …", "You can …") are deletes.
+- Always visible, whatever the tests say: the headline figure, its source, the one main caveat (a `CaveatNote`), and the county limitations box.
+- Don't wrap text in cards to make it look organised. Framing applies only to what survives, e.g. the secondary sections at the end of a page in one `MoreCard`.
+- Small text that may stay: source chips, eyebrow labels, pills, and at most one line of caption directly under a figure.
+
 ### `StatUnit` (`components/stat/stat-unit.tsx`)
 
 The lead figure of a page or section, as one self-contained unit: eyebrow, a big figure that counts up once, `unit` set smaller after it, an optional status badge, the meaning in one or two plain sentences (children), the one limitation that applies (always visible), source chips, and optional `detail` behind a quiet "Show {detailLabel}" button.
