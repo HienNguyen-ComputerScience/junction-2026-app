@@ -54,7 +54,7 @@ export default function ComparePage() {
   const marked = rows.filter((row) => row.recording !== null).sort((a, b) => a.name.localeCompare(b.name, "en"));
 
   return (
-    <main className={cn("page-container print-wide flex max-w-[1200px] flex-col gap-12 pt-6 pb-16 sm:pt-8 print:gap-6 print:pt-0", MOTION_LOUD_CLASS)}>
+    <main className={cn("page-container print-wide flex flex-col gap-12 pt-6 pb-16 sm:pt-8 print:gap-6 print:pt-0", MOTION_LOUD_CLASS)}>
       <Chunk
         lead
         as="h1"

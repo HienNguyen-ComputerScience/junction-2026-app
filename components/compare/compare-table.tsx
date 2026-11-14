@@ -146,7 +146,7 @@ function Referral({ row, inline = false }: { row: CompareRow; inline?: boolean }
     return (
       <span className={inline ? "inline" : "flex flex-col items-start gap-1"}>
         <span className="figure text-base">{pct(row.referral)}</span>
-        <StatusBadge status={row.referralCityOnly ? "no_data" : row.referralStatus} variant="quiet" className={cn(BADGE, inline ? "ml-2" : "xl:whitespace-nowrap")}>
+        <StatusBadge status={row.referralCityOnly ? "no_data" : row.referralStatus} variant="quiet" className={cn(BADGE, inline && "ml-2")}>
           {row.referralCityOnly ? "City units only" : statusLabel(row.referralStatus, "referral")}
         </StatusBadge>
       </span>
