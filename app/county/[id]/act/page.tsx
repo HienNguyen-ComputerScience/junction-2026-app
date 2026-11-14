@@ -4,20 +4,23 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ActionSummary } from "@/components/act/action-card";
+import { lowerFirst, STEP_SHORT } from "@/components/act/action-copy";
 import { ActionItem } from "@/components/act/action-item";
+import { ActionStory, type StoryStep } from "@/components/act/action-story";
 import { ReferralRoutes } from "@/components/act/referral-routes";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
+import { AnimatedNumber, Disclosure, Reveal } from "@/components/motion";
+import { SourceChip } from "@/components/source-chip";
 import { BackLink } from "@/components/ui/back-link";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { Disclosure, PrintButton, Reveal } from "@/components/motion";
 import { buttonVariants } from "@/components/ui/button";
-import { Frame, FrameHeader, FrameTitle } from "@/components/ui/frame";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TextLink } from "@/components/ui/text-link";
-import { STAGE_LABELS, bottleneckLede, getBottleneck, otherActions, pickActions, type Bottleneck } from "@/lib/act";
+import { SELECTION_RULE, STAGE_LABELS, getBottleneck, otherActions, pickActions, type Bottleneck } from "@/lib/act";
 import { plainTitle } from "@/lib/action-title";
-import { counties, getCounty, type Evidence, type Stage } from "@/lib/data";
-import { STATUS_LABEL } from "@/lib/ranking";
+import { counties, getCounty, getGaps, type Evidence, type Gap, type Stage } from "@/lib/data";
+import { MOTION_LOUD_CLASS } from "@/lib/motion";
+import { STATUS_LABEL, formatPct, getIndicator } from "@/lib/ranking";
 
 // Counties are a fixed, known set, so a blocking route is fine here.
 export const instant = false;
@@ -33,37 +36,58 @@ export async function generateMetadata({ params }: PageProps<"/county/[id]/act">
   return { title: `${county.name}: what to do | FirstLine` };
 }
 
-/** Each pathway step in words that fit inside a sentence. */
-const STEP_PHRASE: Record<Stage, string> = {
-  gp_access: "getting to a GP",
-  gp_recognition: "the GP recognising warning signs",
-  referral: "referral from the GP to a specialist",
+/** What the lead figure counts, in one short line under it. */
+const FIGURE_CAPTION: Record<string, string> = {
+  "6411": "of GP visits waited over 7 days",
+  "13": "of referrals handled within 3 days",
 };
 
-/**
- * Why an action is on this county's list, in one line, from the same bottleneck that picked it
- * (lib/act). Nothing is added that the selection rule does not say.
- */
-function whyHere(action: Evidence, bottleneck: Bottleneck, countyName: string): string {
-  const { focus, anyRed } = bottleneck;
-  const step = STEP_PHRASE[action.stage];
-  if (!anyRed) return `It works on ${step}, the step where ${countyName} is closest to falling below Finland's level.`;
-  const position = focus.findIndex((gap) => gap.stage === action.stage);
-  if (position === 0) {
-    return focus.length > 1
-      ? `It works on ${step}, the step where ${countyName} is furthest behind Finland.`
-      : `It works on ${step}, the step where ${countyName} is worse than Finland.`;
-  }
-  return `It works on ${step}, which is also worse than Finland in ${countyName}.`;
+const PATHWAY: Stage[] = ["gp_access", "gp_recognition", "referral"];
+
+/** The page's one statement: the area's main delay, in at most 12 words. */
+function statement(name: string, { focus, anyRed }: Bottleneck): string {
+  if (focus.length === 0) return `${name}: no published pathway figures`;
+  if (!anyRed) return `${name}: no measured step worse than Finland`;
+  return `${name}'s ${focus.length > 1 ? "worst " : ""}delay: ${lowerFirst(STEP_SHORT[focus[0].stage])}`;
 }
 
-/** Steps with no county figure (the HUS-wide referral values in Uusimaa), said once, always visible. */
-function unmeasuredNotes(bottleneck: Bottleneck, countyName: string): string[] {
-  return bottleneck.noData.map((gap) =>
-    gap.shared
-      ? `For ${STEP_PHRASE[gap.stage]}, Sotkanet publishes only a ${gap.shared.name}-wide figure, not one for ${countyName}, so that step is not used to pick these actions.`
-      : `There is no ${countyName} figure for ${STEP_PHRASE[gap.stage]}, so that step is not used to pick these actions.`,
-  );
+/** The three steps of the pathway picture, each with its status in words. */
+function storySteps(countyId: string, bottleneck: Bottleneck): StoryStep[] {
+  const gaps = getGaps(countyId);
+  const main = bottleneck.anyRed ? bottleneck.focus[0]?.stage : undefined;
+  return PATHWAY.map((stage) => {
+    const gap: Gap | undefined = gaps.find((g) => g.stage === stage);
+    const label = STEP_SHORT[stage];
+    if (!gap) return { stage, label, status: "no_data", statusText: "No public data", main: false };
+    const statusText =
+      gap.status === "red"
+        ? stage === main
+          ? "Worse than Finland: the main delay"
+          : "Worse than Finland"
+        : gap.status === "amber"
+          ? "Not worse than Finland"
+          : gap.shared
+            ? `Only a ${gap.shared.name}-wide figure`
+            : "No figure for this area";
+    return { stage, label, status: gap.status, statusText, main: stage === main };
+  });
+}
+
+/** Why these actions and no others: the selection rule, the unmeasured steps, and what the figure covers. */
+function whyNotes(countyName: string, bottleneck: Bottleneck): string[] {
+  const notes = [SELECTION_RULE];
+  for (const gap of bottleneck.noData) {
+    notes.push(
+      gap.shared
+        ? `${STAGE_LABELS[gap.stage]}: Sotkanet publishes only a ${gap.shared.name}-wide figure, not one for ${countyName}, so this step is not used to pick actions. Its options are under "Show the other actions".`
+        : `${STAGE_LABELS[gap.stage]}: there is no ${countyName} figure, so this step is not used to pick actions.`,
+    );
+  }
+  notes.push("GP recognises warning signs: there is no public data on this anywhere in Finland.");
+  const lead = bottleneck.focus[0];
+  const indicator = lead ? getIndicator(lead.indicator_id) : undefined;
+  if (indicator) notes.push(`What the figure covers: ${indicator.limitation}`);
+  return notes;
 }
 
 export default async function CountyActPage({ params }: PageProps<"/county/[id]/act">) {
@@ -78,162 +102,133 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   const remaining = others.filter((group) => !unmeasured.includes(group));
   const otherCount = others.reduce((total, group) => total + group.actions.length, 0);
   const planHref = `/county/${county.id}/plan?actions=${recommended.map((action) => action.id).join(",")}`;
-  const count = recommended.length;
-  const notes = unmeasuredNotes(bottleneck, county.name);
+  const lead = bottleneck.focus[0];
+  const leadValue = lead?.value ?? null;
+
+  const planButton = (
+    <Link href={planHref} className={`${buttonVariants({ size: "lg" })} h-auto max-w-full whitespace-normal`}>
+      Make the action plan for the board
+      <ArrowRight aria-hidden data-icon="inline-end" />
+    </Link>
+  );
 
   return (
-    <main className="page-container flex flex-col gap-10 pt-4 sm:pt-6">
-      <header className="flex flex-col items-start gap-3">
-        <Breadcrumb
-          items={[{ label: "Areas", href: "/" }, { label: county.name, href: `/county/${county.id}` }, { label: "Actions" }]}
-        />
-        <div className="flex flex-col gap-2">
-          <p className="text-sm text-balance text-muted-foreground">
-            Path to early cancer care
-            <span className="max-sm:hidden"> · </span>
-            <span className="max-sm:block">{county.name_fi}</span>
-          </p>
-          <h1 className="type-page">{county.name}: what to do next</h1>
-        </div>
-        <p className="type-lede max-w-[62ch] text-pretty text-foreground">
-          {bottleneckLede(bottleneck)}{" "}
-          {count > 0
-            ? `Here ${count === 1 ? "is the action" : `are the ${count} actions`} we recommend for it, with who does each and why.`
-            : "No action is picked for this area, so all the evidence-backed options are listed below."}
-        </p>
-        {notes.map((note) => (
-          <p key={note} className="max-w-[62ch] text-base text-pretty text-muted-foreground">
-            {note}
-          </p>
-        ))}
-        {count > 0 ? (
-          <div data-print="hide" className="flex flex-col items-start gap-2 pt-2">
-            <div className="flex flex-wrap gap-2.5">
-              <Link href={planHref} className={buttonVariants({ size: "lg" })}>
-                Make the action plan for the board
-                <ArrowRight aria-hidden data-icon="inline-end" />
-              </Link>
-              <PrintButton variant="outline" size="lg" />
-            </div>
-            <p className="max-w-[62ch] text-base text-pretty text-muted-foreground">
-              The plan has these {count} actions filled in. You add the responsible person, a review date and the cost, then
-              print it or download it for Word or Excel.
+    <main className={`page-container flex flex-col pt-4 sm:pt-6 ${MOTION_LOUD_CLASS}`}>
+      <Breadcrumb
+        items={[{ label: "Areas", href: "/" }, { label: county.name, href: `/county/${county.id}` }, { label: "Actions" }]}
+      />
+
+      {/* 1. The main delay, its figure, and the one thing to do with it. */}
+      <section aria-labelledby="act-title" className="mt-6 flex flex-col gap-6 rounded-lg bg-keylime-wash px-7 py-9 sm:px-12 sm:py-12">
+        <Reveal index={0}>
+          <h1 id="act-title" className="type-page max-w-[22ch] text-pretty">
+            {statement(county.name, bottleneck)}
+          </h1>
+        </Reveal>
+        {lead && leadValue !== null ? (
+          <Reveal index={1} className="flex flex-col gap-2">
+            <p className="numeral text-[4rem] leading-none text-forest-ink sm:text-[5rem]">
+              <AnimatedNumber value={leadValue} final={formatPct(leadValue)} decimals={1} level="loud" />
             </p>
-          </div>
+            <p className="text-lg text-foreground">{FIGURE_CAPTION[lead.indicator_id] ?? getIndicator(lead.indicator_id)?.short_name}</p>
+            <span className="flex flex-wrap items-center gap-2 pt-1">
+              <span className="inline-flex min-h-8 items-center rounded-full bg-cream-paper px-3.5 text-base text-forest-ink">
+                Finland {formatPct(lead.national_value)}
+              </span>
+              <SourceChip sourceId={lead.source_id} year={lead.year} />
+            </span>
+          </Reveal>
         ) : null}
-      </header>
-
-      <section aria-labelledby="recommended" className="flex flex-col gap-4">
-        {count > 0 ? (
-          <>
-            <div className="flex flex-col gap-1">
-              <h2 id="recommended" className="type-title">
-                {bottleneck.anyRed ? "Recommended actions" : "Actions to keep this level"}
-              </h2>
-              <p className="text-base text-pretty text-muted-foreground">
-                {bottleneck.anyRed ? "In order of where the pathway breaks." : "In order of closeness to Finland's level."}{" "}
-                Each one opens to the first step, where it was done, its source and its limits.
-              </p>
-            </div>
-            {/* Every recommended action in order, numbered, one under the other. */}
-            <ol aria-label={`Recommended actions for ${county.name}`} className="flex flex-col gap-4">
-              {recommended.map((action, index) => (
-                <Reveal as="li" key={action.id} index={index} className="print-flow">
-                  <ActionItem action={action} index={index + 1} why={whyHere(action, bottleneck, county.name)} />
-                </Reveal>
+        <Reveal index={2}>
+          <Disclosure tone="quiet" show="Why only these actions?" hide="Hide why">
+            <ul className="flex max-w-[62ch] flex-col gap-2.5 rounded-lg bg-cream-paper px-5 py-4 text-base leading-relaxed text-pretty print:px-0">
+              <li className="hidden font-semibold text-forest-ink print:block">Why only these actions</li>
+              {whyNotes(county.name, bottleneck).map((note) => (
+                <li key={note}>{note}</li>
               ))}
-            </ol>
-            <div data-print="hide" className="flex flex-col items-start gap-2 pt-2 sm:flex-row sm:items-center sm:gap-4">
-              <Link href={planHref} className={buttonVariants({ size: "lg" })}>
-                Make the action plan for the board
-                <ArrowRight aria-hidden data-icon="inline-end" />
-              </Link>
-              <p className="text-base text-muted-foreground">With these {count} actions, ready to print or download.</p>
-            </div>
-          </>
-        ) : (
-          <h2 id="recommended" className="type-title">
-            Evidence-backed options
-          </h2>
-        )}
-
-        {otherCount > 0 ? (
-          <Frame aria-labelledby="other-options" className="mt-2">
-            <FrameHeader>
-              <FrameTitle id="other-options" className="type-title">
-                Other options
-              </FrameTitle>
-              <p className="col-span-2 max-w-[68ch] text-base text-pretty text-muted-foreground">
-                {otherCount} more evidence-backed {otherCount === 1 ? "action" : "actions"}, for steps not picked here or not
-                measured in {county.name}.
-              </p>
-            </FrameHeader>
-            <Disclosure
-              className="px-1"
-              defaultOpen={count === 0}
-              label={`the ${otherCount} other ${otherCount === 1 ? "option" : "options"}`}
-            >
-              <div className="flex flex-col gap-1.5">
-                {unmeasured.map((group) => (
-                  <section key={group.stage} aria-labelledby={`unmeasured-${group.stage}`}>
-                    <GroupHead
-                      id={`unmeasured-${group.stage}`}
-                      title={`${STAGE_LABELS[group.stage]}: can't be measured here yet`}
-                      note={`${group.unmeasured} These actions still apply if the county finds a delay at this step.`}
-                      noData
-                    />
-                    <SummaryGrid actions={group.actions} />
-                  </section>
-                ))}
-
-                {remaining.map((group) => (
-                  <section key={group.stage} aria-labelledby={`other-${group.stage}`}>
-                    <GroupHead
-                      id={`other-${group.stage}`}
-                      title={STAGE_LABELS[group.stage]}
-                      note={group.unmeasured}
-                      noData={group.unmeasured !== null}
-                    />
-                    <SummaryGrid actions={group.actions} />
-                  </section>
-                ))}
-              </div>
-            </Disclosure>
-          </Frame>
+            </ul>
+          </Disclosure>
+        </Reveal>
+        {recommended.length > 0 ? (
+          <Reveal index={3} className="pt-1">
+            <div data-print="hide">{planButton}</div>
+          </Reveal>
         ) : null}
       </section>
 
-      <Reveal>
-        <Frame aria-labelledby="referral-routes">
-          <FrameHeader>
-            <FrameTitle id="referral-routes" className="type-title scroll-mt-24">
-              The four referral routes a county needs
-            </FrameTitle>
-            <p className="col-span-2 max-w-[68ch] text-base text-pretty text-muted-foreground">
-              Does {county.name} have a written route for each: fast track, vague-symptoms work-up, GP check within two
-              weeks, and safety-net recheck? Decision support for the county, not diagnosis.
-            </p>
-          </FrameHeader>
-          <Disclosure className="px-1" label="the four routes">
-            <ReferralRoutes />
-          </Disclosure>
-        </Frame>
-      </Reveal>
+      {/* 2. The actions, one card each, beside the pathway they work on. */}
+      {recommended.length > 0 ? (
+        <section aria-labelledby="actions-title" className="mt-[18vh]">
+          <h2 id="actions-title" className="sr-only">
+            Recommended actions for {county.name}
+          </h2>
+          <ActionStory steps={storySteps(county.id, bottleneck)}>
+            <ol className="flex flex-col gap-16 md:gap-[28vh]">
+              {recommended.map((action, index) => (
+                <li key={action.id} data-story-stage={action.stage} data-story-index={index + 1} className="print-flow">
+                  <ActionItem action={action} index={index + 1} />
+                </li>
+              ))}
+            </ol>
+          </ActionStory>
+          <Reveal className="mt-16 md:mt-[18vh]">
+            <div data-print="hide">{planButton}</div>
+          </Reveal>
+        </section>
+      ) : null}
 
-      {count > 0 ? (
-        <div data-print="hide">
-          <Reveal>
-            <Frame aria-labelledby="web-search">
-              <FrameHeader>
-                <FrameTitle id="web-search" className="type-title">
-                  Search the web for newer studies
-                </FrameTitle>
-                <p className="col-span-2 max-w-[68ch] text-base text-pretty text-muted-foreground">
-                  The evidence above was checked by our team. A web search can find newer studies on each action; those
-                  results are not checked.
-                </p>
-              </FrameHeader>
-              <Disclosure className="px-1" label="the web search for each action">
+      {/* 3. Everything else, as three buttons. */}
+      <section aria-label={`More for ${county.name}`} className="mt-[14vh] flex flex-col rounded-lg bg-slate-hush px-7 py-4 sm:px-10">
+        {otherCount > 0 ? (
+          <Disclosure
+            className="py-4"
+            defaultOpen={recommended.length === 0}
+            show={`Show the ${otherCount} other actions`}
+            hide="Hide the other actions"
+          >
+            <div className="flex flex-col gap-1.5">
+              {unmeasured.map((group) => (
+                <section key={group.stage} aria-labelledby={`unmeasured-${group.stage}`}>
+                  <GroupHead
+                    id={`unmeasured-${group.stage}`}
+                    title={`${STAGE_LABELS[group.stage]}: can't be measured here yet`}
+                    note={`${group.unmeasured} These actions still apply if the county finds a delay at this step.`}
+                    noData
+                  />
+                  <SummaryGrid actions={group.actions} />
+                </section>
+              ))}
+              {remaining.map((group) => (
+                <section key={group.stage} aria-labelledby={`other-${group.stage}`}>
+                  <GroupHead
+                    id={`other-${group.stage}`}
+                    title={STAGE_LABELS[group.stage]}
+                    note={group.unmeasured}
+                    noData={group.unmeasured !== null}
+                  />
+                  <SummaryGrid actions={group.actions} />
+                </section>
+              ))}
+            </div>
+          </Disclosure>
+        ) : null}
+
+        <div id="referral-routes" className="scroll-mt-28 border-t border-border-mist py-4 first:border-t-0">
+          <Disclosure show="Show the four referral routes a county needs" hide="Hide the referral routes">
+            <div className="flex flex-col gap-4 rounded-lg bg-cream-paper px-5 py-5 sm:px-7">
+              <p className="text-base font-semibold text-forest-ink">
+                The four referral routes a county needs. Decision support for the county, not diagnosis.
+              </p>
+              <ReferralRoutes />
+            </div>
+          </Disclosure>
+        </div>
+
+        {recommended.length > 0 ? (
+          <div data-print="hide" className="border-t border-border-mist py-4">
+            <Disclosure show="Search new research for these actions" hide="Hide the search">
+              <div className="flex flex-col gap-5 rounded-lg bg-cream-paper px-5 py-5 sm:px-7">
+                <p className="text-base text-foreground">Web results are new and not checked by us.</p>
                 <ol className="flex flex-col gap-5">
                   {recommended.map((action, index) => (
                     <li key={action.id} className="flex flex-col gap-2">
@@ -244,13 +239,13 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
                     </li>
                   ))}
                 </ol>
-              </Disclosure>
-            </Frame>
-          </Reveal>
-        </div>
-      ) : null}
+              </div>
+            </Disclosure>
+          </div>
+        ) : null}
+      </section>
 
-      <nav aria-label="Page" className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+      <nav aria-label="Page" className="mt-12 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
         <BackLink href={`/county/${county.id}`}>Back to {county.name}</BackLink>
         <span className="flex flex-wrap gap-x-6 gap-y-2">
           <TextLink kind="nav" href="/ask" className="text-base">
@@ -267,7 +262,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
 
 function GroupHead({ id, title, note, noData = false }: { id: string; title: string; note: string | null; noData?: boolean }) {
   return (
-    <div className="flex flex-col gap-1 px-3 pt-3 pb-3 sm:px-4">
+    <div className="flex flex-col gap-1 px-1 pt-3 pb-3">
       <h3 id={id} className="type-heading flex flex-wrap items-center gap-2">
         {title}
         {noData ? (
@@ -276,7 +271,7 @@ function GroupHead({ id, title, note, noData = false }: { id: string; title: str
           </StatusBadge>
         ) : null}
       </h3>
-      {note ? <p className="max-w-[52rem] text-base text-pretty text-muted-foreground">{note}</p> : null}
+      {note ? <p className="max-w-[52rem] text-base text-pretty text-foreground">{note}</p> : null}
     </div>
   );
 }
