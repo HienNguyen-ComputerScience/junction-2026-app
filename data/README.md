@@ -12,6 +12,33 @@ npm run data:build   # fetches Sotkanet, rewrites data/*.json
 
 Do not hand-edit the JSON; change `scripts/data/build-snapshot.mjs` and rebuild. Output is sorted, so a rebuild only changes rows whose data changed. Commit the result.
 
+## Data refresh
+
+`npm run data:refresh` runs these steps in order and stops at the first failure:
+
+1. `npm run data:build`: fetch Sotkanet and rewrite `data/*.json`.
+2. `node scripts/insights/add-sources.mjs`: re-add the two insight sources the rebuild drops.
+3. `node scripts/insights/build-insights.mjs`: regenerate `data/insights/*.json`.
+4. `node scripts/insights/check-insights.mjs`: every derived row has a source and agrees with the snapshot.
+5. `node scripts/data/check-hardcoded.mjs`: figures typed into the app's copy still match the snapshot (see below).
+
+**When and where.** `.github/workflows/data-refresh.yml` runs it every day at 04:17 UTC, and on demand from the Actions tab ("Data refresh" → "Run workflow"). After the refresh it runs the full verify (`npm test`, `brief:check`, `typecheck`, `lint`, `build`). If nothing under `data/` changed it stops there. Otherwise it commits `data/` to the branch `data-refresh/auto` and opens or updates one PR titled "data: Sotkanet refresh <date>". The PR body lists the changed rows of `values.json` (from `scripts/data/diff-summary.mjs`). It never pushes to `main`: a person merges the PR, and Vercel deploys `main` as usual. A failed step means a red run and no PR. That includes a quoted anchor value or a hardcoded figure that no longer matches. Read the log, then fix the copy or the check.
+
+**Retrieved dates.** A source keeps its previous `retrieved` date unless the source row itself (for example a new `data_updated`) or a row citing it changed. So a day with no new figures gives no diff and no PR, and `retrieved` means "the date our copy of this source last changed", not "the date we last checked". Set `RETRIEVED_DATE=YYYY-MM-DD` to run the build as if on another day.
+
+**By hand:** `npm run data:refresh`, then `git status data/`. Commit the changed files only if you mean to change the figures: the pitch and video quote the current numbers.
+
+### Hardcoded figures
+
+Almost every number the app shows is read from `data/`. A few claims are typed into the copy, and `check-hardcoded.mjs` checks them. It finds each one by its text, not its line number. It fails with "COPY NOT FOUND" if the text was reworded (update the pattern) and with "FIGURE MISMATCH" if the data no longer supports the claim (update the copy):
+
+- the anchor values 32.7, 85.4 and 54.7 (6411, 2025; `scripts/data/anchors.mjs`, quoted in `SPEC.md`, the pitch and the video);
+- "Most areas wait longer than Finland overall" (`app/compare/page.tsx`): more than half of the 22 areas are above Finland on 6411;
+- "0-3% everywhere" for 5033 (`app/county/[id]/page.tsx` and the 5033 limitation in `build-snapshot.mjs`): checked for the latest year only, because Satakunta was 6% in 2023;
+- the fixed axes of the no-way-round chart (`components/insights/no-way-round-chart.tsx`): GP wait 30–90, occupational-health visits 1,000–2,400, private-doctor use 15–35. Every point must fall inside them.
+
+Not checked, because a Sotkanet refresh cannot change them: England's 17% (`components/pathway/pathway-steps.tsx`, from the NDRS context source), "22 areas" and "four areas" (structure the build already enforces), and years (set in the build script).
+
 ## Files
 
 | File | One row is | Key fields |
@@ -51,7 +78,7 @@ For each county, the 2025 value is compared with Finland overall: Sotkanet's who
 - **Helsinki's 13 value covers the city's own specialist units only.** Most Helsinki hospital referrals go to HUS; the county page says so.
 - **6411 covers public health centres only**, not occupational or private care. The county page says so, with Kuitunen et al. 2026 (source `kuitunen-2026`) as context.
 - **Helsinki has 13 / 5033 values for 2025 only** within 2023–2025.
-- **5033 is 0–3% everywhere** and published as whole percentages, so it does not separate counties.
+- **5033 is 0–3% everywhere in 2025** (Satakunta was 6% in 2023) and published as whole percentages, so it does not separate counties.
 - **Screening attendance (3621, 6103, 3620) is context only**, the step before the GP. Years are 2022–2024 (published a year behind), all 22 areas plus Finland. It counts attendance among those invited, the three programmes invite different age bands, and Sotkanet names the Finnish Cancer Registry as the publisher. `stage` is `null`, so it never enters the ranking, stage status or action selection.
 - **Åland** is outside the wellbeing services reform and has no values; it is excluded.
 - **Evidence:** `evidence.json` stays empty until `docs/evidence/evidence.json` (PR #7) is on main; then run `npm run data:build`. Each unique `source_url` becomes one `ev-…` source. NICE NG12 rows carry a link and a short quote only: NICE content cannot be reproduced outside the UK.
