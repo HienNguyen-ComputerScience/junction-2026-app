@@ -1,0 +1,33 @@
+/* "How to read these numbers": told on scroll with the shared pieces (Chunk, ScrollStory,
+   CaveatNote, Reveal, AnimatedNumber, AnimatedBar; contract in docs/audit/contract.md). This
+   file adds only what is the page's own. Scrolling is never captured or changed. */
+
+/* Anchors and focused controls land below the page's sticky top bar. */
+:root:has(.htr-root) {
+  scroll-padding-top: 5.5rem;
+}
+
+/* A slot that is "not published": hatched, never drawn as a zero. */
+.htr-hatch {
+  background-image: repeating-linear-gradient(135deg, rgb(104 110 105 / 0.28) 0 1px, transparent 1px 8px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .htr-root *,
+  .htr-root *::before,
+  .htr-root *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media print {
+  .htr-root * {
+    animation: none !important;
+    transition: none !important;
+  }
+  .htr-root p,
+  .htr-root li {
+    break-inside: avoid;
+  }
+}
