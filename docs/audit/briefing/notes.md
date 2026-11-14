@@ -37,11 +37,11 @@ Always there: "Next: …" (filled, bottom right, names the next step), "Back" (b
 | 4 | "See the result where it was tried" (link) | Goes to step 5 with that action chosen. |
 | 5 | "Action 1", "Action 2", "Action 3" | Which action's result is shown. The choice made on step 4 carries over. |
 | 5 | "Show where it was tried" | The place and the programme. |
-| 5 | "Show what <area> would measure" | The published figure the area would watch, with its chip; the sentence that FirstLine gives no estimate; and the pace that would reach Finland's level (or the best area's) by a year chosen with the buttons "2027" to "2031". |
+| 5 | "Show what [area] would measure" | The published figure the area would watch, with its chip; the sentence that FirstLine gives no estimate; and the pace that would reach Finland's level (or the best area's) by a year chosen with the buttons "2027" to "2031". |
 | 6 | "Open the plan for your board" | `/county/<area>/plan?target=…&year=…` with the target year chosen on step 5. The briefing does not ask the director to drop or reorder actions, so it sends no `actions=` and the plan shows its default: the same three, in the same order. |
 | 6 | "Print this briefing" | The browser's print dialog with the whole briefing as one document (below). |
 | 6 | "Send this briefing by email" | A mail draft with the address of step 1. |
-| 6 | "Full page for <area>", "Table of all 22 areas" | The detail pages. |
+| 6 | "Full page for [area]", "Table of all 22 areas" | The detail pages. |
 
 ## Motion
 
@@ -80,7 +80,7 @@ Every number comes from the repo's `data/` snapshot through existing `lib/` func
 | 2 | Status of each of the three steps against Finland; GP wait (Sotkanet 6411); referrals processed within 3 days (Sotkanet 13); HUS-wide referral value for the four HUS areas; unpublished figures after the referral | Sotkanet 6411, Sotkanet 13, national cancer strategy roadmap | `getBottleneck`, `bottleneckLede`, `getStageGap`, `STATUS_LABEL`, `getDataGaps` | Step 2 of the way has no public data anywhere, said as a finding. The HUS value is labelled "No county figure" and never shown as the area's own. Helsinki's tile says "The city's own units only. Most referrals go to the HUS hospital group." |
 | 3 | The focus step's share per year 2023 to 2025, rounded to "n of every 100"; change since 2023 | Sotkanet 6411 or 13 | `getMainReason`, `getValue`, `getNationalValue`, `YEARS`, `getRecordedVisitChange`, `isRecordingSensitiveChange`, `describeVisitChange` | Visits (or referrals), not people; rounded. Where recorded visits changed a lot, the change is followed by "Read with care: recorded visits … so part of the change may be how visits are recorded." |
 | 4 | No figures. Actions, first steps, owners, precedents, roadmap measures and funding routes | `data/evidence.json`, `data/roadmap.json` | `pickActions`, `plainTitle`, `getMeasureForAction` | "Chosen for the step where the delay is, by a fixed rule from a checked evidence table. Proposals for service planning, not medical advice." |
-| 5 | The precedent's reported result in the study's own words (`effect_text`); the published figure to watch; the target pace | The study behind each action (source chip); Sotkanet 6411 or 13 | `pickActions`, `targetPath`, `bestForStage`, `TARGET_YEARS` | "Not a forecast for <area>." followed by the study's limitations from the evidence table, always on the step. |
+| 5 | The precedent's reported result in the study's own words (`effect_text`); the published figure to watch; the target pace | The study behind each action (source chip); Sotkanet 6411 or 13 | `pickActions`, `targetPath`, `bestForStage`, `TARGET_YEARS` | "Not a forecast for [area]." followed by the study's limitations from the evidence table, always on the step. |
 | 6 | Step 1's figure and Finland's, repeated | Sotkanet 6411 | as step 1 | "Visits, not people; all non-urgent GP visits, not only cancer-related ones." |
 
 Wording rules kept: Sotkanet 6411 counts visits, so the briefing says "85.4% of non-urgent GP visits … come more than a week after people ask", never "of people" or "of patients". No guideline text is reproduced. There is no symptom checker and no input that takes patient data: the only inputs are the list of areas and buttons.
@@ -89,7 +89,7 @@ How the data shapes play out (all walked):
 
 - Delay at getting to a GP, referral shared with HUS (Vantaa and Kerava, Central, East and West Uusimaa): step 2 marks tile 1 and says steps 2 and 3 cannot be judged for the area.
 - Delay at the referral (Kainuu, Pirkanmaa, Central Ostrobothnia): step 2 marks tile 3; step 3 counts referrals processed within 3 days.
-- No step worse than Finland (Lapland, Päijät-Häme, East Uusimaa): step 2 says so and names the step closest to Finland's level; step 4 becomes "things that help <area> keep its level"; the pace on step 5 aims at the best area's level, and the best area itself gets "The aim is to hold the level."
+- No step worse than Finland (Lapland, Päijät-Häme, East Uusimaa): step 2 says so and names the step closest to Finland's level; step 4 becomes "things that help [area] keep its level"; the pace on step 5 aims at the best area's level, and the best area itself gets "The aim is to hold the level."
 - Helsinki: the referral tile carries the city-units limit on the tile, and the figure sets no target.
 
 ## Step 5: no estimate, and why
@@ -98,8 +98,8 @@ The brief allowed an estimate only if a sourced effect size fits. None does. Eve
 
 So the step shows three things and keeps them apart:
 
-1. What the cited precedent reported where it was done, in its own words and unit, with its source chip and, always visible under it, "Not a forecast for <area>." and the study's limits.
-2. The published figure the area would watch to know whether it is working (behind "Show what <area> would measure"), with the sentence "FirstLine gives no estimate of this action's effect in <area>: no published study measures it on this figure."
+1. What the cited precedent reported where it was done, in its own words and unit, with its source chip and, always visible under it, "Not a forecast for [area]." and the study's limits.
+2. The published figure the area would watch to know whether it is working (behind "Show what [area] would measure"), with the sentence "FirstLine gives no estimate of this action's effect in [area]: no published study measures it on this figure."
 3. In the same panel, the pace that would reach a published level by a chosen year. This is `targetPath` from `lib/plan.ts`: an even pace between two published shares. It is labelled "This is arithmetic on the two published figures above … It assumes nothing about what any action will achieve."
 
 ## Slots left for the insights branch
@@ -118,7 +118,7 @@ They are passed in `app/briefing/[id]/layout.tsx`, where the six steps are creat
 
 - `app/briefing/[id]/layout.tsx` builds the model once and renders all six steps on the server. It hands them to the client `BriefingShell` (`components/briefing/shell.tsx`), which shows the one named by the address (`useSelectedLayoutSegment`). The pages (`[id]/page.tsx`, `[id]/[step]/page.tsx`) only supply the title, the static params and the 404 for an unknown area or step. Every address is prerendered, and each one's HTML holds its finished step.
 - Next and Back are plain links, so the browser's Back and Forward work. All six steps arrive with the first, so a press changes the screen at once.
-- On each step change the keyboard focus moves to the step's statement (`h1`, `tabindex="-1"`), the page title becomes "Step n of 6: <name> · Briefing for <area>", and Next's route announcer reads the statement or the title. The step reached by pressing Start takes the focus too (`components/briefing/arrival.ts`); a page loaded directly keeps the browser's own focus.
+- On each step change the keyboard focus moves to the step's statement (`h1`, `tabindex="-1"`), the page title becomes "Step n of 6: <name> · Briefing for [area]", and Next's route announcer reads the statement or the title. The step reached by pressing Start takes the focus too (`components/briefing/arrival.ts`); a page loaded directly keeps the browser's own focus.
 - The action chosen on step 4 and the year chosen on step 5 live in a small context in the shell. Nothing depends on them: a step opened from a link shows action 1 and 2028.
 - Print: `components/briefing/print-document.tsx` writes the whole briefing for the area as one document (all six steps, every action, every year, the target paces, a numbered source list with addresses). It is in the page on every step, hidden on screen and shown on paper, where the card, its buttons and the site header and footer are hidden.
 
