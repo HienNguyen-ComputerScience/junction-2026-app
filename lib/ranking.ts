@@ -119,7 +119,7 @@ export function getVerdict(countyId: string): string {
   const stillWaiting =
     gpValue == null
       ? ""
-      : ` Even so, ${formatPct(gpValue)} of non-urgent GP visits here still come more than a week after people ask.`;
+      : ` Even so, ${formatPct(gpValue)} of non-urgent GP visits here still come more than a week after the need for care was assessed.`;
   if (referral === "no_data") {
     return `No measured step is worse than Finland: GP access is at or better than Finland's level, and there is no public data on referral speed here.${stillWaiting}`;
   }

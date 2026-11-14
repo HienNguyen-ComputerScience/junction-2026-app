@@ -22,7 +22,7 @@ import {
 } from "@/lib/data";
 
 export const STAGE_LABELS: Record<Stage, string> = {
-  gp_access: "Getting in to see a GP",
+  gp_access: "Getting to a GP",
   gp_recognition: "GP recognises warning signs",
   referral: "GP to specialist referral",
 };
@@ -66,7 +66,7 @@ export function getBottleneck(countyId: string): Bottleneck {
 }
 
 const STAGE_PHRASES: Record<Stage, string> = {
-  gp_access: "getting in to see a GP",
+  gp_access: "getting to a GP",
   gp_recognition: "whether the GP recognises warning signs",
   referral: "the GP to specialist referral",
 };

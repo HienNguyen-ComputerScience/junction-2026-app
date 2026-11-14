@@ -136,20 +136,21 @@
   --primary-foreground: oklch(0.115 0.003 255);
 
   /* Data status, the only saturated colour on any screen, tuned to sit in the dark ramp.
-     red = worse than Finland, amber = at or better than Finland's level, grey = no public data.
+     red = worse than Finland, slate (token status-amber) = at or better than Finland's level, grey = no public data.
      Fill for bars and marks, soft + border for chips, ink for text (AA on every surface). */
   --status-red: oklch(0.63 0.185 25); /*      #e34f4c */
   --status-red-soft: oklch(0.63 0.185 25 / 14%);
   --status-red-border: oklch(0.63 0.185 25 / 36%);
   --status-red-ink: oklch(0.75 0.135 23); /*  #f88985 */
-  /* One amber hue (76) for marker, bar, border and text: only lightness and chroma step. */
-  --status-amber: oklch(0.79 0.135 76); /*    #eaaf49 */
-  --status-amber-soft: oklch(0.79 0.135 76 / 9%);
-  --status-amber-border: oklch(0.79 0.135 76 / 30%);
-  --status-amber-ink: oklch(0.85 0.115 76); /* text */
-  /* Amber as a bar fill: quieter than the marker, so the calm end of a chart stays calm.
-     Markers and labels keep --status-amber. */
-  --status-amber-bar: oklch(0.75 0.118 76); /* same hue as the marker, a step quieter, never grey */
+  /* "At or better than Finland's level" is a cool slate (hue 255), so red is the only alarm
+     colour on any screen. The token name status-amber is historical and the data value stays
+     "amber"; nothing here is amber any more. One hue for marker, bar, border and text. */
+  --status-amber: oklch(0.74 0.045 255); /*   marker */
+  --status-amber-soft: oklch(0.68 0.045 255 / 14%); /* dark slate tint behind chips */
+  --status-amber-border: oklch(0.68 0.045 255 / 42%);
+  --status-amber-ink: oklch(0.82 0.04 255); /* text */
+  /* Slate as a bar fill: a step quieter than the marker. */
+  --status-amber-bar: oklch(0.68 0.045 255);
   --status-grey: oklch(0.56 0.005 255); /*    #727577 */
   --status-grey-soft: oklch(0.94 0.003 255 / 5%);
   --status-grey-border: oklch(0.94 0.003 255 / 18%);

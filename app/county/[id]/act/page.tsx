@@ -46,7 +46,7 @@ const PATHWAY: Stage[] = ["gp_access", "gp_recognition", "referral"];
 
 /** Stages as they read inside a sentence. */
 const STAGE_IN_SENTENCE: Record<Stage, string> = {
-  gp_access: "getting in to see a GP",
+  gp_access: "getting to a GP",
   gp_recognition: "whether the GP recognises warning signs",
   referral: "the GP to specialist referral",
 };

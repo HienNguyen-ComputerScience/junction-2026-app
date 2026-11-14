@@ -272,7 +272,7 @@ function buildLimitations(county: County): LimitationItem[] {
 
   const nationalGpWait = getNationalValue(GP_WAIT_ID);
   items.push({
-    text: `Amber does not mean good. It means at or better than Finland's level, and Finland's level is itself a delay${
+    text: `At or better than Finland's level does not mean good. Finland's level is itself a delay${
       nationalGpWait
         ? `: ${formatPct(nationalGpWait.value)} of non-urgent GP visits nationally come more than a week after the need for care was assessed`
         : ""
