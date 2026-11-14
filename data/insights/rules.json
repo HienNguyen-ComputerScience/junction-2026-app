@@ -1,0 +1,163 @@
+{
+  "constants": {
+    "recording_change_above": 0.2,
+    "small_base_below": 1000,
+    "about_same_points": 1,
+    "screening_target": 80
+  },
+  "levels": [
+    {
+      "level": "solid",
+      "label": "Solid",
+      "shape": "filled circle",
+      "meaning": "Published for this area and year, and the count behind it is steady."
+    },
+    {
+      "level": "care",
+      "label": "Read with care",
+      "shape": "half-filled circle",
+      "meaning": "Published, but something about how it was recorded or what it covers means the figure, or its change from last year, may not be what it seems. The reason is always given."
+    },
+    {
+      "level": "shared",
+      "label": "Shared hospital value",
+      "shape": "two linked circles",
+      "meaning": "No value exists for this area alone; the figure shown covers a wider hospital area (HUS)."
+    },
+    {
+      "level": "none",
+      "label": "No public data",
+      "shape": "empty circle",
+      "meaning": "Nobody publishes this figure for this area and year."
+    }
+  ],
+  "grade_rules": [
+    {
+      "id": "no-data",
+      "level": "none",
+      "label": "No public data",
+      "rule": "Sotkanet has no value for this area and year, and no wider value covers it."
+    },
+    {
+      "id": "shared-hospital",
+      "level": "shared",
+      "label": "Shared hospital value",
+      "rule": "Referral figures (Sotkanet 13) for East, Central and West Uusimaa and Vantaa–Kerava: only one HUS-wide value is published for the hospital that handles their referrals."
+    },
+    {
+      "id": "publisher-gap",
+      "level": "care",
+      "label": "Read with care",
+      "rule": "THL's own notes on the indicator say visits are missing from this area's records (Vantaa and Kerava 2023–2025, Helsinki 2023), for the GP wait (6411), occupational-health visits (2371) and public primary-care visits (293)."
+    },
+    {
+      "id": "small-base",
+      "level": "care",
+      "label": "Read with care",
+      "rule": "The share rests on fewer than 1,000 visits, so a few visits move it a lot."
+    },
+    {
+      "id": "partial-unit",
+      "level": "care",
+      "label": "Read with care",
+      "rule": "Helsinki's referral figure covers the city's own specialist units only; most Helsinki referrals go to HUS."
+    },
+    {
+      "id": "recording-change",
+      "level": "care",
+      "label": "Read the trend with care",
+      "rule": "The count behind the figure (visits, referrals or people) changed by more than 20% from the year before, so part of any change from last year may be in what was recorded. Checked year on year, so a rise and a fall that cancel out are still caught."
+    },
+    {
+      "id": "programme-widening",
+      "level": "care",
+      "label": "Read the trend with care",
+      "rule": "Bowel cancer screening (Sotkanet 6103) started in 2022 and is still adding age groups, so years are not fully comparable."
+    },
+    {
+      "id": "solid",
+      "level": "solid",
+      "label": "Solid",
+      "rule": "None of the above applies."
+    }
+  ],
+  "scope": {
+    "13": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+    "293": "Working-age residents (15–64) only; counts visits, not people.",
+    "692": "Anyone reimbursed by Kela for a private doctor visit in the year, any specialty.",
+    "2371": "Working-age residents (15–64) only; counts visits, not people.",
+    "3620": "Women invited to cervical screening who attended.",
+    "3621": "Women invited to breast screening who attended.",
+    "3625": "Patients diagnosed over ten years; published in whole percent.",
+    "3627": "Patients diagnosed over ten years; published in whole percent.",
+    "5033": "Counts all referrals to the hospital, not only cancer. Published in whole percent.",
+    "6103": "People invited to bowel screening who attended.",
+    "6411": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people."
+  },
+  "nwr_groups": [
+    {
+      "id": "long-few",
+      "label": "Long wait, few other routes",
+      "meaning": "GP wait longer than Finland's, and both occupational-health and private-doctor use lower than Finland's."
+    },
+    {
+      "id": "long-some",
+      "label": "Long wait, other routes in use",
+      "meaning": "GP wait longer than Finland's, but occupational-health or private-doctor use at or above Finland's."
+    },
+    {
+      "id": "short-few",
+      "label": "Shorter wait, few other routes",
+      "meaning": "GP wait at or below Finland's, and both other routes used less than in Finland."
+    },
+    {
+      "id": "short-some",
+      "label": "Shorter wait, other routes in use",
+      "meaning": "GP wait at or below Finland's, and at least one other route used as much as or more than in Finland."
+    }
+  ],
+  "nwr_tests": [
+    {
+      "id": "main",
+      "year": 2025,
+      "reference": "finland",
+      "margin": 0,
+      "label": "2025, compared with Finland (the main view)"
+    },
+    {
+      "id": "median",
+      "year": 2025,
+      "reference": "median",
+      "margin": 0,
+      "label": "2025, compared with the middle area of the 22 instead of Finland"
+    },
+    {
+      "id": "margin5",
+      "year": 2025,
+      "reference": "finland",
+      "margin": 0.05,
+      "label": "2025, only counting areas more than 5% away from Finland's figure"
+    },
+    {
+      "id": "margin10",
+      "year": 2025,
+      "reference": "finland",
+      "margin": 0.1,
+      "label": "2025, only counting areas more than 10% away from Finland's figure"
+    },
+    {
+      "id": "y2024",
+      "year": 2024,
+      "reference": "finland",
+      "margin": 0,
+      "label": "2024 figures, compared with Finland"
+    },
+    {
+      "id": "y2023",
+      "year": 2023,
+      "reference": "finland",
+      "margin": 0,
+      "label": "2023 figures, compared with Finland"
+    }
+  ]
+}
