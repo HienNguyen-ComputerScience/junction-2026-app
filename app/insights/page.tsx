@@ -193,7 +193,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
             />,
           ]}
         />
-        <div className="flex flex-col items-start gap-3 *:max-w-full">
+        <div className="flex flex-col items-start gap-3 rounded-lg bg-slate-hush px-7 py-5 sm:px-10 *:max-w-full">
           <Disclosure show="Show how we tested this" hide="Hide how we tested this">
             <TestsTable />
           </Disclosure>
