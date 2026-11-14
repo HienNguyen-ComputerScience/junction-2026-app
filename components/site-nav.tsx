@@ -113,7 +113,7 @@ export function NavLinks({
  */
 export function BriefingHeaderButton() {
   const pathname = usePathname();
-  if (pathname === "/") return null;
+  if (pathname === "/" || pathname.startsWith("/briefing")) return null;
   return (
     <Link href="/briefing" className={buttonVariants({ variant: "default", size: "default", className: "shrink-0" })}>
       <span className="sm:hidden">Guided briefing</span>
