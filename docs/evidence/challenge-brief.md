@@ -32,3 +32,15 @@ Limits: Kuitunen and Tokola cover one cancer (DLBCL) with 160 patients from 7 Fi
 > "In Finland, lymphoma patients whose first stop was a public health centre waited a median 127 days from first symptom to treatment. Those who went private or through work: 76 days."
 
 Source chip: Kuitunen et al., Cancer Medicine 2026. It's the challenge speaker's own study, so judges will recognise it. It's now in `demo-script.md`, `video-script.md` and `video-shot-script.md`. The Vedsted & Olesen 75–85% line stays as a backup answer. Deck slide 2 (`docs/submission/deck-outline.md`) still uses the 75–85% line: that's nabeo11's call.
+
+## Data added from the deck
+
+Slide 9 says screening participation is lower in some groups, and slide 10's pathway starts before the GP. Sotkanet has screening attendance for all 22 areas plus Finland, 2022–2024, so it is now in the snapshot (`data/values.json`) as **context only**. Source: Finnish Cancer Registry via Sotkanet, retrieved 14 Nov 2026.
+
+| Sotkanet id | Attended, % of those invited (2024) | Lowest | Highest | Finland |
+|---|---|---|---|---|
+| 3621 | Breast cancer screening (mammography), women | Helsinki 74.3 | North Ostrobothnia 85.6 | 81.6 |
+| 6103 | Colorectal cancer screening | Helsinki 69.6 | South Savo 76.9 | 73.5 |
+| 3620 | Cervical cancer screening, women | North Karelia 68.0 | South Ostrobothnia and South Savo 82.3 (tied) | 73.4 |
+
+Limits: this is attendance among people who were **invited**, not coverage of everyone. Breast and cervical count women only. The three programmes invite different age bands, so don't compare one programme with another. It is context, not ranked: it doesn't change a county's rank, stage colour or recommended action. The latest year is 2024, one year behind the GP and referral numbers.

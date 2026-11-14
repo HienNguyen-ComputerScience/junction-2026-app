@@ -21,6 +21,7 @@ const API = "https://sotkanet.fi/rest/1.1";
 const USER_AGENT = "junction-2026-firstline/0.1 (hackathon data snapshot)";
 const YEARS = [2023, 2024, 2025];
 const LATEST_YEAR = 2025;
+const SCREENING_YEARS = [2022, 2023, 2024]; // screening statistics lag a year
 const RETRIEVED = new Date().toISOString().slice(0, 10);
 
 // The indicators we show. direction tells the ranking which way is worse.
@@ -51,6 +52,39 @@ const INDICATORS = [
     stage: null,
     limitation:
       "Published as whole percentages and 0-3% everywhere, so it barely separates counties. Shown as context only, not used for ranking or stage status.",
+  },
+  // Cancer screening attendance: the step before the GP (challenge deck
+  // slides 9-10). Context only (stage null): never ranked, never a stage
+  // status. Sotkanet publishes these a year behind, so they carry their own years.
+  {
+    indicator_id: "3621",
+    short_name: "Breast cancer screening attendance",
+    unit: "%",
+    direction: "lower_is_worse",
+    stage: null,
+    years: SCREENING_YEARS,
+    limitation:
+      "Share of women invited to mammography screening who attended, so it says nothing about people who were not invited. Latest year is 2024. Shown as context only, not used for ranking or stage status.",
+  },
+  {
+    indicator_id: "6103",
+    short_name: "Colorectal cancer screening attendance",
+    unit: "%",
+    direction: "lower_is_worse",
+    stage: null,
+    years: SCREENING_YEARS,
+    limitation:
+      "Share of invited women and men who attended. The programme started in 2022 and is still widening its age band, so years and counties are not fully comparable. Latest year is 2024. Shown as context only, not used for ranking or stage status.",
+  },
+  {
+    indicator_id: "3620",
+    short_name: "Cervical cancer screening attendance",
+    unit: "%",
+    direction: "lower_is_worse",
+    stage: null,
+    years: SCREENING_YEARS,
+    limitation:
+      "Share of women invited to cervical screening who attended. Tests taken outside the programme (private or occupational care) are not counted. Latest year is 2024. Shown as context only, not used for ranking or stage status.",
   },
 ];
 
@@ -156,7 +190,7 @@ const countyByRegion = new Map(counties.map((c) => [c.sotkanet_region_id, c]));
 // ---------------------------------------------------------------- values
 const values = [];
 for (const ind of INDICATORS) {
-  const query = YEARS.map((y) => `years=${y}`).join("&");
+  const query = (ind.years ?? YEARS).map((y) => `years=${y}`).join("&");
   const rows = await get(`/json?indicator=${ind.indicator_id}&${query}&genders=total`);
   for (const row of rows) {
     const county = countyByRegion.get(row.region);
