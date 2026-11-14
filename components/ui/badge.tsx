@@ -8,7 +8,7 @@ import type { ReactNode } from "react"
 const QUIET_TAG =
   "border-border bg-transparent font-normal text-muted-foreground [a]:hover:border-foreground/30 [a]:hover:text-foreground"
 
-const PROVENANCE = "gap-1.5 px-0 text-[0.875rem] font-normal text-muted-foreground"
+const PROVENANCE = "gap-1.5 px-0 text-base font-normal text-muted-foreground"
 
 /** Provenance is an icon plus muted text, never the 8px square (that is for data status only). */
 const PROVENANCE_ICON = { unverified: Globe, provenance: Globe, checked: ShieldCheck } as const

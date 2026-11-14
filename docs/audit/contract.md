@@ -89,7 +89,7 @@ Body copy is 16px: `text-sm` and `text-base` are both 16px on this branch. Do no
 
 ## 2. Motion (`lib/motion.ts`, `components/motion/`)
 
-One easing, two volume levels. Quiet is the default; wrap a subtree in `className="motion-loud"` (exported as `MOTION_LOUD_CLASS`) for the louder set. Only opacity and transform move.
+One easing, two volume levels. Quiet is the default; wrap a subtree in `className="motion-loud"` (exported as `MOTION_LOUD_CLASS`) for the louder set. Only opacity and transform move (the `FocusGroup` cards also change background-color and an inset hairline).
 
 ```ts
 import { MOTION, MOTION_EASE, MOTION_LOUD_CLASS, easeOut, prefersReducedMotion, type MotionLevel } from "@/lib/motion";
@@ -208,6 +208,28 @@ Guardrails: normal scrolling only (no wheel or touch capture, no scroll-snap, no
 - Picture parts marked `data-story-step="n"` get `data-story-state="future" | "current" | "past"`: future parts lose their colour (never their contrast), the current one gets a Forest Ink ring, past ones are normal. The text block being read gets a Forest Ink rule at its side.
 - A client picture can redraw per step with `useStoryStep()` (a number, or `null` for the final state).
 - Below 1024px, under reduced motion, without JavaScript and in print: picture above the text in its final state, nothing sticks. The picture's final state must read correctly on its own.
+
+#### `FocusGroup` (`components/motion/focus-group.tsx`)
+
+```tsx
+<main className="page-container …">
+  <FocusGroup>
+    <Chunk lead … />
+    <ScrollStory … />
+    …
+  </FocusGroup>
+</main>
+```
+
+- The focus effect, "fade the card, not the text": every item is a card (14px radius, constant padding of 21–42px, so nothing moves when focus changes). The item nearest the middle of the screen is **in focus**: Mint Veil surface, scale 1.02. The others are **out of focus**: Cream Paper with a 1px Border Mist hairline drawn as an inset shadow (no layout shift, no coloured border), scale 0.96. Focus moves as the reader scrolls (350 ms; background-color, the inset hairline and transform only). The page scrolls normally.
+- Text is always at full opacity. Light pills inside an out-of-focus card (`CaveatNote`, `SourceChip`) take a Border Mist fill so they stay visible on cream; in focus they go back to their own fill.
+- Items: every `Chunk` and every `ScrollStory` text block (the block, not its screen-height slot) carry `data-focus-item` already. Put `data-focus-item` on any other block that should take part; an item with a tint of its own takes the same two surfaces, so every item in a group looks alike. Sticky pictures never take part. Do not mark full tables, the county limitations box, or the `MoreCard`.
+- One IntersectionObserver per group, on a band through the middle of the viewport (`rootMargin: "-45% 0px -45% 0px"`). Between two items the last one keeps focus. Within 48px of the top of the page the first item is in focus; within 48px of the bottom, the last.
+- Never: scroll-snap, wheel or touch capture, a change of scroll speed, programmatic scrolling.
+- An item holding keyboard focus (`:focus-within`) or an opened "Show …" (`:has(details[open])`) stays in the focused state. Nothing is hidden: out-of-focus items stay readable, clickable and in the accessibility tree.
+- One neutral state (every item cream with the hairline, no scale, no animation) before script runs, under reduced motion and in print (where the padding shrinks to 10pt 12pt).
+- **Contrast, measured (WCAG AA, on mint / on cream):** charcoal 12.1 / 15.8, Forest Ink 9.3 / 12.1, red status ink 7.0 / 9.0, muted text 6.8 / 8.8, faint text 5.8 / 7.5. Pill text on Border Mist: charcoal 13.7, Forest Ink 10.5; cream on a Forest Ink pill 12.1. Every pair passes, so no colour changed. (The earlier opacity fade needed a floor of 0.8 to pass AA; this version has no fade at all.)
+- Used on: county and compare. Not on Ask, error pages or full tables.
 
 #### `CaveatNote` (`components/motion/caveat-note.tsx`)
 

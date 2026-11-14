@@ -213,3 +213,42 @@ Home → an area → "Make the action plan for the board" → Download as Word i
 
 Screenshots: `docs/audit/screenshots/before/` and `docs/audit/screenshots/after/` (per page, desktop and phone, and the printed PDFs).
 
+
+## Scroll-driven pages, cut-first text and the removal pass (14 Nov, evening)
+
+The team lead asked for product-page storytelling on every page except home and the guided briefing, then for "cut first" on explanatory text, then for minimalism on every element. Shared pieces (contract: `Chunk`, `ScrollStory`, `FocusGroup`, `CaveatNote`, `MoreCard`):
+
+| Page | What it is now |
+|---|---|
+| County | Opens with the main delay's figure counting up, what it means against Finland and 2023, its source and one caveat with "Why?". Then a sticky picture of the three steps that light up one by one as each step's text passes. Limitations always visible. One "More for <area>" card (the eight-step strip, live news). Focus effect on. |
+| Compare | Opens with "14 of 22 areas worse than Finland" counting up. Then a sticky chart of all 22 bars: the longest wait, the shortest, and the largest rise since 2023 (its 2023 level marked). The full table is at the end, open and sortable. One "More on all areas" card (getting worse fastest). Focus effect on. |
+| Plan | Opens with the same lead figure as the county page (shared `AreaLead`). Part headings rise in. One toolbar. |
+| Ask | The question box (its title is the h1) and this month's news. |
+| Error, not found | Title and two buttons. |
+
+Focus effect, final version ("fade the card, not the text", team lead's choice): every chunk and story text block is a card; the one in focus is Mint Veil, the others Cream Paper with a Border Mist hairline. Text never fades. All text/surface pairs measured AA (lowest 5.8:1, faint text on mint). Screenshots: `screenshots/after/scroll/focus-cards_county_1366_step0-to-1.png`, `focus-cards_county_390_step1-to-2.png`.
+
+Not done here: the plan page. It moved to the export agent (with the print, Word, Excel and email buttons) before its focus effect was added.
+
+### What was removed or simplified, and why
+
+| Page | Removed or simplified | Why |
+|---|---|---|
+| County | The header lede and the separate recording line | The lead figure's meaning line and its caveat say both. |
+| County | The steps' explanatory line ("The colours compare with Finland …") | It is in the limitations box, which is always visible. |
+| County | Each step text's big number and status badge | The sticky picture beside it shows both. |
+| County | Per-step trend charts shown by default | One "Show the trend" button per step; the change since 2023 is already a sentence. |
+| County | The AI brief | It restated the page's figures in words. The component is unchanged and can return in one line. |
+| County | The eight-step strip and live news as page sections | Folded into one "More for <area>" card, each behind one button. |
+| Compare | The header lede and four stat cards | One headline figure, then three facts told against one chart. |
+| Compare | Sorting instructions above the table | The sort list and headings are labelled. |
+| Compare | "Go to the full table" | Download for Excel is the primary action, and the table is the end of the page. |
+| Compare | "Getting worse fastest" as a section | Duplicated the third story fact; now one row in "More on all areas". |
+| Plan | Header lede ("A plan to take to the board: …") | Described the page. |
+| Plan | The second toolbar and the bottom Update button | Word and Excel are form submits, so the top toolbar already carries what is typed. |
+| Plan | Part 1's lede and reason | The lead says them. |
+| Plan | Section intros (Target, Actions, Recording, Sources) | Described the page or the controls. The target's "not a forecast" became a caveat note. |
+| Plan | "See every action for …" link | A second route; the breadcrumb has Actions. |
+| Ask | Hidden h1 plus a visible duplicate title | One visible h1. |
+| Ask, county news | Panel descriptions | They repeated their titles; the footer says "not medical advice". |
+| Error, not found | Ledes | They restated the buttons. |

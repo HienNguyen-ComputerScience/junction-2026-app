@@ -12,12 +12,12 @@ function sourceName(sourceId: string | null): string | null {
   return sourceId ? (getSource(sourceId)?.name ?? null) : null;
 }
 
-function Section({ number, children }: { number: number; children: ReactNode }) {
+function Section({ number, title, children }: { number: number; title?: string; children: ReactNode }) {
   const step = BRIEFING_STEPS[number - 1];
   return (
     <section className="mt-6 border-t border-[#b6b6b0] pt-4">
       <h2 className="font-sans text-[13pt] leading-snug font-semibold tracking-normal text-[#0f3e17]">
-        {step.number}. {step.label}
+        {step.number}. {title ?? step.label}
       </h2>
       <div className="mt-2 flex flex-col gap-2">{children}</div>
     </section>
@@ -184,10 +184,10 @@ export function BriefingPrint({ briefing }: { briefing: Briefing }) {
         </p>
       </Section>
 
-      <Section number={6}>
+      <Section number={6} title="The action plan as a file">
         <p>
-          The board-ready plan for {county.name} (target, actions as rows, fields for names, dates and cost) is at{" "}
-          {briefing.planPath} on the FirstLine site. The full figures are at /county/{county.id} and the table of all{" "}
+          The action plan for {county.name} (actions, sources, limits, and blank lines for names, dates and cost)
+          downloads as a Word or Excel file from {briefing.actPath} on the FirstLine site. The full figures are at /county/{county.id} and the table of all{" "}
           {stand.ranked} areas at /compare.
         </p>
       </Section>

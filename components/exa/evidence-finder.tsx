@@ -62,7 +62,7 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
         className="w-fit max-w-full whitespace-normal text-left"
       >
         <Search aria-hidden strokeWidth={1.75} className="size-4" />
-        {state.kind === "idle" ? "Find more evidence live" : loading ? "Searching…" : "Search again"}
+        {state.kind === "idle" ? "Search for newer studies" : loading ? "Searching…" : "Search again"}
       </Button>
 
       <div id={panelId} className="empty:hidden">

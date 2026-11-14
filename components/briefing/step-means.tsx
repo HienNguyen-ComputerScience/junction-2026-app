@@ -9,7 +9,7 @@ import type { Briefing } from "@/lib/briefing/model";
 const i = (index: number) => ({ "--i": index }) as CSSProperties;
 
 /**
- * Step 3, "What it means": the share of the step in focus said the way a board would say it,
+ * Step 3, "What it means": the share of the step in focus said the way a director would say it,
  * "about 85 of every 100", on a hundred dots, with a button per year to see how it moved.
  * The change since the first year and the caveat on reading it are always on screen together.
  */

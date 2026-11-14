@@ -10,11 +10,12 @@ import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { buildStepTabs } from "@/components/pathway/step-panels";
 import { AreaLead, spellHus } from "@/components/county/area-lead";
 import { StepsPicture, StepStoryText } from "@/components/county/step-story";
-import { Disclosure, MoreCard, PrintButton, Reveal, ScrollStory } from "@/components/motion";
+import { Disclosure, FocusGroup, MoreCard, Reveal, ScrollStory } from "@/components/motion";
+import { SaveShare } from "@/components/share";
 import { HUS_FULL } from "@/components/pathway/wording";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { buttonVariants } from "@/components/ui/button";
-import { getBottleneck, pickActions } from "@/lib/act";
+import { getBottleneck } from "@/lib/act";
 import { getAreaSteps } from "@/lib/plan-model";
 import { getMainReason } from "@/lib/main-reason";
 import { counties, gaps, getCounty, getValue, LATEST_YEAR, type County } from "@/lib/data";
@@ -61,11 +62,10 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const steps = getAreaSteps(county.id);
   // Each step's trend (2023-2025), from the same builder the old tabs used.
   const trends = new Map(buildStepTabs(county.id, buildPathwaySteps(county.id)).map((tab) => [tab.id, tab.aside]));
-  const actions = pickActions(bottleneck);
-  const planHref = `/county/${county.id}/plan?actions=${actions.map((action) => action.id).join(",")}`;
 
   return (
     <main className="page-container flex flex-col pt-4 sm:pt-6">
+      <FocusGroup>
       <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
 
       <AreaLead countyId={county.id}>
@@ -74,10 +74,12 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             {bottleneck.anyRed ? "See what to do" : "Actions to keep this level"}
             <ArrowRight aria-hidden data-icon="inline-end" />
           </Link>
-          <Link href={planHref} className={buttonVariants({ variant: "outline", size: "lg" })}>
-            Make the action plan for the board
-          </Link>
-          <PrintButton size="lg" />
+          <SaveShare
+            options={[
+              { kind: "print" },
+              { kind: "email", subject: `Early cancer care in ${county.name}`, intro: `Where early cancer care slows in ${county.name}, from published figures:` },
+            ]}
+          />
         </div>
       </AreaLead>
 
@@ -125,6 +127,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           },
           {
             key: "news",
+            print: false,
             label: "Local news, last 12 months (found live, unverified)",
             children: (
               <Disclosure show="Show the news" hide="Hide the news">
@@ -134,6 +137,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           },
         ]}
       />
+      </FocusGroup>
     </main>
   );
 }

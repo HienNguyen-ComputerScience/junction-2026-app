@@ -6,7 +6,7 @@
 // the step are both in the path, so a briefing can be linked, emailed, refreshed and reopened
 // at the same place, every step is static HTML, and the browser's Back button is a real Back.
 
-export type BriefingStepId = "stand" | "where" | "means" | "do" | "change" | "board";
+export type BriefingStepId = "stand" | "where" | "means" | "do" | "change" | "share";
 
 export type BriefingStep = {
   id: BriefingStepId;
@@ -25,7 +25,8 @@ export const BRIEFING_STEPS: BriefingStep[] = [
   { id: "means", number: 3, slug: "what-it-means", label: "What it means", next: "what it means" },
   { id: "do", number: 4, slug: "what-to-do", label: "What to do on Monday", next: "what to do on Monday" },
   { id: "change", number: 5, slug: "what-it-could-change", label: "What it could change", next: "what it could change" },
-  { id: "board", number: 6, slug: "take-it-to-your-board", label: "Take it to your board", next: "take it to your board" },
+  // The slug is older than the label; it stays because proxy.ts lists it (see docs/audit/export/notes.md).
+  { id: "share", number: 6, slug: "take-it-to-your-board", label: "Save or share this briefing", next: "save or share" },
 ];
 
 export const BRIEFING_STEP_COUNT = BRIEFING_STEPS.length;

@@ -76,7 +76,7 @@ export function plainStat({ value, unit, metric }: Effect): string | null {
 }
 
 /** The statistic as the data states it, for the caption under the plain-words stat. */
-function statisticLine({ value, unit, metric }: Effect): string {
+export function statisticLine({ value, unit, metric }: Effect): string {
   const number = value < 0 ? `−${Math.abs(value)}` : String(value);
   const figure = unit === "%" ? `${number}%` : unit === "odds ratio" ? `odds ratio ${number}` : `${number} ${unit}`;
   return `${figure}, ${metric}`;

@@ -1,5 +1,5 @@
 // The action plan as a Word document and as an Excel workbook, from the same Plan object the
-// page shows (lib/plan-model.ts). Nothing is computed here: every figure and sentence comes
+// briefing and the actions page use (lib/plan-model.ts). Nothing is computed here: every figure and sentence comes
 // from the plan, so paper, Word, Excel and the screen cannot disagree.
 
 import type { Block, Run } from "@/lib/export/docx";
@@ -79,7 +79,7 @@ function stepRow(plan: Plan, step: PlanStep): string[] {
   ];
 }
 
-/** The plan as Word blocks: a board paper on A4, every section of the page, fields left blank to fill in by hand. */
+/** The plan as Word blocks: a document on A4, every section of the plan, fields left blank to fill in by hand. */
 export function planToDocx(plan: Plan): Block[] {
   const cell = (value: string): Run[] => [value];
   const blocks: Block[] = [

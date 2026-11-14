@@ -184,8 +184,10 @@ export type Briefing = {
   actions: BriefingAction[];
   targetYears: readonly number[];
   defaultTargetYear: number;
-  /** The board-ready plan page (the foundation's route). Target and year are added as a query. */
-  planPath: string;
+  /** The action plan as a file: add format=docx|xlsx, actions, target and year as a query. */
+  planFilePath: string;
+  /** The actions page, where the same plan downloads with the recommended actions. */
+  actPath: string;
   /** Every source a figure or statement in the briefing comes from, each once, in order of use. */
   sources: Source[];
 };
@@ -451,7 +453,8 @@ export function buildBriefing(countyId: string): Briefing | null {
     actions,
     targetYears: TARGET_YEARS,
     defaultTargetYear: DEFAULT_TARGET_YEAR,
-    planPath: `/county/${county.id}/plan`,
+    planFilePath: `/county/${county.id}/plan/export`,
+    actPath: `/county/${county.id}/act`,
     sources,
   };
 }
