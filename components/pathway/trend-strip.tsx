@@ -81,14 +81,12 @@ export function TrendStrip({
         )}
         {without.map((stage) => (
           <p key={stage.step} className="type-caption text-muted-foreground">
-            <span className="font-medium text-foreground">{stage.title}:</span> no values published for{" "}
-            {areaName} in {span}.
+            <span className="font-medium text-foreground">{stage.title}:</span> no values published for {areaName} in{" "}
+            {span}.
           </p>
         ))}
       </div>
-      {footer ? (
-        <div className="flex flex-col gap-3 border-t border-border px-5 py-4 sm:px-6">{footer}</div>
-      ) : null}
+      {footer ? <div className="flex flex-col gap-3 border-t border-border px-5 py-4 sm:px-6">{footer}</div> : null}
     </FramePanel>
   );
 }
@@ -104,18 +102,31 @@ export const TREND_PAST_FILL = "bg-foreground/25";
 
 /**
  * The judged column when it is worse than Finland, drawn by the bar rule of measure-bar.tsx
- * turned upright: tinted red, with the solid red on the gap to Finland's value. A wait share
- * runs past the tick (solid above it); a referral share stops short of it (solid up to it).
+ * turned upright. A wait share runs past the tick (tinted up to it, solid red above); a referral
+ * share stops short of it (the tinted column ends at the value; the shortfall up to the tick is
+ * faded red hatching).
  */
 export function WorseColumn({ value, finland }: { value: number; finland: number }) {
-  const low = Math.min(value, finland);
-  const high = Math.max(value, finland);
+  if (value < finland) {
+    return (
+      <>
+        <span
+          className="absolute inset-x-0 bottom-0 rounded-t-[2px] bg-status-red-tint"
+          style={{ height: `${value}%` }}
+        />
+        <span
+          className="absolute inset-x-0 bg-shortfall"
+          style={{ bottom: `${value}%`, height: `${finland - value}%` }}
+        />
+      </>
+    );
+  }
   return (
     <>
-      <span className="absolute inset-x-0 bottom-0 bg-status-red-tint" style={{ height: `${low}%` }} />
+      <span className="absolute inset-x-0 bottom-0 bg-status-red-tint" style={{ height: `${finland}%` }} />
       <span
         className="absolute inset-x-0 rounded-t-[3px] bg-status-red"
-        style={{ bottom: `${low}%`, height: `${high - low}%` }}
+        style={{ bottom: `${finland}%`, height: `${value - finland}%` }}
       />
     </>
   );
@@ -149,7 +160,9 @@ function TrendRow({ stage }: { stage: TrendStage }) {
                 <span className="numeral text-[2.25rem] leading-none text-foreground">No change</span>
               ) : (
                 <>
-                  <span className="numeral text-[2.25rem] leading-none text-foreground">{Math.abs(change).toFixed(1)}</span>
+                  <span className="numeral text-[2.25rem] leading-none text-foreground">
+                    {Math.abs(change).toFixed(1)}
+                  </span>
                   <span className="text-sm text-muted-foreground">pts {word}</span>
                 </>
               )}
@@ -224,8 +237,7 @@ function TrendChart({
           <div className="absolute inset-0 flex gap-4 px-1 sm:gap-10 sm:px-4">
             {trend.map((point, i) => {
               const finland = finlandOf(point.year);
-              const worse =
-                judged && i === latestIndex && status === "red" && finland !== null && point.value !== null;
+              const worse = judged && i === latestIndex && status === "red" && finland !== null && point.value !== null;
               return (
                 <div key={point.year} className="relative flex h-full flex-1 items-end justify-center">
                   {point.value === null ? (
@@ -256,7 +268,9 @@ function TrendChart({
                           "absolute z-10 bg-card px-1 figure text-[0.8125rem] leading-5",
                           i === latestIndex ? "font-semibold text-foreground" : "text-muted-foreground",
                         )}
-                        style={{ bottom: `${labelBottom(point.value, finland, worse && point.value < finland)}px` }}
+                        style={{
+                          bottom: `${labelBottom(point.value, finland, worse && point.value < finland)}px`,
+                        }}
                       >
                         {formatPct(point.value)}
                       </span>
