@@ -90,7 +90,7 @@ function InsightCard({
         id={id}
         aria-labelledby={`${id}-title`}
         className={cn(
-          "flex scroll-mt-28 flex-col gap-6 print:gap-3",
+          "flex scroll-mt-4 flex-col gap-6 sm:scroll-mt-28 print:gap-3",
           split && "lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:content-start lg:gap-x-12 print:flex",
         )}
       >
@@ -223,7 +223,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
           </h1>
           {/* What "no way round it" means, in words, before any figure. */}
           <p className="max-w-[60ch] text-[1.1875rem] leading-[1.6] text-pretty text-foreground">
-            The wait for a GP is long there, and people make few private or work-health doctor visits instead.
+            Both wait long for a GP, and both make few private or work-health doctor visits instead.
           </p>
         </Reveal>
         {/* The measure first, then the two areas beside Finland overall, so the gap is seen, not read. */}
@@ -240,7 +240,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
                 </dd>
               </div>
             ))}
-            <div className="flex flex-col gap-2 sm:border-l sm:border-frame-border sm:pl-14">
+            <div className="flex flex-col gap-2 lg:border-l lg:border-frame-border lg:pl-14">
               <dt className="type-heading text-forest-ink">Finland overall</dt>
               <dd className="numeral text-[3.25rem] leading-none text-forest-ink sm:text-[5.5rem] print:text-[32pt]">
                 {FINLAND_WAIT}
