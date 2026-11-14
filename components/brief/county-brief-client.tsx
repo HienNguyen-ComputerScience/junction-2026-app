@@ -44,6 +44,8 @@ type Layout =
 const ACTION = "Recommended action: ";
 const WHO = ". Who: ";
 const FIRST_STEP = ". First step: ";
+/** The precomputed brief's row labels. A free sentence with an early colon is never split. */
+const ROW_LABELS = new Set(["Getting a GP appointment", "The trend", "GP to specialist"]);
 
 function layoutOf(text: string): Layout {
   if (text.startsWith(ACTION)) {
@@ -61,7 +63,7 @@ function layoutOf(text: string): Layout {
   }
   // "Short label (status): body", e.g. "The trend: ..." or "Getting a GP appointment (worse than Finland): ...".
   const match = /^([A-Z][^:().\d]{2,40}?)(?: \(([^)]+)\))?: ([\s\S]+)$/.exec(text);
-  if (match) {
+  if (match && ROW_LABELS.has(match[1])) {
     const [, label, status, body] = match;
     if (`${label}${status ? ` (${status})` : ""}: ${body}` === text) return { kind: "labelled", label, status, body };
   }

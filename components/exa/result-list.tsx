@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import { Fragment } from "react";
 
 import type { Item } from "./types";
 
@@ -57,7 +58,19 @@ export function ResultList({ items, numbered = false, idPrefix = "exa-src" }: { 
               <span className="@2xl:hidden" aria-hidden>
                 ·
               </span>
-              <span className="break-all">{item.domain}</span>
+              {/* Long hosts wrap after a dot, never mid-name. */}
+              <span className="min-w-0 break-words">
+                {item.domain.split(".").map((part, j) => (
+                  <Fragment key={j}>
+                    {j > 0 && (
+                      <>
+                        .<wbr />
+                      </>
+                    )}
+                    {part}
+                  </Fragment>
+                ))}
+              </span>
               {item.maybePaywalled && (
                 <>
                   <span className="@2xl:hidden" aria-hidden>
