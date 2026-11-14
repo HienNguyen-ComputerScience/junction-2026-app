@@ -81,7 +81,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           same width). */}
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_29rem] lg:items-start lg:gap-12">
         <header className="flex flex-col items-start gap-4">
-          <BackLink href="/">Back to ranking</BackLink>
+          <BackLink href="/">Back to all areas</BackLink>
           <div className="flex flex-col gap-2">
             <p className="type-caption text-balance text-muted-foreground">
               Path to early cancer care
@@ -109,7 +109,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             )}
           </div>
           <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
-            What to do about it
+            See all actions
             <ArrowRight aria-hidden data-icon="inline-end" />
           </Link>
           <LimitationsBox items={limitations} variant="disclosure" className="mt-2 w-full lg:hidden" />

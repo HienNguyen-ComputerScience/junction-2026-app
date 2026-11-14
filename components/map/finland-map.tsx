@@ -77,6 +77,14 @@ const AREA_FILL: Record<GapStatus, string> = {
     "[fill:var(--hatch)] group-hover:[fill:var(--hatch-lift)] group-focus-visible:[fill:var(--hatch-lift)]",
 };
 
+// The selected area is a step lighter than its status fill, so it reads as picked even before
+// its outline is seen.
+const SELECTED_FILL: Record<GapStatus, string> = {
+  red: "[fill:color-mix(in_oklch,var(--status-red),white_16%)]",
+  amber: "[fill:color-mix(in_oklch,var(--status-amber-bar),white_16%)]",
+  no_data: "[fill:var(--hatch-lift)]",
+};
+
 // An area of a few pixels (Helsinki, Vantaa and Kerava) would lose most of itself to a border.
 // It is drawn after its neighbours instead, with a thinner hairline, so it stays one solid
 // mark that can be found.
@@ -264,27 +272,37 @@ export function FinlandMap({
                   strokeWidth={small ? 0.75 : 1}
                   className={cn(
                     "transition-colors group-focus-visible:stroke-ring group-focus-visible:[stroke-width:4px]",
-                    // Selected: a 2px accent outline inside the area (the stroke is clipped to it).
+                    // Selected: lighter fill; its accent outline is drawn on top, after the loop.
                     // While one area is selected the others step back a little.
-                    selected ? (small ? "stroke-brand [stroke-width:2px]" : "stroke-brand [stroke-width:4px]") : "stroke-card",
+                    "stroke-card",
                     selectedId !== undefined && !selected && "opacity-[0.72] group-hover:opacity-100 group-focus-visible:opacity-100",
-                    small ? SMALL_AREA[area.status] : AREA_FILL[area.status],
+                    selected ? SELECTED_FILL[area.status] : small ? SMALL_AREA[area.status] : AREA_FILL[area.status],
                   )}
                 />
               </Link>
             );
           })}
+          {/* The selected area's outline: 2px accent, drawn over every neighbour so none covers it. */}
+          {selectedId !== undefined && FINLAND_PATHS[selectedId] && (
+            <use
+              href={`#${pathId(selectedId)}`}
+              fill="none"
+              strokeWidth={2}
+              strokeLinejoin="round"
+              className="pointer-events-none stroke-brand"
+            />
+          )}
         </svg>
 
         {labels.map((item) => (
-          <Leader key={item.area.id} item={item} />
+          <Leader key={item.area.id} item={item} ring={picker} />
         ))}
 
         {/* Åland is drawn but has no data: said in words just under it (below the map's box, so
             it never covers an area), so the shape is not a puzzle. */}
         <span
           aria-hidden
-          className="pointer-events-none absolute top-full left-0 mt-0.5 whitespace-nowrap type-note text-faint"
+          className="pointer-events-none absolute top-full left-0 mt-0.5 whitespace-nowrap type-note text-muted-foreground"
         >
           Åland: not in the data
         </span>
@@ -316,7 +334,7 @@ function HatchPattern({ id, ground }: { id: string; ground: string }) {
  * area's anchor, a short drop to the anchor, and a square mark on it. HTML, so the line stays
  * 1px and meets a label that is positioned in pixels.
  */
-function Leader({ item }: { item: Placed }) {
+function Leader({ item, ring }: { item: Placed; ring: boolean }) {
   const x = `${((item.shape.cx / FINLAND_VIEWBOX.width) * 100).toFixed(2)}%`;
   const y = `${((item.shape.cy / FINLAND_VIEWBOX.height) * 100).toFixed(2)}%`;
   const line = "pointer-events-none absolute bg-foreground/70";
@@ -344,7 +362,11 @@ function Leader({ item }: { item: Placed }) {
         }}
       />
       <span
-        className="pointer-events-none absolute size-1 -translate-1/2 bg-foreground outline-1 outline-card"
+        className={
+          ring
+            ? "pointer-events-none absolute size-4 -translate-1/2 rounded-full border-2 border-brand"
+            : "pointer-events-none absolute size-1 -translate-1/2 bg-foreground outline-1 outline-card"
+        }
         style={{ left: x, top: y }}
       />
     </span>

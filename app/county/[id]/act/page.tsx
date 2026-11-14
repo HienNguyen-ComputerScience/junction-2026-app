@@ -75,7 +75,10 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   return (
     <main className="page-container flex flex-col gap-8 pt-4 sm:pt-6">
       <header className="flex flex-col items-start gap-2">
-        <BackLink href={`/county/${county.id}`}>Back to {county.name} pathway</BackLink>
+        <div className="flex flex-wrap items-center gap-x-6">
+          <BackLink href="/">Back to all areas</BackLink>
+          <BackLink href={`/county/${county.id}`}>Back to {county.name}</BackLink>
+        </div>
         <div className="flex flex-col gap-2">
           <p className="type-caption text-balance text-muted-foreground">
             Path to early cancer care
@@ -196,7 +199,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
       <AskBox />
 
       <nav aria-label="Page" className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
-        <BackLink href={`/county/${county.id}`}>Back to {county.name} pathway</BackLink>
+        <BackLink href={`/county/${county.id}`}>Back to {county.name}</BackLink>
         <TextLink kind="nav" href="/sources" className="type-caption">
           Sources and limitations
         </TextLink>

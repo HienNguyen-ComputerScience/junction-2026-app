@@ -20,6 +20,9 @@ export function LiveMark({
   return (
     <span className={`flex flex-wrap items-center gap-x-2 gap-y-1 ${className ?? ""}`}>
       <Badge variant="unverified">Found live — unverified</Badge>
+      <span aria-hidden className="type-caption text-muted-foreground">
+        ·
+      </span>
       <span className="type-caption font-normal text-muted-foreground">
         {freshness && freshness !== "Live" ? `Web search via Exa · ${freshness.toLowerCase()}` : "Live web search via Exa"}
       </span>

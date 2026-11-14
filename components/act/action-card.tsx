@@ -62,20 +62,49 @@ export function FirstStep({ children, compact = false }: { children: ReactNode; 
   );
 }
 
-/** The evidence's one measured figure, when the data has it: "−17" "days", "97.6%", "0.75" "odds ratio". */
-function EvidenceStat({ effect }: { effect: NonNullable<Evidence["effect_size"]> }) {
-  const value = effect.value < 0 ? `−${Math.abs(effect.value)}` : String(effect.value);
-  const percent = effect.unit === "%";
-  return (
-    <div className="flex flex-col gap-1 @md:pl-[7rem]">
-      <p className="numeral text-[1.75rem] leading-none text-foreground">
-        {value}
-        {percent ? "%" : <span className="ml-1.5 text-sm font-normal text-muted-foreground">{effect.unit}</span>}
-      </p>
-      <p className="type-caption text-pretty text-muted-foreground">{effect.metric}</p>
-    </div>
-  );
+/** An action title without its trailing full stop (stripped at render; the data keeps its text). */
+export const plainTitle = (title: string) => title.replace(/\.+\s*$/, "");
+
+type Effect = NonNullable<Evidence["effect_size"]>;
+
+const rounded = (n: number) => String(Math.round(n * 10) / 10);
+
+/**
+ * The measured figure in plain words, read from the data's own value, unit and metric. Only
+ * the combinations whose direction and meaning the fields state outright are turned into
+ * words; anything else gets no big stat (the evidence sentence still says it).
+ */
+export function plainStat({ value, unit, metric }: Effect): string | null {
+  if (unit === "odds ratio" && /^mortality/.test(metric) && value > 0 && value < 1) {
+    return `${rounded((1 - value) * 100)}% lower odds of dying`;
+  }
+  if (unit === "days" && /^median diagnostic interval/.test(metric) && value < 0) {
+    return `Diagnosis ${rounded(Math.abs(value))} days faster`;
+  }
+  if (unit === "days" && /^median specialist response time/.test(metric) && value > 0) {
+    return `Specialist reply in ${rounded(value)} days`;
+  }
+  if (unit === "%" && /judged safe/.test(metric) && value >= 0 && value <= 100) {
+    return `${rounded(value)}% judged safe`;
+  }
+  if (unit === "%" && /^referral quality score/.test(metric) && value > 0) {
+    return `${rounded(value)}% higher referral quality`;
+  }
+  if (unit === "%" && /^conversion rate/.test(metric) && value >= 0 && value <= 100) {
+    return `${rounded(value)}% of referrals ended in a cancer diagnosis`;
+  }
+  return null;
 }
+
+/** The statistic as the data states it, for the caption under the plain-words stat. */
+function statisticLine({ value, unit, metric }: Effect): string {
+  const number = value < 0 ? `−${Math.abs(value)}` : String(value);
+  const figure = unit === "%" ? `${number}%` : unit === "odds ratio" ? `odds ratio ${number}` : `${number} ${unit}`;
+  return `${figure}, ${metric}`;
+}
+
+/** The precedent is one line (two at most) on the card; a longer text opens in full behind a disclosure. */
+const PRECEDENT_LONG = 120;
 
 /**
  * One recommended action from data/evidence.json, as a panel inside a Frame.
@@ -93,6 +122,7 @@ export function ActionCard({
   index?: number;
   children?: ReactNode;
 }) {
+  const stat = action.effect_size ? plainStat(action.effect_size) : null;
   return (
     <FramePanel
       padding="none"
@@ -117,8 +147,8 @@ export function ActionCard({
       <div className="mt-3 grid gap-x-10 gap-y-4 @3xl:grid-cols-2">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <h3 className="font-heading text-[1.125rem] leading-[1.35] font-semibold tracking-[-0.01em] text-pretty">
-              {action.action}
+            <h3 className="font-heading text-[1.625rem] leading-[1.2] font-semibold tracking-[-0.01em] text-pretty">
+              {plainTitle(action.action)}
             </h3>
             <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
           </div>
@@ -128,21 +158,30 @@ export function ActionCard({
           </dl>
         </div>
 
-        <div className="flex flex-col gap-3 @3xl:pt-1">
-          {action.effect_size ? <EvidenceStat effect={action.effect_size} /> : null}
-          <dl className="flex flex-col gap-3">
-            <Field label="Evidence" strong>
-              {action.effect_text}
-            </Field>
-          </dl>
-          {/* One stack with one left edge, under the evidence text: the two disclosures, then
-              the secondary action. */}
-          <div className="flex flex-col items-start @md:pl-[7rem]">
-            <Disclosure summary="Precedent">
-              <p className="pb-2 pl-[1.375rem] text-sm leading-relaxed text-pretty text-muted-foreground">
-                {action.precedent}
-              </p>
-            </Disclosure>
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1.5">
+            <p className="type-caption font-medium text-muted-foreground">Evidence</p>
+            {stat && action.effect_size ? (
+              <>
+                <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p>
+                <p className="type-caption text-pretty text-muted-foreground">{statisticLine(action.effect_size)}</p>
+              </>
+            ) : null}
+            <p className="text-sm leading-relaxed text-pretty text-foreground tabular-nums">{action.effect_text}</p>
+          </div>
+          <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-muted-foreground">
+            <span className="font-medium">Precedent: </span>
+            {action.precedent}
+          </p>
+          {/* One stack with one left edge: the disclosures, then the secondary action. */}
+          <div className="flex flex-col items-start">
+            {action.precedent.length > PRECEDENT_LONG ? (
+              <Disclosure summary="Full precedent">
+                <p className="pb-2 pl-[1.375rem] text-sm leading-relaxed text-pretty text-muted-foreground">
+                  {action.precedent}
+                </p>
+              </Disclosure>
+            ) : null}
             {/* NICE content may not be reproduced outside the UK: link only, never the quote. */}
             {action.source_id.startsWith("ev-nice") ? null : (
               <Disclosure summary="Quote and page in the source">
@@ -172,7 +211,7 @@ export function ActionSummary({ action }: { action: Evidence }) {
   return (
     <FramePanel padding="none" className="@container flex h-full flex-col gap-3 px-4 py-4 sm:px-5">
       <SourceMarks action={action} />
-      <h4 className="type-heading text-pretty">{action.action}</h4>
+      <h4 className="type-heading text-pretty">{plainTitle(action.action)}</h4>
       <FirstStep compact>{action.first_step}</FirstStep>
       <dl className="mt-1">
         <Field label="Owner">{action.who_implements}</Field>

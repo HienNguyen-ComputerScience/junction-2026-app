@@ -138,14 +138,13 @@ function StepTitle({ step, compact = false }: { step: PathwayStep; compact?: boo
 }
 
 /** Status and source on one row. The section title gives the year, so the chip leaves it out. */
-function StepStatus({ step, children }: { step: PathwayStep; children?: ReactNode }) {
+function StepStatus({ step }: { step: PathwayStep }) {
   return (
     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-2">
       <StatusBadge status={step.status} size="xs">
         {step.measure?.shared && step.measure.value === null ? "No county figure" : STATUS_LABEL[step.status]}
       </StatusBadge>
       {step.measure && <SourceChip sourceId={step.measure.sourceId} />}
-      {children}
     </div>
   );
 }
@@ -158,138 +157,98 @@ export function PathwaySteps({
 }: {
   steps: PathwayStep[];
   density: "full" | "compact";
-  /** Compact only: a link for a step, beside its status (the red-flag helper for step 2). */
+  /** A link for a step, on its own line under the status row (the red-flag helper for step 2). */
   renderExtra?: (step: PathwayStep) => ReactNode;
   className?: string;
 }) {
-  if (density === "compact") {
-    return (
-      <ol className={cn("grid divide-y divide-border md:grid-cols-3 md:grid-rows-[repeat(5,auto)] md:divide-x md:divide-y-0", className)}>
-        {steps.map((step) => (
-          <CompactStep key={step.stage} step={step} extra={renderExtra?.(step)} />
-        ))}
-      </ol>
-    );
-  }
+  const compact = density === "compact";
   return (
     <ol
       className={cn(
-        "grid divide-y divide-border lg:grid-cols-3 lg:grid-rows-[repeat(6,auto)] lg:divide-x lg:divide-y-0",
+        "grid divide-y divide-border",
+        compact
+          ? "md:grid-cols-3 md:grid-rows-[repeat(6,auto)] md:divide-x md:divide-y-0"
+          : "lg:grid-cols-3 lg:grid-rows-[repeat(6,auto)] lg:divide-x lg:divide-y-0",
         className,
       )}
     >
       {steps.map((step) => (
-        <FullStep key={step.stage} step={step} />
+        <Step key={step.stage} step={step} compact={compact} extra={renderExtra?.(step)} />
       ))}
     </ol>
   );
 }
 
-/** Height of the value slot: the figure, or the statement that stands in for it. */
-const SLOT = "flex h-11 items-end";
-const SLOT_FIGURE = "numeral text-[2.25rem] leading-none";
+/** What a step without any measure says (step 2: no public statistic exists). */
+const NO_STATISTIC = "No public statistic shows how often GPs spot possible cancer at the first visit.";
 
-function FullStep({ step }: { step: PathwayStep }) {
+/** The label that always stands with a wider value shown in place of an area's own. */
+const sharedLabel = (name: string) => `${name}-wide value, not a county figure`;
+
+/**
+ * One step card, the same six parts in the same order at both densities (the steps share the
+ * six subgrid rows, so every part lines up across the three): title; value with its gap to
+ * Finland (or the hospital group's note) beside it; one description line; the bar with
+ * "Finland xx.x%" under its tick; the status and source chips on one row; and, for a step
+ * with one, a link on its own line.
+ */
+function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; extra?: ReactNode }) {
   const { measure, status } = step;
   const value = measure?.value ?? null;
-  // A step with a figure shares the six rows of its neighbours (subgrid). A step without one has
-  // fewer parts (title, status, one caption, the bar) and just stacks them: no blank rows.
-  const hasFigure = value !== null || Boolean(measure?.shared);
+  const shared = value === null ? measure?.shared : undefined;
+  const shown = value ?? shared?.value ?? null;
+  const description = shown !== null && measure ? measure.counts : measure ? measure.note : NO_STATISTIC;
   return (
     <li
       className={cn(
-        "flex min-w-0 flex-col px-4 pt-4 pb-5 sm:px-6 lg:row-span-6",
-        hasFigure && "lg:grid lg:grid-rows-subgrid",
+        "flex min-w-0 flex-col px-4 pt-4 pb-5 sm:px-6",
+        compact ? "md:row-span-6 md:grid md:grid-rows-subgrid" : "lg:row-span-6 lg:grid lg:grid-rows-subgrid",
       )}
     >
-      <StepTitle step={step} />
-      <div className="pt-3">
-        <StepStatus step={step} />
-      </div>
+      <StepTitle step={step} compact={compact} />
 
-      {measure && value !== null ? (
-        <>
-          <p className={cn(SLOT, "pt-3")}>
-            <span className={cn(SLOT_FIGURE, STATUS_FIGURE[status])}>
-              {formatPct(value)}
-            </span>
-          </p>
-          <p className="pt-2 type-caption text-muted-foreground">
+      <div className={cn("flex items-end gap-x-3 pt-3", compact ? "min-h-[3.25rem]" : "min-h-[3.75rem]")}>
+        {shown !== null ? (
+          <span
+            className={cn(
+              "numeral leading-none",
+              compact ? "text-[1.75rem]" : "text-[2.25rem]",
+              value !== null ? STATUS_FIGURE[status] : "text-foreground",
+            )}
+          >
+            {formatPct(shown)}
+          </span>
+        ) : (
+          <span aria-hidden className="numeral text-[1.5rem] leading-none text-muted-foreground">
+            –
+          </span>
+        )}
+        {value !== null && measure && (
+          <span className="pb-px type-caption text-muted-foreground">
             <span className={cn("figure font-medium", STATUS_FIGURE[status])}>
               {gapToFinland(value, measure.finland)}
             </span>{" "}
-            vs Finland, {measure.direction}
-          </p>
-          <p className="pt-1 type-caption text-pretty text-muted-foreground">{measure.counts}</p>
-        </>
-      ) : measure?.shared ? (
-        <>
-          <p className={cn(SLOT, "pt-3")}>
-            <span className={cn(SLOT_FIGURE, "text-foreground")}>{formatPct(measure.shared.value)}</span>
-          </p>
-          <p className="pt-2 type-caption text-muted-foreground">{sharedLabel(measure.shared.name)}</p>
-          <p className="pt-1 type-caption text-pretty text-muted-foreground">
-            Finland <span className="figure">{formatPct(measure.finland)}</span>, {measure.direction}.{" "}
-            {sharedMeaning(measure.shared.name)}
-          </p>
-        </>
-      ) : (
-        <p className="pt-3 type-caption text-pretty text-muted-foreground">
-          {measure ? measure.note : "No public statistic shows how often GPs spot possible cancer at the first visit."}
-        </p>
-      )}
+            vs Finland
+          </span>
+        )}
+        {shared && <span className="pb-px type-caption text-pretty text-muted-foreground">{sharedLabel(shared.name)}</span>}
+      </div>
+
+      <p className="pt-2 type-caption text-pretty text-muted-foreground">{description}</p>
 
       <MeasureBar
-        className={hasFigure ? "pt-4" : "pt-3"}
+        className="pt-3"
+        size={compact ? "sm" : "md"}
         value={value}
         finland={measure ? measure.finland : null}
         finlandLabel={measure ? `Finland ${formatPct(measure.finland)}` : undefined}
         status={status}
       />
-    </li>
-  );
-}
 
-/** The label that always stands with a wider value shown in place of an area's own. */
-const sharedLabel = (name: string) => `${name}-wide value, not a county figure`;
-/** Said once per step that shows a wider value: what "HUS-wide" means. */
-const sharedMeaning = (name: string) =>
-  `${name}-wide: one shared figure for the hospital district (${name}) that serves these areas`;
-
-function CompactStep({ step, extra }: { step: PathwayStep; extra?: ReactNode }) {
-  const { measure, status } = step;
-  const value = measure?.value ?? null;
-  return (
-    <li className="flex min-w-0 flex-col px-5 py-3 sm:px-6 md:row-span-5 md:grid md:grid-rows-subgrid md:py-3">
-      <StepTitle step={step} compact />
-      <p className="min-h-8 pt-1.5">
-        {measure && value !== null && (
-          <span className={cn("numeral text-[1.5rem] leading-6", STATUS_FIGURE[status])}>{formatPct(value)}</span>
-        )}
-        {measure && value === null && measure.shared && (
-          <span className="numeral text-[1.5rem] leading-6 text-foreground">{formatPct(measure.shared.value)}</span>
-        )}
-      </p>
-      <p className="type-caption text-muted-foreground">
-        {measure ? measure.counts : "No public statistic measures this step"}
-        {measure && value === null && measure.shared && (
-          <>
-            {" "}
-            · {sharedLabel(measure.shared.name)}
-            <span className="block pt-1">{sharedMeaning(measure.shared.name)}</span>
-          </>
-        )}
-      </p>
-      <MeasureBar
-        className="pt-2"
-        size="sm"
-        value={value}
-        finland={measure ? measure.finland : null}
-        status={status}
-      />
-      <div className="pt-2">
-        <StepStatus step={step}>{extra}</StepStatus>
+      <div className="pt-3">
+        <StepStatus step={step} />
       </div>
+      {extra ? <div className="pt-2">{extra}</div> : null}
     </li>
   );
 }
