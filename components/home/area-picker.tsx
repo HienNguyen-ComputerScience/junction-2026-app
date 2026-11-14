@@ -1,13 +1,12 @@
 "use client";
 
 import { cn } from "cn";
-import { ArrowRight, ChevronDown } from "lucide-react";
-import Link from "next/link";
+import { ArrowRight, ChevronDown, LoaderCircle } from "lucide-react";
+import Link, { useLinkStatus } from "next/link";
 import { useId, useState, useSyncExternalStore, type ReactNode } from "react";
 
 import { markArrival } from "@/components/briefing/arrival";
 import { PRIMARY_BUTTON } from "@/components/briefing/ui";
-import { Reveal } from "@/components/motion";
 import { FramePanel } from "@/components/ui/frame";
 import { TextLink } from "@/components/ui/text-link";
 import { BRIEFING_STEP_COUNT, briefingHref } from "@/lib/briefing/steps";
@@ -34,9 +33,9 @@ const readUrlArea = () => new URLSearchParams(window.location.search).get("area"
 const noUrlArea = () => null;
 
 /**
- * The home page. First screen: the area list and the one filled button ("Start the briefing
- * for …") beside the briefing's step 1 for that area. Below a divider, one link per
- * place to look through the data: the briefing and the area page show the rest.
+ * The home page's tool, as cells of the page grid: the area list and the one filled button
+ * ("Start the briefing for …") under the headline, the briefing's step 1 for that area beside
+ * them, and below a divider the two places to look through the data that the nav doesn't name.
  */
 export function AreaPicker({ areas, defaultId, totalAreas, previews }: Props) {
   const selectId = useId();
@@ -59,77 +58,101 @@ export function AreaPicker({ areas, defaultId, totalAreas, previews }: Props) {
     document.title = `${next.name} · FirstLine`;
   }
 
+  // The two places the nav does not name. The nav's own items (insights, how to read, sources)
+  // are one line above the headline, so they are not repeated here.
   const links = [
     { href: "/compare", label: `Compare all ${totalAreas} areas` },
     { href: `/county/${area.id}`, label: `Full page for ${area.name}` },
-    { href: "/insights", label: "Where access is hardest" },
-    { href: "/how-to-read", label: "How to read these numbers" },
-    { href: "/sources", label: "Sources & limitations" },
   ];
 
   return (
     <>
-      <section aria-label="Guided briefing" className="grid gap-3 lg:grid-cols-[minmax(0,11fr)_minmax(0,13fr)]">
-        <FramePanel padding="none" className="flex flex-col gap-5 p-5 sm:p-7 lg:justify-center lg:gap-7 print:hidden">
-          <div className="flex flex-col gap-2">
-            <label htmlFor={selectId} className="type-heading text-forest-ink">
-              Choose your area
-            </label>
-            <div className="relative">
-              <select
-                id={selectId}
-                value={area.id}
-                onChange={(event) => choose(event.target.value)}
-                className="h-[3.25rem] w-full appearance-none rounded-lg border border-input bg-cream-paper pr-11 pl-4 text-base font-semibold text-charcoal transition-colors outline-none hover:border-foreground/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink"
-              >
-                {areas.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                aria-hidden
-                strokeWidth={1.75}
-                className="pointer-events-none absolute top-1/2 right-4 size-5 -translate-y-1/2 text-forest-ink"
-              />
-            </div>
+      <FramePanel
+        padding="none"
+        className="flex flex-col gap-5 p-5 sm:p-7 lg:col-start-1 lg:row-start-2 lg:justify-center lg:gap-6 print:hidden"
+      >
+        <div className="flex flex-col gap-2">
+          <label htmlFor={selectId} className="type-heading text-forest-ink">
+            Choose your area
+          </label>
+          <div className="relative">
+            <select
+              id={selectId}
+              value={area.id}
+              onChange={(event) => choose(event.target.value)}
+              className="h-[3.25rem] w-full appearance-none rounded-lg border border-input bg-cream-paper pr-11 pl-4 text-base font-semibold text-charcoal transition-colors outline-none hover:border-foreground/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink"
+            >
+              {areas.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              aria-hidden
+              strokeWidth={1.75}
+              className="pointer-events-none absolute top-1/2 right-4 size-5 -translate-y-1/2 text-forest-ink"
+            />
           </div>
-          <div className="flex flex-col gap-3">
-            <Link href={startHref} onClick={markArrival} className={cn(PRIMARY_BUTTON, "w-full text-[1.0625rem]")}>
-              <span>Start the briefing for {area.name}</span>
-              <ArrowRight aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />
-            </Link>
-            <p className="text-base leading-6 text-pretty text-charcoal">
-              {BRIEFING_STEP_COUNT} short steps · download or print at the end
-            </p>
-          </div>
-        </FramePanel>
+        </div>
+        <div className="flex flex-col gap-3">
+          <Link
+            href={startHref}
+            onClick={markArrival}
+            className={cn(PRIMARY_BUTTON, "group w-full justify-between text-left text-[1.0625rem]")}
+          >
+            <span className="text-balance">Start the briefing for {area.name}</span>
+            <StartIcon />
+          </Link>
+          <p className="text-base leading-6 text-balance text-charcoal">
+            {BRIEFING_STEP_COUNT} short steps · download or print at the end
+          </p>
+        </div>
+      </FramePanel>
 
-        {/* The briefing's step 1 for the chosen area. */}
-        {preview ? (
-          <div aria-live="polite" className="rounded-lg border border-frame-border bg-cream-paper p-5 sm:p-7">
+      {/* The briefing's step 1 for the chosen area. A new area's card rises in once (not on load). */}
+      {preview ? (
+        <div
+          aria-live="polite"
+          className="rounded-lg border border-frame-border bg-cream-paper p-5 sm:p-7 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:flex lg:flex-col lg:justify-center"
+        >
+          <div key={area.id} className={picked ? "animate-fade-up" : undefined}>
             {preview}
           </div>
-        ) : null}
-      </section>
+        </div>
+      ) : null}
 
-      <Reveal as="section" className="mt-8 flex flex-col gap-2 border-t border-forest-ink/25 pt-6 sm:mt-12 print:hidden">
+      <section
+        aria-labelledby="own-heading"
+        className="mt-6 flex flex-col gap-3 border-t border-forest-ink/25 pt-6 sm:mt-10 lg:col-span-2 print:hidden"
+      >
         <h2 id="own-heading" className="type-title text-forest-ink">
           Or look through the data yourself
         </h2>
-        <nav aria-labelledby="own-heading">
-          <ul className="flex flex-col divide-y divide-border">
-            {links.map((link) => (
-              <li key={link.href} className="py-1.5">
-                <TextLink kind="nav" href={link.href} className="text-base">
-                  {link.label}
-                </TextLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </Reveal>
+        <ul className="flex flex-col gap-x-10 gap-y-1 sm:flex-row sm:flex-wrap">
+          {links.map((link) => (
+            <li key={link.href}>
+              <TextLink kind="nav" href={link.href} className="min-h-11 text-base">
+                {link.label}
+              </TextLink>
+            </li>
+          ))}
+        </ul>
+      </section>
     </>
+  );
+}
+
+/** Start's arrow: it nudges forward on hover and focus, and turns into a spinner while the briefing loads. */
+function StartIcon() {
+  const { pending } = useLinkStatus();
+  return pending ? (
+    <LoaderCircle aria-hidden className="size-5 shrink-0 motion-safe:animate-spin" strokeWidth={1.75} />
+  ) : (
+    <ArrowRight
+      aria-hidden
+      className="size-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-focus-visible:translate-x-1 motion-reduce:transition-none"
+      strokeWidth={1.75}
+    />
   );
 }

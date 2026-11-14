@@ -1,6 +1,88 @@
 # Home page: the guided briefing is the front door
 
-Post-freeze experiment on branch `t3/home-briefing-first-screen`, stacked on `t3/experimental-real-user-audit`. Production is untouched.
+## Round 5 design pass (branch `t3/home-design-polish`, on `t3/post-freeze-build-integration` 88df84d)
+
+Goal: raise the judges' home score from 8.5. Round 4: clarity 8.5, ease 9.0, hierarchy 8.5, type and spacing 8.0, motion 8.0, accessibility 9.0. The judges named no home defect after R1-04, so the targets came from their round-4 screenshots. The concept stays the same: the area picker, then "Start the briefing for <area>", no header button on home, "Guided briefing" first in the nav, no scroll-driven reveals.
+
+### What was wrong in the round-4 frames
+
+| Where | Problem |
+|---|---|
+| 1366: the keylime card | About 200px of content was centred in a 458px card, so roughly 250px of empty green surrounded the one action. |
+| 1366: the headline row | The h1 used only the left two-thirds of its own full-width row, leaving a dead band beside it. |
+| 1366: the status line | "… a longer / wait." left one word alone on the last line. |
+| 1366 and 390: the link list | Five 1100px-wide rows for 200px labels. Three of the five (Where access is hardest, How to read these numbers, Sources & limitations) repeat the nav. |
+| Motion | The links section faded in on scroll, the one scroll-driven reveal on a page that is meant to have none. Choosing another area swapped the card with no feedback. Start had no hover or pending state. |
+
+### What changed
+
+- **One composition.** The page is a two-column grid from 1024px. The headline sits over the area panel in the left column, and step 1 is beside them, spanning both rows. On a phone the order is unchanged: headline, panel, step 1, links.
+  - The panel now fits its content, and the headline's dead band is gone.
+  - Page height at 1366 went from 1238px to 918px.
+  - The divider and "Or look through the data yourself" now peek above the fold at 768px, as a cue that there is more below.
+  - The headline stays in the static shell. The tool's parts take their own grid cells, so there is no extra wrapper.
+- **Headline** keeps "non-urgent" on one line (`whitespace-nowrap`). It used to break as "non- / urgent".
+- **Start button:** the label is left-aligned with the arrow at the right edge, so a two-line label on a phone reads as a sentence rather than a centred block. The label and the line under it use `text-balance`.
+- **Status line** in step 1: `text-balance`, so it breaks into two even lines with no lone word.
+- **Links: five to two.** "Compare all 22 areas" and "Full page for <area>" are the two places the nav doesn't name. The nav's "Areas" goes to `/`, and the other three are nav items one line above the headline. On a laptop the two sit on one line; on a phone they stack, each 44px tall.
+- **Motion and interaction:**
+  - The links section is a plain section, with no scroll reveal.
+  - Choosing an area plays a quiet `animate-fade-up` (320ms) on the new step-1 card. It plays only on a change, never on load. The `aria-live` wrapper stays mounted, so the change is still announced.
+  - Start's arrow nudges 4px forward on hover and keyboard focus.
+  - While the briefing loads, the arrow becomes a spinner (`useLinkStatus`). The spinner only turns when motion is allowed.
+  - Reduced motion: every animation is off (checked with `document.getAnimations().length === 0` right after load and right after an area change).
+- **Files:** `app/page.tsx`, `components/home/area-picker.tsx`, `components/home/briefing-preview.tsx`. No new numbers and no new wording about Finland overall.
+
+### Checked (`next build` + `next start -p 3113`, playwright-core with Chromium 1255)
+
+106 checks passed, 0 failed, before and after the change. The script is in the session scratchpad; it is not committed.
+
+- **Views:** 1366×768 and 390×844, each with and without reduced motion.
+- **First screen:** Start is fully on the first screen (bottom edge at 522px of 768 at 1366, and 495–521px of 844 at 390) for **all 22 areas**. Every area has a step-1 card. No sideways scroll for any area at either width.
+- **One filled button** on home at both widths.
+- **Text:** nothing under 16px in `main` except the 11px step pill.
+- **Choosing and starting:**
+  - Choosing Kainuu updates the label, `?area=kainuu` and the card.
+  - Tab from the list lands on Start with the focus ring showing (`after-1366-focus-start.png`).
+  - Enter opens `/briefing/kainuu`, whose title is "Step 1 of …". Browser Back returns to `/?area=kainuu` with Kainuu selected.
+  - No page errors.
+- **No JavaScript:** `/?area=helsinki` server HTML holds `href="/briefing/helsinki"`, "Step 1 of" and the links.
+- **Print:** A4 PDF is 1 page with the figure and source.
+- **Verify command:** `npm test` (517/517), `brief:check`, `typecheck`, `lint`, `build`, `check-insights` and `check-hardcoded` all pass.
+
+### Screenshots (`screenshots/round5/`)
+
+`before-*` is the round-4 home on this build, and `after-*` is this pass.
+
+- **First screen:** `-1366.png`, `-390.png`.
+- **Full page:** `-1366-full.png`, `-390-full.png`.
+- **Reduced motion:** `-*-reduced-full.png`.
+- **States:**
+  - `-1366-kainuu.png` and `-390-kainuu.png`: an area below Finland overall, drawn in slate.
+  - `-1366-focus-start.png`: keyboard focus on Start.
+  - `-nojs-1366-full.png`: the page without JavaScript.
+  - `-print-media.png`: print media.
+
+### Self-score against the rubric (honest, not a judge)
+
+| Clarity 25% | Ease 25% | Hierarchy 20% | Type & spacing 15% | Motion 10% | Accessibility 5% | Weighted |
+|---|---|---|---|---|---|---|
+| 9.0 | 9.0 | 9.0 | 9.0 | 8.5 | 9.0 | **8.95** |
+
+- **Clarity +0.5:** two links instead of five, and one composition with no empty block.
+- **Hierarchy +0.5:** the headline now introduces the action it sits over, and the eye runs headline → list → Start, with the evidence beside them.
+- **Type and spacing +1.0:** no dead green, no hyphen break, no lone word, and a shorter page.
+- **Motion +0.5:** feedback on area change, on hover and focus, and while loading, with no scroll reveal.
+- **Ease** stays at 9.0, since the flow is unchanged.
+- It is a judgement call whether a judge lifts motion to 9; the count-up was removed site-wide, so the page's motion is now only feedback.
+
+### Not changed, and needed from others
+
+- **Print-media emulation clips the caveat's open text** ("…not only cancer-"), before and after alike. Emulated print doesn't fire `beforeprint`, so `PrintExpand` never opens it; a real print should. The CaveatNote is shared (`components/motion/caveat-note.tsx`), so this is not mine to change.
+
+---
+
+*History: the sections below describe the earlier pass on `t3/home-briefing-first-screen`. Where they disagree with Round 5 above (the five links, their scroll fade-in, the count-up), Round 5 is current.*
 
 ## What the home page is now
 

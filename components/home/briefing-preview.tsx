@@ -41,7 +41,9 @@ export function BriefingPreview({ stand }: { stand: BriefingStand }) {
         </h2>
       </div>
 
-      <StatusLabel status={stand.status}>{status}</StatusLabel>
+      <StatusLabel status={stand.status} className="text-balance">
+        {status}
+      </StatusLabel>
 
       {/* The source and the one main caveat, always visible; the rest of the limitation is behind "Why?". */}
       <div className="flex flex-col gap-3">

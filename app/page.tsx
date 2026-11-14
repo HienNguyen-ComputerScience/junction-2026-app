@@ -32,10 +32,11 @@ async function Tool({
 }
 
 /**
- * Home: the headline, then the guided briefing's opening (choose the area, start the briefing,
- * and a preview of its step 1), then "Or look through the data yourself" with the map, the
- * area's three steps and its first action. The ranking of all areas is on /compare, the actions
- * and the what-if on the act page, the question box and the news on /ask.
+ * Home: the guided briefing's opening as one composition. On a laptop the headline sits over the
+ * area list and the Start button in the left column, with the briefing's step 1 for that area
+ * beside them; on a phone they stack in that order. Under it, "Or look through the data
+ * yourself" with the two places the nav doesn't name. The page is a grid, so the streamed tool's
+ * parts take their own cells and the headline stays in the static shell.
  */
 export default function HomePage({ searchParams }: PageProps<"/">) {
   const rows = getRanking();
@@ -46,9 +47,10 @@ export default function HomePage({ searchParams }: PageProps<"/">) {
   }
 
   return (
-    <main className="page-container flex flex-col gap-5 pt-3 sm:pt-6">
-      <h1 className="type-page max-w-[34ch] text-pretty">
-        In Finland, your area decides how long a non-urgent GP visit waits
+    <main className="page-container grid gap-5 pt-3 sm:pt-6 lg:grid-cols-[minmax(0,11fr)_minmax(0,13fr)] lg:grid-rows-[auto_1fr_auto] lg:gap-x-8">
+      <h1 className="type-page max-w-[34ch] lg:col-start-1 lg:row-start-1 lg:pt-1">
+        In Finland, your area decides how long a <span className="whitespace-nowrap">non-urgent</span> GP visit
+        waits
       </h1>
 
       {/* The one request-time part: the server render of /?area=<id> already shows that area. */}
@@ -56,7 +58,7 @@ export default function HomePage({ searchParams }: PageProps<"/">) {
         fallback={
           <div
             aria-busy
-            className="min-h-[30rem] rounded-panel border border-border bg-card p-6 text-base text-muted-foreground"
+            className="min-h-[30rem] rounded-panel border border-border bg-card p-6 text-base text-muted-foreground lg:col-span-2"
           >
             Loading the areas…
           </div>
