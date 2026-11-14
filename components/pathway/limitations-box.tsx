@@ -26,13 +26,19 @@ export function LimitationsBox({
   visibleCount = 3,
   variant = "box",
   className = "",
+  glossHus = false,
 }: {
+  /** Spell out the first "HUS" in the items (when nothing above it on the page has). */
+  glossHus?: boolean;
   items: LimitationItem[];
   /** How many items show before the "show more" disclosure ("box" only). */
   visibleCount?: number;
   variant?: "box" | "disclosure";
   className?: string;
 }) {
+  const glossAt = glossHus ? items.findIndex((item) => HUS_TERM.test(item.text)) : -1;
+  const glossed = (item: LimitationItem) => glossAt >= 0 && items[glossAt] === item;
+
   if (variant === "disclosure") {
     return (
       <aside aria-label="Limitations" className={className}>
@@ -55,7 +61,7 @@ export function LimitationsBox({
         >
           <ul className="flex flex-col gap-3 border-t border-frame-border px-3.5 pt-3 pb-4">
             {items.map((item) => (
-              <Limitation key={item.text} item={item} />
+              <Limitation key={item.text} item={item} gloss={glossed(item)} />
             ))}
           </ul>
         </Disclosure>
@@ -79,7 +85,7 @@ export function LimitationsBox({
       </h2>
       <ul className="flex flex-col gap-2.5">
         {first.map((item) => (
-          <Limitation key={item.text} item={item} />
+          <Limitation key={item.text} item={item} gloss={glossed(item)} />
         ))}
       </ul>
       {rest.length > 0 && (
@@ -96,7 +102,7 @@ export function LimitationsBox({
         >
           <ul className="flex flex-col gap-2.5 pt-1 pb-2">
             {rest.map((item) => (
-              <Limitation key={item.text} item={item} />
+              <Limitation key={item.text} item={item} gloss={glossed(item)} />
             ))}
           </ul>
         </Disclosure>
@@ -120,11 +126,17 @@ function withFigures(text: string): ReactNode {
 
 const BODY = "text-[0.8125rem] leading-[1.6] text-pretty text-muted-foreground";
 
+/** "HUS", with "-wide value" when it follows, so the gloss goes after the whole term. */
+const HUS_TERM = /\bHUS(?:-wide(?: value)?)?\b/;
+
 /**
  * One limitation: a bold short line (its source at the right end), then the detail in the
  * secondary grey. An item without a title is the detail alone.
  */
-function Limitation({ item }: { item: LimitationItem }) {
+function Limitation({ item, gloss = false }: { item: LimitationItem; gloss?: boolean }) {
+  // The first "HUS" on the page is spelled out beside the words, which stay as written.
+  const match = gloss ? HUS_TERM.exec(item.text) : null;
+  const end = match ? match.index + match[0].length : -1;
   return (
     <li className="flex flex-col gap-0.5">
       {item.title ? (
@@ -136,7 +148,16 @@ function Limitation({ item }: { item: LimitationItem }) {
           {item.sourceId && <SourceChip sourceId={item.sourceId} />}
         </div>
       ) : null}
-      <p className={BODY}>{withFigures(item.text)}</p>
+      <p className={BODY}>
+        {end < 0 ? (
+          withFigures(item.text)
+        ) : (
+          <>
+            {withFigures(item.text.slice(0, end))} (HUS: Helsinki University Hospital region)
+            {withFigures(item.text.slice(end))}
+          </>
+        )}
+      </p>
       {!item.title && item.sourceId && <SourceChip sourceId={item.sourceId} />}
     </li>
   );

@@ -138,10 +138,15 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
               {anyRed ? "See all actions" : "Actions to keep this level"}
               <ArrowRight aria-hidden data-icon="inline-end" />
             </Link>
-            <LimitationsBox items={limitations} variant="disclosure" className="mt-2 w-full lg:hidden" />
+            <LimitationsBox
+              items={limitations}
+              variant="disclosure"
+              glossHus={firstHus < 0}
+              className="mt-2 w-full lg:hidden"
+            />
           </div>
 
-          <LimitationsBox items={limitations} visibleCount={2} className="max-lg:hidden" />
+          <LimitationsBox items={limitations} visibleCount={2} glossHus={firstHus < 0} className="max-lg:hidden" />
         </div>
       </div>
 
