@@ -151,7 +151,7 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
 
 function IndicatorCards({ rows }: { rows: typeof sourceRows }) {
   return (
-    <FocusGroup className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
       {rows.map(({ indicator, source, years }) => {
         const lead = firstSentence(indicator.limitation);
         // The card already shows the first sentence, so Scope continues from the second.
@@ -179,7 +179,7 @@ function IndicatorCards({ rows }: { rows: typeof sourceRows }) {
           />
         );
       })}
-    </FocusGroup>
+    </div>
   );
 }
 
@@ -262,6 +262,7 @@ export default function SourcesPage() {
 
       <section id="indicators" aria-labelledby="indicator-sources" className="flex scroll-mt-20 flex-col gap-10">
         <SectionHead id="indicator-sources" eyebrow="The public indicators" title="Indicators" />
+        <FocusGroup className="flex max-w-[52rem] flex-col gap-10">
         <section aria-labelledby="indicators-ranking" className="flex max-w-[52rem] flex-col gap-4">
           <Reveal className="flex flex-col gap-1">
             <h3 id="indicators-ranking" className="type-heading text-forest-ink">Used to rank counties</h3>
@@ -276,6 +277,7 @@ export default function SourcesPage() {
           </Reveal>
           <IndicatorCards rows={context} />
         </section>
+        </FocusGroup>
       </section>
 
       <section id="evidence" aria-labelledby="evidence-sources" className="flex scroll-mt-20 flex-col gap-6">
@@ -283,7 +285,7 @@ export default function SourcesPage() {
           id="evidence-sources"
           eyebrow="Checked sources"
           title="Evidence for actions"
-          line={`Each recommended action cites one of these checked sources.${evidenceRetrieved ? ` All retrieved on ${evidenceRetrieved}.` : ""}`}
+          line={`Each recommended action cites one of these checked sources.${evidenceRetrieved ? ` All retrieved on ${evidenceRetrieved}; the publisher is the host of the link.` : " The publisher is the host of the link."}`}
         />
         <ul className="grid gap-3 md:grid-cols-2">
           {evidenceSources.map((source) => (
@@ -292,7 +294,6 @@ export default function SourcesPage() {
                 title={source.name}
                 publisher={evidenceRetrieved ? source.publisher : `${source.publisher} · retrieved ${source.retrieved}`}
                 href={source.url}
-                linkLabel="Open the source"
                 headingLevel="h3"
               />
             </li>
@@ -314,7 +315,6 @@ export default function SourcesPage() {
                 title={source.name}
                 publisher={otherRetrieved ? source.publisher : `${source.publisher} · retrieved ${source.retrieved}`}
                 href={source.url}
-                linkLabel="Open the source"
                 headingLevel="h3"
               />
             </li>
@@ -325,7 +325,6 @@ export default function SourcesPage() {
                 title={regionsSource.name}
                 publisher={`${regionsSource.publisher} · retrieved ${regionsSource.retrieved}`}
                 href={regionsSource.url}
-                linkLabel="Open the area list"
                 headingLevel="h3"
               />
             </li>

@@ -19,7 +19,7 @@ export function SourceCard({
   publisher,
   years,
   href,
-  linkLabel = "Open the official source",
+  linkLabel,
   note,
   detail,
   detailLabel,
@@ -30,6 +30,7 @@ export function SourceCard({
   publisher: string;
   years?: string;
   href: string;
+  /** A separate link under the text. Without it, the title itself is the link. */
   linkLabel?: string;
   /** One line under the title, e.g. the indicator's main limitation. */
   note?: ReactNode;
@@ -45,7 +46,16 @@ export function SourceCard({
       data-focus-item={focus ? "" : undefined}
       className={cn("print-keep flex h-full flex-col gap-2", !focus && SOURCE_FRAME)}
     >
-      <Heading className="text-lg leading-7 font-semibold text-pretty text-forest-ink">{title}</Heading>
+      <Heading className="text-lg leading-7 font-semibold text-pretty text-forest-ink">
+        {linkLabel ? (
+          title
+        ) : (
+          // Inline, so the arrow follows the last word of a name of any length.
+          <TextLink kind="external" inline href={href} className="text-lg font-semibold text-pretty">
+            {title}
+          </TextLink>
+        )}
+      </Heading>
       {note && <p className="max-w-[44rem] text-base text-pretty text-foreground">{note}</p>}
       <p className="text-base text-pretty text-muted-foreground">
         {publisher}
@@ -56,16 +66,20 @@ export function SourceCard({
           </>
         )}
       </p>
-      <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
-        <TextLink kind="external" href={href} className="text-base">
-          {linkLabel}
-        </TextLink>
-        {detail && detailLabel && (
-          <Disclosure label={detailLabel} tone="quiet" className="basis-full">
-            {detail}
-          </Disclosure>
-        )}
-      </div>
+      {(linkLabel || (detail && detailLabel)) && (
+        <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
+          {linkLabel && (
+            <TextLink kind="external" href={href} className="text-base">
+              {linkLabel}
+            </TextLink>
+          )}
+          {detail && detailLabel && (
+            <Disclosure label={detailLabel} tone="quiet" className="basis-full">
+              {detail}
+            </Disclosure>
+          )}
+        </div>
+      )}
     </article>
   );
 }
