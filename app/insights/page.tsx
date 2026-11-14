@@ -305,7 +305,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
               <ConfidenceBadge areaId={warning.county_id} indicatorId="6411" year={last.year} showReason={false} />
             </>
           }
-          caveat={<CaveatNote short="three years only: a direction, not a forecast" />}
+          caveat={<p className="text-base text-pretty text-muted-foreground">Three years only: a direction, not a forecast.</p>}
           more={
             <>
               <More show="Show how we flag and grade a change" hide="Hide how we flag and grade a change">
@@ -352,15 +352,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
           </ol>
         }
         meaning={`${capital(word(goal3Count))} of them measure Goal 3 of the national cancer strategy directly.`}
-        caveat={
-          <CaveatNote short="counts only, no patient data">
-            <ul className="flex list-disc flex-col gap-1.5 pl-5">
-              {starterDataset.privacy.map((p) => (
-                <li key={p}>{p}</li>
-              ))}
-            </ul>
-          </CaveatNote>
-        }
+        caveat={<p className="text-base text-pretty text-muted-foreground">No patient data: counts only.</p>}
         action={
           <div className="flex flex-wrap items-center gap-3 *:max-w-full">
             <StarterDownload label="Download the recording template (Excel)" />
@@ -380,6 +372,11 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
         more={
           <>
             <More show={`Show the ${fieldCount} fields`} hide={`Hide the ${fieldCount} fields`}>
+              <ul className="flex list-disc flex-col gap-1.5 pl-5 text-base text-pretty">
+                {starterDataset.privacy.map((p) => (
+                  <li key={p}>{p}</li>
+                ))}
+              </ul>
               <StarterFields />
             </More>
             <More show="Show the Goal 3 link" hide="Hide the Goal 3 link">
