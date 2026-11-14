@@ -482,6 +482,35 @@ h2:not([class*="type-"], .font-sans) {
   animation: fl-fade var(--motion-rise) var(--motion-ease) both;
 }
 
+/* ScrollStory (components/motion/scroll-story.tsx). While a story is told, picture parts marked
+   data-story-step are future, current or past. Future parts lose their colour (never their
+   contrast: nothing fades, so every word stays AA); the current part gets a Forest Ink ring and
+   the keylime wash; past parts are back to normal. With no state (server HTML, no script,
+   reduced motion, phones, print) every part is in its final, normal state. */
+[data-story-step] {
+  transition:
+    filter var(--motion-rise) var(--motion-ease),
+    background-color var(--motion-rise) var(--motion-ease),
+    box-shadow var(--motion-rise) var(--motion-ease);
+}
+[data-story-state="future"] {
+  filter: saturate(0);
+}
+:not(svg *)[data-story-state="current"] {
+  box-shadow: 0 0 0 2px var(--color-forest-ink);
+}
+/* The text block being read gets a Forest Ink rule at its side (from 1024px, while telling). */
+@media (min-width: 1024px) {
+  .scroll-story-step > * {
+    border-left: 2px solid transparent;
+    padding-left: 1.5rem;
+    transition: border-color var(--motion-rise) var(--motion-ease);
+  }
+  [data-scroll-story="telling"] .scroll-story-step[data-active] > * {
+    border-left-color: var(--color-forest-ink);
+  }
+}
+
 /* Disclosure (components/motion/disclosure.tsx): a native <details> that eases open where the
    browser can animate one, and simply opens elsewhere. */
 @supports (interpolate-size: allow-keywords) {
@@ -540,6 +569,21 @@ h2:not([class*="type-"], .font-sans) {
   @page wide {
     size: A4 landscape;
     margin: 12mm;
+  }
+  /* Scroll stories print as a plain document: picture unstuck and in its final state, text after. */
+  .scroll-story-picture {
+    position: static !important;
+  }
+  .scroll-story-step {
+    min-height: 0 !important;
+  }
+  [data-story-state] {
+    filter: none !important;
+    box-shadow: none !important;
+  }
+  [data-slot="chunk"] {
+    min-height: 0 !important;
+    break-inside: avoid;
   }
   html,
   body {
