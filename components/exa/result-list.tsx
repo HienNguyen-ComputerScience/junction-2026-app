@@ -1,8 +1,23 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 
 import type { Freshness, Item } from "./types";
+
+/** Closes a live-search panel: a quiet icon button, not a third button style. */
+export function CloseButton({ onClick, label }: { onClick: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors outline-none hover:bg-accent hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+    >
+      <X aria-hidden strokeWidth={1.75} className="size-4" />
+    </button>
+  );
+}
 
 /**
  * Where live content comes from, in one pattern everywhere: the "Found live — unverified" tag,

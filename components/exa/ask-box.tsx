@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Frame, FrameDescription, FrameHeader, FrameMeta, FramePanel, FrameTitle } from "@/components/ui/frame";
 
-import { LiveMark, LoadingRows, ResultList, Unavailable } from "./result-list";
+import { CloseButton, LiveMark, LoadingRows, ResultList, Unavailable } from "./result-list";
 import { isAskResponse, TOO_MANY, type AskResponse } from "./types";
 
 const MAX_QUESTION = 300;
@@ -69,6 +69,11 @@ export function AskBox() {
         if (err instanceof DOMException && err.name === "AbortError") return;
         setState({ kind: "error", message: "" });
       });
+  }
+
+  function close() {
+    ctrlRef.current?.abort();
+    setState({ kind: "idle" });
   }
 
   const data = state.kind === "done" ? state.data : null;
@@ -156,6 +161,12 @@ export function AskBox() {
       </div>
 
       <div aria-live="polite" className="-mt-5 [&>*]:mt-5">
+          {state.kind !== "idle" && (
+            <div className="flex items-center justify-between gap-2 border-t border-border pt-3">
+              <span className="type-caption text-muted-foreground">{loading ? "Searching" : "Results"}</span>
+              <CloseButton onClick={close} label={loading ? "Cancel search" : "Close results"} />
+            </div>
+          )}
           {loading && <LoadingRows label="Searching and writing an answer from the results" rows={2} />}
           {state.kind === "error" && state.message !== "" && <p className="text-sm text-muted-foreground">{state.message}</p>}
           {/* From the snapshot, not the search: shown first, and also when the live search is down. */}
@@ -184,7 +195,7 @@ export function AskBox() {
           )}
           {unavailable && <Unavailable />}
           {data && data.freshness !== "unavailable" && (
-            <div className="space-y-5 border-t border-border pt-5">
+            <div className="space-y-5">
               {answered && data.answer && (
                 <div className="space-y-2 rounded-lg border border-dashed border-input bg-muted/40 p-4">
                   <p className="type-caption text-muted-foreground">
