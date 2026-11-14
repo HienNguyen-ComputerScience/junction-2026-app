@@ -2,6 +2,9 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* The theme is dark by default and has no `.dark` class anywhere. This line keeps every
+   `dark:` class (shadcn leftovers, app/sources) inert; without it Tailwind would switch them
+   on for viewers whose system is dark. Do not remove it and do not add a `dark` class. */
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -31,6 +34,8 @@
   --color-status-grey-border: var(--status-grey-border);
   --color-status-grey-ink: var(--status-grey-ink);
   --color-trend-down: var(--trend-down);
+  --color-faint: var(--faint);
+  --color-track: var(--track);
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -71,111 +76,86 @@
   --radius-frame: 1.25rem;
   --radius-panel: 0.875rem;
 
-  /* Raw amber classes (used by app/sources) resolve to the status tokens, so they sit in the palette. */
-  --color-amber-50: var(--status-amber-soft);
-  --color-amber-300: var(--status-amber-border);
+  /* Raw amber classes (used by app/sources for a note) resolve to the neutral raised surface:
+     amber is a data status here, never a callout colour. */
+  --color-amber-50: var(--muted);
+  --color-amber-300: var(--input);
   --color-amber-950: var(--foreground);
 }
 
 :root {
-  /* Surfaces: cool "frost" page, tinted frames, white panels. */
-  --background: oklch(0.974 0.004 255);
-  --foreground: oklch(0.2 0.03 262);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.03 262);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.03 262);
-  --frame: oklch(0.951 0.006 258);
-  --frame-border: oklch(0.905 0.008 258);
+  /* One dark theme, no toggle. Form controls and scrollbars follow it. */
+  color-scheme: dark;
 
-  /* Brand accent: lake indigo. Links, focus, primary button, small highlights only. */
-  --brand: oklch(0.45 0.17 266);
-  --brand-soft: oklch(0.956 0.018 266);
-  --brand-ink: oklch(0.41 0.16 266);
-  --primary: var(--brand);
-  --primary-foreground: oklch(0.99 0 0);
+  /* Surfaces, deepest to highest: a graphite ramp, only barely cool, so the page never reads
+     as blue. Depth comes from these steps and from hairlines, never from shadows. */
+  --background: oklch(0.17 0.004 255); /* page    #0e0f11 */
+  --frame: oklch(0.2 0.004 255); /*        frame   #151618 */
+  --card: oklch(0.228 0.004 255); /*       panel   #1b1d1e */
+  --muted: oklch(0.268 0.005 255); /*      raised  #242628: inputs, chips, inner blocks */
+  --accent: oklch(0.305 0.005 255); /*     raised, hovered #2d2f32 */
+  --popover: var(--muted);
+  --secondary: var(--muted);
 
-  --secondary: oklch(0.945 0.007 258);
-  --secondary-foreground: oklch(0.25 0.03 262);
-  --muted: oklch(0.948 0.006 258);
-  --muted-foreground: oklch(0.47 0.022 260);
-  --accent: oklch(0.945 0.012 266);
-  --accent-foreground: oklch(0.25 0.03 262);
-  --destructive: oklch(0.55 0.2 27);
-  --border: oklch(0.91 0.008 258);
-  --input: oklch(0.87 0.01 258);
-  --ring: oklch(0.55 0.16 266);
+  /* Three text roles, all AA on every surface above. */
+  --foreground: oklch(0.94 0.003 255); /*       primary   #eaebed, also the Finland line */
+  --muted-foreground: oklch(0.75 0.006 255); /* secondary #abaeb2 */
+  --faint: oklch(0.69 0.006 255); /*            muted     #999b9f: placeholders, axis ticks */
+  --card-foreground: var(--foreground);
+  --popover-foreground: var(--foreground);
+  --secondary-foreground: var(--foreground);
+  --accent-foreground: var(--foreground);
 
-  /* Data status: red = worse than Finland, amber = at or better than Finland's level,
-     grey = no public data. Fill for bars/dots, soft + border for chips, ink for text (AA). */
-  --status-red: oklch(0.6 0.2 25);
-  --status-red-soft: oklch(0.966 0.018 22);
-  --status-red-border: oklch(0.88 0.06 22);
-  --status-red-ink: oklch(0.47 0.17 26);
-  --status-amber: oklch(0.8 0.15 76);
-  --status-amber-soft: oklch(0.972 0.03 85);
-  --status-amber-border: oklch(0.87 0.09 80);
-  --status-amber-ink: oklch(0.46 0.1 62);
-  --status-grey: oklch(0.82 0.01 258);
-  --status-grey-soft: oklch(0.955 0.005 258);
-  --status-grey-border: oklch(0.88 0.008 258);
-  --status-grey-ink: oklch(0.45 0.018 260);
-  --trend-down: oklch(0.47 0.09 170);
+  /* Hairlines: the text colour at 7 to 10%. */
+  --frame-border: oklch(0.94 0.003 255 / 7%);
+  --border: oklch(0.94 0.003 255 / 8%);
+  --input: oklch(0.94 0.003 255 / 10%);
+  /* Empty part of a bar, so the 100% end is visible on a panel. */
+  --track: oklch(0.94 0.003 255 / 10%);
+
+  /* Primary action: off-white from the ramp with dark text. No brand colour in the chrome. */
+  --primary: var(--foreground);
+  --primary-foreground: oklch(0.17 0.004 255);
+
+  /* The one accent, pale glacier blue: links and focus rings only. Never a fill. */
+  --brand: oklch(0.84 0.04 228); /* #b0d0df */
+  --brand-ink: var(--brand);
+  --brand-soft: var(--muted);
+  --ring: var(--brand);
+
+  /* Data status, the only saturated colour on any screen, tuned to sit in the dark ramp.
+     red = worse than Finland, amber = at or better than Finland's level, grey = no public data.
+     Fill for bars and marks, soft + border for chips, ink for text (AA on every surface). */
+  --status-red: oklch(0.63 0.185 25); /*      #e34f4c */
+  --status-red-soft: oklch(0.63 0.185 25 / 14%);
+  --status-red-border: oklch(0.63 0.185 25 / 36%);
+  --status-red-ink: oklch(0.75 0.135 23); /*  #f88985 */
+  --status-amber: oklch(0.79 0.135 78); /*    #eaaf49 */
+  --status-amber-soft: oklch(0.79 0.135 78 / 12%);
+  --status-amber-border: oklch(0.79 0.135 78 / 32%);
+  --status-amber-ink: oklch(0.85 0.105 82); /* #f0c77c */
+  --status-grey: oklch(0.56 0.005 255); /*    #727577 */
+  --status-grey-soft: oklch(0.94 0.003 255 / 5%);
+  --status-grey-border: oklch(0.94 0.003 255 / 18%);
+  --status-grey-ink: var(--muted-foreground);
+  --trend-down: var(--muted-foreground);
+  /* Errors are stated in words and in the primary text colour; this is only a fallback. */
+  --destructive: var(--status-red-ink);
 
   --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --chart-2: oklch(0.7 0 0);
+  --chart-3: oklch(0.56 0 0);
+  --chart-4: oklch(0.44 0 0);
+  --chart-5: oklch(0.33 0 0);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-/* Used only as a scoped surface (e.g. <Frame tone="inverse">), never as a page theme. */
-.dark {
-  --background: oklch(0.215 0.04 266);
-  --foreground: oklch(0.975 0.004 260);
-  --card: oklch(0.26 0.042 266);
-  --card-foreground: oklch(0.975 0.004 260);
-  --popover: oklch(0.26 0.042 266);
-  --popover-foreground: oklch(0.975 0.004 260);
-  --frame: oklch(0.215 0.04 266);
-  --frame-border: oklch(1 0 0 / 9%);
-  --brand: oklch(0.74 0.13 272);
-  --brand-soft: oklch(0.3 0.06 270);
-  --brand-ink: oklch(0.8 0.11 272);
-  --primary: var(--brand);
-  --primary-foreground: oklch(0.2 0.04 266);
-  --secondary: oklch(0.3 0.04 266);
-  --secondary-foreground: oklch(0.975 0.004 260);
-  --muted: oklch(0.32 0.04 266);
-  --muted-foreground: oklch(0.78 0.02 260);
-  --accent: oklch(0.3 0.04 266);
-  --accent-foreground: oklch(0.975 0.004 260);
-  --destructive: oklch(0.7 0.19 22);
-  --border: oklch(1 0 0 / 11%);
-  --input: oklch(1 0 0 / 16%);
-  --ring: oklch(0.74 0.13 272);
-  --status-red: oklch(0.67 0.2 25);
-  --status-red-soft: oklch(0.67 0.2 25 / 16%);
-  --status-red-border: oklch(0.67 0.2 25 / 40%);
-  --status-red-ink: oklch(0.76 0.155 23);
-  --status-amber: oklch(0.82 0.15 78);
-  --status-amber-soft: oklch(0.82 0.15 78 / 14%);
-  --status-amber-border: oklch(0.82 0.15 78 / 38%);
-  --status-amber-ink: oklch(0.87 0.12 84);
-  --status-grey: oklch(0.6 0.02 260);
-  --status-grey-soft: oklch(1 0 0 / 7%);
-  --status-grey-border: oklch(1 0 0 / 16%);
-  --status-grey-ink: oklch(0.8 0.015 260);
-  --trend-down: oklch(0.8 0.09 170);
+  --sidebar: var(--frame);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--foreground);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 }
 
 @layer base {
@@ -205,8 +185,8 @@
     display: none;
   }
   ::selection {
-    background: var(--brand-soft);
-    color: var(--brand-ink);
+    background: oklch(0.94 0.003 255 / 22%);
+    color: var(--foreground);
   }
 }
 

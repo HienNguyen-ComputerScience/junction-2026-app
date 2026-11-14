@@ -21,7 +21,7 @@ export function Disclosure({
     <details className={cn("group/disc", className)}>
       <summary
         className={cn(
-          "flex min-h-9 w-fit cursor-pointer items-center gap-1.5 rounded-sm type-caption font-medium text-brand-ink outline-none select-none hover:underline hover:underline-offset-4 focus-visible:ring-3 focus-visible:ring-ring/50",
+          "flex min-h-9 w-fit cursor-pointer items-center gap-1.5 rounded-sm type-caption font-medium text-foreground outline-none select-none hover:underline hover:underline-offset-4 focus-visible:ring-3 focus-visible:ring-ring/50",
           summaryClassName,
         )}
       >

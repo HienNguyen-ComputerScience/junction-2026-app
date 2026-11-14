@@ -14,25 +14,22 @@ import { cn } from "cn";
  *     <FrameFooter>footnotes</FrameFooter>
  *   </Frame>
  *
- * tone="inverse" scopes the dark tokens (.dark) to the frame: use it once per screen, for the key message.
- * Frame and FramePanel never clip overflow, so `sticky` children keep working.
+ * The page is dark: a frame is one surface step above the page and a panel one step above the
+ * frame, each edged with a hairline. No shadows.
  */
 
 type FrameElement = "section" | "div" | "article" | "aside";
 
 function Frame({
   as: Comp = "section",
-  tone = "default",
   className,
   ...props
-}: Omit<React.ComponentProps<"section">, "ref"> & { as?: FrameElement; tone?: "default" | "inverse" }) {
+}: Omit<React.ComponentProps<"section">, "ref"> & { as?: FrameElement }) {
   return (
     <Comp
       data-slot="frame"
-      data-tone={tone}
       className={cn(
         "group/frame flex flex-col rounded-frame border border-frame-border bg-frame p-1.5 text-foreground",
-        tone === "inverse" && "dark border-transparent bg-background",
         className,
       )}
       {...props}
@@ -108,8 +105,7 @@ function FramePanel({
     <div
       data-slot="frame-panel"
       className={cn(
-        "rounded-panel border border-border/80 bg-card text-card-foreground shadow-[0_1px_2px_oklch(0.2_0.02_260/0.05)]",
-        "group-data-[tone=inverse]/frame:border-white/8 group-data-[tone=inverse]/frame:shadow-none",
+        "rounded-panel border border-border bg-card text-card-foreground",
         PANEL_PADDING[padding],
         className,
       )}

@@ -30,7 +30,7 @@ export function BarFill({
   /** Stagger position for the load animation. */
   index?: number;
 }) {
-  const fill = status ? STATUS_FILL[status] : "bg-foreground/80";
+  const fill = status ? STATUS_FILL[status] : "bg-foreground/50";
   const split = status === "red" && finland != null && value > finland;
   return (
     <span
@@ -40,7 +40,7 @@ export function BarFill({
       {split ? (
         <>
           <span
-            className={cn("h-full opacity-40", fill)}
+            className={cn("h-full opacity-55", fill)}
             style={{ width: `${(finland / value) * 100}%` }}
           />
           <span className={cn("h-full flex-1", fill)} />
@@ -83,7 +83,7 @@ export function FinlandAxis({
     ? { right: `${100 - x}%`, paddingRight: 6 }
     : { left: `${x}%`, paddingLeft: 6 };
   return (
-    <div aria-hidden className={cn("relative h-4 type-mark text-muted-foreground", className)}>
+    <div aria-hidden className={cn("relative h-4 type-mark text-faint", className)}>
       {x > 16 && <span className="absolute left-0">0%</span>}
       <span className="absolute font-medium whitespace-nowrap text-foreground" style={anchor}>
         {label}
@@ -99,7 +99,7 @@ export function FinlandAxis({
 export function BarKey({ className }: { className?: string }) {
   return (
     <p className={className}>
-      Bars start at 0%; the ink line marks Finland&apos;s value. GP wait, lower is better: a red
+      Bars start at 0%; the white line marks Finland&apos;s value. GP wait, lower is better: a red
       bar is tinted up to the line and solid beyond it. Referrals, higher is faster: a bar that
       stops short of the line is slower than Finland.
     </p>
@@ -132,7 +132,7 @@ export function MeasureBar({
       <div
         className={cn(
           "relative h-2.5 rounded-[2px]",
-          value === null ? "bg-hatch ring-1 ring-status-grey-border ring-inset" : "bg-muted",
+          value === null ? "bg-hatch ring-1 ring-status-grey-border ring-inset" : "bg-track",
         )}
       >
         {value !== null && <BarFill value={value} finland={finland} status={status} index={index} />}

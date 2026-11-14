@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { LogoMark, SiteHeader } from "@/components/site-header";
@@ -23,6 +23,12 @@ const bricolage = Bricolage_Grotesque({
 export const metadata: Metadata = {
   title: "FirstLine",
   description: "Where early cancer care breaks down, county by county in Finland.",
+};
+
+// Matches --background, so the browser chrome and form controls are dark too.
+export const viewport: Viewport = {
+  themeColor: "#0e0f11",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
