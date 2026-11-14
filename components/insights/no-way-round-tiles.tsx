@@ -44,7 +44,14 @@ function Dots({ level }: { level: TileLevel }) {
  * step 3 the two that hold under every cut-off. The final state (server, phone, reduced motion,
  * print) shows every level at once, each with its own fill and number of dots.
  */
-export function NoWayRoundTiles({ areas }: { areas: { id: string; name: string; level: TileLevel }[] }) {
+export function NoWayRoundTiles({
+  areas,
+  counts = false,
+}: {
+  areas: { id: string; name: string; level: TileLevel }[];
+  /** Start each legend line with how many areas reach that level (counted from `areas`). */
+  counts?: boolean;
+}) {
   const step = useStoryStep();
   const shown = (level: TileLevel): TileLevel => {
     if (step === null) return level;
@@ -72,12 +79,14 @@ export function NoWayRoundTiles({ areas }: { areas: { id: string; name: string; 
           );
         })}
       </ul>
-      <ul aria-hidden className="flex flex-col gap-1.5 text-base">
+      {/* Without counts the legend only repeats each box's own screen-reader text; with counts it adds facts, so it is read. */}
+      <ul aria-hidden={counts ? undefined : true} aria-label={counts ? "Legend" : undefined} className="flex flex-col gap-1.5 text-base">
         {([1, 2, 3] as const).map((level) => (
           <li key={level} className="flex items-center gap-2.5">
             <span className={cn("inline-flex h-6 w-10 items-center justify-center rounded-sm border-2", FILL[level])}>
               <Dots level={level} />
             </span>
+            {counts ? <span className="figure min-w-[2ch] text-right font-semibold">{areas.filter((a) => a.level >= level).length}</span> : null}
             {level === 1 ? "Longer GP wait than Finland overall" : level === 2 ? "… and few private or work-health doctor visits instead" : "… true in every one of the six tests we ran"}
           </li>
         ))}

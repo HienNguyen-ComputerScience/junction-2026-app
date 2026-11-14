@@ -2,6 +2,8 @@
 
 Branch `t3/insights-cancer-access-gaps`. Page: `/insights` ("Where getting to a doctor is hardest, and what to start counting"). Coverage check first: [coverage.md](coverage.md). Component contract: [contract.md](contract.md).
 
+> This records the first build. The page has since been reworked twice: [page-rework/notes.md](page-rework/notes.md) (scroll story) and [rework-2/notes.md](rework-2/notes.md) (one statement and four framed insights, the current page).
+
 ## Headline finding
 
 In Central Finland and South Savo, about 7 in 10 non-urgent GP visits come more than a week after people ask (73.5% and 69.7%; Finland 54.7%, Sotkanet 6411, 2025), and fewer people there use an occupational-health doctor (1,580 and 1,694 visits per 1,000 aged 15–64; Finland 2,049, Sotkanet 2371) or a private doctor (23.5% and 22.3% of residents reimbursed by Kela; Finland 26.9%, Sotkanet 692) than in Finland as a whole. They are the only two areas that stay in this group under all six cut-offs tested, including the 2023 and 2024 figures.

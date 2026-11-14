@@ -7,6 +7,9 @@ import { countAreasWithRule, formatValue, groupLabel, inTen, type NwrArea, noWay
 
 const TESTS = noWayRound.tests.length;
 
+/** Test labels in data say "compared with Finland"; on screen the reference is always "Finland overall". */
+const overall = (label: string) => label.replace(/Finland(?! overall)/g, "Finland overall");
+
 /** The caveats that travel with this figure wherever it is shown. Always visible. */
 export const NO_WAY_ROUND_CAVEATS = [
   "Area figures, not people: they say nothing about any one person's options.",
@@ -98,8 +101,8 @@ export function TestsTable() {
   return (
     <div className="flex flex-col gap-3">
       <p className="max-w-[60rem] text-base text-pretty">
-        The main view compares each area with Finland in 2025. Each test below changes one thing: the point of
-        comparison, how far from Finland an area must be to count, or the year. An area is in &ldquo;long wait, few
+        The main view compares each area with Finland overall in 2025. Each test below changes one thing: the point of
+        comparison, how far from Finland overall an area must be to count, or the year. An area is in &ldquo;long wait, few
         other routes&rdquo; when its GP wait is above the comparison point and both its occupational-health visits and
         its private-doctor use are below it.
       </p>
@@ -121,9 +124,9 @@ export function TestsTable() {
               const margin = t.margin ? ` (and more than ${t.margin * 100}% away)` : "";
               return (
                 <tr key={t.id} className="border-b border-border-mist align-top">
-                  <th scope="row" className="px-4 py-3 font-semibold">{t.label}</th>
+                  <th scope="row" className="px-4 py-3 font-semibold">{overall(t.label)}</th>
                   <td className="px-4 py-3">
-                    {t.reference === "finland" ? "Finland" : "Middle area"} {t.year}: {formatValue("6411", t.values.wait)} ·{" "}
+                    {t.reference === "finland" ? "Finland overall" : "Middle area"} {t.year}: {formatValue("6411", t.values.wait)} ·{" "}
                     {Math.round(t.values.occupational).toLocaleString("en-GB")} · {formatValue("692", t.values.private)}
                     {margin}
                   </td>
