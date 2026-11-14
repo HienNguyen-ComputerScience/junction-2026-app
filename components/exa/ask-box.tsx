@@ -87,8 +87,8 @@ export function AskBox() {
         <label htmlFor="ask-box-input" className="sr-only">
           Your question about health care access in Finland
         </label>
-        <div className="flex min-w-0 flex-1 items-center gap-2.5 pl-3">
-          <Search aria-hidden className="size-[1.125rem] shrink-0 text-muted-foreground" />
+        <div className="flex min-w-0 flex-1 items-center gap-2.5 pl-2.5 sm:pl-3">
+          <Search aria-hidden className="hidden size-[1.125rem] shrink-0 text-muted-foreground sm:block" />
           <input
             id="ask-box-input"
             type="text"
@@ -96,7 +96,7 @@ export function AskBox() {
             onChange={(e) => setQuestion(e.target.value)}
             maxLength={MAX_QUESTION}
             disabled={loading}
-            placeholder="e.g. Is GP access getting better in Kainuu this year?"
+            placeholder="e.g. Is GP access improving in Kainuu?"
             autoComplete="off"
             className="h-11 w-full min-w-0 bg-transparent text-[0.9375rem] outline-none placeholder:text-muted-foreground/80 disabled:opacity-60"
           />
