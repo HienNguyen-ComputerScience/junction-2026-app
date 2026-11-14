@@ -1,5 +1,4 @@
 # Guided briefing: notes
-
 Post-freeze experiment on branch `t3/guided-county-briefing`, stacked on `t3/experimental-real-user-audit`. Production is untouched.
 
 The briefing brings one area's data to a county director one piece at a time: a nearly empty card, one statement or one figure, and a clearly labelled button to go on. It lives at `/briefing`.
@@ -14,7 +13,7 @@ The briefing brings one area's data to a county director one piece at a time: a 
 | 1 | Where you stand | `/briefing/<area>` | The area's share of non-urgent GP visits that come more than a week after people ask, counted up, with Finland's bar beside it and the area's place among the 22 | A director's first question is "are we bad?". One figure, one comparison, one rank. |
 | 2 | Where the delay is | `…/where-the-delay-is` | The three steps of the way to care as three tiles; the one worse than Finland is marked "The delay is here." | The audit found the bottleneck was buried under charts. Here it is the whole screen. Steps without public data are drawn as that, and said in a sentence. |
 | 3 | What it means | `…/what-it-means` | "About 85 of every 100 non-urgent GP visits…" on a hundred dots, with a button per year | A percentage becomes a count a board can repeat. The year buttons show the direction without a chart. |
-| 4 | What to do on Monday | `…/what-to-do` | The three recommended actions, all named at once; the first is open on its first step and who is responsible | Audit finding 2.1: actions two and three were below the fold. Here all three are in view before any press. |
+| 4 | What to do on Monday | `…/what-to-do` | The three recommended actions, named at once in three short rows, each with a button "Show the first step" | Audit finding 2.1: actions two and three were below the fold. Here all three titles and their buttons are in view at 1366×768 before any press (measured). |
 | 5 | What it could change | `…/what-it-could-change` | What was reported where the chosen action was tried, with its source and its limits | The honest answer to "will it work?": a result elsewhere, never a forecast for this area (see "Step 5: no estimate" below). |
 | 6 | Take it to your board | `…/take-it-to-your-board` | The briefing in three lines and one filled button to the board-ready plan | The briefing ends in something the director can carry out of the browser: the plan page, a printed document, an email. |
 
@@ -33,13 +32,13 @@ Always there: "Next: …" (filled, bottom right, names the next step), "Back" (b
 | 2 | "Explain these three steps" | What each step's words mean, and that the colours compare with Finland, not with a clinical standard. |
 | 3 | "2023", "2024", "2025" | The statement and the hundred dots for that year. |
 | 3 | "Show me the source" | As on step 1, for the figure in focus. |
-| 4 | "Show the first step" (one per action) | The action's first step and who is responsible. One is open at a time; action 1 starts open. |
-| 4 | "Show where it was tried and how it is funded" (inside an open action; the shared `Disclosure`) | The precedent with its source chip, and the national roadmap measure and funding route with its chip, or a sentence that none is named. |
+| 4 | "Show the first step" (one per action) | The action's first step and who is responsible. One is open at a time; none is open at the start, so all three stay in view. |
+| 4 | "Show where it was tried and how it is funded" (a text button inside an open action) | The precedent with its source chip, and the national roadmap measure and funding route with its chip, or a sentence that none is named. |
 | 4 | "See the result where it was tried" (link) | Goes to step 5 with that action chosen. |
 | 5 | "Action 1", "Action 2", "Action 3" | Which action's result is shown. The choice made on step 4 carries over. |
 | 5 | "Show where it was tried" | The place and the programme. |
 | 5 | "Show what <area> would measure" | The published figure the area would watch, with its chip; the sentence that FirstLine gives no estimate; and the pace that would reach Finland's level (or the best area's) by a year chosen with the buttons "2027" to "2031". |
-| 6 | "Open the plan for your board" | `/county/<area>/plan?target=…&year=…` with the target year chosen on step 5. |
+| 6 | "Open the plan for your board" | `/county/<area>/plan?target=…&year=…` with the target year chosen on step 5. The briefing does not ask the director to drop or reorder actions, so it sends no `actions=` and the plan shows its default: the same three, in the same order. |
 | 6 | "Print this briefing" | The browser's print dialog with the whole briefing as one document (below). |
 | 6 | "Send this briefing by email" | A mail draft with the address of step 1. |
 | 6 | "Full page for <area>", "Table of all 22 areas" | The detail pages. |
@@ -54,7 +53,8 @@ Shared pieces used (from `components/motion` and `app/globals.css`):
 - `animate-line-in` for the progress segment of the current step, the line of the way behind the three tiles on step 2, and the bar across the top of the tile where the delay is.
 - `AnimatedNumber` (`level="loud"`) for the figure on step 1 and the pace on step 5. The server renders the final text; the moving digits are an `aria-hidden` overlay.
 - `AnimatedBar` for the bars on step 1 and in the comparison, always with `play`, so they grow when a button puts them on screen and never on scroll.
-- `Disclosure` (`tone="quiet"`) inside the action cards on step 4.
+
+Not used: `Reveal` (a step is mounted by a press, so the CSS utility does the same with the final state in the server HTML and no script) and `Disclosure` (the panels inside a step are one-at-a-time buttons that say whether they are open, which a native `<details>` per panel does not give).
 
 The briefing's own choreography (`app/briefing/briefing.css`, classes `bf-*`):
 
@@ -79,7 +79,7 @@ Every number comes from the repo's `data/` snapshot through existing `lib/` func
 | 1 | Area's and Finland's share of non-urgent GP visits that waited more than 7 days, 2025; the gap in percentage points; rank among 22 | Sotkanet 6411 (THL) | `getRanking`, `getNationalValue`, `diff1` | "Visits, not people; all non-urgent GP visits, not only cancer-related ones. A GP is a health-centre doctor." |
 | 2 | Status of each of the three steps against Finland; GP wait (Sotkanet 6411); referrals processed within 3 days (Sotkanet 13); HUS-wide referral value for the four HUS areas; unpublished figures after the referral | Sotkanet 6411, Sotkanet 13, national cancer strategy roadmap | `getBottleneck`, `bottleneckLede`, `getStageGap`, `STATUS_LABEL`, `getDataGaps` | Step 2 of the way has no public data anywhere, said as a finding. The HUS value is labelled "No county figure" and never shown as the area's own. Helsinki's tile says "The city's own units only. Most referrals go to the HUS hospital group." |
 | 3 | The focus step's share per year 2023 to 2025, rounded to "n of every 100"; change since 2023 | Sotkanet 6411 or 13 | `getMainReason`, `getValue`, `getNationalValue`, `YEARS`, `getRecordedVisitChange`, `isRecordingSensitiveChange`, `describeVisitChange` | Visits (or referrals), not people; rounded. Where recorded visits changed a lot, the change is followed by "Read with care: recorded visits … so part of the change may be how visits are recorded." |
-| 4 | No figures. Actions, first steps, owners, precedents, roadmap measures and funding routes | `data/evidence.json`, `data/roadmap.json` | `pickActions`, `plainTitle`, `getMeasureForAction` | "Proposals for service planning, picked by a fixed rule from a checked evidence table. Not medical advice." |
+| 4 | No figures. Actions, first steps, owners, precedents, roadmap measures and funding routes | `data/evidence.json`, `data/roadmap.json` | `pickActions`, `plainTitle`, `getMeasureForAction` | "Chosen for the step where the delay is, by a fixed rule from a checked evidence table. Proposals for service planning, not medical advice." |
 | 5 | The precedent's reported result in the study's own words (`effect_text`); the published figure to watch; the target pace | The study behind each action (source chip); Sotkanet 6411 or 13 | `pickActions`, `targetPath`, `bestForStage`, `TARGET_YEARS` | "Not a forecast for <area>." followed by the study's limitations from the evidence table, always on the step. |
 | 6 | Step 1's figure and Finland's, repeated | Sotkanet 6411 | as step 1 | "Visits, not people; all non-urgent GP visits, not only cancer-related ones." |
 
@@ -124,16 +124,17 @@ They are passed in `app/briefing/[id]/layout.tsx`, where the six steps are creat
 
 ## What I checked, and how
 
-The Playwright browser MCP could not start in this environment ("Chromium distribution 'chrome' is not found"), so the walks were scripted with `playwright-core` driving the bundled Chromium, pressing the same buttons a person would. Screenshots are in `docs/audit/briefing/screenshots/`.
+The Playwright browser MCP could not start in this environment ("Chromium distribution 'chrome' is not found"), so the walks were scripted with `playwright-core` driving the bundled Chromium, pressing the same buttons a person would. The results below are from the last pass, run against the production build (`next build`, `next start`) after the final merge of the foundation branch. Screenshots are in `docs/audit/briefing/screenshots/`.
 
-- **Areas walked from Start to step 6 by pressing the buttons:** Vantaa and Kerava and Kainuu at 1366×768; Päijät-Häme and Helsinki at 390×844; East Uusimaa with reduced motion. Every step was reached, the address and title changed on each, no page scrolled sideways, no console error.
-- **Keyboard only:** from the start page with Tab and Enter to step 6. The list of areas, Start and every Next were reached and showed a 2 px Forest Ink focus ring. On arrival the focus was on the step's statement on all six steps. Browser Back went 6 → 5 → 4, and a refresh kept step 4.
-- **Buttons inside the steps:** all of the buttons in the table above were pressed and their panels read (`screenshots/buttons/`). The year chosen on step 5 (2029) arrived on the plan page.
+- **Areas walked from Start to step 6 by pressing the buttons:** Vantaa and Kerava and Kainuu at 1366×768; Päijät-Häme and Helsinki at 390×844; East Uusimaa with reduced motion. Every step was reached, the address and title changed on each, no page scrolled sideways, no script error. The only failed request is the site header's prefetch of `/insights`, which returns 404 until the insights branch is merged.
+- **Keyboard only:** from the start page with Tab and Enter to step 6. The list of areas, Start and every Next were reached and showed a 2 px Forest Ink focus ring. Every control on steps 1, 4, 5 and 6 was then tabbed through and its ring read from the page: all are drawn, the source chips included (theirs is the site's ring). On arrival the focus was on the step's statement on all six steps. Browser Back went 6 → 5 → 4, and a refresh kept step 4.
+- **Buttons inside the steps:** all of the buttons in the table above were pressed and their panels read (`screenshots/buttons/`). The year chosen on step 5 (2029) arrived on the plan page. The plan link was followed for Vantaa and Kerava, Kainuu, Helsinki (`target=finland`) and Päijät-Häme (`target=best`): all open the plan.
+- **Step 4 above the fold:** at 1366×768 the button bar starts at 687 px; the three titles end at 467, 570 and 673 px and their buttons at 465, 568 and 671 px, for Vantaa and Kerava, Central Ostrobothnia and Päijät-Häme (`screenshots/buttons/step4_viewport_1366x768.png`).
 - **Reduced motion:** 0 running animations on all six steps 120 ms after load; everything at full opacity except the source chips' arrow icon, which is drawn at 70% by design.
-- **Print:** the print document shows, the card and the site header do not; 4 A4 pages for Vantaa and Kerava and for East Uusimaa, with all six headings and the source list (`screenshots/print/`).
-- **Contrast:** 751 text runs measured on the start page and all steps for three areas, with every panel opened. None below WCAG AA; the lowest ratio is 6.65:1.
+- **Print:** the print document shows, the card and the site header do not; 5 A4 pages for Vantaa and Kerava and for East Uusimaa, with all six headings and the source list (`screenshots/print/`).
+- **Contrast:** 760 text runs measured on the start page and all steps for three areas, with every panel opened. None below WCAG AA; the lowest ratio is 7.53:1.
 - **Text size:** everything is 16 px or more except the 11 px eyebrows (the allowed exception) and the text inside the site's shared source chip (13 px, see "What still falls short").
-- **Unknown addresses:** `/briefing/nowhere` and `/briefing/kainuu/not-a-step` return the 404 page.
+- **Unknown addresses:** `/briefing/nowhere` and `/briefing/kainuu/not-a-step` show the site's "Page not found" page. In the production build the very first request for such an address answers with HTTP 200 and later ones with 404 (see "Needed from the foundation agent").
 - **Motion:** frame sequences of steps 1, 2 and 3 coming on screen, about every 130 ms after the press, in `screenshots/motion/`.
 
 ### The two-minute test
@@ -142,11 +143,13 @@ Counted, not timed with a person: the words on screen with no in-step button pre
 
 | Area | Step 1 | 2 | 3 | 4 | 5 | 6 | Total | At 200 words a minute | At 250 |
 |---|---|---|---|---|---|---|---|---|---|
-| Vantaa and Kerava | 66 | 66 | 72 | 117 | 92 | 112 | 525 | 2 min 38 s | 2 min 6 s |
-| Kainuu | 63 | 69 | 81 | 111 | 89 | 105 | 518 | 2 min 35 s | 2 min 4 s |
-| Päijät-Häme | 62 | 69 | 115 | 112 | 89 | 107 | 554 | 2 min 46 s | 2 min 13 s |
+| Vantaa and Kerava | 66 | 66 | 72 | 71 | 92 | 112 | 479 | 2 min 24 s | 1 min 55 s |
+| Kainuu | 63 | 69 | 81 | 65 | 89 | 105 | 472 | 2 min 22 s | 1 min 53 s |
+| Helsinki | 63 | 81 | 93 | 69 | 90 | 106 | 502 | 2 min 31 s | 2 min 0 s |
+| Päijät-Häme | 62 | 69 | 115 | 66 | 89 | 107 | 508 | 2 min 32 s | 2 min 2 s |
+| East Uusimaa | 65 | 65 | 116 | 71 | 91 | 111 | 519 | 2 min 36 s | 2 min 5 s |
 
-So a reader who reads every word, captions and caveats included, needs about two and a half minutes; the statements alone (one per step, about 150 words) take under a minute. It passes the two-minute test for a demo or a brisk reader and misses it for a slow, complete read. The first version was about 600 to 690 words; steps 3 to 6 were cut after the team lead's note that step 5 had too much text.
+So a reader who reads every word, captions and caveats included, needs about two and a half minutes; a brisk reader about two; the statements alone (one per step, about 150 words) take under a minute. It passes the two-minute test for a demo or a brisk reader and misses it for a slow, complete read. The first version was about 600 to 690 words; steps 3 to 6 were cut after the team lead's note that step 5 was hard to read and had too much text. That is also why the detail on step 5 (where it was tried, what the area would measure, the target pace) is behind two buttons, while the result, its source and its caveat stay on the step. The start page says "About two minutes".
 
 ## What still falls short
 
@@ -154,18 +157,22 @@ So a reader who reads every word, captions and caveats included, needs about two
 - **Not tested with a person, a screen reader or a real printer.** Focus, titles and live regions were checked in the DOM; nobody listened to it in NVDA or VoiceOver. Print was checked as print-media rendering and PDF, not on paper.
 - **The route announcement is not uniform:** Next's announcer read the step's statement on some steps and the page title on others. Both name the step, and the focus moves to the statement either way.
 - **The source chip's text is 13 px.** It is the site's shared `components/source-chip.tsx`, outside the briefing's folders.
+- **Step 4 shows no first step until a button is pressed.** That is the price of keeping all three actions in view on a small laptop. At 768 px high the third row's lower edge sits under the button bar; its title and button are fully visible.
+- **An unknown briefing address answers 200 on its first request** in the production build (the not-found page is shown either way, with `noindex`).
 - **Step 5 gives no number for the area.** That is the honest state of the evidence table, but a director may still want one. It needs an effect size measured on Sotkanet 6411 or 13, which no cited study has.
 - **The briefing always opens on the GP wait in step 1,** also for the three areas whose delay is at the referral. Step 2 then moves to the referral. One opening figure for every area keeps step 1 comparable, at the price of a turn in the story for those three.
 - **The comparison on step 1 is by the director's choice,** not by similarity. The data has no defensible "similar area" measure.
 - **Choices are not in the address.** The action chosen on step 4 and the year chosen on step 5 are lost on a refresh (the step itself is kept).
 - **The edge lines are desktop only** and purely decorative.
 - **Motion was recorded as frames, not as video.**
+- **`package-lock.json` shows as modified in this worktree** (three added lines from `npm install`, there before this work started). It is not part of any commit here; the verify command ran with it.
 
 ## Needed from the foundation agent
 
-Nothing blocks the briefing. Two small things outside the briefing's folders:
+Nothing blocks the briefing. Three small things outside the briefing's folders:
 
 1. `components/source-chip.tsx`: the chip's text is 13 px, under the 16 px floor the brief sets for body and button text. Raise it, or confirm the chip is an allowed exception like the eyebrow.
-2. `PRIMARY_BUTTON` and friends in `components/briefing/ui.tsx` restate the button look from the contract as class strings, because the briefing's buttons are links with their own sizes. If `buttonVariants` gains a 52 px size with the trailing arrow, the briefing can switch to it.
+2. `proxy.ts`: its matcher covers `/county/:id…` so that an unknown area gets a real 404 with Cache Components. The briefing has the same case: add `/briefing/:id` and `/briefing/:id/:step` (valid steps are `BRIEFING_STEP_SLUGS` in `lib/briefing/steps.ts`). Until then the first request for an unknown briefing address returns the not-found page with HTTP 200.
+3. `PRIMARY_BUTTON` and friends in `components/briefing/ui.tsx` restate the button look from the contract as class strings, because the briefing's buttons are links with their own sizes. If `buttonVariants` gains a 52 px size with the trailing arrow, the briefing can switch to it.
 
-One thing for whoever copies the briefing's patterns: in Tailwind 4, `outline-none` next to `focus-visible:outline-2` switches the focus ring off (it sets the outline style to none). The briefing had this and it is fixed here; the shared `Disclosure` uses a ring instead and is not affected.
+One thing for whoever copies the briefing's patterns: in Tailwind 4, `outline-none` next to `focus-visible:outline-2` switches the focus ring off (it sets the outline style to none). The briefing had this and it is fixed here. The shared `Disclosure` and the source chip draw a ring instead; both were measured and their rings are drawn.

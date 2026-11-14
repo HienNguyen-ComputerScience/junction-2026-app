@@ -203,7 +203,7 @@ export function ChangeView({
                     key={pace.year}
                     className="mr-1.5 font-display text-[2.5rem] leading-[1.35] font-light tracking-[-0.01em] text-forest-ink lining-nums"
                   >
-                    <AnimatedNumber value={pace.perYear} final={pace.perYear.toFixed(1)} level="loud" play={open === "measure"} />
+                    <AnimatedNumber value={pace.perYear} final={pace.perYear.toFixed(1)} level="loud" play={open === "measure"} className="lining-nums" />
                   </span>{" "}
                   percentage points better each year, for {pace.years} {pace.years === 1 ? "year" : "years"} ({pace.points.toFixed(1)}{" "}
                   points in all).

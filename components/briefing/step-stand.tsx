@@ -34,7 +34,7 @@ export function StepStand({ briefing, confidence }: { briefing: Briefing; confid
         <div className="animate-fade-up flex flex-wrap items-end gap-x-5 gap-y-2" style={i(1)}>
           {/* The figure as drawn. The heading below carries it for screen readers. */}
           <p aria-hidden className="font-display text-[3.5rem] leading-[1.05] font-light tracking-[-0.03em] text-forest-ink lining-nums sm:text-[4.625rem]">
-            <AnimatedNumber value={stand.value} final={figure} suffix="%" level="loud" play />
+            <AnimatedNumber value={stand.value} final={figure} suffix="%" level="loud" play className="lining-nums" />
           </p>
           {confidence ? <div data-slot="briefing-confidence" className="pb-2 text-base leading-6 text-charcoal">{confidence}</div> : null}
         </div>

@@ -138,7 +138,7 @@ export function BriefingShell({
               never below the fold. */}
           <nav
             aria-label="Briefing steps"
-            className="sticky bottom-0 z-10 flex items-stretch justify-between gap-3 rounded-b-[14px] border-t border-border-mist bg-cream-paper px-[21px] py-[14px] sm:px-[42px] sm:py-[21px]"
+            className="sticky bottom-0 z-10 flex items-stretch justify-between gap-3 rounded-b-[14px] border-t border-border-mist bg-cream-paper px-[21px] py-[14px] sm:px-[42px]"
           >
             <Link href={previous ? briefingHref(areaId, previous) : "/briefing"} className={cn(SECONDARY_BUTTON, "shrink-0 max-sm:px-4")}>
               <ArrowLeft aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />

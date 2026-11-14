@@ -30,7 +30,7 @@ export function BoardActions({
   function sendByEmail() {
     const address = `${window.location.origin}${briefingPath}`;
     const subject = `Briefing: early cancer care in ${areaName}`;
-    const body = `A two-minute briefing on where early cancer care slows in ${areaName}, and what to do about it:\n\n${address}\n\nEvery figure in it names its public source.`;
+    const body = `A short briefing on where early cancer care slows in ${areaName}, and what to do about it:\n\n${address}\n\nEvery figure in it names its public source.`;
     window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 

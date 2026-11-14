@@ -13,7 +13,7 @@ import { getRanking } from "@/lib/ranking";
 export const metadata: Metadata = {
   title: "Guided briefing | FirstLine",
   description:
-    "A two-minute briefing on early cancer care in one area of Finland: where it stands, where the delay is, and what to do.",
+    "A short guided briefing on early cancer care in one area of Finland: where it stands, where the delay is, and what to do.",
 };
 
 const i = (index: number) => ({ "--i": index }) as CSSProperties;
@@ -41,7 +41,7 @@ export default function BriefingStartPage() {
         <div className="relative flex flex-1 flex-col">
           <EdgeLines className="absolute top-[13.5rem] left-0 max-lg:hidden" />
           <div className="flex flex-1 flex-col gap-[21px] px-[21px] pt-[28px] pb-[42px] sm:px-[42px] lg:pr-[84px] lg:pl-[126px]">
-            <Pill className="animate-fade-up">Two minutes, {BRIEFING_STEP_COUNT} steps</Pill>
+            <Pill className="animate-fade-up">About two minutes, {BRIEFING_STEP_COUNT} steps</Pill>
             <h1 className={`animate-fade-up ${STATEMENT}`} style={i(1)}>
               Early cancer care in your area, brought to you one piece at a time: where you stand, where the delay is,
               and what to do about it.
