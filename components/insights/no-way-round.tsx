@@ -1,7 +1,7 @@
 import { AnimatedNumber, Disclosure, Reveal } from "@/components/motion";
 import { ConfidenceBadge } from "@/components/insights/confidence-badge";
 import { NoWayRoundChart } from "@/components/insights/no-way-round-chart";
-import { SortableTable } from "@/components/insights/sortable-table";
+import { SortableTable, SwipeHint } from "@/components/insights/sortable-table";
 import { SourceChip } from "@/components/source-chip";
 import { countAreasWithRule, formatValue, groupLabel, inTen, type NwrArea, noWayRound } from "@/lib/insights";
 
@@ -106,6 +106,7 @@ export function TestsTable() {
         other routes&rdquo; when its GP wait is above the comparison point and both its occupational-health visits and
         its private-doctor use are below it.
       </p>
+      <SwipeHint />
       <div className="relative w-full overflow-x-auto rounded-[14px] bg-cream-paper">
         <table className="w-full min-w-[40rem] border-collapse text-left text-base">
           <caption className="px-4 pt-4 pb-2 text-left font-semibold text-forest-ink">

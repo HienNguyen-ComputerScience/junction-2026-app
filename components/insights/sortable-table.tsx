@@ -4,6 +4,11 @@ import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { cn } from "cn";
 
+/** A quiet cue, on phones only, that a table is wider than the screen and scrolls sideways. */
+export function SwipeHint() {
+  return <p className="text-base text-muted-foreground sm:hidden print:hidden">Swipe sideways to see all columns</p>;
+}
+
 export type SortableColumn = {
   /** Visible column heading. */
   header: string;
@@ -62,6 +67,8 @@ export function SortableTable({
   };
 
   return (
+    <div className="flex w-full flex-col gap-2">
+    <SwipeHint />
     <div className="relative w-full overflow-x-auto rounded-[14px] bg-cream-paper">
       <table className="w-full min-w-[40rem] border-collapse text-left text-base">
         <caption className="px-4 pt-4 pb-2 text-left text-base font-semibold text-forest-ink">{caption}</caption>
@@ -134,6 +141,7 @@ export function SortableTable({
       <p className="px-4 pt-2 pb-4 text-base text-muted-foreground print:hidden">
         Press a column heading to sort by it; press it again to reverse the order.
       </p>
+    </div>
     </div>
   );
 }
