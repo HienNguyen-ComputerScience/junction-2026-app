@@ -59,7 +59,7 @@ export function sourceLabel(source: Source): string {
 
 /**
  * Source reference: a small mono tag that links to the source. Sits next to, or in the same
- * block as, every number. 24px tall on desktop, 28px on phones; the hit area is 36px tall on a phone and 40px from sm, and neighbouring chips sit 8px apart.
+ * block as, every number. 24px tall on desktop, 28px on phones, with a larger hit area.
  * One format everywhere: "<publisher or Sotkanet id>" and, when the figure has a year, " · 2025".
  */
 export function SourceChip({
@@ -83,7 +83,7 @@ export function SourceChip({
       rel="noopener noreferrer"
       title={title}
       aria-label={`${label}: ${title} (opens in a new tab)`}
-      className="group/chip relative inline-flex h-7 w-fit max-w-full min-w-0 items-center gap-1 rounded-sm border border-border bg-muted px-1.5 align-middle type-mark whitespace-nowrap text-muted-foreground transition-colors outline-none after:absolute after:-inset-x-0.5 after:-inset-y-1 after:content-[''] sm:after:-inset-y-2 hover:border-foreground/30 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:h-6 sm:px-2"
+      className="group/chip relative inline-flex h-7 w-fit max-w-full min-w-0 items-center gap-1 rounded-sm border border-border bg-muted px-1.5 align-middle type-mark whitespace-nowrap text-muted-foreground transition-colors outline-none after:absolute after:-inset-x-0.5 after:-inset-y-2 after:content-[''] hover:border-foreground/30 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:h-6 sm:px-2"
     >
       <span className="truncate">{label}</span>
       <ArrowUpRight aria-hidden className="size-3 shrink-0 opacity-70 group-hover/chip:opacity-100" />

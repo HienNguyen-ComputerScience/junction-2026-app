@@ -7,11 +7,7 @@ import { FramePanel } from "@/components/ui/frame";
 import { STAGE_LABELS } from "@/lib/act";
 import type { Evidence } from "@/lib/data";
 
-/**
- * Label and value. Side by side when the card has room (one 112px label column on both sides of
- * the card), stacked on a phone. Two text tones on a card: ink for what it argues from (title,
- * First step, Evidence, Owner), one secondary tone for the description and the precedent.
- */
+/** Label and value. Side by side when the card has room, stacked on a phone. */
 function Field({
   label,
   children,
@@ -19,12 +15,12 @@ function Field({
 }: {
   label: string;
   children: ReactNode;
-  /** `ink` for what the card argues from (the evidence); `quiet` (secondary) for supporting context. */
+  /** `ink` for what the card argues from (the evidence); `quiet` for supporting context. */
   tone?: "ink" | "quiet";
 }) {
   return (
-    <div className="grid gap-y-1 @md:grid-cols-[7rem_minmax(0,1fr)]">
-      <dt className="type-caption text-muted-foreground @md:pr-4">{label}</dt>
+    <div className="grid gap-x-4 gap-y-1 @md:grid-cols-[6rem_minmax(0,1fr)]">
+      <dt className="type-caption text-muted-foreground">{label}</dt>
       <dd
         className={`text-sm leading-relaxed text-pretty tabular-nums ${tone === "ink" ? "text-foreground" : "text-muted-foreground"}`}
       >

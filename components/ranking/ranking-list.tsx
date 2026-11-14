@@ -437,9 +437,7 @@ function RankingRowLink({
 
 /**
  * Change in percentage points since FIRST_YEAR, in words: "27.4 pts worse since 2023". No arrow
- * and no sign (a rising arrow reads as good news), and no colour: colour is for status. The
- * number and the word worse/better are in the text colour, the rest is secondary, so a column
- * of them can be scanned.
+ * and no sign (a rising arrow reads as good news), and no colour: colour is for status.
  */
 function ChangeSince({ change }: { change: number | null }) {
   if (change === null) return null;
@@ -450,8 +448,7 @@ function ChangeSince({ change }: { change: number | null }) {
         "No change"
       ) : (
         <>
-          <span className="figure text-foreground">{size} pts</span>{" "}
-          <span className="text-foreground">{change > 0 ? "worse" : "better"}</span>
+          <span className="figure">{size} pts</span> {change > 0 ? "worse" : "better"}
         </>
       )}{" "}
       since {FIRST_YEAR}
