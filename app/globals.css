@@ -365,10 +365,10 @@ h2:not([class*="type-"], .font-sans) {
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* Legend labels (BarKey) and the short notes under a chart: 14px. */
+/* Legend labels (BarKey) and the short notes under a chart: 16px. */
 @utility type-legend {
-  font-size: 0.875rem;
-  line-height: 1.375rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
   color: var(--muted-foreground);
 }
 
