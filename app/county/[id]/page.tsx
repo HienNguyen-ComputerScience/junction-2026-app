@@ -1,14 +1,22 @@
-import { ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Fragment } from "react";
 
 import { CountyBrief } from "@/components/brief/county-brief";
 import { CountyNews } from "@/components/exa/county-news";
 import { LimitationsBox, type LimitationItem } from "@/components/pathway/limitations-box";
-import { StageCard, type StageCardProps } from "@/components/pathway/stage-card";
+import { StageCard, StepRail, type StageCardProps } from "@/components/pathway/stage-card";
 import { SourceChip } from "@/components/source-chip";
+import { BackLink } from "@/components/ui/back-link";
 import { buttonVariants } from "@/components/ui/button";
+import {
+  Frame,
+  FrameFooter,
+  FrameHeader,
+  FrameMeta,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
 import { counties, getCounty, getValue, LATEST_YEAR, type County } from "@/lib/data";
 import {
   formatPct,
@@ -42,86 +50,82 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const lateReferralsFinland = getNationalValue(REFERRAL_LATE_ID);
 
   return (
-    // Two columns on desktop: the limitations box sits in a sticky side column so it is
-    // visible without scrolling; on phones it comes straight after the verdict.
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-x-8">
-      <div className="flex flex-col gap-4 lg:col-start-1 lg:row-start-1">
-        <Link
-          href="/"
-          className={buttonVariants({ variant: "ghost", size: "sm", className: "w-fit" })}
-        >
-          <ArrowLeft aria-hidden />
-          Back to ranking
-        </Link>
-
-        <header className="flex flex-col gap-3">
-          <p className="text-sm font-medium text-muted-foreground">
-            Path to early cancer care · {county.name_fi}
-          </p>
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{county.name}</h1>
-          <p className="max-w-3xl text-base sm:text-lg">{getVerdict(county.id)}</p>
-          <Link
-            href={`/county/${county.id}/act`}
-            className={buttonVariants({ size: "lg", className: "w-fit px-4 text-base" })}
-          >
+    <main className="page-container flex flex-col gap-6 pt-4 sm:gap-8 sm:pt-6">
+      {/* Desktop: title and verdict on the left, the limitations box beside them, so both are
+          on the first screen. Phones: the box moves below the pathway so the key number
+          comes first (the wrapper is display: contents there, and `order` places the box). */}
+      <div className="contents lg:grid lg:grid-cols-[minmax(0,1fr)_30rem] lg:items-start lg:gap-10">
+        <header className="flex flex-col items-start gap-4">
+          <BackLink href="/">Back to ranking</BackLink>
+          <div className="flex flex-col gap-2">
+            <p className="type-caption text-muted-foreground">
+              Path to early cancer care · {county.name_fi}
+            </p>
+            <h1 className="type-page">{county.name}</h1>
+          </div>
+          <p className="max-w-[40rem] type-lede">{getVerdict(county.id)}</p>
+          <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
             What to do about it
             <ArrowRight aria-hidden data-icon="inline-end" />
           </Link>
         </header>
+
+        <LimitationsBox items={limitations} className="max-lg:order-1" />
       </div>
 
-      <LimitationsBox
-        items={limitations}
-        className="lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto"
-      />
-
-      <div className="flex flex-col gap-8 lg:col-start-1 lg:row-start-2">
-        <section aria-labelledby="pathway-heading" className="flex flex-col gap-3">
-          <h2 id="pathway-heading" className="text-xl font-semibold">
+      <Frame aria-labelledby="pathway-heading">
+        <FrameHeader>
+          <FrameTitle id="pathway-heading" className="type-title">
             The first steps, compared with Finland ({LATEST_YEAR})
-          </h2>
-          <ol className="grid grid-cols-1 gap-2 md:grid-cols-[1fr_auto_1fr_auto_1fr] md:items-stretch">
+          </FrameTitle>
+          <FrameMeta className="hidden sm:flex">
+            <span aria-hidden className="h-3.5 w-0.5 bg-foreground" />
+            Line on each bar: Finland&apos;s value
+          </FrameMeta>
+        </FrameHeader>
+        <FramePanel padding="none">
+          <ol className="grid grid-cols-1 p-4 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)] md:px-0 md:py-6">
             {stages.map((stage, index) => (
-              <Fragment key={stage.title}>
-                {index > 0 && (
-                  <li aria-hidden className="flex items-center justify-center text-muted-foreground">
-                    <ArrowDown className="size-5 md:hidden" />
-                    <ArrowRight className="hidden size-5 md:block" />
-                  </li>
-                )}
-                <li>
+              <li
+                key={stage.title}
+                className="grid grid-cols-[1.75rem_minmax(0,1fr)] gap-x-3 md:flex md:flex-col md:gap-4"
+              >
+                <StepRail
+                  step={stage.step}
+                  status={stage.status}
+                  first={index === 0}
+                  last={index === stages.length - 1}
+                />
+                <div className={`md:flex-1 md:px-6 ${index === stages.length - 1 ? "" : "max-md:pb-8"}`}>
                   <StageCard {...stage} />
-                </li>
-              </Fragment>
+                </div>
+              </li>
             ))}
           </ol>
-          <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+        </FramePanel>
+        <FrameFooter className="flex flex-col gap-2">
+          <p>
+            Bars start at 0%. The ink line marks Finland&apos;s value; the solid red part of a bar
+            is the share beyond it.
+          </p>
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
             <span>
               Context: referrals left unprocessed for more than 21 days in {LATEST_YEAR}:{" "}
               {lateReferrals ? `${lateReferrals.value}%` : "no public data"}
-              {lateReferralsFinland ? ` (Finland ${lateReferralsFinland.value}%)` : ""}. Too
-              small everywhere to tell counties apart, so it does not set any colour.
+              {lateReferralsFinland ? ` (Finland ${lateReferralsFinland.value}%)` : ""}. Too small
+              everywhere to tell counties apart, so it does not set any colour.
             </span>
             <SourceChip
               sourceId={lateReferrals?.source_id ?? lateReferralsFinland?.source_id ?? "sotkanet-5033"}
               year={LATEST_YEAR}
             />
           </p>
-        </section>
+        </FrameFooter>
+      </Frame>
 
-        <section aria-labelledby="brief-heading" className="flex flex-col gap-3">
-          <h2 id="brief-heading" className="text-xl font-semibold">
-            Brief for the county director
-          </h2>
-          <CountyBrief countyId={county.id} />
-        </section>
-
-        <section aria-labelledby="news-heading" className="flex flex-col gap-3">
-          <h2 id="news-heading" className="text-xl font-semibold">
-            Local news
-          </h2>
-          <CountyNews key={county.id} countyId={county.id} />
-        </section>
+      <div className="contents max-lg:*:order-2">
+        <CountyBrief countyId={county.id} />
+        <CountyNews key={county.id} countyId={county.id} />
       </div>
     </main>
   );
@@ -139,7 +143,7 @@ function buildStages(county: County): StageCardProps[] {
       measure: gpGap && {
         value: gpGap.value,
         nationalValue: gpGap.national_value,
-        caption: "of non-urgent GP visits came more than 7 days after people asked",
+        caption: "of non-urgent GP visits came more than 7 days after the need for care was assessed",
         note: gpGap.note,
         sourceId: gpGap.source_id,
         year: gpGap.year,
@@ -158,7 +162,7 @@ function buildStages(county: County): StageCardProps[] {
     },
     {
       step: 3,
-      title: "GP → specialist referral",
+      title: "GP to specialist referral",
       status: stageStatus(county.id, "referral"),
       measure: referralGap && {
         value: referralGap.value,
@@ -212,7 +216,7 @@ function buildLimitations(county: County): LimitationItem[] {
   items.push({
     text: `Amber does not mean good. It means at or better than Finland's level, and Finland's level is itself a delay${
       nationalGpWait
-        ? `: ${formatPct(nationalGpWait.value)} of non-urgent GP visits nationally come more than a week after people ask`
+        ? `: ${formatPct(nationalGpWait.value)} of non-urgent GP visits nationally come more than a week after the need for care was assessed`
         : ""
     }.`,
   });

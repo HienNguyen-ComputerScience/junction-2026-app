@@ -1,6 +1,8 @@
-import { AlertTriangle, CircleDashed, Minus } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { SourceChip } from "@/components/source-chip";
+import { MeasureBar } from "@/components/ui/measure-bar";
+import { STATUS_FILL, STATUS_INK, StatusBadge } from "@/components/ui/status-badge";
 import type { GapStatus } from "@/lib/data";
 import { formatPct, STATUS_LABEL } from "@/lib/ranking";
 
@@ -24,94 +26,177 @@ export type StageCardProps = {
   emptyText?: string;
 };
 
-const STATUS_STYLE: Record<GapStatus, { card: string; badge: string }> = {
-  red: {
-    card: "border-red-300 bg-red-50 dark:border-red-900 dark:bg-red-950/40",
-    badge: "bg-red-600 text-white",
-  },
-  amber: {
-    card: "border-amber-300 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/40",
-    badge: "bg-amber-400 text-amber-950",
-  },
-  no_data: {
-    card: "border-dashed border-zinc-300 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/40",
-    badge: "bg-zinc-200 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-100",
-  },
+const NODE: Record<GapStatus, string> = {
+  red: "bg-status-red text-white",
+  amber: "bg-status-amber text-foreground",
+  no_data: "border border-dashed border-status-grey-ink/60 bg-card text-status-grey-ink",
 };
 
-const STATUS_ICON = { red: AlertTriangle, amber: Minus, no_data: CircleDashed };
-
-export function StageCard({ step, title, status, measure, emptyText }: StageCardProps) {
-  const style = STATUS_STYLE[status];
-  const Icon = STATUS_ICON[status];
-
+/**
+ * The path itself: a numbered node per step, joined by one line. Horizontal from md up,
+ * a vertical rail down the left on phones. Decorative; the step number is also in the heading.
+ */
+export function StepRail({
+  step,
+  status,
+  first,
+  last,
+}: {
+  step: number;
+  status: GapStatus;
+  first: boolean;
+  last: boolean;
+}) {
   return (
-    <article className={`flex h-full flex-col gap-3 rounded-xl border-2 p-4 ${style.card}`}>
-      <div className="flex flex-col gap-2">
-        <span className="text-xs font-medium text-muted-foreground">Step {step}</span>
-        <h3 className="text-lg font-semibold leading-snug">{title}</h3>
-        <span
-          className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${style.badge}`}
-        >
-          <Icon aria-hidden className="size-3.5" />
-          {STATUS_LABEL[status]}
+    <div aria-hidden className={`flex flex-col items-center md:flex-row ${first ? "md:pl-6" : ""}`}>
+      {!first && (
+        <span className="hidden w-6 items-center md:flex">
+          <span className="h-px flex-1 bg-foreground/30" />
+          <ChevronRight className="-ml-2 size-3.5 shrink-0 text-foreground/45" strokeWidth={1.75} />
         </span>
+      )}
+      <span
+        className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[0.8125rem] font-semibold tabular-nums ${NODE[status]}`}
+      >
+        {step}
+      </span>
+      {!last && <span className="w-px flex-1 bg-foreground/30 md:h-px md:w-auto" />}
+    </div>
+  );
+}
+
+/** One step of the pathway: status, the key number against Finland, and its trend. */
+export function StageCard({ step, title, status, measure, emptyText }: StageCardProps) {
+  return (
+    <article className="@container flex h-full min-w-0 flex-col gap-4">
+      <div className="flex flex-col items-start gap-2">
+        <h3 className="type-heading">
+          <span className="sr-only">Step {step}: </span>
+          {title}
+        </h3>
+        <StatusBadge status={status}>{STATUS_LABEL[status]}</StatusBadge>
       </div>
 
-      {measure ? (
-        <>
-          {measure.value !== null ? (
-            <div className="flex flex-col gap-0.5">
-              <span className="text-3xl font-semibold tabular-nums">
-                {formatPct(measure.value)}
-              </span>
-              <span className="text-sm">{measure.caption}</span>
-              <span className="text-sm text-muted-foreground">
-                Finland: {formatPct(measure.nationalValue)}
-              </span>
-            </div>
-          ) : (
-            <span className="text-sm text-muted-foreground">
-              Finland: {formatPct(measure.nationalValue)} {measure.caption}
-            </span>
-          )}
-          <p className="text-sm">{measure.note}</p>
-          {measure.trend.some((point) => point.value !== null) && (
-            <TrendStrip trend={measure.trend} />
-          )}
-          <div className="mt-auto">
-            <SourceChip sourceId={measure.sourceId} year={measure.year} />
+      {measure && measure.value !== null ? (
+        <div className="grid gap-x-8 gap-y-5 @sm:grid-cols-[minmax(0,1fr)_auto]">
+          <div className="flex flex-col gap-3">
+            <p className={`numeral text-[2.75rem] @sm:text-[3.5rem] ${STATUS_INK[status]}`}>
+              {formatPct(measure.value)}
+            </p>
+            <p className="max-w-[26ch] text-sm text-pretty">{measure.caption}</p>
+            <MeasureBar
+              value={measure.value}
+              finland={measure.nationalValue}
+              finlandLabel={`Finland ${formatPct(measure.nationalValue)}`}
+              status={status}
+              className="mt-1"
+            />
           </div>
-        </>
+          {measure.trend.some((point) => point.value !== null) && (
+            <TrendChart
+              trend={measure.trend}
+              finland={measure.nationalValue}
+              finlandYear={measure.year}
+              status={status}
+            />
+          )}
+        </div>
       ) : (
-        <p className="text-sm">{emptyText}</p>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2 text-sm text-pretty">
+            {measure ? (
+              <>
+                <p>{measure.note}</p>
+                <p className="text-muted-foreground">
+                  Finland: {formatPct(measure.nationalValue)} {measure.caption}
+                </p>
+              </>
+            ) : (
+              <p>{emptyText}</p>
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            <MeasureBar
+              value={null}
+              finland={measure ? measure.nationalValue : null}
+              finlandLabel={measure ? `Finland ${formatPct(measure.nationalValue)}` : undefined}
+              status={status}
+            />
+            {!measure && (
+              <p aria-hidden className="type-mark text-muted-foreground">
+                No indicator, so nothing to draw
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {measure && (
+        <div className="mt-auto pt-1">
+          <SourceChip sourceId={measure.sourceId} year={measure.year} />
+        </div>
       )}
     </article>
   );
 }
 
-function TrendStrip({ trend }: { trend: TrendPoint[] }) {
+/**
+ * Trend as zero-based columns on a 0 to 100% scale, so 58.0 and 85.4 look as different as
+ * they are. The latest year carries the status colour; the ink line is Finland's value.
+ */
+function TrendChart({
+  trend,
+  finland,
+  finlandYear,
+  status,
+}: {
+  trend: TrendPoint[];
+  finland: number;
+  finlandYear: number;
+  status: GapStatus;
+}) {
+  const lastIndex = trend.length - 1;
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-xs text-muted-foreground">Trend</span>
-      <div className="flex items-end gap-3">
-        {trend.map((point) => (
-          <div key={point.year} className="flex w-12 flex-col items-center gap-1">
-            <span className="text-xs font-medium tabular-nums">
-              {point.value === null ? "n/a" : formatPct(point.value)}
-            </span>
-            <div className="flex h-10 w-full items-end rounded-sm bg-background/70">
-              {point.value !== null && (
+    <figure className="flex w-full flex-col gap-2 @sm:w-44">
+      <figcaption className="type-micro text-muted-foreground">
+        {trend[0].year} to {trend[lastIndex].year}, on a 0 to 100% scale
+      </figcaption>
+      <div className="pt-5">
+        <div className="relative flex h-28 items-end gap-2 border-b border-foreground/40">
+          {trend.map((point, i) => (
+            <div key={point.year} className="flex h-full flex-1 items-end justify-center">
+              {point.value === null ? (
+                <span className="pb-1 type-mark text-muted-foreground">n/a</span>
+              ) : (
                 <div
-                  className="w-full rounded-sm bg-foreground/60"
-                  style={{ height: `${point.value}%` }}
-                />
+                  className={`relative w-full max-w-12 rounded-t-[2px] ${i === lastIndex ? STATUS_FILL[status] : "bg-foreground/25"}`}
+                  style={{ height: `${Math.min(100, Math.max(0, point.value))}%` }}
+                >
+                  <span className="absolute inset-x-0 -top-5 text-center type-mark font-medium text-foreground">
+                    {formatPct(point.value)}
+                  </span>
+                </div>
               )}
             </div>
-            <span className="text-xs text-muted-foreground">{point.year}</span>
-          </div>
-        ))}
+          ))}
+          <span
+            aria-hidden
+            className="absolute inset-x-0 h-0.5 translate-y-1/2 bg-foreground"
+            style={{ bottom: `${Math.min(100, Math.max(0, finland))}%` }}
+          />
+        </div>
+        <div className="mt-1 flex gap-2">
+          {trend.map((point) => (
+            <span key={point.year} className="flex-1 text-center type-mark text-muted-foreground">
+              {point.year}
+            </span>
+          ))}
+        </div>
       </div>
-    </div>
+      <p className="flex items-center gap-1.5 type-mark font-medium text-foreground">
+        <span aria-hidden className="h-0.5 w-3 bg-foreground" />
+        Finland {formatPct(finland)} ({finlandYear})
+      </p>
+    </figure>
   );
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Frame, FrameDescription, FrameHeader, FramePanel, FrameTitle } from "@/components/ui/frame";
 
 import { LoadingRows, ResultList, Unavailable } from "./result-list";
 import { isItemsResponse, STATUS_LABEL, type ItemsResponse } from "./types";
@@ -33,25 +33,29 @@ export function CountyNews({ countyId }: { countyId: string }) {
   const unavailable = state.kind === "error" || data?.freshness === "unavailable";
 
   return (
-    <Card aria-labelledby="county-news-title" className="min-h-48">
-      <CardHeader>
-        <div className="flex flex-wrap items-center gap-2">
-          <CardTitle id="county-news-title">Last 12 months</CardTitle>
+    <Frame aria-labelledby="county-news-title">
+      <FrameHeader>
+        <FrameTitle id="county-news-title" className="type-title">
+          Local news, last 12 months
+        </FrameTitle>
+        <div className="col-span-2 flex flex-wrap items-center gap-2 pt-1">
           <Badge variant="secondary">Found live — unverified</Badge>
-          <span className="text-xs text-muted-foreground">via Exa</span>
+          <span className="type-mark text-muted-foreground">via Exa</span>
           {data && !unavailable && <Badge variant="outline">{STATUS_LABEL[data.freshness]}</Badge>}
           {unavailable && <Badge variant="outline">{STATUS_LABEL.unavailable}</Badge>}
         </div>
-        <CardDescription>Finnish news and county pages about access to a doctor. Not checked by the team.</CardDescription>
-      </CardHeader>
-      <CardContent>
+        <FrameDescription>
+          Finnish news and county pages about access to a doctor. Not checked by the team.
+        </FrameDescription>
+      </FrameHeader>
+      <FramePanel padding="none" className="min-h-40 px-4 py-4 sm:px-6 sm:py-5">
         {state.kind === "loading" && <LoadingRows label="Searching local news with Exa" />}
         {unavailable && <Unavailable />}
         {data && !unavailable && data.items.length === 0 && (
           <p className="text-sm text-muted-foreground">No news found for this county in the last 12 months.</p>
         )}
         {data && !unavailable && data.items.length > 0 && <ResultList items={data.items} />}
-      </CardContent>
-    </Card>
+      </FramePanel>
+    </Frame>
   );
 }
