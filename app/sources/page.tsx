@@ -1,10 +1,17 @@
-import { ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { SourceChip } from "@/components/source-chip";
 import { BackLink } from "@/components/ui/back-link";
-import { Frame, FrameDescription, FrameHeader, FramePanel, FrameTitle } from "@/components/ui/frame";
+import {
+  Frame,
+  FrameDescription,
+  FrameHeader,
+  FramePanel,
+  FramePanelLabel,
+  FrameTitle,
+} from "@/components/ui/frame";
+import { TextLink } from "@/components/ui/text-link";
 import { indicators, sources, values } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Sources & limitations | FirstLine" };
@@ -17,8 +24,8 @@ const sourceRows = indicators.map((indicator) => ({
   years: [...new Set(values.filter((value) => value.indicator_id === indicator.indicator_id).map((value) => value.year))].sort(),
 }));
 
-const LINK =
-  "inline-flex min-h-9 items-center gap-1.5 rounded-sm text-sm font-medium text-brand-ink underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
+/** The indicator the essential distinction is about: its chip sits in that card's label row. */
+const gpWaitIndicator = indicators.find((indicator) => String(indicator.indicator_id) === "6411");
 
 /** A label column in muted text and the value in body ink, like the act page's Owner and Precedent rows. */
 function Row({ label, children }: { label: string; children: ReactNode }) {
@@ -32,7 +39,7 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
 
 export default function SourcesPage() {
   return (
-    <main className="page-container flex flex-col gap-6 pt-4 sm:gap-8 sm:pt-6">
+    <main className="page-container flex flex-col gap-6 pt-4 sm:pt-6">
       <header className="grid grid-cols-12 gap-x-6 gap-y-3">
         <BackLink href="/" className="col-span-12">
           Back to county ranking
@@ -46,19 +53,21 @@ export default function SourcesPage() {
         </p>
       </header>
 
-      <section
-        aria-labelledby="essential-caveat"
-        className="grid gap-x-8 gap-y-3 rounded-panel border border-l-2 border-border border-l-foreground bg-muted p-5 sm:p-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
-      >
-        <h2 id="essential-caveat" className="type-title">
-          The essential distinction
-        </h2>
-        <p className="max-w-[44rem] text-[0.9375rem] leading-relaxed text-pretty text-foreground">
-          THL Sotkanet 6411 (latest snapshot year: 2025) covers <strong className="font-semibold">non-urgent GP appointments with waiting-time data</strong>, not people with suspected cancer. GP waiting time is a proxy for access, not a cancer diagnosis or referral delay. The referral indicators describe processing of specialist referrals generally, not the whole GP-to-specialist journey.
-        </p>
-      </section>
+      <Frame aria-labelledby="essential-caveat">
+        <FramePanel padding="none">
+          <FramePanelLabel>
+            <h2 id="essential-caveat" className="font-sans type-caption font-medium tracking-normal">
+              The essential distinction
+            </h2>
+            {gpWaitIndicator && <SourceChip sourceId={gpWaitIndicator.source_id} />}
+          </FramePanelLabel>
+          <p className="max-w-[52rem] px-4 py-4 text-[0.9375rem] leading-relaxed text-pretty text-foreground sm:px-6 sm:py-5">
+            THL Sotkanet 6411 (latest snapshot year: 2025) covers <strong className="font-semibold">non-urgent GP appointments with waiting-time data</strong>, not people with suspected cancer. GP waiting time is a proxy for access, not a cancer diagnosis or referral delay. The referral indicators describe processing of specialist referrals generally, not the whole GP-to-specialist journey.
+          </p>
+        </FramePanel>
+      </Frame>
 
-      <div className="grid items-start gap-6 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_23rem]">
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_23rem]">
         <Frame aria-labelledby="indicator-sources">
           <FrameHeader>
             <FrameTitle id="indicator-sources">The public indicators</FrameTitle>
@@ -82,23 +91,22 @@ export default function SourcesPage() {
                   <Row label="Scope">{indicator.limitation}</Row>
                 </dl>
                 {source && (
-                  <a className={`${LINK} w-fit`} href={source.url} target="_blank" rel="noopener noreferrer">
+                  <TextLink kind="external" href={source.url} className="text-sm">
                     Official THL definition
-                    <ExternalLink aria-hidden strokeWidth={1.75} className="size-4" />
-                  </a>
+                  </TextLink>
                 )}
               </FramePanel>
             ))}
           </div>
         </Frame>
 
-        <div className="flex flex-col gap-6 sm:gap-8 lg:sticky lg:top-20">
+        <div className="flex flex-col gap-6 lg:sticky lg:top-20">
           <Frame aria-labelledby="gaps">
             <FrameHeader>
               <FrameTitle id="gaps">What the map cannot tell you</FrameTitle>
             </FrameHeader>
-            <FramePanel padding="md">
-              <ul className="flex list-disc flex-col gap-3 pl-5 text-sm leading-relaxed text-pretty marker:text-faint">
+            <FramePanel padding="none">
+              <ul className="divide-y divide-border text-sm leading-relaxed text-pretty [&>li]:px-4 [&>li]:py-3 sm:[&>li]:px-5">
                 <li>No indicator here follows a person from first symptoms through GP assessment, cancer diagnosis and specialist treatment.</li>
                 <li>Referral processing does not establish when a patient saw a specialist, whether cancer was suspected, or why a delay occurred.</li>
                 <li>GP recognition of warning signs and choice of tests are not quantified here. Missing evidence stays “no public data,” not a low-risk score.</li>
@@ -128,10 +136,9 @@ export default function SourcesPage() {
           {evidenceSources.map((source) => (
             <li key={source.source_id}>
               <FramePanel padding="sm" className="flex h-full flex-col gap-1">
-                <a className={`${LINK} w-fit max-w-full`} href={source.url} target="_blank" rel="noopener noreferrer">
+                <TextLink kind="external" href={source.url} className="max-w-full text-sm">
                   <span className="min-w-0 text-pretty">{source.name}</span>
-                  <ExternalLink aria-hidden strokeWidth={1.75} className="size-4 shrink-0" />
-                </a>
+                </TextLink>
                 <p className="type-caption text-muted-foreground">{source.publisher} · retrieved {source.retrieved}</p>
               </FramePanel>
             </li>
@@ -140,7 +147,7 @@ export default function SourcesPage() {
         <p className="px-3 pt-4 pb-2 type-caption text-pretty text-muted-foreground sm:px-4">Results labelled “Found live — unverified” come from Exa live search. They are not checked by the team.</p>
         <p className="px-3 pb-2 type-caption text-pretty text-muted-foreground sm:px-4">
           Map boundaries: Statistics Finland, wellbeing services counties 2025 (1:4 500 000), CC BY 4.0.{" "}
-          <a className="text-brand-ink underline underline-offset-4" href="https://www.stat.fi/org/avoindata/paikkatietoaineistot_en.html" target="_blank" rel="noopener noreferrer">Statistics Finland open data</a>
+          <TextLink kind="external" inline href="https://www.stat.fi/org/avoindata/paikkatietoaineistot_en.html">Statistics Finland open data</TextLink>
         </p>
       </Frame>
 

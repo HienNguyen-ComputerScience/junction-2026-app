@@ -2,61 +2,87 @@
 
 **Direction.** Sober, exact, plain-spoken: a statistics office's annual report, not a startup page. One dark theme, no toggle. The chrome is near-black and neutral, with one accent that is the product's identity; the only other saturated colour on any screen is data status. The richness goes into the figures and the bars.
 
-**Signature: the Finland line.** Every bar in the product is zero-based (0 to 100%) and carries a thin off-white marker at Finland's value, labelled "Finland 54.7%". Use `components/ui/measure-bar.tsx`, never a hand-made bar:
-- `<MeasureBar value finland finlandLabel status />`: bar + line + axis. `value={null}` draws a hatched empty track (no public data), `finland={null}` draws no line. Optional: `size="lg"` (the tall bar of the home card), `higherIsBetter` (see below), and `gapLabel`: the distance to Finland as text ("+30.7 pts", "−7.9 pts", from `gapToFinland(value, finland)` in `components/ranking/ranking-list.tsx`), for wait bars and referral bars alike. With `size="lg"` it is written inside the span between the bar's end and the line; at the default size it sits just above the bar, against the line on the side of the gap, in the status ink.
-- `BarFill`, `FinlandTick`, `FinlandAxis`: the parts, for custom layouts (the ranking draws one continuous 1px line down the column).
-- The red part of a bar is always the distance from Finland, and there are two kinds of share:
-  - a **wait** share (lower is better) is worse when it runs past the line: tinted red up to the line, solid red beyond it;
-  - a **referral** share (higher is faster) is worse when it stops short of the line: a neutral grey fill up to the value, then **solid red** from the value to the line, at the full height of the bar. So on both kinds the solid red part is the gap to Finland and it always touches the line. Never a red bar that ends before the line.
-  - The kind is read from the data: "worse than Finland" below Finland's value, or "at or better" above it, can only be a higher-is-better share. Pass `higherIsBetter` only to override that.
-- Slate bars (token `status-amber`, name historical) use `bg-status-amber-bar`, a step quieter than the marker, and a slate figure stays in the text colour (`STATUS_FIGURE`), so the calm end of a chart is calm. Red is the only alarm colour. Slate is still not "good".
-- The axis label is centred on its tick and leaves the centre only where it would run off the bar. "0%" and "100%" appear at the ends where there is room.
-- `<BarKey />`: the legend, four items in plain words: "Finland's value" (line), "Worse than Finland" (red), "At or better than Finland's level" (slate), "No public data" (hatched). Every swatch sits in the same 24×10px slot, so the labels share one left edge; one item per line on a phone, one row from `sm`. Default `kinds="both"` is for wait and referral bars together; `kinds="wait"` for a chart of wait bars only (the red swatch is tinted then solid, as on those bars); `finlandLabel="Finland 54.7%"` names the line with its value when one value applies to every bar in view. Add it wherever bars are shown. No prose keys, and nothing else in the key: a longer explanation is a sentence under it.
-- `withFigures("Finland 54.7%")` (same file) sets the numbers of a one-string label in the numeral face and leaves the words in the sans.
+**One way to do each thing.** A step, a bar, a button, a link, a caption and a panel title each have one component or one rule below. Before adding a variant, remove a use.
 
-**Tokens** (`app/globals.css`, use as Tailwind classes; hex values are what they resolve to)
-- Surfaces, deepest to highest: `bg-background` page `#050506` → `bg-frame` `#0d0e0f` → `bg-card` panel `#131415` → `bg-muted` raised `#1a1b1d` (inputs, chips, inner blocks) → `bg-accent` raised and hovered `#222425` (also the hover of a row on a panel). Near-black and neutral: nothing may read as navy.
-- The surface steps are small, so hairlines carry the edges: `border-frame-border` (8%), `border-border` (9%), `border-input` (10%), all the text colour at low opacity. No shadows.
-- Text, three roles, all AA on every surface (the lowest pair, `text-faint` on `bg-accent`, is 5.6:1): `text-foreground` `#eaebed`, `text-muted-foreground` `#abaeb2`, `text-faint` `#999c9f` (placeholders, axis ticks, rank numbers, row chevrons). Never lighter than `text-faint`.
-- **Accent**: one colour, a cold glacier cyan, `brand` `#67cfe3` (`oklch(0.8 0.1 212)`, 11:1 on the page). It is used for exactly five things: the logo mark's bars, the active nav underline, the primary button fill (`bg-primary`, with `text-primary-foreground` `#050506` on it), text links (`text-brand-ink` `#89ddee`; any `<a class="underline">` without a colour of its own gets it) and the focus ring (`ring-ring`). Nothing else: no accent headings, icons, borders, chips or chart marks. It is blue-leaning so it can never read as "green = good".
-- Primary button, disabled: a neutral raised surface, hairline and faint text. Clearly inactive, never a dim accent. `Button variant="outline-accent"`: accent text and hairline, no fill, for secondary but important actions.
-- Status (data only): `status-red` `#e34f4c` (worse than Finland), `status-amber` (slate, hue 255, `oklch(0.74 0.045 255)`; the name is historical; at or better than Finland's level), `status-grey` `#727577` (no public data, hatched). Each has `-soft`, `-border`, `-ink`; text uses `-ink` (`#f88985`, slate `oklch(0.82 0.04 255)`). `status-amber-bar` `oklch(0.68 0.045 255)` is the slate of a bar fill. Text on a filled red or slate mark is `text-background`. Notes, banners, results and errors are neutral (`bg-muted`, `border-input`, `text-foreground`).
-- `bg-track`: the empty part of a bar (text colour at 12%).
-- Radius: `rounded-frame` 20px (outer) → `rounded-panel` 14px (inner, frame padding is 6px; `rounded-xl` resolves to the same 14px) → `rounded-lg` 10px (buttons, inputs, inner blocks) → `rounded-sm` 6px (chips, badges). `rounded-full` only for the step and action number dots. Nothing else is a pill.
-- Spacing: 4px grid. Container: `page-container` (used by the header, the footer and every page, so left edges match). Sections: `gap-6 sm:gap-8`. Panel padding: `px-4 sm:px-6`.
+## The pathway steps
 
-**Dark by default, with no `.dark` class.** `:root` holds the dark tokens and sets `color-scheme: dark`; `app/layout.tsx` exports the matching `viewport` (theme colour `#050506` and colour scheme). `@custom-variant dark (&:is(.dark *))` stays in `globals.css` on purpose: it keeps every `dark:` class inert. Do not remove it, do not add a `dark` class, and do not write `dark:` variants.
+`components/pathway/pathway-steps.tsx` is the only component for the three steps, on every page: `buildPathwaySteps(countyId)` reads them from the snapshot, `<PathwaySteps steps density />` draws them.
 
-**Type** (Bricolage Grotesque for headlines, Geist for text and numbers, Geist Mono for source chips; weights 600 or below)
-- `type-display` home h1 · `type-page` page h1 · `type-title` section title (22px semibold): every frame header, and `FrameTitle` applies it by default · `type-heading` item title inside a section (17px): an action, a step, a result tier. An item title never uses `type-title`: the section must outrank what it holds. An `h1` or `h2` without a `type-*` class still gets the system's weight and tracking.
-- `type-lede` (17px) · body `text-sm`/`text-[0.9375rem]` · `type-caption` (13px) · `type-micro` (12px)
-- `type-legend`: 13px, one step above muted, for legend labels (`BarKey` sets it itself).
-- `type-note`: 12px text face, for notes on a chart or a card ("via Exa", "No indicator, so nothing to draw", dates, model names). Pair with `text-muted-foreground`.
-- **Numbers: one face, Geist with tabular figures, plain zero.** (Geist Mono only has a slashed zero.) Two utilities:
-  - `numeral` for standalone key figures, with a size: `numeral text-[3.5rem]` (20px to 80px; the tracking tightens with the size). Colour it with `STATUS_FIGURE[status]` (red ink only when worse than Finland).
-  - `figure` for a number inside a line of text: table values, deltas, axis labels, the "54.7%" of "Finland 54.7%". It sets the face only (sans, tabular); size, weight and colour come from where it sits. Wrap the number with its unit and nothing else: `<span className="figure">+30.7 pts</span> vs Finland`.
-  - Source chips and nothing else stay mono (`type-mark`, `--font-chip`).
-  - Words stay in the sans: prose (including figures inside a running sentence, like the home lede), labels and captions. `type-mark` (11px mono) is for source chips.
-- Sentence case everywhere; short labels end without a period.
-- Gaps to Finland are written "+30.7 pts vs Finland" / "−21.9 pts vs Finland": one decimal, a true minus sign, computed for display from the two figures shown (`gapToFinland` in `components/ranking/ranking-list.tsx`).
+- Every step has the same parts in the same order: mark and title · status badge and source chip on one row · the value slot · the comparison line · one caption · the bar with the Finland line.
+- The value slot has a fixed height. A step without a value shows a muted "No public data" on the baseline of the figures beside it, never a hole, and keeps every other part (the hatched bar included).
+- Two densities. `density="full"` (county page): three divided columns on shared rows (subgrid). `density="compact"` (act page): one short strip, per step its name and value, what the value counts, a thin bar, the badge and the chip.
+- The section title gives the year ("… (2025)"), so the chip in a step leaves it out and the status row stays one row.
+- `ledStage`: the step whose figure already leads the page shows its gap to Finland in the slot instead, so **one number is on screen once per viewport**.
+- `TrendStrip` (`components/pathway/trend-strip.tsx`) is the panel under the full steps: the change since 2023 in words and the three yearly bars.
 
-**Components**
-- `Frame` / `FrameHeader` / `FrameTitle` / `FrameMeta` / `FrameDescription` / `FramePanel` / `FrameFooter` (`frame.tsx`): the section container, a frame with a label row around panels. There is no inverse tone: the home hero leads by size and by its figures, on the same page as everything else.
-- `StatusBadge`: a square mark plus a text label, never colour alone. `variant="chip"` (tag), `"plain"` (coloured text), `"quiet"` (muted text, for dense rows). Take status from the data; never recompute it. In a list, the group heading carries the status label once; rows carry the gap as text with the marker, not the label repeated.
-- `SourceChip` (`components/source-chip.tsx`): mono tag with an arrow, on the raised surface. Must sit next to, or in the same block as, every number. One format everywhere: "Sotkanet 6411" or, with the figure's year, "Sotkanet 6411 · 2025"; evidence sources show the publisher's name ("PubMed Central", "NICE", "Sveriges riksdag"), never "Source: hostname". A document on a file server (files.hackjunction.app) shows the opening words of its own title ("Kansallinen syöpästrategia"), never an invented name. The hostname and the full title are in the tooltip. In a table, one chip per column per group heading, not one per row and not again in the column header.
-- **Two chip families, and one quiet provenance style.** The families are the mono source chip (`SourceChip`, `Badge variant="outline"`) and the coloured status badge (`StatusBadge`). Everything else is quiet:
-  - Provenance, i.e. where content comes from: `<Badge variant="unverified">Found live — unverified</Badge>` (hollow 6px mark) and `<Badge variant="checked">Precomputed from the snapshot</Badge>` / "Source checked" (solid 6px mark). Muted text, regular weight, no box.
-  - `Badge` `secondary`, `brand` and `default` are one neutral tag: hairline, no fill, regular weight, muted text ("How to read FirstLine"). Freshness ("Live", "Cached") is plain `type-note` text, not a tag.
-  - No bold white pills: a tag is never heavier than the status badge next to it.
-- `Button`: `default` is the solid accent fill with dark text, and it is the only primary style: the main action of a view or a panel ("What to do about it", "Ask", "Write AI brief"). `outline` is the raised surface, for secondary actions; `link` is accent text. Sizes `sm` 32px, default 36px, `lg` 44px for the main action.
-- `BackLink`: the only back-link pattern (arrow icon + text, starts on the page edge).
-- `Disclosure`: styled `<details>` with a chevron. Never a bare `<details>`.
-- Rows that navigate (the ranking): the whole row is the link, with a 16px chevron at its right end (`text-faint`, the text colour on hover), a `bg-accent` hover and focus surface (one step, `bg-muted`, is too faint on a panel) and an inset focus ring. All rows are equal.
-- Selection (the red-flag chips): a raised surface, a stronger hairline and a tick box. Never a colour change alone.
-- Icons: lucide only, 16px, stroke 1.75, text colour. No glyph arrows or triangles in text.
+## Bars: the Finland line
 
-**Page pattern**: `BackLink`, a one-line context caption, `type-page` h1, then Frames. Phone (390px): one-row 56px header, stacked columns, tap targets 36px or more, no horizontal scroll, and data before legend: a chart starts with one line saying what the bar and the line are; the full key goes under it.
+Every bar is zero-based (0 to 100%) and carries a thin off-white marker at Finland's value. Use `components/ui/measure-bar.tsx`, never a hand-made bar:
+
+- `<MeasureBar value finland finlandLabel status />`: bar, line and axis. `value={null}` draws a hatched empty track (no public data), `finland={null}` draws no line. `size`: `"sm"` 6px (compact steps), default, `"lg"` (the home card). `gapLabel`: the distance to Finland as text ("+30.7 pts", from `gapToFinland(value, finland)` in `components/ranking/ranking-list.tsx`).
+- `BarFill`, `FinlandTick`, `FinlandAxis`: the parts, for custom layouts (the ranking draws one continuous 1px line down the bar rows, and only through bar rows).
+- **One treatment for "worse than Finland", on every bar (big bars, the ranking's mini bars, the home card):** the solid red part is always the gap to Finland and always touches the line.
+  - a **wait** share (lower is better): tinted red up to the Finland line, solid red beyond it;
+  - a **referral** share (higher is faster): tinted red up to the value, solid red from the value to the Finland line.
+  - The tint is the opaque token `bg-status-red-tint`. The kind is read from the data; pass `higherIsBetter` only to override.
+- At or better than Finland: slate (`bg-status-amber-bar`; the token name is historical). Slate is not "good", and a slate figure stays in the text colour (`STATUS_FIGURE`).
+- Grey fill: only the "Finland overall" bar. Hatched track: no public data.
+- The map of Finland (`components/map/finland-map.tsx`) fills its areas with the same tokens at the same strength as the bars: `status-red`, `status-amber-bar`, the hatch.
+- `<BarKey items />`: the key, one row of swatches drawn like the marks: "Finland's value", "Worse than Finland" (tint then solid), "At or better than Finland's level", "No public data". **One key per page** (home: in the hero card; county: under the steps; act: beside the strip's title), with `items` limited to the marks in view. No prose legends.
+- `withFigures("Finland 54.7%")` sets the numbers of a one-string label in the figure face.
+
+## Buttons and links
+
+- **Primary**: `Button` (default), the filled accent. At most one per viewport: the main action of the view ("What to do about it", "Ask"). Disabled, it is a flat neutral block with faint text: clearly switched off.
+- **Secondary**: `Button variant="outline"`, a neutral outline on the raised surface ("Write AI brief", "Show 4 more", "Find more evidence live").
+- **Tertiary**: a text link. `Button` has no other variants; sizes are default (36px) and `lg` (44px).
+- **Links**: `TextLink` (`text-link.tsx`) is the one text link: accent text, no underline until hover, and an icon that says where it goes. `kind="jump"` (further down this page, arrow down), `kind="nav"` (another page of the app, arrow right), `kind="external"` (another site, new tab, the small up-right arrow the source chips use). `inline` sets it in running text. No other link style, and no underlined links.
+- `BackLink`: the only back-link pattern (arrow + text, starts on the page edge).
+- `Disclosure`: styled `<details>` with a chevron, never a bare `<details>`. Disclosures in one stack share one left edge, and a secondary button under them starts on the same edge (see the action card).
+- Rows that navigate (the ranking): the whole row is the link, with a 16px chevron at its right end, a `bg-accent` hover and an inset focus ring.
+
+## Text
+
+Bricolage Grotesque for headlines, Geist for text and numbers, Geist Mono for source chips; weights 600 or below. Sentence case; short labels end without a period.
+
+- `type-display` home h1 · `type-page` page h1 · `type-title` section title (22px; `FrameTitle` applies it) · `type-heading` item title inside a section (17px). An item title never uses `type-title`.
+- `type-lede` (17px) · body `text-sm` / `text-[0.9375rem]`.
+- **Captions: `type-caption`, 13px, in `text-muted-foreground`.** This is the one size for secondary text: descriptions, row sub-lines, footers, "Who" lines, the quiet status line. There is no smaller prose. A caption says something the screen does not already show; a sentence that restates a label, a chart or a badge is deleted, not shrunk. Limitations, source lines, exact labels and anything read from the data are never cut.
+- 12px and 11px are for marks only: `type-note` (labels drawn on a chart or an axis), `type-mark` (mono source chips), badges.
+- `type-legend`: 13px, for the labels of `BarKey` (it sets it itself).
+- **Numbers: one face, Geist with tabular figures.** `numeral` for standalone key figures, with a size (`numeral text-[2.25rem]`), coloured with `STATUS_FIGURE[status]` (red ink only when worse than Finland). `figure` for a number inside a line of text; wrap the number with its unit and nothing else.
+- Gaps to Finland: "+30.7 pts vs Finland" / "−21.9 pts vs Finland", one decimal, a true minus sign (`gapToFinland`). Change over time is written in words, with no arrow and no colour: "27.4 pts worse since 2023".
+- Always "non-urgent GP visits"; never people or patients "waiting", and the app never does a "diagnosis".
+
+## Surfaces and frames
+
+- Surfaces, deepest to highest (`app/globals.css`): `bg-background` page `#050506` → `bg-frame` `#0f1011` → `bg-card` panel `#18191b` → `bg-muted` raised `#202123` (inputs, chips, inner blocks, the First step box) → `bg-accent` raised and hovered `#292b2d`. Page, frame and panel must be told apart at a glance; nothing may read as navy.
+- Hairlines carry the edges: `border-frame-border` (10%), `border-border` (12%), `border-input` (14%), the text colour at low opacity. No shadows.
+- `Frame` / `FrameHeader` / `FrameTitle` / `FrameMeta` / `FrameDescription` / `FramePanel` / `FrameFooter` (`frame.tsx`): the section container. `FrameMeta` sits beside the title from `sm` and under it on a phone.
+- **A panel with a title has a label strip**: `FramePanelLabel` as the first child of a `FramePanel padding="none"`, title on the left, its chip or its one link on the right, a hairline under it. A panel without a title has no strip.
+- Text, three roles, all AA on every surface: `text-foreground` `#eaebed`, `text-muted-foreground` `#abaeb2`, `text-faint` `#999c9f` (placeholders, axis ticks, rank numbers, chevrons). Never lighter than `text-faint`.
+- **Accent**: one colour, a cold glacier cyan, `brand` `#67cfe3`. Used for the logo mark, the active nav underline, the primary button, text links (`text-brand-ink`) and the focus ring. Nothing else.
+- Status (data only): `status-red` (worse than Finland, the only alarm colour), `status-amber` (slate; at or better than Finland's level), `status-grey` (no public data, hatched). Each has `-soft`, `-border`, `-ink`. Notes, banners, results and errors are neutral.
+- Radius: `rounded-frame` 20px → `rounded-panel` 14px → `rounded-lg` 10px (buttons, inputs, inner blocks) → `rounded-sm` 6px (chips, badges). `rounded-full` only for the step dots.
+- Spacing: 4px grid. Container: `page-container`. Sections: `gap-6`. Panel padding: `px-4 sm:px-6`.
+- Dark by default, with no `.dark` class: `:root` holds the dark tokens. `@custom-variant dark (&:is(.dark *))` stays in `globals.css` to keep every `dark:` class inert. Do not add a `dark` class or `dark:` variants.
+
+## Tags
+
+- `StatusBadge`: an 8px square mark plus a text label, never colour alone. `variant="chip"` (tag; `size="xs"` is as tall as a source chip), `"plain"` (coloured text), `"quiet"` (the mark plus a 13px caption, for dense rows). Take status from the data. In a list, the group heading carries the status label once, with its count and its source chips.
+- `SourceChip` (`components/source-chip.tsx`): mono tag with an arrow. Every number has one, or a source line, near it. One format: "Sotkanet 6411" or, where no title gives the year, "Sotkanet 6411 · 2025"; evidence sources show the publisher's name.
+- Provenance is quiet: `<Badge variant="unverified">Found live — unverified</Badge>` (hollow 8px mark) and `<Badge variant="checked">Precomputed from the snapshot</Badge>` / "Source checked" (solid 8px mark). Muted text, no box.
+- Live content (`components/exa/result-list.tsx`): `LiveMark` is the one provenance and freshness line, in the frame header: the unverified badge plus "via Exa · live" or "via Exa · cached · saved 2026-11-14". Rows have one minimum height, with or without a snippet.
+- Icons: lucide only, 16px (the up-right arrow of an external link or a chip is 14px), stroke 1.75, in the colour of the text beside them.
+
+## Pages
+
+- Page pattern: `BackLink`, a one-line context caption, `type-page` h1, then Frames.
+- Act: the compact steps, then Action 1 with its "First step" box inside the first 1280×800 screen.
+- County: the limitations box (title and content) is inside the first 1280×800 screen, never clipped.
+- A recommended action in the county brief is one row (title and "Who", the First step box, the source chip); the section has one link, "See the evidence and limitations", to the act page.
+- Phone (390px): one-row 56px header, stacked columns, tap targets 36px or more, no horizontal scroll, a source line directly under the figures it sources.
 
 **Motion**: `animate-bar-grow` (bars, staggered with `--i`) and `animate-fade-up`, one curve, under 0.6s, off with `prefers-reduced-motion`. Hover is a surface step or a text-colour change only.
 
-**Don't**: gradients, shadows, glows, pills, all-caps tracked labels, the accent outside its five uses, a second accent, green, text lighter than `text-faint`, a data number in the sans or the display face, mono for words, a prose legend where swatches would do, a status label repeated on every row, truncating meaningful text, a `SourceChip` nested inside another link, a sticky table header that slices rows, a red bar that ends short of the Finland line, an item title as large as its section title, or a bar without the Finland line when Finland's value exists.
+**Don't**: gradients, shadows, glows, pills, all-caps tracked labels, the accent outside its uses, a second accent, green, text lighter than `text-faint`, prose under 13px, a second key on a page, a prose legend, a second filled button in a viewport, an underlined link, a status label repeated on every row, a number twice in one viewport, truncating meaningful text, a `SourceChip` nested inside another link, a red bar whose solid part does not touch the Finland line, or a bar without the Finland line when Finland's value exists.
