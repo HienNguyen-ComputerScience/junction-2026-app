@@ -69,10 +69,10 @@ export function NavLinks({
               <Link
                 href={hrefs[item.key]}
                 aria-current={active ? "page" : undefined}
-                className={`relative flex h-14 items-center px-1.5 type-caption font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset sm:px-2.5 ${
+                className={`flex h-11 items-center rounded-sm px-2 text-[0.9375rem] whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:px-3 sm:text-base ${
                   active
-                    ? "text-foreground after:absolute after:inset-x-1.5 after:bottom-0 after:h-0.5 after:bg-brand after:content-[''] sm:after:inset-x-2.5"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-mint-veil font-semibold text-forest-ink"
+                    : "text-foreground hover:bg-keylime-wash hover:text-forest-ink"
                 }`}
               >
                 <span className="sm:hidden" aria-hidden>

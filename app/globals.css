@@ -2,18 +2,39 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* The theme is dark by default and has no `.dark` class anywhere. This line keeps every
+/* One light theme ("cream paper"), no toggle and no `.dark` class anywhere. This line keeps every
    `dark:` class (shadcn leftovers, app/sources) inert; without it Tailwind would switch them
    on for viewers whose system is dark. Do not remove it and do not add a `dark` class. */
 @custom-variant dark (&:is(.dark *));
 
+/* The palette, by name. `static` so every variable exists on :root even when no utility uses it:
+   bg-keylime-wash, text-forest-ink and var(--color-forest-ink) all work. Forest Ink and Charcoal
+   are the only text colours; keylime, mint, sage and slate are surfaces and never text. */
+@theme static {
+  --color-forest-ink: #0f3e17;
+  --color-forest-shadow: #0c2f10;
+  --color-cream-paper: #fffefc;
+  --color-keylime-wash: #e1f4df;
+  --color-mint-veil: #cfe7d3;
+  --color-sage-mist: #b1dbb8;
+  --color-slate-hush: #b6ced5;
+  --color-charcoal: #222222;
+  --color-border-mist: #efeeeb;
+
+  /* Body copy is never below 16px: text-sm is the body size here, not a smaller one. */
+  --text-sm: 1rem;
+  --text-sm--line-height: 1.5rem;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-bricolage);
-  --font-display: var(--font-bricolage);
+  /* One sans (Inter) and one serif (Cormorant Garamond, weight 300 only). No mono face: figures
+     are Inter with tabular numerals. --font-sans and --font-display are set on <html> by next/font. */
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), Georgia, "Times New Roman", serif;
+  --font-heading: var(--font-display), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 
   /* FirstLine tokens: see components/ui/README.md */
   --color-frame: var(--frame);
@@ -68,14 +89,14 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --radius-sm: 0.4375rem; /* 7px: nav items, small controls */
+  --radius-md: 0.6875rem; /* 11px */
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-  --radius-frame: 1.25rem;
+  --radius-frame: 0.875rem;
   --radius-panel: 0.875rem;
 
   /* Raw amber classes (used by app/sources for a note) resolve to the neutral raised surface:
@@ -86,89 +107,84 @@
 }
 
 :root {
-  /* One dark theme, no toggle. Form controls and scrollbars follow it. */
-  color-scheme: dark;
+  /* One light theme, no toggle. Form controls and scrollbars follow it. */
+  color-scheme: light;
 
-  /* The numeral face: Geist (sans) with tabular figures. Geist Mono has only a slashed zero and
-     no feature to change it, so figures that must read plainly at display size are set in the
-     sans. Source chips and bare axis numerals keep the mono (type-mark). */
+  /* Figures are Inter with tabular numerals, at every size. Chips use the same face. */
   --font-numeral: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-chip: var(--font-geist-mono), ui-monospace, monospace;
+  --font-chip: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 
-  /* Surfaces, deepest to highest: near-black, neutral, only barely cool, so the page never
-     reads as blue. Three levels must read at a glance: page, frame, panel. Each is a clear
-     step above the last and edged with a hairline; depth never comes from shadows. */
-  --background: oklch(0.115 0.003 255); /* page    #050506 */
-  --frame: oklch(0.172 0.003 255); /*      frame   #0f1011 */
-  --card: oklch(0.215 0.004 255); /*       panel   #18191b */
-  --muted: oklch(0.25 0.004 255); /*       raised  #202123: inputs, chips, inner blocks */
-  --accent: oklch(0.29 0.004 255); /*      raised, hovered #292b2d: also the hover of a row on a panel */
-  --popover: var(--muted);
-  --secondary: var(--muted);
+  /* Surfaces, lightest to heaviest. Depth comes from stacking them, never from a shadow:
+     page (cream) → panel (keylime) → raised block, input, chip (mint) → hovered or pressed (sage).
+     Slate Hush (bg-slate-hush) is the cool counter-panel for data previews, with cream cards on it. */
+  --background: var(--color-cream-paper);
+  --frame: var(--color-keylime-wash);
+  --card: var(--color-keylime-wash);
+  --muted: var(--color-mint-veil);
+  --accent: var(--color-sage-mist);
+  --popover: var(--color-cream-paper);
+  --secondary: var(--color-mint-veil);
 
-  /* Three text roles, all AA on every surface above. */
-  --foreground: oklch(0.94 0.003 255); /*       primary   #eaebed, also the Finland line */
-  --muted-foreground: oklch(0.75 0.006 255); /* secondary #abaeb2 */
-  --faint: oklch(0.69 0.006 255); /*            muted     #999c9f: placeholders, axis ticks */
+  /* Text. Charcoal for body, Forest Ink for headings, links and buttons, and two quieter greys
+     that still pass AA (4.5:1) on every surface above, sage and slate included. */
+  --foreground: var(--color-charcoal);
+  --muted-foreground: #454c46; /* 8.8:1 on cream, 5.8:1 on sage, 5.4:1 on slate */
+  --faint: #4f564f; /*            7.5:1 on cream, 4.9:1 on sage, 4.6:1 on slate: placeholders, axis ticks */
   --card-foreground: var(--foreground);
   --popover-foreground: var(--foreground);
   --secondary-foreground: var(--foreground);
   --accent-foreground: var(--foreground);
 
-  /* Hairlines: the text colour at 10 to 14%, so every surface step also has an edge. */
-  --frame-border: oklch(0.94 0.003 255 / 10%);
-  --border: oklch(0.94 0.003 255 / 12%);
-  --input: oklch(0.94 0.003 255 / 14%);
-  /* Empty part of a bar, so the 100% end is visible on a panel (#2d2e2f on a panel). A tinted
-     red fill is 1.9:1 against it and the solid red 1.8:1 against the tint. */
-  --track: oklch(0.94 0.003 255 / 12%);
+  /* Hairlines. Border Mist edges things on cream; on the green surfaces it would vanish, so
+     panels and rows use Forest Ink at 14%. Fields need a 3:1 edge (WCAG 1.4.11). */
+  --frame-border: var(--color-border-mist);
+  --border: color-mix(in srgb, var(--color-forest-ink) 14%, transparent);
+  --input: #6c7f6f; /* 4.2:1 on cream, 3.7:1 on keylime, 3.3:1 on mint */
+  /* Empty part of a bar, so its 100% end is visible on a panel. */
+  --track: color-mix(in srgb, var(--color-forest-ink) 16%, transparent);
 
-  /* The one accent, a cold glacier cyan. It is the identity colour and it is used for exactly
-     five things: the logo mark, the active nav underline, the primary button fill, text links
-     and the focus ring. Nothing else. It sits far from the red and amber status hues and is
-     blue-leaning (B above G in sRGB), so it can never read as "green = good". */
-  --brand: oklch(0.8 0.1 212); /*      #67cfe3, 11:1 on the page */
-  --brand-ink: oklch(0.85 0.085 212); /* #89ddee, link text */
-  --brand-soft: oklch(0.8 0.1 212 / 12%);
-  --ring: var(--brand);
+  /* Forest Ink is the one ink: logo, active nav item, primary button fill, links, focus ring. */
+  --brand: var(--color-forest-ink);
+  --brand-ink: var(--color-forest-ink);
+  --brand-soft: color-mix(in srgb, var(--color-forest-ink) 10%, transparent);
+  --ring: var(--color-forest-ink);
 
-  /* Primary action: the accent as a fill, with the page colour as its text (AA). */
-  --primary: var(--brand);
-  --primary-foreground: oklch(0.115 0.003 255);
+  /* Primary action: Forest Ink fill, Cream Paper text (12.1:1). Hover is Forest Shadow. */
+  --primary: var(--color-forest-ink);
+  --primary-foreground: var(--color-cream-paper);
 
-  /* Data status, the only saturated colour on any screen, tuned to sit in the dark ramp.
-     red = worse than Finland, slate (token status-amber) = at or better than Finland's level, grey = no public data.
-     Fill for bars and marks, soft + border for chips, ink for text (AA on every surface). */
-  --status-red: oklch(0.63 0.185 25); /*      #e34f4c */
-  --status-red-soft: oklch(0.63 0.185 25 / 14%);
-  --status-red-border: oklch(0.63 0.185 25 / 36%);
-  --status-red-ink: oklch(0.75 0.135 23); /*  #f88985 */
-  /* The tinted part of a red bar (the share up to Finland's line), as an opaque colour so a
-     bar and the key's swatch are the same pixels. */
-  --status-red-tint: color-mix(in oklch, var(--status-red) 56%, var(--card));
-  /* "At or better than Finland's level" is a cool slate (hue 255), so red is the only alarm
-     colour on any screen. The token name status-amber is historical and the data value stays
-     "amber"; nothing here is amber any more. One hue for marker, bar, border and text. */
-  --status-amber: oklch(0.74 0.045 255); /*   marker */
-  --status-amber-soft: oklch(0.68 0.045 255 / 14%); /* dark slate tint behind chips */
-  --status-amber-border: oklch(0.68 0.045 255 / 42%);
-  --status-amber-ink: oklch(0.82 0.04 255); /* text */
-  /* Slate as a bar fill: a step quieter than the marker. */
-  --status-amber-bar: oklch(0.68 0.045 255);
-  --status-grey: oklch(0.56 0.005 255); /*    #727577 */
-  --status-grey-soft: oklch(0.94 0.003 255 / 5%);
-  --status-grey-border: oklch(0.94 0.003 255 / 18%);
+  /* Data status: the only hues outside the greens, and never colour alone (a text label goes
+     with every use). red = worse than Finland, slate (token status-amber, a historical name:
+     the data value stays "amber") = at or better than Finland's level, grey = no public data.
+     Fill for bars and marks (3:1 or more on cream, keylime, mint and sage), soft + border for
+     chips, ink for text (AA on every surface). */
+  --status-red: #c5392f; /*      mark: 5.2:1 on cream, 4.6:1 on keylime, 3.4:1 on sage */
+  --status-red-soft: color-mix(in srgb, #c5392f 12%, transparent);
+  --status-red-border: color-mix(in srgb, #c5392f 45%, transparent);
+  --status-red-ink: #9c1f18; /*  text: 7.9:1 on cream, 6.9:1 on keylime, 5.2:1 on sage */
+  /* The tinted part of a red bar (the share up to Finland's line), opaque so a bar and the
+     key's swatch are the same pixels. */
+  --status-red-tint: color-mix(in srgb, var(--status-red) 42%, var(--card));
+  --status-amber: #3f6672; /*    marker: 6.2:1 on cream, 5.4:1 on keylime */
+  --status-amber-soft: color-mix(in srgb, #4f7682 16%, transparent);
+  --status-amber-border: color-mix(in srgb, #4f7682 50%, transparent);
+  --status-amber-ink: #27444e; /* text: 10.3:1 on cream, 9:1 on keylime */
+  --status-amber-bar: #4f7682; /* bar fill: 4.9:1 on cream, 4.3:1 on keylime */
+  --status-grey: #686e69; /*     5.2:1 on cream, 4.5:1 on keylime */
+  --status-grey-soft: color-mix(in srgb, var(--color-charcoal) 5%, transparent);
+  --status-grey-border: color-mix(in srgb, var(--color-charcoal) 38%, transparent);
   --status-grey-ink: var(--muted-foreground);
   --trend-down: var(--muted-foreground);
   /* Errors are stated in words and in the primary text colour; this is only a fallback. */
   --destructive: var(--status-red-ink);
 
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.7 0 0);
-  --chart-3: oklch(0.56 0 0);
-  --chart-4: oklch(0.44 0 0);
-  --chart-5: oklch(0.33 0 0);
-  --radius: 0.625rem;
+  /* Chart ramp, darkest first: greens for ordered steps, slate for a second series. */
+  --chart-1: #0f3e17;
+  --chart-2: #2f6b3a;
+  --chart-3: #5f9a68;
+  --chart-4: #4f7682;
+  --chart-5: #b6ced5;
+  --radius: 0.875rem; /* 14px: cards and buttons */
   --sidebar: var(--frame);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
@@ -185,18 +201,19 @@
   }
   html {
     @apply font-sans;
-    font-feature-settings: "ss01" off;
   }
   body {
     @apply bg-background text-foreground;
     text-rendering: optimizeLegibility;
   }
-  /* Headings use the display face by default (utilities still override). */
+  /* Headings use the display serif by default, light and in Forest Ink (utilities still
+     override). The serif is weight 300 only: never bold. */
   h1,
-  h2,
-  h3 {
-    font-family: var(--font-bricolage), var(--font-sans), sans-serif;
-    letter-spacing: -0.015em;
+  h2 {
+    font-family: var(--font-display), Georgia, serif;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--color-forest-ink);
   }
   /* Disclosures draw their own chevron (components/ui/disclosure.tsx). */
   summary {
@@ -206,8 +223,8 @@
     display: none;
   }
   ::selection {
-    background: oklch(0.94 0.003 255 / 22%);
-    color: var(--foreground);
+    background: var(--color-sage-mist);
+    color: var(--color-charcoal);
   }
 }
 
@@ -215,15 +232,26 @@
    so no page has a heavier h1 than the others. Unlayered on purpose: it has to beat the raw
    font-semibold / tracking-tight utilities. Headings that opt into the text face keep theirs. */
 h1:not([class*="type-"], .font-sans) {
-  font-weight: 500;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(2rem, 1.6rem + 1.6vw, 2.5rem);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
   text-wrap: balance;
 }
 h2:not([class*="type-"], .font-sans) {
-  font-weight: 560;
-  letter-spacing: -0.015em;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(1.5rem, 1.3rem + 0.8vw, 1.75rem);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
   text-wrap: balance;
+}
+
+/* No box-shadow anywhere: depth is layered surfaces. Focus rings stay (Tailwind draws them in a
+   separate variable), only the shadow utilities are switched off. */
+[class*="shadow"] {
+  --tw-shadow: 0 0 #0000 !important;
 }
 
 /* ---- Layout: one container for the header, the footer and every page. ---- */
@@ -231,79 +259,101 @@ h2:not([class*="type-"], .font-sans) {
   @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
 }
 
-/* ---- Type scale. Use these instead of ad-hoc sizes. Weights stay at 600 or below. ---- */
+/* ---- Type scale. Use these instead of ad-hoc sizes. ----
+   The serif (display, page, title, statement) is always weight 300 and Forest Ink. Everything
+   else is Inter at 300, 400 or 600. Uppercase is for type-eyebrow only. */
 @utility type-display {
-  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
-  font-size: clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem);
-  line-height: 1.04;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2.5rem, 1.7rem + 3.2vw, 3.5rem); /* 40px to 56px */
+  line-height: 1.15;
   letter-spacing: -0.03em;
-  font-weight: 500;
+  font-weight: 300;
+  color: var(--color-forest-ink);
   text-wrap: balance;
 }
 @utility type-page {
-  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
-  font-size: clamp(1.875rem, 1.5rem + 1.5vw, 2.5rem);
-  line-height: 1.1;
-  letter-spacing: -0.025em;
-  font-weight: 500;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2rem, 1.6rem + 1.6vw, 2.5rem); /* 32px to 40px */
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  font-weight: 300;
+  color: var(--color-forest-ink);
   text-wrap: balance;
 }
-/* Section titles (frame headers): 22px. Item titles inside a section use type-heading (17px),
-   so a section always outranks what it holds. */
+/* Section titles: 28px from a tablet up, 24px on a phone. Item titles inside a section use
+   type-heading (sans, 18px), so a section always outranks what it holds. */
 @utility type-title {
-  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
-  /* 22px from a tablet up; 19px on a phone, so a section title stays on one line. */
-  font-size: clamp(1.1875rem, 1rem + 0.75vw, 1.375rem);
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  font-weight: 600;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.5rem, 1.3rem + 0.8vw, 1.75rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  font-weight: 300;
+  color: var(--color-forest-ink);
   text-wrap: balance;
+}
+/* One sentence set large and light: a briefing statement, a pull line. 23px. */
+@utility type-statement {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.4375rem;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  font-weight: 300;
+  color: var(--color-forest-ink);
+  text-wrap: pretty;
 }
 @utility type-heading {
-  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
-  font-size: 1.0625rem;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.125rem;
   line-height: 1.3;
-  letter-spacing: -0.01em;
-  font-weight: 560;
+  letter-spacing: 0;
+  font-weight: 600;
 }
 @utility type-lede {
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   line-height: 1.6;
   text-wrap: pretty;
 }
-@utility type-caption {
-  font-size: 0.8125rem;
-  line-height: 1.25rem;
-}
-/* Notes on a chart or a card ("via Exa", "No indicator, so nothing to draw", dates): the text
-   face, 12px. Pair with text-muted-foreground. Words are never mono; a number inside a note
-   takes `figure`. */
-@utility type-note {
-  font-size: 0.75rem;
-  line-height: 1rem;
-  font-variant-numeric: tabular-nums;
-}
-/* Mono, 11px: source chips and bare axis numerals (0%, 100%, years, tick values). */
-@utility type-mark {
-  font-family: var(--font-chip);
+/* The one uppercase style: a small label above a section or a card. */
+@utility type-eyebrow {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   font-size: 0.6875rem;
   line-height: 1rem;
-  letter-spacing: 0;
-  word-spacing: -0.25em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-forest-ink);
+}
+/* Secondary matter around the body copy (meta lines, table notes): 14px. */
+@utility type-caption {
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+}
+/* Notes on a chart or a card ("via Exa", "No indicator, so nothing to draw", dates): 13px.
+   Pair with text-muted-foreground. A number inside a note takes `figure`. */
+@utility type-note {
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
   font-variant-numeric: tabular-nums;
 }
-/* Numerals. One rule: a number inside a line of text is `figure` (sans, tabular); a standalone
-   key figure is `numeral` (a size on top). Both are Geist with tabular figures, so zeros are
-   plain and columns align. Source chips stay mono (type-mark).
-   `numeral`: key figures. Pair with a text-* size (20px to 80px). The tracking tightens with
-   the size, so "85.4%" at 60px is set tight and a 20px figure stays open. */
+/* 12px: source chips and bare axis numerals (0%, 100%, years, tick values). */
+@utility type-mark {
+  font-family: var(--font-chip);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+/* Numerals. One rule: a number inside a line of text is `figure` (tabular); a standalone
+   key figure is `numeral` (a size on top). Both are Inter with tabular lining figures, so
+   columns align.
+   `numeral`: key figures. Pair with a text-* size (20px to 80px). Light (300) sits right next
+   to the light serif at display sizes; add font-normal below 28px. */
 @utility numeral {
   font-family: var(--font-numeral);
   font-variant-numeric: tabular-nums lining-nums;
-  font-feature-settings: "zero" 0;
-  letter-spacing: calc(-0.05em + 0.8px);
-  font-weight: 500;
-  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-weight: 300;
+  line-height: 1;
 }
 /* `figure`: a data number at text size (table values, deltas, "54.7%" in a label, trend values).
    Sets the face only: size, weight and colour come from where it sits. Wrap the number and its
@@ -313,11 +363,11 @@ h2:not([class*="type-"], .font-sans) {
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* Legend labels (BarKey) and the short notes under a chart: 13px, one step up from muted. */
+/* Legend labels (BarKey) and the short notes under a chart: 14px. */
 @utility type-legend {
-  font-size: 0.8125rem;
-  line-height: 1.25rem;
-  color: color-mix(in oklch, var(--foreground), var(--muted-foreground) 45%);
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+  color: var(--muted-foreground);
 }
 
 /* The shortfall of a referral bar that stops short of Finland's line: faded red hatching on the
@@ -325,10 +375,10 @@ h2:not([class*="type-"], .font-sans) {
 @utility bg-shortfall {
   background-image: repeating-linear-gradient(
     135deg,
-    color-mix(in oklch, var(--status-red) 70%, transparent) 0 1.5px,
+    color-mix(in srgb, var(--status-red) 80%, transparent) 0 1.5px,
     transparent 1.5px 5px
   );
-  background-color: color-mix(in oklch, var(--status-red) 14%, transparent);
+  background-color: color-mix(in srgb, var(--status-red) 14%, transparent);
 }
 
 /* Empty measure track: "no public data" drawn as absence, not as a zero. */

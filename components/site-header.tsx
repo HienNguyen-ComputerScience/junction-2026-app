@@ -6,14 +6,13 @@ import { counties } from "@/lib/data";
 import { getRanking } from "@/lib/ranking";
 
 /**
- * FirstLine mark: an F built from the product's own chart. The stem is the Finland line, in the
- * same off-white as on every bar; the two arms are bars measured from it, in the accent (the one
- * place the accent is a mark of its own). Flat, no tile. Decorative.
+ * FirstLine mark: an F built from the product's own chart. The stem is the Finland line; the
+ * two arms are bars measured from it. All Forest Ink. Flat, no tile. Decorative.
  */
 export function LogoMark({ className = "size-6" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden className={className}>
-      <rect x="3" y="2" width="2.5" height="20" className="fill-foreground" />
+      <rect x="3" y="2" width="2.5" height="20" className="fill-forest-ink" />
       <rect x="7.5" y="4" width="14" height="5.5" rx="1" className="fill-brand" />
       <rect x="7.5" y="12" width="8.5" height="5.5" rx="1" className="fill-brand" />
     </svg>
@@ -32,7 +31,7 @@ export function SiteHeader() {
             className="flex h-11 w-fit shrink-0 items-center gap-2 rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             <LogoMark />
-            <span className="font-display text-[1.125rem] leading-none font-[560] tracking-[-0.02em]">
+            <span className="font-display text-2xl leading-none font-light text-forest-ink">
               FirstLine
             </span>
           </Link>

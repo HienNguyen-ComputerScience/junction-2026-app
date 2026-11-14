@@ -1,23 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import { LogoMark, SiteHeader } from "@/components/site-header";
 
-const geistSans = Geist({
+// One sans and one serif. Inter carries body copy, labels and every figure (300, 400, 600).
+const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "600"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// The display serif, for headings and statements. Weight 300 only: it is never set bold.
+const cormorant = Cormorant_Garamond({
+  variable: "--font-display",
   subsets: ["latin"],
-});
-
-// Display face for headlines and big figures only; body copy stays in Geist.
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-bricolage",
-  subsets: ["latin"],
-  axes: ["opsz"],
+  weight: "300",
 });
 
 export const metadata: Metadata = {
@@ -25,17 +22,17 @@ export const metadata: Metadata = {
   description: "Where early cancer care breaks down, county by county in Finland.",
 };
 
-// Matches --background, so the browser chrome and form controls are dark too.
+// Matches --background (Cream Paper), so the browser chrome and form controls are light too.
 export const viewport: Viewport = {
-  themeColor: "#050506",
-  colorScheme: "dark",
+  themeColor: "#fffefc",
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} h-full antialiased`}
+      className={`${inter.variable} ${cormorant.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <SiteHeader />
@@ -44,7 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <div className="page-container flex flex-col gap-3 py-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <LogoMark className="size-5" />
-              <span className="font-display text-[0.9375rem] leading-none font-[560] tracking-[-0.02em]">
+              <span className="font-display text-xl leading-none font-light text-forest-ink">
                 FirstLine
               </span>
             </div>
