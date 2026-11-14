@@ -11,8 +11,6 @@ export const SOURCE_FRAME = "rounded-[14px] border border-frame-border bg-cream-
  * One source as a compact framed unit: what it is, who publishes it, the years covered and the
  * official link, always visible. Anything longer sits behind one plainly labelled "Show …" button
  * that opens in place (and is open on paper).
- *
- * `focus`: the card takes part in the page's FocusGroup, which then draws its surface.
  */
 export function SourceCard({
   title,
@@ -23,7 +21,6 @@ export function SourceCard({
   note,
   detail,
   detailLabel,
-  focus = false,
   headingLevel = "h4",
 }: {
   title: ReactNode;
@@ -37,15 +34,11 @@ export function SourceCard({
   detail?: ReactNode;
   /** Lower case: "definition and scope" → "Show definition and scope". */
   detailLabel?: string;
-  focus?: boolean;
   headingLevel?: "h3" | "h4";
 }) {
   const Heading = headingLevel;
   return (
-    <article
-      data-focus-item={focus ? "" : undefined}
-      className={cn("print-keep flex h-full flex-col gap-2", !focus && SOURCE_FRAME)}
-    >
+    <article className={cn("print-keep flex h-full flex-col gap-2", SOURCE_FRAME)}>
       <Heading className="text-lg leading-7 font-semibold text-pretty text-forest-ink">
         {linkLabel ? (
           title

@@ -3,11 +3,9 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { cn } from "cn";
 
-import { Disclosure, FocusGroup, Reveal } from "@/components/motion";
+import { Disclosure, MoreCard, Reveal } from "@/components/motion";
 import { SaveShare } from "@/components/share";
 import { LimitationItem, SOURCE_FRAME, SourceCard, SourceList, type SourceListItem } from "@/components/sources/source-card";
-import { BackLink } from "@/components/ui/back-link";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { TextLink } from "@/components/ui/text-link";
 import { counties, indicators, sources, values } from "@/lib/data";
 import { MOTION_LOUD_CLASS } from "@/lib/motion";
@@ -187,14 +185,16 @@ function Definition({ row, withLead }: { row: SourceRow; withLead: boolean }) {
   );
 }
 
-/** The two indicators the ranking reads, as full focus cards: name, main caveat, publisher, years, link. */
+/**
+ * The two indicators the ranking reads, side by side as two framed cards of the same height: name,
+ * main caveat, publisher, years, link. Static, like every other framed unit on the page.
+ */
 function RankingCards({ rows }: { rows: SourceRow[] }) {
   return (
-    <FocusGroup className="flex flex-col gap-4">
+    <ul className="grid gap-3 md:grid-cols-2">
       {rows.map((row) => (
-        <SourceCard
-          key={row.indicator.indicator_id}
-          focus
+        <li key={row.indicator.indicator_id} className="print-keep">
+          <SourceCard
           title={row.indicator.short_name}
           note={firstSentence(row.indicator.limitation)}
           publisher={row.source?.publisher ?? row.indicator.source_id}
@@ -203,9 +203,10 @@ function RankingCards({ rows }: { rows: SourceRow[] }) {
           linkLabel="Official definition on Sotkanet"
           detailLabel="definition and scope"
           detail={<Definition row={row} withLead={false} />}
-        />
+          />
+        </li>
       ))}
-    </FocusGroup>
+    </ul>
   );
 }
 
@@ -279,16 +280,16 @@ export default function SourcesPage() {
   ];
 
   return (
-    <main className={cn("page-container flex flex-col gap-12 pt-4 pb-12 sm:pt-6", MOTION_LOUD_CLASS)}>
-      <header className="flex flex-col items-start gap-6">
-        <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: "Sources & limitations" }]} />
+    <main className={cn("page-container flex flex-col gap-12 pt-6 pb-12 sm:pt-8", MOTION_LOUD_CLASS)}>
+      {/* A top-level page: no breadcrumb (it is not under Areas), as on /compare and /insights. */}
+      <header className="flex flex-col items-start gap-5">
         <Reveal className="flex max-w-[52rem] flex-col gap-3">
           <p className="type-eyebrow">Sources &amp; limitations</p>
           <h1 className="type-page text-balance">
             Every number in FirstLine comes from a public source. Here they are, and what they cannot tell you.
           </h1>
         </Reveal>
-        <Reveal index={1} className="flex flex-col gap-4">
+        <Reveal index={1} className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
           <p className="text-lg text-pretty text-foreground">
             <span className="figure font-semibold">{sources.length}</span> public sources ·{" "}
             <span className="figure font-semibold">{indicators.length}</span> indicators
@@ -329,10 +330,18 @@ export default function SourcesPage() {
 
       <section aria-labelledby="indicator-sources" className="flex flex-col gap-8">
         <SectionHead id="indicator-sources" title="Indicators" />
-        <section aria-labelledby="indicators-ranking" className="flex max-w-[52rem] flex-col gap-4">
+        <section aria-labelledby="indicators-ranking" className="flex flex-col gap-4">
           <Reveal className="flex flex-col gap-1">
             <h3 id="indicators-ranking" className="type-heading text-forest-ink">Used to rank counties</h3>
-            <p className="text-base text-muted-foreground">Sotkanet 6411 sets the order; 13 sets the referral status shown beside it.</p>
+            {/* Plain names, not Sotkanet ids: the ids are in each card's "definition and scope". */}
+            <p className="text-base text-pretty text-muted-foreground">
+              {ranking.map((row, i) => (
+                <span key={row.indicator.indicator_id}>
+                  {i > 0 ? " " : ""}“{row.indicator.short_name}”{" "}
+                  {row.indicator.indicator_id === GP_WAIT_ID ? "sets the order." : "sets the referral status shown beside each county's rank."}
+                </span>
+              ))}
+            </p>
           </Reveal>
           <RankingCards rows={ranking} />
         </section>
@@ -363,9 +372,41 @@ export default function SourcesPage() {
         />
       </section>
 
-      <nav aria-label="Page" className="print:hidden">
-        <BackLink href="/">Back to areas</BackLink>
-      </nav>
+      {/* Where to go next, as on /how-to-read. */}
+      <MoreCard
+        id="read-next"
+        title="Read next"
+        className="print:hidden"
+        rows={[
+          {
+            key: "how-to-read",
+            label: "Three things to know before you read any figure",
+            action: (
+              <TextLink kind="nav" href="/how-to-read">
+                How to read these numbers
+              </TextLink>
+            ),
+          },
+          {
+            key: "compare",
+            label: "Every area side by side, against Finland overall",
+            action: (
+              <TextLink kind="nav" href="/compare">
+                Where access is hardest
+              </TextLink>
+            ),
+          },
+          {
+            key: "areas",
+            label: "One area's figures and what it can do",
+            action: (
+              <TextLink kind="nav" href="/">
+                Areas
+              </TextLink>
+            ),
+          },
+        ]}
+      />
     </main>
   );
 }
