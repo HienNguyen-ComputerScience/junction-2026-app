@@ -170,7 +170,10 @@ export function AreaPicker({
             onSelect={(id) => choose(id, true)}
             className="h-[16.25rem] lg:h-[20rem]"
           />
-          <p className="self-start type-caption text-muted-foreground">Map: Statistics Finland, CC BY 4.0</p>
+          <p className="self-start type-caption text-pretty text-muted-foreground">
+            Not specific to cancer: it covers all non-urgent GP visits. Map: Statistics Finland, CC BY
+            4.0
+          </p>
         </div>
         {/* The page's one key: the map's fills and the steps' bars use the same marks. */}
         <BarKey className="border-t border-border px-4 py-2.5 sm:px-5" />

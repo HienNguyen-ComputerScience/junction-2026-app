@@ -160,6 +160,8 @@ export function FinlandMap({
   onSelect,
 }: Props) {
   const uid = useId();
+  // In picker mode the selected area's figure is shown beside the map, so its label is the name only.
+  const picker = onSelect !== undefined;
   const pathId = (id: string) => `${uid}-p-${id}`;
   const clipId = (id: string) => `${uid}-c-${id}`;
   const hatchId = `${uid}-hatch`;
@@ -190,7 +192,7 @@ export function FinlandMap({
     // No role="img" here: it would hide the 22 links inside from assistive technology. A
     // figure with a name keeps the summary and the links.
     <figure aria-label={label} className={cn("flex items-stretch justify-center", className)}>
-      <LabelColumn side="left" labels={leftLabels} />
+      <LabelColumn side="left" labels={leftLabels} nameOnly={picker} />
 
       <div className="relative h-full shrink-0" style={{ aspectRatio: `${width} / ${height}` }}>
         <svg
@@ -275,7 +277,7 @@ export function FinlandMap({
         ))}
       </div>
 
-      <LabelColumn side="right" labels={rightLabels} />
+      <LabelColumn side="right" labels={rightLabels} nameOnly={picker} />
     </figure>
   );
 }
@@ -340,7 +342,7 @@ function Leader({ item }: { item: Placed }) {
  * The labels of one side, in a column that takes its width from them. Decorative for
  * assistive technology: the same name, value and status are the accessible name of the link.
  */
-function LabelColumn({ side, labels }: { side: Side; labels: Placed[] }) {
+function LabelColumn({ side, labels, nameOnly }: { side: Side; labels: Placed[]; nameOnly: boolean }) {
   if (labels.length === 0) return null;
   return (
     <div
@@ -357,9 +359,11 @@ function LabelColumn({ side, labels }: { side: Side; labels: Placed[] }) {
           style={{ top: y }}
         >
           <span className="type-caption leading-4 font-medium text-foreground">{area.name}</span>
-          <StatusBadge status={area.status} variant="quiet" className="h-4 leading-4">
-            <span className="figure">{area.valueLabel ?? area.statusLabel}</span>
-          </StatusBadge>
+          {!nameOnly && (
+            <StatusBadge status={area.status} variant="quiet" className="h-4 leading-4">
+              <span className="figure">{area.valueLabel ?? area.statusLabel}</span>
+            </StatusBadge>
+          )}
         </span>
       ))}
     </div>
