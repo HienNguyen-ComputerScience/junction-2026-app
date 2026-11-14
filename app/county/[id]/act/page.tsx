@@ -11,7 +11,7 @@ import { BackLink } from "@/components/ui/back-link";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Disclosure, PrintButton, Reveal } from "@/components/motion";
 import { buttonVariants } from "@/components/ui/button";
-import { Frame, FrameDescription, FrameHeader, FrameTitle } from "@/components/ui/frame";
+import { Frame, FrameHeader, FrameTitle } from "@/components/ui/frame";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TextLink } from "@/components/ui/text-link";
 import { STAGE_LABELS, bottleneckLede, getBottleneck, otherActions, pickActions, type Bottleneck } from "@/lib/act";
@@ -163,10 +163,10 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
               <FrameTitle id="other-options" className="type-title">
                 Other options
               </FrameTitle>
-              <FrameDescription>
+              <p className="col-span-2 max-w-[68ch] text-base text-pretty text-muted-foreground">
                 {otherCount} more evidence-backed {otherCount === 1 ? "action" : "actions"}, for steps not picked here or not
                 measured in {county.name}.
-              </FrameDescription>
+              </p>
             </FrameHeader>
             <Disclosure
               className="px-1"
@@ -203,16 +203,16 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
         ) : null}
       </section>
 
-      <Reveal as="section">
+      <Reveal>
         <Frame aria-labelledby="referral-routes">
           <FrameHeader>
             <FrameTitle id="referral-routes" className="type-title scroll-mt-24">
               The four referral routes a county needs
             </FrameTitle>
-            <FrameDescription className="text-base">
+            <p className="col-span-2 max-w-[68ch] text-base text-pretty text-muted-foreground">
               Does {county.name} have a written route for each: fast track, vague-symptoms work-up, GP check within two
               weeks, and safety-net recheck? Decision support for the county, not diagnosis.
-            </FrameDescription>
+            </p>
           </FrameHeader>
           <Disclosure className="px-1" label="the four routes">
             <ReferralRoutes />
@@ -222,16 +222,16 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
 
       {count > 0 ? (
         <div data-print="hide">
-          <Reveal as="section">
+          <Reveal>
             <Frame aria-labelledby="web-search">
               <FrameHeader>
                 <FrameTitle id="web-search" className="type-title">
                   Search the web for newer studies
                 </FrameTitle>
-                <FrameDescription className="text-base">
+                <p className="col-span-2 max-w-[68ch] text-base text-pretty text-muted-foreground">
                   The evidence above was checked by our team. A web search can find newer studies on each action; those
                   results are not checked.
-                </FrameDescription>
+                </p>
               </FrameHeader>
               <Disclosure className="px-1" label="the web search for each action">
                 <ol className="flex flex-col gap-5">

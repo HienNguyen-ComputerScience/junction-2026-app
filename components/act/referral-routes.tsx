@@ -1,7 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 
 import { SourceChip } from "@/components/source-chip";
-import { Disclosure } from "@/components/motion";
 import {
   FINNISH_ROADMAP,
   KAYPA_HOITO,
@@ -68,14 +67,14 @@ function LinkChips({ links }: { links: GuidelineLink[] }) {
   return (
     <ul role="list" className="contents">
       {links.map((link) => (
-        <li key={link.url} className="flex items-center gap-1">
+        <li key={link.url} className="flex min-w-0 flex-wrap items-center gap-1.5">
           <a
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
             title={link.label}
             aria-label={`${chipName(link)}: ${link.label} (opens in a new tab)`}
-            className="inline-flex min-h-9 items-center gap-1 rounded-full border border-input bg-cream-paper px-3 text-sm font-medium text-brand-ink outline-none hover:bg-mint-veil focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-input bg-cream-paper px-3 py-1 text-left text-sm font-medium text-brand-ink outline-none hover:bg-mint-veil focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             {chipName(link)}
             <ArrowUpRight aria-hidden className="size-3.5 shrink-0" />
@@ -138,17 +137,10 @@ export function ReferralRoutes() {
                 </span>
                 {leadingSentences(tier.gpAction, urgency === "prompt" ? 2 : 1)}
               </p>
-              <Disclosure
-                tone="quiet"
-                show={`Show the guideline or study behind it (${links.length})`}
-                hide="Hide the guideline or study"
-                contentClassName="pt-2"
-              >
-                <p className="hidden text-sm font-semibold print:block">Guideline or study behind it</p>
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pt-1 pb-1">
-                  <LinkChips links={links} />
-                </div>
-              </Disclosure>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                <span className={ROW_LABEL}>Behind it</span>
+                <LinkChips links={links} />
+              </div>
             </li>
           );
         })}
