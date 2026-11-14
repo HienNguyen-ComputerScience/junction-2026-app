@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { ArrowDown } from "lucide-react";
 import { type ReactNode, Suspense } from "react";
 import { cn } from "cn";
 
 import { ConfidenceBadge } from "@/components/insights/confidence-badge";
 import { Goal3Detail } from "@/components/insights/goal3-link";
 import { GradingRulesBody } from "@/components/insights/grading-rules";
-import { GpWaitWarningTable, PathwayStepsRow, StarterFields } from "@/components/insights/insights-story";
+import { GpWaitWarningTable, PathwayStepsRow, STEP_NAME, StarterFields } from "@/components/insights/insights-story";
 import { AreaTable, NO_WAY_ROUND_CAVEATS, TestsTable } from "@/components/insights/no-way-round";
 import { NoWayRoundTiles, type TileLevel } from "@/components/insights/no-way-round-tiles";
 import { PathwayRow } from "@/components/insights/pathway-row";
@@ -206,63 +207,83 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
   const steps = getPathwayRow(DEFAULT_AREA)?.steps ?? [];
   const notPublished = steps.filter((s) => !s.published);
   // The source behind each unpublished step: the data-gap row it points to.
-  const gapSources = [
-    ...new Set(
-      notPublished
-        .map((s) => dataGaps.find((g) => g.id === s.data_gap_id)?.source_id)
-        .filter((id): id is string => typeof id === "string"),
-    ),
-  ];
+  const gapSources = notPublished.flatMap((s) => {
+    const sourceId = dataGaps.find((g) => g.id === s.data_gap_id)?.source_id;
+    return sourceId ? [{ step: s.id, sourceId }] : [];
+  });
 
   return (
     <main className={cn("page-container flex flex-col gap-10 pt-4 pb-16 sm:gap-12 sm:pt-6", MOTION_LOUD_CLASS)}>
       {/* The finding: one serif statement, the two figures, source and main caveat. */}
       <header className="flex flex-col items-start gap-6 *:max-w-full">
         <Reveal className="flex max-w-[52rem] flex-col gap-3">
-          <p className="type-eyebrow">GP wait, {noWayRound.year}</p>
+          <p className="type-eyebrow">Where access is hardest</p>
           <h1 className="font-display text-[2.5rem] leading-[1.1] font-light text-balance text-forest-ink sm:text-[3.5rem]">
             In {word(robust.length)} areas the GP queue is long, with no way round it.
           </h1>
-        </Reveal>
-        <Reveal index={1} className="flex flex-wrap gap-x-14 gap-y-6">
-          {robust.map((a) => (
-            <div key={a.county_id} className="flex flex-col gap-2">
-              <p className="type-heading text-forest-ink">{a.name}</p>
-              <p className="numeral text-[4rem] leading-none text-status-red-ink sm:text-[5.5rem] print:text-[32pt]">
-                <AnimatedNumber value={a.wait.value} final={formatValue("6411", a.wait.value)} level="loud" />
-              </p>
-            </div>
-          ))}
-        </Reveal>
-        <Reveal index={2} className="flex max-w-[60ch] flex-col items-start gap-3 *:max-w-full">
-          <p className="text-[1.1875rem] leading-[1.6] text-pretty text-foreground">
-            of non-urgent GP visits waited more than 7 days. Finland overall:{" "}
-            <span className="figure font-semibold">{FINLAND_WAIT}</span>.
+          {/* What "no way round it" means, in words, before any figure. */}
+          <p className="max-w-[60ch] text-[1.1875rem] leading-[1.6] text-pretty text-foreground">
+            The wait for a GP is long there, and people make few private or work-health doctor visits instead.
           </p>
-          <SourceChip sourceId="sotkanet-6411" year={noWayRound.year} />
-          <CaveatNote short="area figures, not people; not cancer-specific">
-            <ul className="flex list-disc flex-col gap-1.5 pl-5">
-              {NO_WAY_ROUND_CAVEATS.map((text) => (
-                <li key={text}>{text}</li>
-              ))}
-              {robust.map((a) => (
-                <li key={a.county_id}>
-                  {a.name}, {a.wait.grade.label.toLowerCase()}: {a.wait.grade.reason}
-                </li>
-              ))}
-            </ul>
-          </CaveatNote>
-          <SaveShare
-            className="pt-2 print:hidden"
-            options={[
-              { kind: "print" },
-              {
-                kind: "email",
-                subject: "Where cancer care access is hardest in Finland",
-                intro: "Where access to early cancer care is hardest across Finland, from published figures:",
-              },
-            ]}
-          />
+        </Reveal>
+        {/* The measure first, then the two areas beside Finland overall, so the gap is seen, not read. */}
+        <Reveal index={1} className="flex flex-col gap-4">
+          <p className="text-base font-semibold text-pretty text-forest-ink">
+            Non-urgent GP visits that waited more than 7 days, {noWayRound.year}
+          </p>
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:flex sm:flex-wrap sm:gap-x-14">
+            {robust.map((a) => (
+              <div key={a.county_id} className="flex flex-col gap-2">
+                <dt className="type-heading text-forest-ink">{a.name}</dt>
+                <dd className="numeral text-[3.25rem] leading-none text-status-red-ink sm:text-[5.5rem] print:text-[32pt]">
+                  <AnimatedNumber value={a.wait.value} final={formatValue("6411", a.wait.value)} level="loud" />
+                </dd>
+              </div>
+            ))}
+            <div className="flex flex-col gap-2 sm:border-l sm:border-frame-border sm:pl-14">
+              <dt className="type-heading text-forest-ink">Finland overall</dt>
+              <dd className="numeral text-[3.25rem] leading-none text-forest-ink sm:text-[5.5rem] print:text-[32pt]">
+                {FINLAND_WAIT}
+              </dd>
+            </div>
+          </dl>
+        </Reveal>
+        <Reveal index={2} className="flex max-w-full flex-col items-start gap-4 *:max-w-full">
+          <div className="flex flex-wrap items-center gap-3 *:max-w-full">
+            <SourceChip sourceId="sotkanet-6411" year={noWayRound.year} />
+            <CaveatNote short="area figures, not people; not cancer-specific">
+              <ul className="flex list-disc flex-col gap-1.5 pl-5">
+                {NO_WAY_ROUND_CAVEATS.map((text) => (
+                  <li key={text}>{text}</li>
+                ))}
+                {robust.map((a) => (
+                  <li key={a.county_id}>
+                    {a.name}, {a.wait.grade.label.toLowerCase()}: {a.wait.grade.reason}
+                  </li>
+                ))}
+              </ul>
+            </CaveatNote>
+          </div>
+          <div className="flex flex-wrap items-start gap-x-6 gap-y-3 *:max-w-full print:hidden">
+            <SaveShare
+              options={[
+                { kind: "print" },
+                {
+                  kind: "email",
+                  subject: "Where cancer care access is hardest in Finland",
+                  intro: "Where access to early cancer care is hardest across Finland, from published figures:",
+                },
+              ]}
+            />
+            {/* The page's one action sits in the last card; this quiet link gets there from the top. */}
+            <a
+              href="#starter-dataset"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg text-base font-semibold text-forest-ink underline decoration-forest-ink/30 underline-offset-4 outline-none hover:decoration-forest-ink focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              Go to the recording template
+              <ArrowDown aria-hidden strokeWidth={1.75} className="size-4 shrink-0" />
+            </a>
+          </div>
         </Reveal>
       </header>
 
@@ -270,7 +291,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
       <InsightCard
         id="no-way-round"
         eyebrow={`All ${c.areas} areas, ${noWayRound.year}`}
-        title={`Of the ${c.wait_above_finland} areas that wait longer than Finland overall, only ${word(c.long_few_every_test)} also make few private or work-health doctor visits in all ${word(TESTS)} tests.`}
+        title={`${c.wait_above_finland} areas wait longer than Finland overall. Only ${word(c.long_few_every_test)} of them also make few private or work-health doctor visits in all ${word(TESTS)} tests.`}
         visual={<NoWayRoundTiles areas={tiles} counts />}
         split
         source={
@@ -323,7 +344,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
                 <WarningMethod />
                 <GradingRulesBody />
               </More>
-              <More show={`Show all ${gp.areas} areas`} hide={`Hide the ${gp.areas} areas`}>
+              <More show={`Show the change for all ${gp.areas} areas`} hide={`Hide the change for all ${gp.areas} areas`}>
                 <GpWaitWarningTable />
               </More>
             </>
@@ -337,9 +358,17 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
         eyebrow="The cancer pathway"
         title={`${capital(word(notPublished.length))} of ${word(steps.length)} steps to cancer treatment are not published by area.`}
         visual={<PathwayStepsRow />}
-        source={gapSources.map((id) => (
-          <SourceChip key={id} sourceId={id} />
-        ))}
+        source={
+          // Each unpublished step with the source that shows it can be measured.
+          <ul className="flex flex-col gap-2">
+            {gapSources.map(({ step, sourceId }) => (
+              <li key={step} className="flex flex-wrap items-center gap-x-3 gap-y-1 text-base">
+                <span className="min-w-[9rem] font-semibold text-forest-ink">{STEP_NAME[step]}</span>
+                <SourceChip sourceId={sourceId} />
+              </li>
+            ))}
+          </ul>
+        }
         more={
           <Suspense fallback={<AreaPathwayBody chosen={null} />}>
             <AreaPathway searchParams={searchParams} />
@@ -379,7 +408,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
               </ul>
               <StarterFields />
             </More>
-            <More show="Show the Goal 3 link" hide="Hide the Goal 3 link">
+            <More show="Show how this ties to Goal 3" hide="Hide how this ties to Goal 3">
               <Goal3Detail />
             </More>
           </>

@@ -27,6 +27,13 @@ const SAYS: Record<TileLevel, string> = {
   3: "longer GP wait and few private or work-health doctor visits instead, in all six tests",
 };
 
+const KEY: Record<TileLevel, string> = {
+  0: "All areas",
+  1: "Longer GP wait than Finland overall",
+  2: "Of those, few private or work-health doctor visits instead",
+  3: "Of those, true in every one of the six tests we ran",
+};
+
 /** One to three dots: the level as a shape, so the picture never depends on colour alone. */
 function Dots({ level }: { level: TileLevel }) {
   if (level === 0) return null;
@@ -62,13 +69,14 @@ export function NoWayRoundTiles({
     <div className="flex flex-col gap-4">
       {/* The key comes first, so it is on screen before the boxes it explains. Without counts it only repeats each box's own screen-reader text; with counts it adds facts, so it is read. */}
       <ul aria-hidden={counts ? undefined : true} aria-label={counts ? "Legend" : undefined} className="flex flex-col gap-1.5 text-base">
-        {([1, 2, 3] as const).map((level) => (
+        {/* With counts the key reads as a funnel, every line a subset of the one above. */}
+        {((counts ? [0, 1, 2, 3] : [1, 2, 3]) as TileLevel[]).map((level) => (
           <li key={level} className="flex items-center gap-2.5">
-            <span className={cn("inline-flex h-6 w-10 items-center justify-center rounded-sm border-2", FILL[level])}>
+            <span className={cn("inline-flex h-6 w-10 shrink-0 items-center justify-center rounded-sm border-2", FILL[level])}>
               <Dots level={level} />
             </span>
-            {counts ? <span className="figure min-w-[2ch] text-right font-semibold">{areas.filter((a) => a.level >= level).length}</span> : null}
-            {level === 1 ? "Longer GP wait than Finland overall" : level === 2 ? "… and few private or work-health doctor visits instead" : "… true in every one of the six tests we ran"}
+            {counts ? <span className="figure min-w-[2ch] shrink-0 text-right font-semibold">{areas.filter((a) => a.level >= level).length}</span> : null}
+            <span className="text-pretty">{KEY[level]}</span>
           </li>
         ))}
       </ul>

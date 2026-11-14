@@ -33,7 +33,7 @@ export function GpWaitWarningTable() {
   );
 }
 
-const STEP_NAME: Record<PathwayStepId, string> = {
+export const STEP_NAME: Record<PathwayStepId, string> = {
   detection: "Screening",
   gp_recognition: "GP recognition",
   gp_access: "GP wait",
