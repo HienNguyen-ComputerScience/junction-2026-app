@@ -24,6 +24,8 @@ export type AskResponse = {
   retrievedAt?: string;
   /** True when the question gate refused it: no search ran, so no status badge. */
   offTopic?: boolean;
+  /** Sentences the checker removed because their numbers weren't in the cited source. Absent on older cached replies. */
+  dropped?: number;
 };
 
 /** Shown when a route answers HTTP 429. */

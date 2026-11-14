@@ -55,10 +55,20 @@ globalThis.fetch = async (input) => {
     calls.claude++;
     await pause(mode.delay);
     if (mode.claude === "fail") return new Response("overloaded", { status: 529 });
+    // "unbacked": every sentence has a number that is in no source, so the checker removes all three.
     const input =
       mode.claude === "nothing"
         ? { nothing_found: true, sentences: [] }
-        : { nothing_found: false, sentences: [{ text: "Patients in Vantaa waited for a GP appointment.", sources: [1] }] };
+        : mode.claude === "unbacked"
+          ? {
+              nothing_found: false,
+              sentences: [
+                { text: "Waits rose 987% in 2025 [1].", sources: [1] },
+                { text: "Patients waited 431 days on average [1].", sources: [1] },
+                { text: "The wait was 77 days in Vantaa [1].", sources: [1] },
+              ],
+            }
+          : { nothing_found: false, sentences: [{ text: "Patients in Vantaa waited for a GP appointment.", sources: [1] }] };
     return Response.json({ stop_reason: "tool_use", content: [{ type: "tool_use", name: "submit_answer", input }] });
   }
   throw new Error(`unexpected fetch ${url}`);
@@ -179,6 +189,30 @@ test("2b: Claude's 'Nothing found in the sources.' is cached, but only for a few
   assert.equal(calls.claude, 2, "expired at 6 minutes");
   assert.equal(calls.exa, 2, "an expired nothing-found re-runs the search too");
   assert.ok(c.json.answer);
+});
+
+test("the checker removing every sentence says so, with the count, instead of a plain 'Nothing found'", async () => {
+  mode.claude = "unbacked";
+  const a = await ask(Q);
+  assert.equal(a.json.nothingFound, true);
+  assert.equal(a.json.answer, null);
+  assert.equal(a.json.dropped, 3);
+  assert.match(a.json.message, /^The checker removed 3 sentences from the written answer: their numbers were not in the sources they cited/);
+  assert.equal(a.json.items.length, 1, "the sources are still returned");
+  const b = await ask(Q);
+  assert.equal(b.json.freshness, "cache");
+  assert.equal(b.json.dropped, 3, "the count survives the cache");
+  advance(6 * MINUTE);
+  mode.claude = "answer";
+  assert.ok((await ask(Q)).json.answer, "still only cached for a few minutes");
+});
+
+test("Claude saying nothing found keeps the plain message and no dropped count", async () => {
+  mode.claude = "nothing";
+  const a = await ask(Q);
+  assert.equal(a.json.nothingFound, true);
+  assert.equal(a.json.message, "Nothing found in the sources.");
+  assert.ok(a.json.dropped === undefined || a.json.dropped === 0);
 });
 
 test("2b: a no-relevant-results nothing-found expires after a few minutes, not 24 h", async () => {
