@@ -245,3 +245,20 @@ export function inTen(shares: number[]): string {
   if (tenths.size === 1) return `about ${[...tenths][0]} in 10`;
   return `between ${Math.min(...shares).toFixed(1)}% and ${Math.max(...shares).toFixed(1)}% of`;
 }
+
+/**
+ * Areas whose count behind an indicator moved by more than the recording threshold between two
+ * years (first to last, not year on year), and how many areas could be compared.
+ */
+export function countBaseChange(indicatorId: string, fromYear: number, toYear: number) {
+  let changed = 0;
+  let compared = 0;
+  for (const g of grades) {
+    if (g.county_id === "finland" || g.indicator_id !== indicatorId || g.year !== toYear) continue;
+    const from = getGrade(g.county_id, indicatorId, fromYear)?.base;
+    if (!from || !g.base) continue;
+    compared++;
+    if (Math.abs(g.base / from - 1) > rules.constants.recording_change_above) changed++;
+  }
+  return { changed, compared };
+}
