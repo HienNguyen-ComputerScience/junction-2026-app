@@ -34,7 +34,7 @@ export function StepUnit({
   const Heading = headingLevel;
   return (
     <Reveal index={index} className="print-keep flex">
-      <FramePanel padding="none" className="flex w-full min-w-0 flex-col gap-3 p-6 sm:p-7 print:gap-2 print:p-4">
+      <FramePanel padding="none" className="step-unit flex w-full min-w-0 flex-col gap-3 p-6 sm:p-7 print:gap-2 print:p-4">
         <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <span className="type-eyebrow">Step {step.number}</span>
           {flag ? (
@@ -49,7 +49,9 @@ export function StepUnit({
         ) : (
           <p className="font-display text-3xl font-light text-forest-ink print:text-2xl">No figure</p>
         )}
-        <StatusBadge status={step.status}>{step.statusLabel}</StatusBadge>
+        <StatusBadge status={step.status} className="h-auto max-w-full shrink items-baseline whitespace-normal leading-snug">
+          {step.statusLabel}
+        </StatusBadge>
         {step.measure ? (
           <p className="text-base">
             {step.measure}, {step.year} ({step.direction}).

@@ -143,7 +143,7 @@ export default function ComparePage() {
             </p>
           </Disclosure>
         </div>
-        <FramePanel padding="none" className="p-5 sm:p-7 print:border-0 print:bg-transparent print:p-0">
+        <FramePanel padding="none" className="print-bare p-5 sm:p-7">
           <CompareTable rows={rows} finland={lead.finlandGp} finlandReferral={lead.finlandReferral} />
         </FramePanel>
         <p className="hidden text-[8.5pt] text-muted-foreground print:block">

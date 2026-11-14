@@ -95,10 +95,11 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             Each step compared with Finland&apos;s level. The colours compare with Finland, not with a clinical standard.
           </p>
         </Reveal>
-        <div className="grid gap-3 lg:grid-cols-3">
+        <div className="grid gap-3 lg:grid-cols-3 print:grid-cols-3">
           {steps.map((step, i) => (
             <StepUnit key={step.stage} step={step} index={i} flag={step.stage === reasonStage ? "The main delay" : undefined}>
-              {trends.get(step.stage) ? <div className="pt-1">{trends.get(step.stage)}</div> : null}
+              {/* On paper the card says the change since 2023 in words; the chart would push it off the page. */}
+              {trends.get(step.stage) ? <div className="pt-1 print:hidden">{trends.get(step.stage)}</div> : null}
             </StepUnit>
           ))}
         </div>
@@ -114,10 +115,16 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
         <LimitationsBox items={limitations} visibleCount={4} />
       </section>
 
-      <PathwayStrip countyId={county.id} />
+      {/* The eight-step strip is screen context; its one figure (127 vs 76 days) is in the limitations. */}
+      <div className="print:hidden">
+        <PathwayStrip countyId={county.id} />
+      </div>
 
-      <CountyBrief countyId={county.id} />
-      <CountyNews key={county.id} countyId={county.id} />
+      {/* Screen tools (an AI rewrite, live news): not on paper, where the steps above carry the figures. */}
+      <div className="flex flex-col gap-12 sm:gap-16 print:hidden">
+        <CountyBrief countyId={county.id} />
+        <CountyNews key={county.id} countyId={county.id} />
+      </div>
     </main>
   );
 }

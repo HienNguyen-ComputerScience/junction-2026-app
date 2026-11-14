@@ -585,9 +585,14 @@ h2:not([class*="type-"], .font-sans) {
   dl > div {
     break-inside: avoid;
   }
+  /* A tall list item (a whole action card) may break; keeping it whole leaves a blank page. */
+  .print-flow {
+    break-inside: auto !important;
+  }
   h1,
   h2,
-  h3 {
+  h3,
+  .type-eyebrow {
     break-after: avoid;
   }
   a {
@@ -610,6 +615,11 @@ h2:not([class*="type-"], .font-sans) {
   [data-slot="card"],
   [data-slot="stat-unit"] {
     border: 0.75pt solid #d4d6d1 !important;
+  }
+  /* A panel that only frames a paper table prints with no box at all. */
+  .print-bare {
+    border: 0 !important;
+    padding: 0 !important;
   }
   /* A4 is narrower than a desktop screen: wide tables print smaller and tighter, and no column
      keeps a screen minimum width. */
@@ -642,6 +652,24 @@ h2:not([class*="type-"], .font-sans) {
   }
   [data-slot="stat-unit"] :is(.text-base, .text-sm) {
     font-size: 9.5pt !important;
+  }
+  /* Step cards print compact, so the three steps sit side by side under the page title. */
+  .step-unit :is(.text-base, .text-sm) {
+    font-size: 10pt !important;
+    line-height: 1.4 !important;
+  }
+  .step-unit .type-heading {
+    font-size: 13pt !important;
+  }
+  /* On paper a source chip is a citation: full text, never cut short. */
+  .source-chip {
+    height: auto !important;
+    font-size: 9pt !important;
+    white-space: normal !important;
+  }
+  .source-chip > span {
+    overflow: visible !important;
+    white-space: normal !important;
   }
   /* Paper is not a screen: the page title and lede print smaller. */
   .type-display {

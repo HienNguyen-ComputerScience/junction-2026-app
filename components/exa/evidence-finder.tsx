@@ -50,7 +50,7 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
   const showResults = loading || (data !== null && !unavailable);
 
   return (
-    <section aria-label={`Live evidence search for: ${actionTitle}`} className="flex w-full flex-col gap-2">
+    <section data-print="hide" aria-label={`Live evidence search for: ${actionTitle}`} className="flex w-full flex-col gap-2">
       {/* A secondary action: the action's own checked source comes first. */}
       <Button
         type="button"

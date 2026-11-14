@@ -95,7 +95,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
         {/* Every recommended action in order, numbered, one under the other. */}
         <ol aria-label={`Recommended actions for ${county.name}`} className="flex flex-col gap-1.5">
           {recommended.map((action, index) => (
-            <Reveal as="li" key={action.id} index={index}>
+            <Reveal as="li" key={action.id} index={index} className="print-flow">
               <ActionCard action={action} index={index + 1}>
                 <EvidenceFinder actionId={action.id} actionTitle={action.action} />
               </ActionCard>
