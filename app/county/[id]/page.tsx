@@ -18,7 +18,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { getBottleneck } from "@/lib/act";
 import { getAreaSteps } from "@/lib/plan-model";
 import { getMainReason } from "@/lib/main-reason";
-import { counties, gaps, getCounty, getValue, LATEST_YEAR, type County } from "@/lib/data";
+import { counties, gaps, getCounty, getValue, LATEST_YEAR, values, type County } from "@/lib/data";
 import {
   formatPct,
   getIndicator,
@@ -153,8 +153,19 @@ const INDICATOR_TITLE: Record<string, string> = {
 const INDICATOR_SHORT: Record<string, string> = {
   [GP_WAIT_ID]: "Counts all non-urgent GP appointments, not only possible cancer.",
   [REFERRAL_ID]: "Measures when assessment starts, not when a specialist is seen.",
-  [REFERRAL_LATE_ID]: "Whole percentages of 0-3% everywhere, so it barely separates counties.",
+  [REFERRAL_LATE_ID]: referralLateShort(),
 };
+
+/** 5033's spread in the latest year, from the data, so a refresh never leaves the line wrong. */
+function referralLateShort() {
+  const shares = values.filter((v) => v.indicator_id === REFERRAL_LATE_ID && v.year === LATEST_YEAR).map((v) => v.value);
+  const whole = shares.every(Number.isInteger);
+  const show = (n: number) => (whole ? String(n) : n.toFixed(1));
+  const [min, max] = [Math.min(...shares), Math.max(...shares)];
+  const range = min === max ? `${show(min)}%` : `${show(min)}-${show(max)}%`;
+  if (max - min > 5) return `From ${range} across areas in ${LATEST_YEAR}.`;
+  return `${whole ? "Whole percentages of " : ""}${range} everywhere, so it barely separates counties.`;
+}
 
 function buildLimitations(county: County): LimitationItem[] {
   const items: LimitationItem[] = [];

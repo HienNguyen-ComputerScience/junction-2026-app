@@ -24,7 +24,7 @@ Hosted on Vercel (project `firstline-finland`), deployed automatically from `mai
 The AI-written brief and live Exa search need `ANTHROPIC_API_KEY` and `EXA_API_KEY` set in the Vercel project. Without `ANTHROPIC_API_KEY` the site shows the precomputed brief. Without `EXA_API_KEY` (or when Exa is down) an Exa panel shows saved results with their date when a committed cache entry exists for that request, and otherwise a clear "unavailable" state.
 
 ## Stack
-Next.js 16 (App Router, Cache Components), TypeScript, Tailwind CSS 4, shadcn/ui, hosted on Vercel. Data: a static JSON snapshot of THL Sotkanet, rebuilt by a script. Claude API (brief and Exa answers) and Exa search are called server-side only. No database, no patient data.
+Next.js 16 (App Router, Cache Components), TypeScript, Tailwind CSS 4, shadcn/ui, hosted on Vercel. Data: a static JSON snapshot of THL Sotkanet, rebuilt by a script and refreshed daily by a GitHub Action that opens a PR when a figure changes (`npm run data:refresh`, see `data/README.md`). Claude API (brief and Exa answers) and Exa search are called server-side only. No database, no patient data.
 
 ## How to run
 Needs Node.js 22.18 or later (the tests and `brief:check` load TypeScript files directly).

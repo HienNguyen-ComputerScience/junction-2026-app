@@ -17,6 +17,15 @@ export const metadata: Metadata = { title: "Compare all 22 areas | FirstLine" };
 
 const pct = (value: number) => `${value.toFixed(1)}%`;
 
+/** The headline follows the data, so a refresh never leaves it wrong. */
+function howManyLonger(worse: number, total: number) {
+  if (worse === 0) return "No area waits longer than Finland overall";
+  if (worse === total) return "Every area waits longer than Finland overall";
+  if (worse * 2 > total) return "Most areas wait longer than Finland overall";
+  if (worse * 2 === total) return "Half the areas wait longer than Finland overall";
+  return "Fewer than half the areas wait longer than Finland overall";
+}
+
 /**
  * Every area side by side, told on scroll: how many areas are slower than Finland overall (the headline),
  * then a ScrollStory over the 22 bars (the longest wait, the shortest, the largest rise), then the
@@ -35,7 +44,7 @@ export default function ComparePage() {
         lead
         as="h1"
         eyebrow={`Compare all ${lead.total} areas, ${LATEST_YEAR}`}
-        statement="Most areas wait longer than Finland overall"
+        statement={howManyLonger(lead.worse, lead.total)}
         figure={
           <ChunkFigure tone="alarm" unit={`of ${lead.total} areas have a longer wait than Finland overall`}>
             <AnimatedNumber value={lead.worse} decimals={0} final={String(lead.worse)} level="loud" />

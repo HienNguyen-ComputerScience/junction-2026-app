@@ -56,8 +56,8 @@ const INDICATORS = [
     unit: "%",
     direction: "higher_is_worse",
     stage: null,
-    limitation:
-      "Published as whole percentages and 0-3% everywhere, so it barely separates counties. Shown as context only, not used for ranking or stage status.",
+    // Written from the fetched values (see referralLateLimitation), so a refresh keeps it true.
+    limitation: referralLateLimitation,
   },
   // Cancer screening attendance: the step before the GP (challenge deck
   // slides 9-10). Context only (stage null): never ranked, never a stage
@@ -407,6 +407,21 @@ const DATA_GAPS = [
 ];
 
 
+/** 5033's limitation, with its spread in LATEST_YEAR read from the values: "… 0-3% everywhere …". */
+function referralLateLimitation(rows) {
+  const shares = rows.filter((v) => v.indicator_id === "5033" && v.year === LATEST_YEAR).map((v) => v.value);
+  if (shares.length === 0) throw new Error("5033 has no values for its limitation");
+  const whole = shares.every(Number.isInteger);
+  const show = (n) => (whole ? String(n) : n.toFixed(1));
+  const [min, max] = [Math.min(...shares), Math.max(...shares)];
+  const range = min === max ? `${show(min)}%` : `${show(min)}-${show(max)}%`;
+  const spread =
+    max - min > 5
+      ? `Ranges from ${range} across areas in ${LATEST_YEAR}.`
+      : `Published as ${whole ? "whole percentages and " : ""}${range} everywhere, so it barely separates counties.`;
+  return `${spread} Shown as context only, not used for ranking or stage status.`;
+}
+
 async function get(path) {
   const res = await fetch(`${API}${path}`, { headers: { "User-Agent": USER_AGENT } });
   if (!res.ok) throw new Error(`Sotkanet ${path}: HTTP ${res.status}`);
@@ -463,7 +478,7 @@ for (const ind of INDICATORS) {
     unit: ind.unit,
     direction: ind.direction,
     stage: ind.stage,
-    limitation: ind.limitation,
+    limitation: typeof ind.limitation === "function" ? null : ind.limitation, // filled in after the values
     source_id,
   });
 }
@@ -544,6 +559,12 @@ values.sort(
     a.county_id.localeCompare(b.county_id) ||
     a.year - b.year,
 );
+// Limitations that quote the data are written from it, now that the values are in.
+for (const row of indicators) {
+  const ind = INDICATORS.find((i) => i.indicator_id === row.indicator_id);
+  if (typeof ind.limitation === "function") row.limitation = ind.limitation(values);
+}
+
 const valueOf = (county_id, indicator_id, year) =>
   values.find((v) => v.county_id === county_id && v.indicator_id === indicator_id && v.year === year);
 

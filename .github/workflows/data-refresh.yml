@@ -77,3 +77,17 @@ jobs:
           else
             gh pr create --head "$BRANCH" --base "$BASE" --title "$title" --body-file "$RUNNER_TEMP/pr-body.md"
           fi
+
+      # Auto-merge is OFF unless the repo variable AUTO_MERGE is "true" (Settings → Secrets and
+      # variables → Actions → Variables). Do not enable before peer review ends Sun 15 Nov 14:00:
+      # a merge deploys new figures to the live site while judges compare it with the pitch.
+      # Every check above has passed by now; Vercel deploys main after the merge.
+      - name: Auto-merge the refresh PR
+        if: steps.changes.outputs.changed == 'true' && vars.AUTO_MERGE == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          pr="$(gh pr list --head "$BRANCH" --base "$BASE" --state open --json number --jq '.[0].number')"
+          gh pr merge "$pr" --squash --delete-branch
+          echo "Merged PR #$pr into $BASE"

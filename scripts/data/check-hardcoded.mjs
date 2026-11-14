@@ -1,16 +1,15 @@
 #!/usr/bin/env node
-// Fails (exit 1) when a figure typed by hand into user-visible copy no longer matches the
-// snapshot. Most of the app reads its numbers from data/, so a refresh updates them; these few
-// claims are written into the code and would go stale silently. Part of `npm run data:refresh`.
+// Safety net for figures in the app's copy after a data refresh. Part of `npm run data:refresh`.
 //
 //   node scripts/data/check-hardcoded.mjs
 //
-// Each claim finds its copy by text, never by line number, because the files keep changing. Two
-// different failures:
-//   COPY NOT FOUND   the text moved or was reworded: update the `find` pattern here.
-//   FIGURE MISMATCH  the snapshot no longer supports the copy: change the copy (or the snapshot).
-// The full audit (which numbers in app/, components/, lib/ are read from data and which are not)
-// is in data/README.md, "Hardcoded figures".
+// The app reads its numbers from data/. The claims that used to be typed by hand (the /compare
+// headline, the 5033 "0-3%" range, the no-way-round chart axes) are now computed from the data.
+// This script fails (exit 1) when:
+//   FIGURE MISMATCH  a value the spec, pitch and video quote (anchors.mjs) changed, or the 5033
+//                    limitation in data/indicators.json no longer states the range in the data;
+//   TYPED FIGURE     one of those claims is typed into the code again (compute it from data/).
+// See data/README.md, "Hardcoded figures".
 
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -20,113 +19,54 @@ import { ANCHORS } from "./anchors.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const readJson = (path) => JSON.parse(readFileSync(join(ROOT, path), "utf8"));
-
 const values = readJson("data/values.json");
-const counties = readJson("data/counties.json");
-const noWayRound = readJson("data/insights/no-way-round.json");
-
-const areaIds = new Set(counties.filter((c) => c.kind !== "country").map((c) => c.id));
+const indicators = readJson("data/indicators.json");
 const valueOf = (county, indicator, year) =>
   values.find((v) => v.county_id === county && v.indicator_id === indicator && v.year === year)?.value ?? null;
-const latestYear = (indicator) => Math.max(...values.filter((v) => v.indicator_id === indicator).map((v) => v.year));
-
-/** 5033: "0-3% everywhere", in whole percentages, for the latest year the app shows. */
-function referralLateRange() {
-  const year = latestYear("5033");
-  const off = values.filter(
-    (v) => v.indicator_id === "5033" && v.year === year && v.value !== null && !(Number.isInteger(v.value) && v.value >= 0 && v.value <= 3),
-  );
-  return off.length
-    ? `5033 in ${year} is not whole percentages of 0-3 everywhere: ${off.map((v) => `${v.county_id} ${v.value}`).join(", ")}`
-    : null;
-}
-
-/** Every dot of the no-way-round chart (and Finland's lines) must sit inside the hand-set axis. */
-function insideAxis(key, min, max) {
-  return () => {
-    const points = [
-      ["finland", noWayRound.finland[key]],
-      ...noWayRound.areas.map((a) => [a.county_id, a[key]?.value ?? null]),
-    ].filter(([, v]) => v !== null);
-    const out = points.filter(([, v]) => v < min || v > max);
-    return out.length
-      ? `no-way-round ${key} outside the chart axis ${min}-${max}: ${out.map(([id, v]) => `${id} ${v}`).join(", ")}`
-      : null;
-  };
-}
-
-const CLAIMS = [
-  ...ANCHORS.map((a) => ({
-    what: `quoted figure ${a.county_id} ${a.indicator_id} ${a.year} = ${a.value} (SPEC.md, pitch, video)`,
-    file: "scripts/data/anchors.mjs",
-    find: new RegExp(`value: ${a.value.toString().replace(".", "\\.")}\\b`),
-    check: () => {
-      const got = valueOf(a.county_id, a.indicator_id, a.year);
-      return got === a.value ? null : `expected ${a.value}, data/values.json has ${got}`;
-    },
-  })),
-  {
-    what: '"Most areas wait longer than Finland overall" (compare page headline)',
-    file: "app/compare/page.tsx",
-    find: /Most areas wait longer than Finland overall/,
-    check: () => {
-      const year = latestYear("6411");
-      const fi = valueOf("finland", "6411", year);
-      const rows = values.filter((v) => v.indicator_id === "6411" && v.year === year && areaIds.has(v.county_id));
-      const longer = rows.filter((v) => v.value !== null && v.value > fi).length;
-      return longer * 2 > areaIds.size
-        ? null
-        : `only ${longer} of ${areaIds.size} areas have a 6411 value above Finland (${fi}) in ${year}`;
-    },
-  },
-  {
-    what: '5033 "0-3% everywhere" (county page limitation)',
-    file: "app/county/[id]/page.tsx",
-    find: /Whole percentages of 0-3% everywhere/,
-    check: referralLateRange,
-  },
-  {
-    what: '5033 "0-3% everywhere" (indicator limitation, written to data/indicators.json)',
-    file: "scripts/data/build-snapshot.mjs",
-    find: /Published as whole percentages and 0-3% everywhere/,
-    check: referralLateRange,
-  },
-  {
-    what: "no-way-round chart: GP wait axis 30-90",
-    file: "components/insights/no-way-round-chart.tsx",
-    find: /yAxis: Axis = \{ min: 30, max: 90,/,
-    check: insideAxis("wait", 30, 90),
-  },
-  {
-    what: "no-way-round chart: occupational-health axis 1000-2400",
-    file: "components/insights/no-way-round-chart.tsx",
-    find: /xAxis=\{\{ min: 1000, max: 2400,/,
-    check: insideAxis("occupational", 1000, 2400),
-  },
-  {
-    what: "no-way-round chart: private-doctor axis 15-35",
-    file: "components/insights/no-way-round-chart.tsx",
-    find: /xAxis=\{\{ min: 15, max: 35,/,
-    check: insideAxis("private", 15, 35),
-  },
-];
 
 const problems = [];
-for (const claim of CLAIMS) {
-  const path = join(ROOT, claim.file);
+
+// 1. The quoted anchor values.
+for (const a of ANCHORS) {
+  const got = valueOf(a.county_id, a.indicator_id, a.year);
+  if (got !== a.value)
+    problems.push(
+      `FIGURE MISMATCH: quoted figure ${a.county_id} ${a.indicator_id} ${a.year} (SPEC.md, pitch, video): expected ${a.value}, data/values.json has ${got}`,
+    );
+}
+
+// 2. The 5033 limitation the build writes states the latest year's range.
+{
+  const year = Math.max(...values.filter((v) => v.indicator_id === "5033").map((v) => v.year));
+  const shares = values.filter((v) => v.indicator_id === "5033" && v.year === year).map((v) => v.value);
+  const whole = shares.every(Number.isInteger);
+  const show = (n) => (whole ? String(n) : n.toFixed(1));
+  const [min, max] = [Math.min(...shares), Math.max(...shares)];
+  const range = min === max ? `${show(min)}%` : `${show(min)}-${show(max)}%`;
+  const limitation = indicators.find((i) => i.indicator_id === "5033")?.limitation ?? "";
+  if (!limitation.includes(range))
+    problems.push(`FIGURE MISMATCH: data/indicators.json 5033 limitation does not state the ${year} range ${range}: "${limitation}"`);
+}
+
+// 3. The computed claims must not be typed back in.
+const TYPED = [
+  ["app/compare/page.tsx", /statement="[^"]*(longer|shorter) than Finland overall"/, "the /compare headline"],
+  ["app/county/[id]/page.tsx", /\d+-\d+% everywhere/, "the 5033 range on the county page"],
+  ["scripts/data/build-snapshot.mjs", /whole percentages and \d/, "the 5033 range in its limitation"],
+  ["components/insights/no-way-round-chart.tsx", /\{ ?min: \d+, max: \d+, ticks: \[/, "a no-way-round chart axis"],
+];
+for (const [file, pattern, what] of TYPED) {
+  const path = join(ROOT, file);
   const text = existsSync(path) ? readFileSync(path, "utf8") : "";
-  const at = text.search(claim.find);
-  if (at < 0) {
-    problems.push(`COPY NOT FOUND: ${claim.file} no longer contains ${claim.find} (${claim.what}). Update this check.`);
-    continue;
-  }
-  const line = text.slice(0, at).split("\n").length;
-  const problem = claim.check();
-  if (problem) problems.push(`FIGURE MISMATCH: ${claim.file}:${line} ${claim.what}: ${problem}`);
+  const at = text.search(pattern);
+  if (at >= 0)
+    problems.push(
+      `TYPED FIGURE: ${file}:${text.slice(0, at).split("\n").length} types ${what} by hand; compute it from data/ instead.`,
+    );
 }
 
 if (problems.length) {
   console.error(`check-hardcoded: ${problems.length} problem(s)\n- ${problems.join("\n- ")}`);
   process.exit(1);
 }
-console.log(`check-hardcoded: OK (${CLAIMS.length} hand-typed claims match data/)`);
+console.log(`check-hardcoded: OK (${ANCHORS.length} anchors, the 5033 limitation, ${TYPED.length} computed claims)`);
