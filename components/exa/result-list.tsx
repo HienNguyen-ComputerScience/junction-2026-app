@@ -1,7 +1,32 @@
 import { ArrowUpRight } from "lucide-react";
 import { Fragment } from "react";
 
-import type { Item } from "./types";
+import { Badge } from "@/components/ui/badge";
+
+import { statusText, type Freshness, type Item } from "./types";
+
+/**
+ * Where live content comes from, in one pattern everywhere: the "Found live — unverified" tag,
+ * then "via Exa · live" or "via Exa · cached · saved 2026-11-14" once a response says which.
+ */
+export function LiveMark({
+  result,
+  className,
+}: {
+  /** The response, once there is one. */
+  result?: { freshness: Freshness; retrievedAt?: string; offTopic?: boolean } | null;
+  className?: string;
+}) {
+  const freshness = result ? statusText(result) : null;
+  return (
+    <span className={`flex flex-wrap items-center gap-x-2 gap-y-1 ${className ?? ""}`}>
+      <Badge variant="unverified">Found live — unverified</Badge>
+      <span className="type-caption font-normal text-muted-foreground">
+        via Exa{freshness ? ` · ${freshness.toLowerCase()}` : ""}
+      </span>
+    </span>
+  );
+}
 
 export function Unavailable({ children }: { children?: React.ReactNode }) {
   return (
@@ -116,7 +141,7 @@ export function ResultList({ items, numbered = false, idPrefix = "exa-src" }: { 
               id={numbered ? `${idPrefix}-${i + 1}` : undefined}
               className="grid scroll-mt-20 gap-x-6 gap-y-1 py-3.5 first:pt-0 last:pb-0 @2xl:grid-cols-[7rem_minmax(0,1fr)]"
             >
-              <p className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 type-note text-muted-foreground @2xl:flex-col @2xl:gap-y-0.5 @2xl:pt-0.5">
+              <p className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 type-caption text-muted-foreground @2xl:flex-col @2xl:pt-px">
                 <span className="text-foreground/80">
                   {item.publishedDate ? <time dateTime={item.publishedDate}>{item.publishedDate}</time> : "date unknown"}
                 </span>
@@ -145,7 +170,9 @@ export function ResultList({ items, numbered = false, idPrefix = "exa-src" }: { 
                   </>
                 )}
               </p>
-              <div className="flex min-w-0 max-w-[46rem] flex-col gap-1">
+              {/* Every row is at least a title and two snippet lines tall, so a result that came
+                  without a snippet keeps the pitch of the list. */}
+              <div className="flex min-h-16 min-w-0 max-w-[46rem] flex-col gap-1">
                 <a
                   href={item.url}
                   target="_blank"
@@ -158,7 +185,7 @@ export function ResultList({ items, numbered = false, idPrefix = "exa-src" }: { 
                   <ArrowUpRight
                     aria-hidden
                     strokeWidth={1.75}
-                    className="ml-1 inline-block size-4 align-[-3px] text-muted-foreground transition-colors group-hover/link:text-brand-ink"
+                    className="ml-1 inline-block size-3.5 align-[-2px] text-muted-foreground transition-colors group-hover/link:text-brand-ink"
                   />
                   <span className="sr-only"> (opens in a new tab)</span>
                 </a>

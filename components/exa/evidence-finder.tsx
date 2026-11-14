@@ -3,11 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Search } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isItemsResponse, statusText, TOO_MANY, type ItemsResponse } from "./types";
+import { LiveMark, LoadingRows, ResultList, Unavailable } from "./result-list";
+import { isItemsResponse, TOO_MANY, type ItemsResponse } from "./types";
 
 type State =
   | { kind: "idle" }
@@ -47,15 +46,15 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
 
   return (
     <section aria-label={`Live evidence search for: ${actionTitle}`} className="flex w-full flex-col gap-2">
-      {/* Quiet, like the quote disclosure above it: the action's own checked source comes first. */}
+      {/* A secondary action: the action's own checked source comes first. */}
       <Button
         type="button"
-        variant="ghost"
+        variant="outline"
         onClick={run}
         disabled={loading}
         aria-expanded={state.kind !== "idle"}
         aria-controls={panelId}
-        className="-ml-2 w-fit px-2 text-[0.8125rem] disabled:opacity-100 disabled:text-muted-foreground"
+        className="w-fit text-[0.8125rem]"
       >
         <Search aria-hidden strokeWidth={1.75} className="size-4" />
         {state.kind === "idle" ? "Find more evidence live" : loading ? "Searching…" : "Search again"}
@@ -64,18 +63,7 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
       <div id={panelId} className="empty:hidden">
         {showResults && (
           <div className="flex flex-col gap-3 rounded-lg border border-dashed border-input bg-muted/40 p-4">
-            <div className="flex flex-col gap-1.5">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="unverified">Found live — unverified</Badge>
-                <span className="type-note text-muted-foreground">via Exa</span>
-                {data && statusText(data) !== null && (
-                  <span className="type-note text-muted-foreground">· {statusText(data)}</span>
-                )}
-              </div>
-              <p className="type-micro text-muted-foreground">
-                Not checked by the team, unlike this action&apos;s own source. Read before relying on it.
-              </p>
-            </div>
+            <LiveMark result={data} />
             <div className="border-t border-border pt-3">
               {loading && <LoadingRows label="Searching for more evidence with Exa" rows={2} />}
               {data && data.items.length === 0 && (

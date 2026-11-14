@@ -3,12 +3,11 @@
 import { ArrowUp, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FramePanel } from "@/components/ui/frame";
+import { Frame, FrameDescription, FrameHeader, FrameMeta, FramePanel, FrameTitle } from "@/components/ui/frame";
 
-import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isAskResponse, statusText, TOO_MANY, type AskResponse } from "./types";
+import { LiveMark, LoadingRows, ResultList, Unavailable } from "./result-list";
+import { isAskResponse, TOO_MANY, type AskResponse } from "./types";
 
 const MAX_QUESTION = 300;
 
@@ -73,21 +72,20 @@ export function AskBox() {
   const answered = data?.answer && data.answer.sentences.length > 0;
 
   return (
-    <FramePanel padding="lg" aria-labelledby="ask-box-title" role="group" className="flex flex-col gap-5">
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <h3 id="ask-box-title" className="font-sans text-sm font-semibold tracking-normal">
-            Ask a question
-          </h3>
-          {/* Provenance, not a pill: quiet text with a hollow mark (nobody has checked it). */}
-          <Badge variant="unverified">Found live — unverified</Badge>
-          <span className="type-note text-muted-foreground">via Exa</span>
-        </div>
-        <p className="max-w-2xl type-caption text-muted-foreground">
-          Answered only from live Exa search results, with a numbered source for every sentence. Decision support, not medical advice.
-        </p>
-      </div>
-
+    <Frame id="ask" aria-labelledby="ask-heading" className="scroll-mt-4">
+      <FrameHeader>
+        <FrameTitle id="ask-heading" className="type-title">
+          Ask the evidence
+        </FrameTitle>
+        <FrameMeta>
+          <LiveMark result={data} />
+        </FrameMeta>
+        <FrameDescription>
+          Answered only from live Exa search results, with a numbered source for every sentence. Decision support,
+          not medical advice.
+        </FrameDescription>
+      </FrameHeader>
+      <FramePanel padding="lg" className="flex flex-col gap-5">
       <form
         className="flex flex-col gap-2 rounded-xl border border-input bg-muted p-1.5 transition-[border-color,box-shadow] focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/25 sm:flex-row sm:items-center"
         onSubmit={(e) => {
@@ -124,7 +122,7 @@ export function AskBox() {
       </form>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3" role="group" aria-label="Example questions">
-        <span aria-hidden className="type-micro font-medium text-muted-foreground sm:pt-2.5">Try</span>
+        <span aria-hidden className="type-caption text-muted-foreground sm:pt-2">Try</span>
         <div className="flex flex-wrap gap-2">
           {EXAMPLES.map((ex) => (
             <button
@@ -149,20 +147,10 @@ export function AskBox() {
           {unavailable && <Unavailable />}
           {data && data.freshness !== "unavailable" && (
             <div className="space-y-5 border-t border-border pt-5">
-              {/* Freshness is one quiet line of text, not another tag. */}
-              <p className="type-note text-muted-foreground">
-                {statusText(data) !== null && (
-                  <>
-                    <span className="font-medium text-foreground">{statusText(data)}.</span>{" "}
-                  </>
-                )}
-                Answered only from these Exa results.
-              </p>
-
               {answered && data.answer && (
                 <div className="space-y-2 rounded-lg border border-dashed border-input bg-muted/40 p-4">
-                  <p className="type-micro text-muted-foreground">
-                    Not checked by the team. Written by AI from the live results below; read the sources before relying on it.
+                  <p className="type-caption text-muted-foreground">
+                    Written by AI from the live results below. Read the sources before relying on it.
                   </p>
                   <p className="text-[0.9375rem] leading-relaxed text-foreground/85">
                     {data.answer.sentences.map((s, i) => (
@@ -186,7 +174,7 @@ export function AskBox() {
                       </span>
                     ))}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="type-caption text-muted-foreground">
                     Numbers here come from the web sources cited and can measure something different from the dashboard&apos;s
                     indicators (share of GP visits waiting more than 7 days).
                   </p>
@@ -207,13 +195,14 @@ export function AskBox() {
 
               {data.items.length > 0 && (
                 <div className="space-y-3">
-                  <h4 className="type-micro font-medium text-muted-foreground">Sources</h4>
+                  <h4 className="type-caption font-medium text-muted-foreground">Sources</h4>
                   <ResultList items={data.items} numbered idPrefix="ask-src" />
                 </div>
               )}
             </div>
           )}
       </div>
-    </FramePanel>
+      </FramePanel>
+    </Frame>
   );
 }

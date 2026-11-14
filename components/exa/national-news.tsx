@@ -2,12 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Frame, FrameDescription, FrameHeader, FramePanel, FrameTitle } from "@/components/ui/frame";
+import { Frame, FrameDescription, FrameHeader, FrameMeta, FramePanel, FrameTitle } from "@/components/ui/frame";
 
-import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isItemsResponse, STATUS_LABEL, statusText, type ItemsResponse } from "./types";
+import { LiveMark, LoadingRows, ResultList, Unavailable } from "./result-list";
+import { isItemsResponse, type ItemsResponse } from "./types";
 
 type State = { kind: "loading" } | { kind: "done"; data: ItemsResponse } | { kind: "error" };
 
@@ -35,7 +34,6 @@ export function NationalNews() {
 
   const data = state.kind === "done" ? state.data : null;
   const unavailable = state.kind === "error" || data?.freshness === "unavailable";
-  const freshness = unavailable ? STATUS_LABEL.unavailable : data ? statusText(data) : null;
 
   return (
     <Frame aria-labelledby="national-news-title">
@@ -43,15 +41,11 @@ export function NationalNews() {
         <FrameTitle id="national-news-title" className="type-title">
           Finland, this month
         </FrameTitle>
-        {/* One provenance tag; the freshness is plain text after it, not another pill. */}
-        <div className="col-span-2 flex flex-wrap items-center gap-x-2 gap-y-1 pt-1">
-          <Badge variant="unverified">Found live — unverified</Badge>
-          <span className="type-note text-muted-foreground">
-            via Exa{freshness && ` · ${freshness.toLowerCase()}`}
-          </span>
-        </div>
+        <FrameMeta>
+          <LiveMark result={state.kind === "error" ? { freshness: "unavailable" } : data} />
+        </FrameMeta>
         <FrameDescription>
-          Recent national news on the cancer care pathway. Not checked by the team.
+          Recent national news on the cancer care pathway.
           {data?.freshness === "stale-cache" && data.message ? ` ${data.message}` : ""}
         </FrameDescription>
       </FrameHeader>
@@ -66,7 +60,7 @@ export function NationalNews() {
             <ResultList items={expanded ? data.items : data.items.slice(0, FIRST_ROWS)} />
             {data.items.length > FIRST_ROWS && (
               <div className="border-t border-border/80 pt-4">
-                <Button variant="outline" size="sm" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
+                <Button variant="outline" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
                   {expanded ? "Show fewer" : `Show ${data.items.length - FIRST_ROWS} more`}
                 </Button>
               </div>

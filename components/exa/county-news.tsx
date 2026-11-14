@@ -2,12 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Frame, FrameDescription, FrameHeader, FramePanel, FrameTitle } from "@/components/ui/frame";
+import { Frame, FrameDescription, FrameHeader, FrameMeta, FramePanel, FrameTitle } from "@/components/ui/frame";
 
-import { LoadingRows, ResultList, Unavailable } from "./result-list";
-import { isItemsResponse, STATUS_LABEL, statusText, type ItemsResponse } from "./types";
+import { LiveMark, LoadingRows, ResultList, Unavailable } from "./result-list";
+import { isItemsResponse, type ItemsResponse } from "./types";
 
 type State = { kind: "loading" } | { kind: "done"; data: ItemsResponse } | { kind: "error" };
 
@@ -36,7 +35,6 @@ export function CountyNews({ countyId }: { countyId: string }) {
 
   const data = state.kind === "done" ? state.data : null;
   const unavailable = state.kind === "error" || data?.freshness === "unavailable";
-  const freshness = unavailable ? STATUS_LABEL.unavailable : data ? statusText(data) : null;
 
   return (
     <Frame aria-labelledby="county-news-title">
@@ -44,15 +42,11 @@ export function CountyNews({ countyId }: { countyId: string }) {
         <FrameTitle id="county-news-title" className="type-title">
           Local news, last 12 months
         </FrameTitle>
-        {/* One provenance tag; the freshness is plain text after it, not another pill. */}
-        <div className="col-span-2 flex flex-wrap items-center gap-x-2 gap-y-1 pt-1">
-          <Badge variant="unverified">Found live — unverified</Badge>
-          <span className="type-note text-muted-foreground">
-            via Exa{freshness && ` · ${freshness.toLowerCase()}`}
-          </span>
-        </div>
+        <FrameMeta>
+          <LiveMark result={state.kind === "error" ? { freshness: "unavailable" } : data} />
+        </FrameMeta>
         <FrameDescription>
-          Finnish news and county pages about access to a doctor. Not checked by the team.
+          Finnish news and county pages about access to a doctor.
         </FrameDescription>
       </FrameHeader>
       <FramePanel padding="none" className="px-4 py-4 sm:px-6 sm:py-5">
@@ -66,7 +60,7 @@ export function CountyNews({ countyId }: { countyId: string }) {
             <ResultList items={expanded ? data.items : data.items.slice(0, FIRST_ROWS)} />
             {data.items.length > FIRST_ROWS && (
               <div className="border-t border-border/80 pt-4">
-                <Button variant="outline" size="sm" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
+                <Button variant="outline" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
                   {expanded ? "Show fewer" : `Show ${data.items.length - FIRST_ROWS} more`}
                 </Button>
               </div>
