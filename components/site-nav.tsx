@@ -26,8 +26,9 @@ const ITEMS: NavItem[] = [
     short: "Actions",
     match: (p) => p.startsWith("/county") && (p.endsWith("/act") || p.endsWith("/plan")),
   },
-  // The page is built on the insights branch; the label is a placeholder until it proposes one.
   { key: "insights", label: "Where access is hardest", short: "Access", match: (p) => p.startsWith("/insights") },
+  // The walkthrough of where the numbers come from and what they cannot say (app/how-to-read).
+  { key: "how-to-read", label: "How to read these numbers", short: "How to read", match: (p) => p.startsWith("/how-to-read") },
   { key: "ask", label: "Ask the evidence", short: "Ask", match: (p) => p.startsWith("/ask") },
   { key: "sources", label: "Sources & limitations", short: "Sources", match: (p) => p.startsWith("/sources") },
 ];
@@ -67,6 +68,7 @@ export function NavLinks({
     areas: "/",
     actions: `/county/${actionsArea}/act`,
     insights: "/insights",
+    "how-to-read": "/how-to-read",
     ask: "/ask",
     sources: "/sources",
   };
