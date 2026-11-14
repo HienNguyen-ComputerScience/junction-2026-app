@@ -2,25 +2,66 @@ import type { ReactNode } from "react";
 import { BadgeCheck } from "lucide-react";
 
 import { SourceChip } from "@/components/source-chip";
-import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import { FramePanel } from "@/components/ui/frame";
 import { STAGE_LABELS } from "@/lib/act";
 import type { Evidence } from "@/lib/data";
 
+/** Label and value. Side by side when the card has room, stacked on a phone. */
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="grid gap-x-4 gap-y-1 sm:grid-cols-[6rem_minmax(0,1fr)]">
+    <div className="grid gap-x-4 gap-y-1 @md:grid-cols-[6rem_minmax(0,1fr)]">
       <dt className="type-caption text-muted-foreground">{label}</dt>
-      <dd className="text-sm leading-relaxed text-pretty">{children}</dd>
+      <dd className="text-sm leading-relaxed text-pretty text-foreground tabular-nums">{children}</dd>
+    </div>
+  );
+}
+
+/** A plain text tag (stage, checked): the chip shape in the UI sans, so it never reads as a source. */
+const TAG =
+  "inline-flex h-6 w-fit shrink-0 items-center rounded-sm border border-input px-2 text-[0.75rem] leading-none font-medium text-foreground";
+
+/** "Source checked" plus the source chip. On a phone the chip comes first and the tag shortens. */
+function SourceMarks({ action }: { action: Evidence }) {
+  return (
+    <span className="flex min-w-0 flex-wrap items-center gap-2">
+      {action.verified ? (
+        <span className={`${TAG} gap-1.5 max-sm:order-last max-sm:h-7 max-sm:border-transparent max-sm:px-0`}>
+          <BadgeCheck aria-hidden strokeWidth={1.75} className="size-4 text-muted-foreground" />
+          <span aria-hidden className="sm:hidden">
+            Checked
+          </span>
+          <span className="max-sm:sr-only">Source checked</span>
+        </span>
+      ) : null}
+      <SourceChip sourceId={action.source_id} />
+    </span>
+  );
+}
+
+/** The step to take first: the one emphasised block on a card. */
+function FirstStep({ children, compact = false }: { children: ReactNode; compact?: boolean }) {
+  return (
+    <div className="rounded-lg border border-input bg-muted px-4 py-3.5">
+      <p className="type-caption font-medium text-muted-foreground">First step</p>
+      <p
+        className={
+          compact
+            ? "mt-1 text-sm leading-relaxed font-medium text-pretty text-foreground"
+            : "mt-1 text-[1.0625rem] leading-[1.55] font-medium text-pretty text-foreground"
+        }
+      >
+        {children}
+      </p>
     </div>
   );
 }
 
 /**
  * One recommended action from data/evidence.json, as a panel inside a Frame.
- * Left: what to do and the first step (the one highlighted block). Right: who, precedent,
- * evidence and limitations. `children` render in a footer row (e.g. a live-evidence panel).
+ * Label row: the action's place in the list, its pathway stage, and its checked source.
+ * Left: what to do, the first step (the emphasised block) and who owns it. Right: precedent,
+ * evidence and limitations. `children` render under the evidence (e.g. a live-evidence search).
  */
 export function ActionCard({
   action,
@@ -33,64 +74,74 @@ export function ActionCard({
   children?: ReactNode;
 }) {
   return (
-    <FramePanel padding="none" className="@container">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border/80 px-4 py-2.5 sm:px-6">
+    <FramePanel
+      padding="none"
+      id={index !== undefined ? `action-${index}` : undefined}
+      className="@container scroll-mt-20 px-4 pt-4 pb-5 sm:px-6 sm:pt-5 sm:pb-6"
+    >
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         {index !== undefined && (
-          <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-input bg-muted text-[0.75rem] font-semibold text-foreground tabular-nums">
-            <span className="sr-only">Action </span>
-            {index}
+          <span className="type-caption font-medium text-muted-foreground tabular-nums">
+            Action {index}
           </span>
         )}
-        <span className="type-caption font-medium">{STAGE_LABELS[action.stage]}</span>
-        <span className="flex min-w-0 flex-wrap items-center gap-2 sm:ml-auto">
-          {/* Phone: the chip first, then a bare "Checked", so both fit on one line. */}
-          {action.verified ? (
-            <Badge
-              variant="outline"
-              className="gap-1 max-sm:order-last max-sm:h-7 max-sm:border-transparent max-sm:bg-transparent max-sm:px-0"
-            >
-              <BadgeCheck aria-hidden className="size-3.5!" />
-              <span aria-hidden className="sm:hidden">
-                Checked
-              </span>
-              <span className="max-sm:sr-only">Source checked</span>
-            </Badge>
-          ) : null}
-          <SourceChip sourceId={action.source_id} />
+        <span className={`${TAG} gap-1`}>
+          <span className="text-muted-foreground">Stage:</span>
+          <span className="font-medium text-foreground">{STAGE_LABELS[action.stage]}</span>
+        </span>
+        <span className="flex basis-full sm:ml-auto sm:basis-auto">
+          <SourceMarks action={action} />
         </span>
       </div>
 
-      <div className="grid gap-x-10 gap-y-6 px-4 py-5 sm:px-6 @3xl:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-        <div className="flex flex-col gap-4">
+      <div className="mt-4 grid gap-x-10 gap-y-6 @3xl:grid-cols-2">
+        <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
             <h3 className="type-title text-pretty">{action.action}</h3>
             <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
           </div>
-          <div className="rounded-lg border border-input bg-muted px-4 py-3">
-            <p className="type-micro font-semibold text-muted-foreground">First step</p>
-            <p className="mt-1 text-[0.9375rem] leading-normal font-medium text-pretty">{action.first_step}</p>
-          </div>
+          <FirstStep>{action.first_step}</FirstStep>
+          <dl>
+            <Field label="Owner">{action.who_implements}</Field>
+          </dl>
         </div>
 
-        <dl className="flex flex-col gap-3.5">
-          <Field label="Owner">{action.who_implements}</Field>
+        <dl className="flex flex-col gap-4 @3xl:pt-1">
           <Field label="Precedent">{action.precedent}</Field>
           <Field label="Evidence">
             {action.effect_text}
-            {/* NICE content may not be reproduced outside the UK: link only, never the quote. */}
-            {action.source_id.startsWith("ev-nice") ? null : (
-              <Disclosure summary="Quote and page in the source" summaryClassName="min-h-8">
-                <p className="mb-1 border-l-2 border-border pl-3 type-caption text-muted-foreground">
-                  {action.quote_or_page}
-                </p>
-              </Disclosure>
-            )}
+            <div className="mt-1 flex flex-col items-start">
+              {/* NICE content may not be reproduced outside the UK: link only, never the quote. */}
+              {action.source_id.startsWith("ev-nice") ? null : (
+                <Disclosure summary="Quote and page in the source">
+                  <p className="mb-2 border-l-2 border-border pl-3 type-caption text-muted-foreground">
+                    {action.quote_or_page}
+                  </p>
+                </Disclosure>
+              )}
+              {children}
+            </div>
           </Field>
           <Field label="Limitations">{action.limitations}</Field>
         </dl>
       </div>
+    </FramePanel>
+  );
+}
 
-      {children ? <div className="border-t border-border/80 px-4 py-3 sm:px-6">{children}</div> : null}
+/**
+ * The compact form of an action card, for the options not picked for this county: the checked
+ * source, the action, its first step and its owner.
+ */
+export function ActionSummary({ action }: { action: Evidence }) {
+  return (
+    <FramePanel padding="none" className="@container flex h-full flex-col gap-3 px-4 py-4 sm:px-5">
+      <SourceMarks action={action} />
+      <h4 className="type-heading text-pretty">{action.action}</h4>
+      <FirstStep compact>{action.first_step}</FirstStep>
+      <dl className="mt-1">
+        <Field label="Owner">{action.who_implements}</Field>
+      </dl>
     </FramePanel>
   );
 }
