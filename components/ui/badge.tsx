@@ -27,7 +27,7 @@ const badgeVariants = cva(
         // Provenance: where a piece of content comes from. A 14px icon plus 13px muted text, no
         // box: a dashed circle for content nobody has checked ("Found live — unverified"), a
         // shield (or the database, `source="snapshot"`) for content the team checked or computed
-        // ("Source checked", "Precomputed from the snapshot").
+        // ("Source checked", "From the published figures").
         unverified: PROVENANCE,
         checked: PROVENANCE,
         // Alias of `unverified`: a provenance tag is unchecked unless it says `checked`.

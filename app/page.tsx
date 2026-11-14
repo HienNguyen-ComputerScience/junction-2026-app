@@ -3,6 +3,7 @@ import { NationalNews } from "@/components/exa/national-news";
 import { EarlyWarning } from "@/components/home/early-warning";
 import { HomeTool } from "@/components/home/home-tool";
 import { RankingList } from "@/components/ranking/ranking-list";
+import { SourceChip } from "@/components/source-chip";
 import {
   Frame,
   FrameDescription,
@@ -11,6 +12,7 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
+import { LATEST_YEAR } from "@/lib/data";
 import {
   formatPct,
   getNationalValue,
@@ -31,6 +33,10 @@ export default function CountyRankingPage() {
   }
 
   const totalAreas = rows.length + unranked.length;
+  // The h1's two numbers: the shortest and the longest 2025 GP wait share across the areas.
+  const waitValues = rows.map((row) => row.gpWait.value);
+  const lowestWait = Math.min(...waitValues);
+  const highestWait = Math.max(...waitValues);
 
   return (
     <main className="page-container flex flex-col gap-10 pt-3 sm:gap-14 sm:pt-6">
@@ -42,8 +48,12 @@ export default function CountyRankingPage() {
           <span aria-hidden className="h-4 w-0.5 shrink-0 bg-foreground" />
           First step to early cancer care: getting to a GP
         </p>
-        <h1 className="type-display text-[1.5rem] text-foreground sm:text-[1.75rem] lg:text-[2rem]">
-          In Finland, where you live decides how fast you get to see a GP
+        <h1 className="type-display max-w-[56rem] text-[1.375rem] text-foreground sm:text-[1.625rem] lg:text-[1.75rem]">
+          Across Finland, {formatPct(lowestWait)} to {formatPct(highestWait)} of non-urgent GP visits wait over 7
+          days, depending on the area
+          <span className="ml-3 inline-flex align-middle">
+            <SourceChip sourceId={nationalGpWait.source_id} year={LATEST_YEAR} />
+          </span>
         </h1>
       </header>
 
@@ -61,7 +71,7 @@ export default function CountyRankingPage() {
             Compare all {totalAreas} areas
           </FrameTitle>
           <FrameDescription>
-            Longest GP waits first. 21 wellbeing services counties and the City of Helsinki.
+            Longest GP waits first. 21 wellbeing services counties and the City of Helsinki. Gaps to Finland are in percentage points (pts).
           </FrameDescription>
         </FrameHeader>
         <FramePanel padding="none">
@@ -84,7 +94,8 @@ export default function CountyRankingPage() {
               {" "}
               Referrals: the share processed within 3 days (Sotkanet {REFERRAL_ID}). Higher is
               faster; Finland {formatPct(nationalReferral.value)}.
-            </span>
+            </span>{" "}
+            HUS-wide: one shared figure for the hospital district (HUS) that serves these areas.
           </p>
         </FrameFooter>
       </Frame>

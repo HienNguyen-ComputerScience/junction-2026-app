@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { cn } from "cn";
 
 import { StepMark } from "@/components/pathway/pathway-steps";
@@ -32,7 +33,16 @@ const valued = (trend: TrendPoint[]) =>
  * first year, then the bars by year with one highlighted bar and the Finland line. A step with
  * an indicator but no values gets one quiet line.
  */
-export function TrendStrip({ stages, areaName }: { stages: TrendStage[]; areaName: string }) {
+export function TrendStrip({
+  stages,
+  areaName,
+  footer,
+}: {
+  stages: TrendStage[];
+  areaName: string;
+  /** Rows under the trend inside the same panel: the page's bar key and its context-only line. */
+  footer?: ReactNode;
+}) {
   const withTrend = stages.filter((stage) => valued(stage.trend).length > 0);
   const without = stages.filter((stage) => valued(stage.trend).length === 0);
   const years = stages[0]?.trend ?? [];
@@ -52,7 +62,7 @@ export function TrendStrip({ stages, areaName }: { stages: TrendStage[]; areaNam
         <h3 id="trend-heading" className="font-sans type-caption font-medium tracking-normal">
           Trend, {span}
           {judgedYear !== undefined && (
-            <span className="font-normal text-muted-foreground"> · Only {judgedYear} has a status</span>
+            <span className="font-normal text-muted-foreground"> · Earlier years in grey for comparison</span>
           )}
         </h3>
         <span className="flex flex-wrap items-center gap-1.5 font-normal">
@@ -76,6 +86,9 @@ export function TrendStrip({ stages, areaName }: { stages: TrendStage[]; areaNam
           </p>
         ))}
       </div>
+      {footer ? (
+        <div className="flex flex-col gap-3 border-t border-border px-5 py-4 sm:px-6">{footer}</div>
+      ) : null}
     </FramePanel>
   );
 }
