@@ -63,7 +63,7 @@ export function TrendStrip({
           ))}
         </span>
       </FramePanelLabel>
-      <div className="flex flex-col gap-4 px-5 py-5 sm:px-6">
+      <div className="flex flex-col gap-4 px-5 py-4 sm:px-6">
         {withTrend.length > 0 && (
           <ul className="flex flex-col divide-y divide-border">
             {withTrend.map((stage) => (
@@ -135,8 +135,8 @@ function TrendRow({ stage }: { stage: TrendStage }) {
   const word = change > 0 ? (faster ? "better" : "worse") : faster ? "worse" : "better";
 
   return (
-    <li className="grid gap-x-10 gap-y-5 py-5 first:pt-0 last:pb-0 lg:grid-cols-[15rem_minmax(0,1fr)]">
-      <div className="flex flex-col gap-4 lg:py-2">
+    <li className="grid gap-y-3 py-5 first:pt-0 last:pb-0">
+      <div className="flex flex-col gap-3">
         <p className="flex items-center gap-2 text-[0.9375rem] leading-snug font-semibold">
           <StepMark step={stage.step} status={stage.status} className="size-5 text-[0.6875rem]" />
           <span>
@@ -145,24 +145,17 @@ function TrendRow({ stage }: { stage: TrendStage }) {
           </span>
         </p>
         {first.year < last.year && (
-          <dl className="flex flex-col gap-1.5">
-            <dt className="type-caption text-muted-foreground">Since {first.year}</dt>
-            <dd className="flex items-baseline gap-1.5 whitespace-nowrap">
-              {change === 0 ? (
-                <span className="numeral text-[2.25rem] leading-none text-foreground">No change</span>
-              ) : (
-                <>
-                  <span className="numeral text-[2.25rem] leading-none text-foreground">
-                    {Math.abs(change).toFixed(1)}
-                  </span>
-                  <span className="text-sm text-muted-foreground">percentage points {word}</span>
-                </>
-              )}
-            </dd>
-            <dd className="type-caption text-muted-foreground">
-              <span className="figure">{formatPct(first.value)}</span> in {first.year}
-            </dd>
-          </dl>
+          <div className="flex items-center gap-3">
+            <p className="numeral text-[2.25rem] leading-none whitespace-nowrap text-foreground">
+              {change === 0 ? "No change" : Math.abs(change).toFixed(1)}
+            </p>
+            <div className="flex flex-col">
+              {change !== 0 && <p className="text-sm text-muted-foreground">percentage points {word}</p>}
+              <p className="type-caption text-muted-foreground">
+                since {first.year}, from <span className="figure">{formatPct(first.value)}</span>
+              </p>
+            </div>
+          </div>
         )}
       </div>
 
@@ -201,7 +194,7 @@ function TrendChart({
   const finlandOf = (year: number) => nationalTrend.find((point) => point.year === year)?.value ?? null;
   // Value labels sit 6px above their bar. One that would cover the Finland tick of its own
   // column moves just above the tick instead.
-  const PLOT = 176;
+  const PLOT = 112;
   const LABEL = 20;
   const labelBottom = (value: number, finland: number | null, gapAbove: boolean) => {
     const bottom = (clamp(value) / 100) * PLOT + 6;
@@ -225,8 +218,8 @@ function TrendChart({
   return (
     <figure className="flex w-full min-w-0 flex-col gap-3">
       <div aria-hidden className="flex flex-col gap-2 pt-5">
-        <div className="relative h-44 border-b border-foreground/40">
-          <div className="absolute inset-0 flex gap-4 px-1 sm:gap-10 sm:px-4">
+        <div className="relative h-28 border-b border-foreground/40">
+          <div className="absolute inset-0 flex gap-4 px-1 sm:gap-6 sm:px-4">
             {trend.map((point, i) => {
               const finland = finlandOf(point.year);
               const worse = judged && i === latestIndex && status === "red" && finland !== null && point.value !== null;
@@ -236,7 +229,7 @@ function TrendChart({
                     <span className="pb-1 type-caption text-faint">No data</span>
                   ) : (
                     <>
-                      <div className="relative h-full w-full max-w-28">
+                      <div className="relative h-full w-full max-w-24">
                         {worse ? (
                           <WorseColumn value={clamp(point.value)} finland={clamp(finland)} />
                         ) : (
@@ -273,7 +266,7 @@ function TrendChart({
             })}
           </div>
         </div>
-        <div className="flex gap-4 px-1 sm:gap-10 sm:px-4">
+        <div className="flex gap-4 px-1 sm:gap-6 sm:px-4">
           {trend.map((point) => {
             const finland = finlandOf(point.year);
             return (

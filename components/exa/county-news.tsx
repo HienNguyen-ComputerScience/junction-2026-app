@@ -2,22 +2,18 @@
 
 import { useEffect, useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Frame, FrameDescription, FrameHeader, FrameMeta, FramePanel, FrameTitle } from "@/components/ui/frame";
 
-import { LiveMark, LoadingRows, ResultList, Unavailable } from "./result-list";
+import { NewsCarousel } from "./news-carousel";
+import { LiveMark, LoadingRows, Unavailable } from "./result-list";
 import { isItemsResponse, type ItemsResponse } from "./types";
 
 type State = { kind: "loading" } | { kind: "done"; data: ItemsResponse } | { kind: "error" };
-
-/** Rows shown before "Show more". */
-const FIRST_ROWS = 4;
 
 // Loads on mount: the route answers in about a second (fast search, cached for a while),
 // so a "Search live" button would only add a click to the demo.
 export function CountyNews({ countyId }: { countyId: string }) {
   const [state, setState] = useState<State>({ kind: "loading" });
-  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const ctrl = new AbortController();
@@ -46,10 +42,7 @@ export function CountyNews({ countyId }: { countyId: string }) {
           <LiveMark result={state.kind === "error" ? { freshness: "unavailable" } : data} />
         </FrameMeta>
         <FrameDescription className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <span className="inline-flex h-6 items-center rounded-sm border border-input px-1.5 text-[0.75rem] font-medium text-foreground/85">
-            In Finnish
-          </span>
-          <span>News and county pages about access to a doctor.</span>
+          <span>News and county pages about access to a doctor, in Finnish.</span>
         </FrameDescription>
       </FrameHeader>
       <FramePanel padding="none" className="px-4 py-4 sm:px-6 sm:py-5">
@@ -59,16 +52,7 @@ export function CountyNews({ countyId }: { countyId: string }) {
           <p className="text-sm text-muted-foreground">No news found for this county in the last 12 months.</p>
         )}
         {data && !unavailable && data.items.length > 0 && (
-          <div className="flex flex-col gap-4">
-            <ResultList items={expanded ? data.items : data.items.slice(0, FIRST_ROWS)} />
-            {data.items.length > FIRST_ROWS && (
-              <div className="border-t border-border/80 pt-4">
-                <Button variant="outline" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
-                  {expanded ? "Show fewer" : `Show ${data.items.length - FIRST_ROWS} more`}
-                </Button>
-              </div>
-            )}
-          </div>
+          <NewsCarousel items={data.items} label="Local news" />
         )}
       </FramePanel>
     </Frame>

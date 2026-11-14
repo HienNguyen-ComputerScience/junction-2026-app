@@ -6,8 +6,8 @@ import { formatPct, STATUS_LABEL } from "@/lib/ranking";
 
 /** What the big share counts, said under it. Visits and referrals, never people. */
 const WHAT: Partial<Record<Stage, string>> = {
-  gp_access: "of non-urgent GP visits wait over 7 days",
-  referral: "of referrals are processed within 3 days",
+  gp_access: "of non-urgent GP visits wait over 7 days (lower is better)",
+  referral: "of referrals are processed within 3 days (higher is better)",
 };
 
 /**

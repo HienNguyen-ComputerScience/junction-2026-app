@@ -3,10 +3,8 @@ import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 
 import { SourceChip } from "@/components/source-chip";
-import { Disclosure } from "@/components/ui/disclosure";
 import { BarFill, FinlandTick, SHARED_BAR, withFigures } from "@/components/ui/measure-bar";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { HUS_FULL } from "@/components/pathway/wording";
 import { LATEST_YEAR, type County, type GapStatus } from "@/lib/data";
 import {
   CITY_UNITS_ONLY_REFERRAL,
@@ -54,17 +52,6 @@ const REFERRAL_TAG: Record<GapStatus, string> = {
   no_data: "No public data",
 };
 
-/**
- * The gap to Finland in percentage points, for display: the difference of the two one-decimal
- * figures shown on screen, with a real minus sign. "+" means a larger share than Finland.
- */
-export function gapToFinland(value: number, finland: number): string {
-  const diff = Number(value.toFixed(1)) - Number(finland.toFixed(1));
-  const abs = Math.abs(diff).toFixed(1);
-  if (abs === "0.0") return "0.0 pts";
-  return `${diff > 0 ? "+" : "−"}${abs} pts`;
-}
-
 export function RankingList({
   rows,
   unranked,
@@ -111,16 +98,6 @@ export function RankingList({
               At or better than Finland&apos;s level
             </StatusBadge>
           </span>
-          {/* The two units-only labels, explained once, out of the way until asked for. */}
-          <Disclosure
-            summary="HUS-wide, City units only"
-            summaryClassName="min-h-7 text-[0.75rem] font-normal text-muted-foreground"
-          >
-            <p className="max-w-[17rem] pb-2 pl-[1.375rem] type-note text-pretty text-muted-foreground">
-              &ldquo;HUS-wide&rdquo; is one shared figure from {HUS_FULL} for four Uusimaa areas. &ldquo;City
-              units only&rdquo; means Helsinki&apos;s own units; most of its referrals go to HUS.
-            </p>
-          </Disclosure>
         </HeadCell>
       </div>
 
