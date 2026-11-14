@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { CountyBrief } from "@/components/brief/county-brief";
@@ -42,6 +43,13 @@ export const instant = false;
 
 export function generateStaticParams() {
   return counties.map((county) => ({ id: county.id }));
+}
+
+export async function generateMetadata({ params }: PageProps<"/county/[id]">): Promise<Metadata> {
+  const { id } = await params;
+  const county = getCounty(id);
+  if (!county) return {};
+  return { title: `${county.name}: where care is delayed | FirstLine` };
 }
 
 export default async function CountyPathwayPage({ params }: PageProps<"/county/[id]">) {
@@ -224,7 +232,7 @@ function buildLimitations(county: County): LimitationItem[] {
   const husWide = gaps.find((gap) => gap.shared)?.shared;
   if (shared) {
     items.push({
-      text: `The referral step shows the ${shared.name}-wide value, not a figure for ${county.name}. ${shared.name} handles hospital referrals from Helsinki, East, Central and West Uusimaa, and Vantaa and Kerava, and THL publishes one number for all of them. So the step stays grey, and it is not used to rank or to pick actions. THL or ${shared.name} could publish it by the patient's home county. The link shows the ${shared.name} report we used to check that the number is ${shared.name}'s.`,
+      text: `The referral step shows the ${shared.name}-wide value, not a figure for ${county.name}. ${shared.name} handles hospital referrals from East, Central and West Uusimaa and Vantaa and Kerava, and THL publishes one ${shared.name}-wide number for them, not one per county. So the step stays grey, and it is not used to rank or to pick actions. THL or ${shared.name} could publish it by the patient's home county. The link shows the ${shared.name} report we used to check that the number is ${shared.name}'s.`,
       sourceId: shared.confirmed_by,
     });
   } else if (stageStatus(county.id, "referral") === "no_data") {
@@ -243,7 +251,7 @@ function buildLimitations(county: County): LimitationItem[] {
     if (county.id === "helsinki" && husWide) {
       items.push({
         text: `Helsinki's referral value covers the city's own specialist units only. Most hospital referrals from Helsinki go to ${husWide.name}, which processed ${formatPct(husWide.value)} within 3 days in ${LATEST_YEAR}.`,
-        sourceId: husWide.confirmed_by,
+        sourceId: "sotkanet-13",
       });
     }
   }
