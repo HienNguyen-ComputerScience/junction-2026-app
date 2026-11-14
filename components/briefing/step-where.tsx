@@ -15,16 +15,17 @@ const AFTER_LABEL: Record<string, string> = { diagnosis: "Diagnosis", treatment:
 function StageTile({ stage, index, confidence }: { stage: BriefingStage; index: number; confidence?: ReactNode }) {
   const measured = stage.status !== "no_data";
   return (
-    <li
-      className={cn(
-        "bf-rise relative flex flex-col gap-2.5 overflow-hidden rounded-[14px] p-[21px]",
-        stage.isBreak ? "bg-status-red-soft" : measured ? "bg-keylime-wash" : "border border-dashed border-status-grey bg-cream-paper",
-      )}
-      style={i(index + 2)}
-    >
+    // The cream under the tint keeps the tile opaque, so the line of the way stays behind it.
+    <li className="animate-fade-up rounded-[14px] bg-cream-paper" style={i(index + 2)}>
+      <div
+        className={cn(
+          "relative flex h-full flex-col gap-2.5 overflow-hidden rounded-[14px] p-[21px]",
+          stage.isBreak ? "bg-status-red-soft" : measured ? "bg-keylime-wash" : "border border-dashed border-status-grey",
+        )}
+      >
       {/* The mark of the step that is worse than Finland: a bar drawn across the top, then the words. */}
       {stage.isBreak ? (
-        <span aria-hidden className="bf-bar absolute inset-x-0 top-0 h-1.5 bg-status-red" style={i(7)} />
+        <span aria-hidden className="animate-line-in absolute inset-x-0 top-0 h-1.5 bg-status-red" style={i(6)} />
       ) : null}
       <span className="flex items-center gap-2.5">
         <span
@@ -42,12 +43,14 @@ function StageTile({ stage, index, confidence }: { stage: BriefingStage; index: 
         </h2>
       </span>
       <StatusLabel status={stage.status}>{stage.statusLabel}</StatusLabel>
+      {stage.note ? <p className="text-base leading-6 text-pretty text-charcoal">{stage.note}</p> : null}
       {stage.isBreak ? (
-        <p className="bf-pop text-base leading-6 font-semibold text-status-red-ink" style={{ "--d": 1250 } as CSSProperties}>
+        <p className="bf-pop text-base leading-6 font-semibold text-status-red-ink" style={{ "--d": 1100 } as CSSProperties}>
           The delay is here.
         </p>
       ) : null}
       {confidence ? <div data-slot="briefing-confidence" className="text-base leading-6 text-charcoal">{confidence}</div> : null}
+      </div>
     </li>
   );
 }
@@ -79,11 +82,11 @@ export function StepWhere({
 
   return (
     <>
-      <Pill className="bf-rise">Where the delay is</Pill>
+      <Pill className="animate-fade-up">Where the delay is</Pill>
       <h1
         data-briefing-heading
         tabIndex={-1}
-        className={`bf-rise ${STATEMENT}`}
+        className={`animate-fade-up ${STATEMENT}`}
         style={i(1)}
       >
         {pathway.lede}
@@ -91,7 +94,7 @@ export function StepWhere({
 
       <div className="relative">
         {/* The way itself: one line drawn from the first step to the last, behind the tiles. */}
-        <span aria-hidden className="bf-bar absolute top-[2.3125rem] right-6 left-6 h-px bg-forest-ink max-sm:hidden" style={i(2)} />
+        <span aria-hidden className="animate-line-in absolute top-[2.3125rem] right-6 left-6 h-px bg-forest-ink max-sm:hidden" style={i(2)} />
         <ol className="relative grid gap-3 sm:grid-cols-3">
           {pathway.stages.map((stage, index) => (
             <StageTile key={stage.stage} stage={stage} index={index} confidence={confidence?.[stage.stage]} />
@@ -100,12 +103,12 @@ export function StepWhere({
       </div>
 
       {missingLine ? (
-        <p className="bf-rise text-base leading-6 text-pretty text-charcoal" style={i(6)}>
+        <p className="animate-fade-up text-base leading-6 text-pretty text-charcoal" style={i(6)}>
           {missingLine}
         </p>
       ) : null}
 
-      <div className="bf-rise" style={i(7)}>
+      <div className="animate-fade-up" style={i(7)}>
         <ButtonPanels
           items={[
             {

@@ -2,9 +2,9 @@ import type { CSSProperties, ReactNode } from "react";
 
 import { ButtonPanels } from "@/components/briefing/button-panels";
 import { CompareArea } from "@/components/briefing/compare-area";
-import { CountUp } from "@/components/briefing/motion";
 import { SourceDetails, SourceLine } from "@/components/briefing/source-line";
 import { Pill, ShareBar, STATEMENT, StatusLabel } from "@/components/briefing/ui";
+import { AnimatedNumber } from "@/components/motion";
 import type { Briefing } from "@/lib/briefing/model";
 import { formatPct, GP_WAIT_ID } from "@/lib/ranking";
 
@@ -28,20 +28,20 @@ export function StepStand({ briefing, confidence }: { briefing: Briefing; confid
 
   return (
     <>
-      <Pill className="bf-rise">Where you stand</Pill>
+      <Pill className="animate-fade-up">Where you stand</Pill>
 
       <div className="flex flex-col gap-1">
-        <div className="bf-rise flex flex-wrap items-end gap-x-5 gap-y-2" style={i(1)}>
+        <div className="animate-fade-up flex flex-wrap items-end gap-x-5 gap-y-2" style={i(1)}>
           {/* The figure as drawn. The heading below carries it for screen readers. */}
           <p aria-hidden className="font-display text-[3.5rem] leading-[1.05] font-light tracking-[-0.03em] text-forest-ink lining-nums sm:text-[4.625rem]">
-            <CountUp value={stand.value} final={figure} suffix="%" delay={240} />
+            <AnimatedNumber value={stand.value} final={figure} suffix="%" level="loud" play />
           </p>
           {confidence ? <div data-slot="briefing-confidence" className="pb-2 text-base leading-6 text-charcoal">{confidence}</div> : null}
         </div>
         <h1
           data-briefing-heading
           tabIndex={-1}
-          className={`bf-rise ${STATEMENT}`}
+          className={`animate-fade-up ${STATEMENT}`}
           style={i(2)}
         >
           <span className="sr-only">{figure} </span>
@@ -49,12 +49,12 @@ export function StepStand({ briefing, confidence }: { briefing: Briefing; confid
         </h1>
       </div>
 
-      <div className="bf-rise flex flex-col gap-3" style={i(3)}>
+      <div className="animate-fade-up flex flex-col gap-3" style={i(3)}>
         <ShareBar name={county.name} value={stand.value} text={figure} tone={tone} index={4} />
         <ShareBar name="Finland as a whole" value={stand.finland} text={formatPct(stand.finland)} tone="plain" index={5} />
       </div>
 
-      <div className="bf-rise flex flex-col gap-3" style={i(4)}>
+      <div className="animate-fade-up flex flex-col gap-3" style={i(4)}>
         <p className="flex flex-wrap items-start gap-x-3 gap-y-1 text-base leading-6 text-charcoal">
           <StatusLabel status={stand.status}>
             {stand.gapText}
@@ -87,11 +87,11 @@ export function StepStand({ briefing, confidence }: { briefing: Briefing; confid
         </div>
       </div>
 
-      <div className="bf-rise" style={i(5)}>
+      <div className="animate-fade-up" style={i(5)}>
         <SourceLine sourceId={stand.sourceId} year={stand.year}>{stand.limitation}</SourceLine>
       </div>
 
-      <div className="bf-rise" style={i(6)}>
+      <div className="animate-fade-up" style={i(6)}>
         <ButtonPanels
           items={[
             {

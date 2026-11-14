@@ -24,44 +24,42 @@ export function StepBoard({ briefing, moreLinks }: { briefing: Briefing; moreLin
 
   return (
     <>
-      <Pill className="bf-rise">Take it to your board</Pill>
+      <Pill className="animate-fade-up">Take it to your board</Pill>
       <h1
         data-briefing-heading
         tabIndex={-1}
-        className={`bf-rise ${STATEMENT}`}
+        className={`animate-fade-up ${STATEMENT}`}
         style={i(1)}
       >
         That is the briefing for {county.name}. The next page turns it into a plan your board can decide on.
       </h1>
 
       <ol className="flex flex-col gap-[14px] text-base leading-6 text-charcoal">
-        <li className="bf-rise flex flex-col gap-1" style={i(2)}>
+        <li className="animate-fade-up flex flex-col gap-1" style={i(2)}>
           <span className="type-eyebrow">Where you stand</span>
           <span className="text-pretty">
             {formatPct(stand.value)} {stand.statement} Finland: {formatPct(stand.finland)}.
           </span>
         </li>
-        <li className="bf-rise flex flex-col gap-1" style={i(3)}>
+        <li className="animate-fade-up flex flex-col gap-1" style={i(3)}>
           <span className="type-eyebrow">Where the delay is</span>
           <span className="text-pretty">{pathway.lede}</span>
         </li>
         {first ? (
-          <li className="bf-rise flex flex-col gap-1" style={i(4)}>
+          <li className="animate-fade-up flex flex-col gap-1" style={i(4)}>
             <span className="type-eyebrow">First thing to do</span>
-            <span className="text-pretty">
-              {first.title}. First step: {first.firstStep}
-            </span>
+            <span className="text-pretty">{first.title}.</span>
           </li>
         ) : null}
       </ol>
 
-      <div className="bf-rise" style={i(5)}>
+      <div className="animate-fade-up" style={i(5)}>
         <SourceLine sourceId={stand.sourceId} year={stand.year}>
           Visits, not people; all non-urgent GP visits, not only cancer-related ones.
         </SourceLine>
       </div>
 
-      <div className="bf-rise" style={i(6)}>
+      <div className="animate-fade-up" style={i(6)}>
         <BoardActions
           areaName={county.name}
           planPath={briefing.planPath}
@@ -70,11 +68,7 @@ export function StepBoard({ briefing, moreLinks }: { briefing: Briefing; moreLin
         />
       </div>
 
-      <div className="bf-rise flex flex-col gap-2 text-base leading-6 text-charcoal" style={i(7)}>
-        <p className="text-pretty">
-          The plan page has the target, the actions as rows with fields for names, dates and cost, and buttons to print
-          it or download it for Word and Excel.
-        </p>
+      <div className="animate-fade-up flex flex-col gap-2 text-base leading-6 text-charcoal" style={i(7)}>
         <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-x-8">
           <li>
             <Link href={`/county/${county.id}`} className={TEXT_LINK}>

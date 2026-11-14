@@ -14,8 +14,8 @@ export function StepChange({ briefing }: { briefing: Briefing }) {
   if (actions.length === 0) {
     return (
       <>
-        <Pill className="bf-rise">What it could change</Pill>
-        <h1 data-briefing-heading tabIndex={-1} className={`bf-rise ${STATEMENT}`}>
+        <Pill className="animate-fade-up">What it could change</Pill>
+        <h1 data-briefing-heading tabIndex={-1} className={`animate-fade-up ${STATEMENT}`}>
           No action is recommended for {county.name}, so there is no result from elsewhere to show.
         </h1>
       </>
@@ -24,7 +24,7 @@ export function StepChange({ briefing }: { briefing: Briefing }) {
 
   return (
     <>
-      <Pill className="bf-rise">What it could change</Pill>
+      <Pill className="animate-fade-up">What it could change</Pill>
       <ChangeView
         areaName={county.name}
         targetYears={briefing.targetYears}
@@ -44,7 +44,6 @@ export function StepChange({ briefing }: { briefing: Briefing }) {
                 year: action.watch.year,
                 target: action.watch.target
                   ? {
-                      short: action.watch.target.level === "finland" ? "Finland's level" : "the best area's level",
                       levelName: action.watch.target.levelName,
                       paces: action.watch.target.paces,
                     }

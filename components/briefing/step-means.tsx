@@ -19,8 +19,8 @@ export function StepMeans({ briefing }: { briefing: Briefing }) {
   if (!meaning) {
     return (
       <>
-        <Pill className="bf-rise">What it means</Pill>
-        <h1 data-briefing-heading tabIndex={-1} className={`bf-rise ${STATEMENT}`} style={i(1)}>
+        <Pill className="animate-fade-up">What it means</Pill>
+        <h1 data-briefing-heading tabIndex={-1} className={`animate-fade-up ${STATEMENT}`} style={i(1)}>
           No public figure is published for {county.name} on the measured steps, so there is nothing to put into plain
           numbers here.
         </h1>
@@ -31,9 +31,9 @@ export function StepMeans({ briefing }: { briefing: Briefing }) {
   const latest = meaning.years[meaning.years.length - 1];
   return (
     <>
-      <Pill className="bf-rise">What it means</Pill>
+      <Pill className="animate-fade-up">What it means</Pill>
       {meaning.noRedNote ? (
-        <p className="bf-rise text-base leading-6 text-pretty text-charcoal">{meaning.noRedNote}</p>
+        <p className="animate-fade-up text-base leading-6 text-pretty text-charcoal">{meaning.noRedNote}</p>
       ) : null}
 
       <HundredGrid
@@ -45,17 +45,17 @@ export function StepMeans({ briefing }: { briefing: Briefing }) {
       />
 
       {meaning.changeText ? (
-        <p className="bf-rise text-base leading-6 text-pretty text-charcoal" style={i(10)}>
+        <p className="animate-fade-up text-base leading-6 text-pretty text-charcoal" style={i(6)}>
           <span className="font-semibold text-forest-ink">Since {meaning.years[0].year}:</span> {meaning.changeText}
           {meaning.caveat ? <> {meaning.caveat}</> : null}
         </p>
       ) : null}
 
-      <div className="bf-rise" style={i(11)}>
+      <div className="animate-fade-up" style={i(7)}>
         <SourceLine sourceId={meaning.sourceId} year={latest.year}>{meaning.limitation}</SourceLine>
       </div>
 
-      <div className="bf-rise" style={i(12)}>
+      <div className="animate-fade-up" style={i(8)}>
         <ButtonPanels
           items={[
             {

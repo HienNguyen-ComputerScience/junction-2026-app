@@ -6,7 +6,9 @@ import { useSelectedLayoutSegment } from "next/navigation";
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { cn } from "cn";
 
+import { takeArrival } from "@/components/briefing/arrival";
 import { EdgeLines, PRIMARY_BUTTON, SECONDARY_BUTTON, TEXT_LINK } from "@/components/briefing/ui";
+import { MOTION_LOUD_CLASS } from "@/lib/motion";
 import {
   BRIEFING_STEP_COUNT,
   BRIEFING_STEPS,
@@ -72,8 +74,10 @@ export function BriefingShell({
   useEffect(() => {
     const previous = shown.current;
     shown.current = stepId;
-    // The first step shown after a page load keeps the browser's own focus and scroll.
-    if (previous === null || stepId === null || previous === stepId) return;
+    // The first step shown after a page load keeps the browser's own focus and scroll; the
+    // first step shown by pressing Start takes the focus like every later one.
+    const pressed = previous === null ? takeArrival() : previous !== stepId;
+    if (!pressed || stepId === null) return;
     const card = cardRef.current;
     if (!card) return;
     if (card.getBoundingClientRect().top < 0) card.scrollIntoView({ block: "start" });
@@ -88,7 +92,7 @@ export function BriefingShell({
 
   return (
     <ChoicesContext.Provider value={choices}>
-      <div className="bf-root bg-keylime-wash px-4 py-6 sm:px-6 sm:py-10 print:hidden">
+      <div className={cn("bf-root bg-keylime-wash px-4 py-6 sm:px-6 sm:py-10 print:hidden", MOTION_LOUD_CLASS)}>
         <div
           ref={cardRef}
           className="relative mx-auto flex w-full max-w-[60rem] scroll-mt-4 flex-col overflow-clip rounded-[14px] border border-border-mist bg-cream-paper lg:min-h-[41rem]"
@@ -112,7 +116,7 @@ export function BriefingShell({
                       <span
                         // Re-keyed on the current step so only the newest part grows in.
                         key={item.number === step.number ? `now-${step.id}` : "done"}
-                        className={cn("block h-full rounded-full bg-forest-ink", item.number === step.number && "bf-bar")}
+                        className={cn("block h-full rounded-full bg-forest-ink", item.number === step.number && "animate-line-in")}
                       />
                     ) : null}
                   </span>
@@ -149,7 +153,9 @@ export function BriefingShell({
               </Link>
             ) : (
               <Link href="/briefing" className={cn(SECONDARY_BUTTON, "max-sm:flex-1 max-sm:px-4")}>
-                Start again<span className="max-sm:sr-only"> with another area</span>
+                <span>
+                  Start again<span className="max-sm:sr-only"> with another area</span>
+                </span>
               </Link>
             )}
           </nav>

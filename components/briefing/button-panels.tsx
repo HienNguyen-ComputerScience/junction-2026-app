@@ -45,7 +45,7 @@ export function ButtonPanels({ items }: { items: ButtonPanel[] }) {
           key={item.id}
           id={`${base}-${item.id}`}
           hidden={open !== item.id}
-          className="bf-rise rounded-[14px] bg-keylime-wash p-[21px] sm:p-[28px]"
+          className="animate-fade-up rounded-[14px] bg-keylime-wash p-[21px] sm:p-[28px]"
         >
           {item.content}
         </div>

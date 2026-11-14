@@ -58,7 +58,7 @@ export function CompareArea({
           id={selectId}
           value={other.id}
           onChange={(event) => setOtherId(event.target.value)}
-          className="h-[3.25rem] w-full max-w-sm rounded-[14px] border border-input bg-cream-paper px-4 text-base font-semibold text-charcoal outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink"
+          className="h-[3.25rem] w-full max-w-sm rounded-[14px] border border-input bg-cream-paper px-4 text-base font-semibold text-charcoal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink"
         >
           {[...others]
             .sort((a, b) => a.name.localeCompare(b.name, "en"))

@@ -79,19 +79,19 @@ export function HundredGrid({
         text:
           better === "lower"
             ? worse
-              ? "Came more than a week after people asked, up to Finland's level"
-              : "Came more than a week after people asked"
+              ? "Late, up to Finland's level"
+              : "Late: more than a week after people asked"
             : "Processed within 3 days",
       },
-      { state: "excess", text: "Came more than a week after people asked, above Finland's level" },
+      { state: "excess", text: "Late, above Finland's level" },
       {
         state: "short",
         text:
           better === "lower"
-            ? `Would also come late at Finland's level, but not in ${areaName}`
-            : `Would be processed within 3 days at Finland's level, but not in ${areaName}`,
+            ? `Late at Finland's level, not in ${areaName}`
+            : `Within 3 days at Finland's level, not in ${areaName}`,
       },
-      { state: "empty", text: better === "lower" ? "Came within a week" : "Took longer than 3 days" },
+      { state: "empty", text: better === "lower" ? "Within a week" : "Took longer than 3 days" },
     ] as const
   ).filter((item) => has(item.state));
 
@@ -101,7 +101,7 @@ export function HundredGrid({
         data-briefing-heading
         tabIndex={-1}
         aria-live="polite"
-        className={`bf-rise ${STATEMENT}`}
+        className={`animate-fade-up ${STATEMENT}`}
         style={{ "--i": 1 } as CSSProperties}
       >
         In {current.year}, about {n} of every 100 {things} in {areaName} {did}.
@@ -122,7 +122,7 @@ export function HundredGrid({
             />
           ))}
         </div>
-        <ul className="bf-rise flex flex-col gap-1 text-base leading-6 text-charcoal" style={{ "--i": 8 } as CSSProperties}>
+        <ul className="animate-fade-up flex flex-col gap-1 text-base leading-6 text-charcoal" style={{ "--i": 5 } as CSSProperties}>
           {legend.map((item) => (
             <li key={item.state} className="flex items-start gap-2.5">
               <span aria-hidden className={cn("mt-1 size-4 shrink-0 rounded-full", dotClass[item.state])} />
@@ -136,8 +136,8 @@ export function HundredGrid({
         <div
           role="group"
           aria-label="Show another year"
-          className="bf-rise flex flex-wrap items-center gap-3"
-          style={{ "--i": 9 } as CSSProperties}
+          className="animate-fade-up flex flex-wrap items-center gap-3"
+          style={{ "--i": 6 } as CSSProperties}
         >
           <span className="text-base leading-6 font-semibold text-forest-ink max-sm:basis-full">Show the year:</span>
           {years.map((entry) => (

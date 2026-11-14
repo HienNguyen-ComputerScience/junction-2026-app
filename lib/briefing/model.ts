@@ -82,6 +82,8 @@ export type BriefingStage = {
   status: GapStatus;
   /** The status in words; a step with only a hospital-group value says "No county figure". */
   statusLabel: string;
+  /** A limit on the status that must be read with it, shown on the step itself, or null. */
+  note: string | null;
   /** True for a measured step that is worse than Finland: where the delay is. */
   isBreak: boolean;
   /** The area's own published share, or null. */
@@ -202,7 +204,7 @@ function gapWords(value: number, finland: number): string {
 }
 
 const GP_LIMITATION =
-  "This counts visits, not people, and it covers all non-urgent GP visits, not only cancer-related ones. A GP is a health-centre doctor.";
+  "Visits, not people; all non-urgent GP visits, not only cancer-related ones. A GP is a health-centre doctor.";
 
 function buildStand(county: County): BriefingStand | null {
   const ranking = getRanking();
@@ -251,7 +253,7 @@ function buildStage(county: County, stage: Stage, breaks: Set<Stage>): BriefingS
   const number = STAGES.indexOf(stage) + 1;
   const label = STAGE_LABELS[stage];
   const gap = stage === "gp_recognition" ? undefined : getStageGap(county.id, stage);
-  const base = { stage, number, label, year: LATEST_YEAR, explains: EXPLAINS[stage] };
+  const base = { stage, number, label, year: LATEST_YEAR, explains: EXPLAINS[stage], note: null };
 
   if (!gap) {
     const finding =
@@ -279,11 +281,13 @@ function buildStage(county: County, stage: Stage, breaks: Set<Stage>): BriefingS
     stage === "gp_access"
       ? `${own} of non-urgent GP visits waited more than 7 days in ${gap.year}. Finland: ${national}. Lower is better.`
       : `${own} of referrals to specialist care were processed within 3 days in ${gap.year}. Finland: ${national}. Higher is faster.`;
-  if (stage === "referral" && CITY_UNITS_ONLY_REFERRAL.has(county.id)) {
+  const cityOnly = stage === "referral" && CITY_UNITS_ONLY_REFERRAL.has(county.id);
+  if (cityOnly) {
     figures += ` This figure covers only the city's own specialist units; most ${county.name} referrals go to ${HUS_FULL}.`;
   }
   return {
     ...base, year: gap.year, status: gap.status, statusLabel: STATUS_LABEL[gap.status],
+    note: cityOnly ? "The city's own units only. Most referrals go to the HUS hospital group." : null,
     isBreak: gap.status === "red" && breaks.has(stage),
     value: gap.value, finland: gap.national_value, sourceId: gap.source_id, figures, finding: null,
   };
@@ -311,11 +315,11 @@ function buildMeaning(county: County, anyRed: boolean): BriefingMeaning | null {
   let moved = false;
   if (first && gap.year !== FIRST_YEAR) {
     const worseBy = better === "lower" ? diff1(gap.value, first.value) : diff1(first.value, gap.value);
-    const was = `in ${FIRST_YEAR} (${formatPct(first.value)})`;
-    if (Math.abs(worseBy) < FLAT_BELOW_POINTS) changeText = `About the same as ${was}.`;
+    const was = `${FIRST_YEAR}: ${formatPct(first.value)}`;
+    if (Math.abs(worseBy) < FLAT_BELOW_POINTS) changeText = `About the same (${was}).`;
     else {
       moved = true;
-      changeText = `${Math.abs(worseBy).toFixed(1)} percentage points ${worseBy > 0 ? "worse" : "better"} than ${was}.`;
+      changeText = `${Math.abs(worseBy).toFixed(1)} percentage points ${worseBy > 0 ? "worse" : "better"} (${was}).`;
     }
   }
 
@@ -325,7 +329,7 @@ function buildMeaning(county: County, anyRed: boolean): BriefingMeaning | null {
   if (moved && gap.indicator_id === GP_WAIT_ID) {
     const visits = getRecordedVisitChange(county.id);
     if (visits !== null && isRecordingSensitiveChange(visits)) {
-      caveat = `Read this change with care: the number of recorded visits ${describeVisitChange(visits)} from ${FIRST_YEAR} to ${gap.year}, so part of the change may be how visits are recorded.`;
+      caveat = `Read with care: recorded visits ${describeVisitChange(visits)} over the same years, so part of the change may be how visits are recorded.`;
     }
   }
 
@@ -342,11 +346,11 @@ function buildMeaning(county: County, anyRed: boolean): BriefingMeaning | null {
     caveat,
     noRedNote: anyRed
       ? null
-      : `No measured step in ${county.name} is worse than Finland. This is the figure for ${gap.stage === "gp_access" ? "the first step, getting to a GP" : "the GP to specialist referral"}.`,
+      : `No measured step is worse than Finland. This is ${gap.stage === "gp_access" ? "the first step, getting to a GP" : "the last step, the GP to specialist referral"}.`,
     limitation:
       gap.stage === "gp_access"
-        ? "Visits, not people. All non-urgent GP visits, not only cancer-related ones. Numbers are rounded to whole visits."
-        : `${indicator?.limitation.split(" Counted per hospital organisation")[0] ?? "Not cancer-specific."} Numbers are rounded to whole referrals.`,
+        ? "Visits, not people; all non-urgent GP visits, not only cancer-related ones. Rounded to whole visits."
+        : `${indicator?.limitation.split(" Counted per hospital organisation")[0] ?? "Not cancer-specific."} Rounded to whole referrals.`,
   };
 }
 

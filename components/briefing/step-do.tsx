@@ -12,7 +12,7 @@ const COUNT_WORD = ["No", "One", "Two", "Three"];
 
 /**
  * Step 4, "What to do on Monday": the recommended actions for the step where the delay is,
- * all visible, each with who is responsible, the first step and where it was tried.
+ * all three named at once; the first is open on its first step and who is responsible.
  * The actions and their order come from lib/act (the same rule as the act page).
  */
 export function StepDo({ briefing }: { briefing: Briefing }) {
@@ -22,11 +22,11 @@ export function StepDo({ briefing }: { briefing: Briefing }) {
 
   return (
     <>
-      <Pill className="bf-rise">What to do on Monday</Pill>
+      <Pill className="animate-fade-up">What to do on Monday</Pill>
       <h1
         data-briefing-heading
         tabIndex={-1}
-        className={`bf-rise ${STATEMENT}`}
+        className={`animate-fade-up ${STATEMENT}`}
         style={i(1)}
       >
         {actions.length === 0
@@ -62,9 +62,8 @@ export function StepDo({ briefing }: { briefing: Briefing }) {
         />
       ) : null}
 
-      <p className="bf-rise text-base leading-6 text-pretty text-charcoal" style={i(5)}>
-        These are proposals for service planning, picked by a fixed rule from a checked evidence table. They are not
-        medical advice.
+      <p className="animate-fade-up text-base leading-6 text-pretty text-charcoal" style={i(5)}>
+        Proposals for service planning, picked by a fixed rule from a checked evidence table. Not medical advice.
       </p>
     </>
   );

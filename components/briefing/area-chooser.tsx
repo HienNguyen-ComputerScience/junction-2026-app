@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useId, useState } from "react";
 
+import { markArrival } from "@/components/briefing/arrival";
 import { PRIMARY_BUTTON } from "@/components/briefing/ui";
 
 /**
@@ -33,7 +34,7 @@ export function AreaChooser({
           id={selectId}
           value={area.id}
           onChange={(event) => setAreaId(event.target.value)}
-          className="h-[3.25rem] w-full max-w-sm rounded-[14px] border border-input bg-cream-paper px-4 text-base font-semibold text-charcoal outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink"
+          className="h-[3.25rem] w-full max-w-sm rounded-[14px] border border-input bg-cream-paper px-4 text-base font-semibold text-charcoal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink"
         >
           {areas.map((option) => (
             <option key={option.id} value={option.id}>
@@ -42,7 +43,7 @@ export function AreaChooser({
           ))}
         </select>
       </div>
-      <Link href={`/briefing/${area.id}`} className={`${PRIMARY_BUTTON} w-full sm:w-fit`}>
+      <Link href={`/briefing/${area.id}`} onClick={markArrival} className={`${PRIMARY_BUTTON} w-full sm:w-fit`}>
         Start the briefing for {area.name}
         <ArrowRight aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />
       </Link>
