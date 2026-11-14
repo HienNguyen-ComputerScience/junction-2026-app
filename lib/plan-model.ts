@@ -255,6 +255,15 @@ function buildStep(countyId: string, stage: Stage, input: PlanInput): PlanStep {
   };
 }
 
+/**
+ * The three steps for an area as the plan shows them, with the default target. The county page
+ * shows these steps without a plan around them.
+ */
+export function getAreaSteps(countyId: string): PlanStep[] {
+  const input = readPlanInput(new URLSearchParams(), getBottleneck(countyId).anyRed);
+  return STAGES.map((stage) => buildStep(countyId, stage, input));
+}
+
 /** The sentence that says which published figure will show whether an action worked. */
 function successLine(step: PlanStep | undefined, year: number): string {
   if (!step || step.value === null || !step.indicatorId) {

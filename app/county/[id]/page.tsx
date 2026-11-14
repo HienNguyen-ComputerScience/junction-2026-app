@@ -10,11 +10,13 @@ import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
 import { RecordingNote } from "@/components/pathway/recording-note";
 import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { buildStepTabs } from "@/components/pathway/step-panels";
-import { StepAside, StepTabs, StepTabsProvider } from "@/components/pathway/step-tabs";
+import { PrintButton, Reveal } from "@/components/motion";
+import { StepUnit } from "@/components/stat/step-unit";
 import { HUS_FULL, shortReason } from "@/components/pathway/wording";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { buttonVariants } from "@/components/ui/button";
-import { getBottleneck } from "@/lib/act";
+import { getBottleneck, pickActions } from "@/lib/act";
+import { getAreaSteps } from "@/lib/plan-model";
 import { getMainReason } from "@/lib/main-reason";
 import { counties, gaps, getCounty, getValue, LATEST_YEAR, type County } from "@/lib/data";
 import {
@@ -51,51 +53,66 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const county = getCounty(id);
   if (!county) notFound();
 
-  const steps = buildPathwaySteps(county.id);
   const limitations = buildLimitations(county);
-  const { anyRed } = getBottleneck(county.id);
-  // The verdict is the main reason sentence, the same one as on the home card. The tab selected
-  // first is the step that sentence is about (the worst one), so the two always agree.
+  const bottleneck = getBottleneck(county.id);
+  // The verdict is the main reason sentence, the same one as on the home card; the step it is
+  // about is flagged as the main delay, so the two always agree.
   const reason = getMainReason(county.id);
-  const reasonStage = reason.gap?.stage ?? null;
-  const tabs = buildStepTabs(county.id, steps);
+  const reasonStage = bottleneck.anyRed ? (reason.gap?.stage ?? null) : null;
+  const steps = getAreaSteps(county.id);
+  // Each step's trend (2023-2025), from the same builder the old tabs used.
+  const trends = new Map(buildStepTabs(county.id, buildPathwaySteps(county.id)).map((tab) => [tab.id, tab.aside]));
+  const actions = pickActions(bottleneck);
+  const planHref = `/county/${county.id}/plan?actions=${actions.map((action) => action.id).join(",")}`;
 
   return (
-    <main className="page-container flex flex-col gap-10 pt-4 sm:gap-14 sm:pt-6">
-      {/* Desktop: name, verdict and the three steps (one at a time) on the left, the limitations
-          box beside them, so both are on the first screen. Below lg the limitations are a
-          one-line disclosure under the main action instead (never both at the same width). */}
-      <StepTabsProvider tabs={tabs} defaultId={reasonStage ?? "gp_access"}>
-        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-start lg:gap-10">
-          <header className="flex flex-col items-start gap-4">
-            <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
-            <h1 className="type-page lg:text-[2.5rem] lg:leading-[1.1]">{county.name}</h1>
-            <p className="max-w-[44rem] text-base leading-relaxed text-pretty text-foreground">{shortReason(reason)}</p>
-            {reason.caveat && <RecordingNote caveat={reason.caveat} className="max-w-[44rem]" />}
-            <section aria-labelledby="steps-heading" className="w-full">
-              <h2 id="steps-heading" className="sr-only">
-                The first three steps, compared with Finland ({LATEST_YEAR})
-              </h2>
-              <StepTabs
-                label={`The first three steps, ${LATEST_YEAR}`}
-                action={
-                  <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
-                    {anyRed ? "See all actions" : "Actions to keep this level"}
-                    <ArrowRight aria-hidden data-icon="inline-end" />
-                  </Link>
-                }
-              />
-            </section>
-            <LimitationsBox items={limitations} variant="disclosure" className="mt-2 w-full lg:hidden" />
-          </header>
-
-          {/* Right column: the limitations, then the selected step's trend under them. */}
-          <div className="flex flex-col gap-4 max-lg:mt-4">
-            <LimitationsBox items={limitations} className="max-lg:hidden" />
-            <StepAside />
-          </div>
+    <main className="page-container flex flex-col gap-12 pt-4 sm:gap-16 sm:pt-6">
+      <header className="flex flex-col items-start gap-4">
+        <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
+        <p className="type-eyebrow">{county.name_fi}</p>
+        <h1 className="type-display">{county.name}</h1>
+        <p className="type-lede max-w-[62ch] text-pretty text-foreground">{shortReason(reason)}</p>
+        {reason.caveat && <RecordingNote caveat={reason.caveat} className="max-w-[62ch]" />}
+        <div data-print="hide" className="flex flex-wrap gap-2.5 pt-1">
+          <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
+            {bottleneck.anyRed ? "See what to do" : "Actions to keep this level"}
+            <ArrowRight aria-hidden data-icon="inline-end" />
+          </Link>
+          <Link href={planHref} className={buttonVariants({ variant: "outline", size: "lg" })}>
+            Make the action plan for the board
+          </Link>
+          <PrintButton size="lg" />
         </div>
-      </StepTabsProvider>
+      </header>
+
+      <section aria-labelledby="steps-heading" className="flex flex-col gap-5">
+        <Reveal className="flex flex-col gap-2">
+          <p className="type-eyebrow">The first three steps, {LATEST_YEAR}</p>
+          <h2 id="steps-heading" className="type-title">
+            {bottleneck.anyRed ? "Where care is delayed" : "Where the pathway stands"}
+          </h2>
+          <p className="max-w-[68ch] text-base text-muted-foreground">
+            Each step compared with Finland&apos;s level. The colours compare with Finland, not with a clinical standard.
+          </p>
+        </Reveal>
+        <div className="grid gap-3 lg:grid-cols-3">
+          {steps.map((step, i) => (
+            <StepUnit key={step.stage} step={step} index={i} flag={step.stage === reasonStage ? "The main delay" : undefined}>
+              {trends.get(step.stage) ? <div className="pt-1">{trends.get(step.stage)}</div> : null}
+            </StepUnit>
+          ))}
+        </div>
+      </section>
+
+      <section aria-labelledby="limits-heading" className="flex flex-col gap-4">
+        <Reveal className="flex flex-col gap-2">
+          <p className="type-eyebrow">Read before you use these figures</p>
+          <h2 id="limits-heading" className="type-title">
+            What these figures cannot tell you
+          </h2>
+        </Reveal>
+        <LimitationsBox items={limitations} visibleCount={4} />
+      </section>
 
       <PathwayStrip countyId={county.id} />
 

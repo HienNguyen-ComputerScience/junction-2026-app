@@ -6,18 +6,18 @@ import type { ReactNode } from "react";
 import { Suspense } from "react";
 import { cn } from "cn";
 
-import { AnimatedNumber, Disclosure, PrintButton, Reveal } from "@/components/motion";
+import { Disclosure, PrintButton, Reveal } from "@/components/motion";
 import { EmailPlanButton } from "@/components/plan/email-plan-button";
+import { StepUnit } from "@/components/stat/step-unit";
 import { SourceChip } from "@/components/source-chip";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { FramePanel } from "@/components/ui/frame";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { TextLink } from "@/components/ui/text-link";
 import { counties, getCounty } from "@/lib/data";
 import { TARGET_YEARS } from "@/lib/plan";
 import { targetGoal, targetMilestones, targetPace } from "@/lib/plan-export";
-import { buildPlan, type Plan, type PlanAction, type PlanStep } from "@/lib/plan-model";
+import { buildPlan, type Plan, type PlanAction } from "@/lib/plan-model";
 import { formatPct } from "@/lib/ranking";
 
 // Counties are a fixed, known set; the plan itself is drawn up per request (its query holds the
@@ -104,49 +104,6 @@ function Toolbar({ plan, exportPath, position }: { plan: Plan; exportPath: strin
 }
 
 /** One step of the pathway as a small unit: the figure, what it counts, Finland, the status in words, the source. */
-function StepUnit({ step, index }: { step: PlanStep; index: number }) {
-  return (
-    <Reveal index={index} className="print-keep flex">
-      <FramePanel padding="none" className="flex w-full flex-col gap-3 p-6 sm:p-7 print:gap-2 print:p-4">
-        <p className="type-eyebrow">Step {step.number}</p>
-        <h3 className="type-heading">{step.label}</h3>
-        {step.value !== null ? (
-          <p className={cn("numeral text-5xl print:text-3xl", step.status === "red" ? "text-status-red-ink" : "text-forest-ink")}>
-            <AnimatedNumber value={step.value} final={formatPct(step.value)} />
-          </p>
-        ) : (
-          <p className="font-display text-3xl font-light text-forest-ink print:text-2xl">No figure</p>
-        )}
-        <StatusBadge status={step.status}>{step.statusLabel}</StatusBadge>
-        {step.measure ? (
-          <p className="text-base">
-            {step.measure}, {step.year} ({step.direction}).
-            {step.finland !== null ? (
-              <>
-                {" "}
-                Finland: <span className="figure font-semibold">{formatPct(step.finland)}</span>.
-              </>
-            ) : null}
-          </p>
-        ) : null}
-        {step.note ? <p className="text-base text-muted-foreground">{step.note}</p> : null}
-        {step.changeText ? <p className="text-base">{step.changeText}.</p> : null}
-        {step.caveat ? (
-          <p className="rounded-lg bg-mint-veil px-4 py-3 text-base">
-            <span className="font-semibold">Read with care: </span>
-            {step.caveat}
-          </p>
-        ) : null}
-        {step.sourceId ? (
-          <div className="mt-auto pt-1">
-            <SourceChip sourceId={step.sourceId} year={step.year} />
-          </div>
-        ) : null}
-      </FramePanel>
-    </Reveal>
-  );
-}
-
 function Row({ label, children, strong = false }: { label: string; children: ReactNode; strong?: boolean }) {
   return (
     <div className="grid gap-1 border-t border-border py-3.5 sm:grid-cols-[13rem_minmax(0,1fr)] sm:gap-6">
