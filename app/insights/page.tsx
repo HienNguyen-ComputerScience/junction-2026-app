@@ -8,7 +8,6 @@ import { NoWayRound } from "@/components/insights/no-way-round";
 import { PathwayRow } from "@/components/insights/pathway-row";
 import { StarterDataset, StarterDownload } from "@/components/insights/starter-dataset";
 import { PrintButton } from "@/components/motion";
-import { buttonVariants } from "@/components/ui/button";
 import { countBaseChange, noWayRound, pathwayAreas } from "@/lib/insights";
 
 export const metadata: Metadata = {
@@ -42,7 +41,10 @@ function AreaPicker({ selected }: { selected: string }) {
           ))}
         </select>
       </label>
-      <button type="submit" className={buttonVariants({ variant: "outline" })}>
+      <button
+        type="submit"
+        className="inline-flex min-h-11 items-center rounded-lg border border-forest-ink bg-cream-paper px-4 py-2 text-base font-semibold text-forest-ink outline-none hover:bg-mint-veil focus-visible:ring-3 focus-visible:ring-ring/50"
+      >
         Show this area&apos;s pathway
       </button>
     </form>

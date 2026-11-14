@@ -53,7 +53,7 @@ export function starterSheets(): Sheet[] {
     name: "Field definitions",
     widths: [8, 34, 60, 34, 34, 44, 60],
     rows: [
-      ["Field", "Column heading", "What to count", "Step of the pathway", "Missing figure it closes", "National roadmap measure", "Finnish definition or who publishes it abroad"],
+      ["Field", "Column heading", "What to count", "Step of the pathway", "Missing figure it helps close", "National roadmap measure", "Finnish definition or who publishes it abroad"],
       ...sections.flatMap((s) =>
         s.fields.map(
           (f) =>

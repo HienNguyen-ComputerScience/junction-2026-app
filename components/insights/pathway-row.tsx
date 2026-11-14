@@ -3,7 +3,14 @@ import { cn } from "cn";
 import { ConfidenceBadge } from "@/components/insights/confidence-badge";
 import { SourceChip } from "@/components/source-chip";
 import { getSource } from "@/lib/data";
-import { formatValue, getPathwayRow, INDICATOR_NAME, type PathwayItem, type PathwayStepId } from "@/lib/insights";
+import {
+  formatValue,
+  getPathwayRow,
+  INDICATOR_NAME,
+  type PathwayItem,
+  type PathwayStep,
+  type PathwayStepId,
+} from "@/lib/insights";
 
 const STEP: Record<PathwayStepId, { title: string; question: string; missing?: string }> = {
   detection: { title: "1. Detection", question: "Do people invited to cancer screening attend?" },
@@ -33,6 +40,26 @@ const VERSUS: Record<NonNullable<PathwayItem["versus"]>, string> = {
   same: "about the same as Finland",
   worse: "worse than Finland",
 };
+
+/** One short line per step for the strip: the status in words, never colour alone. */
+function stepSummary(step: PathwayStep): string {
+  if (!step.published) return "Not published";
+  const items = step.items;
+  if (items.length === 1) {
+    const it = items[0];
+    if (it.value === null) return "No value";
+    const value = formatValue(it.indicator_id, it.value);
+    if (it.shared) return `${value}, ${it.shared.name}-wide (shared)`;
+    return `${value}, ${it.versus ? VERSUS[it.versus] : ""}`;
+  }
+  const worse = items.filter((it) => it.versus === "worse").length;
+  const better = items.filter((it) => it.versus === "better").length;
+  const parts = [];
+  if (worse) parts.push(`${worse} of ${items.length} worse than Finland`);
+  if (better) parts.push(`${better} of ${items.length} better`);
+  if (items.length - worse - better) parts.push(`${items.length - worse - better} about the same`);
+  return parts.join(", ");
+}
 
 function Item({ item }: { item: PathwayItem }) {
   const name = INDICATOR_NAME[item.indicator_id];
@@ -108,7 +135,21 @@ export function PathwayRow({ areaId, headingLevel = 3 }: { areaId: string; headi
           </li>
         </ul>
       </div>
-      <ol className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <ol aria-label={`The seven steps in ${row.name} at a glance`} className="grid gap-2 sm:grid-cols-4 xl:grid-cols-7">
+        {row.steps.map((step) => (
+          <li
+            key={step.id}
+            className={cn(
+              "flex flex-col gap-1 rounded-lg p-3 text-base",
+              step.published ? "bg-mint-veil" : "border-2 border-dashed border-forest-ink/50 bg-cream-paper",
+            )}
+          >
+            <span className="font-semibold text-forest-ink">{STEP[step.id].title}</span>
+            <span className="text-pretty">{stepSummary(step)}</span>
+          </li>
+        ))}
+      </ol>
+      <ol aria-label="Each step in detail" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {row.steps.map((step) => {
           const meta = STEP[step.id];
           return (
@@ -117,8 +158,8 @@ export function PathwayRow({ areaId, headingLevel = 3 }: { areaId: string; headi
               className={cn(
                 "flex flex-col gap-4 rounded-[14px] p-6",
                 step.published ? "bg-keylime-wash" : "border-2 border-dashed border-forest-ink/50 bg-cream-paper",
-                step.id === "detection" && "sm:col-span-2",
-                step.id === "outcome" && "sm:col-span-2",
+                step.id === "detection" && "sm:col-span-2 xl:col-span-4",
+                step.id === "outcome" && "sm:col-span-2 xl:col-span-3",
               )}
             >
               <div className="flex flex-col gap-1">
@@ -126,7 +167,7 @@ export function PathwayRow({ areaId, headingLevel = 3 }: { areaId: string; headi
                 <p className="type-heading text-forest-ink">{meta.question}</p>
               </div>
               {step.published ? (
-                <div className={cn("grid gap-5", step.items.length > 1 && "md:grid-cols-2", step.items.length > 2 && "xl:grid-cols-3")}>
+                <div className={cn("grid gap-5", step.items.length > 1 && "md:grid-cols-2", step.items.length > 2 && "lg:grid-cols-3")}>
                   {step.items.map((item) => (
                     <Item key={item.indicator_id} item={item} />
                   ))}

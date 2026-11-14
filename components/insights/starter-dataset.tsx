@@ -10,7 +10,12 @@ export const STARTER_TEMPLATE_URL = "/api/insights/starter-template";
 /** The download as a link that looks like a primary button: it says what it opens. */
 export function StarterDownload() {
   return (
-    <a href={STARTER_TEMPLATE_URL} download className={buttonVariants({ size: "lg" })} data-print="hide">
+    <a
+      href={STARTER_TEMPLATE_URL}
+      download
+      className={buttonVariants({ size: "lg", className: "h-auto max-w-full whitespace-normal text-left" })}
+      data-print="hide"
+    >
       <Download aria-hidden strokeWidth={1.75} data-icon="inline-start" />
       Download the Excel template (.xlsx)
     </a>
@@ -71,7 +76,7 @@ export function StarterDataset({ headingLevel = 2 }: { headingLevel?: 2 | 3 }) {
             </div>
             <p className="max-w-[60rem] text-base text-pretty">{s.why}</p>
             <dl className="grid gap-x-6 gap-y-3 text-base md:grid-cols-[14rem_1fr]">
-              <dt className="font-semibold">Missing figure it closes</dt>
+              <dt className="font-semibold">Missing figure it helps close</dt>
               <dd className="text-pretty">{s.data_gap?.missing}</dd>
               <dt className="font-semibold">National roadmap measure</dt>
               <dd className="text-pretty">
@@ -120,7 +125,7 @@ export function StarterDataset({ headingLevel = 2 }: { headingLevel?: 2 | 3 }) {
 
       <div className="flex flex-col gap-3">
         <h3 className="type-heading text-forest-ink">What the county can calculate from the counts</h3>
-        <div className="w-full overflow-x-auto rounded-[14px] bg-cream-paper">
+        <div className="relative w-full overflow-x-auto rounded-[14px] bg-cream-paper">
           <table className="w-full min-w-[44rem] border-collapse text-left text-base">
             <caption className="sr-only">Indicators the county can compute from the starter counts</caption>
             <thead>

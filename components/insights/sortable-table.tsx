@@ -62,7 +62,7 @@ export function SortableTable({
   };
 
   return (
-    <div className="w-full overflow-x-auto rounded-[14px] bg-cream-paper">
+    <div className="relative w-full overflow-x-auto rounded-[14px] bg-cream-paper">
       <table className="w-full min-w-[40rem] border-collapse text-left text-base">
         <caption className="px-4 pt-4 pb-2 text-left text-base font-semibold text-forest-ink">{caption}</caption>
         <thead>

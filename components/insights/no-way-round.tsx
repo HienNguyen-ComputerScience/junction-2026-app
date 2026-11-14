@@ -37,8 +37,11 @@ export function NoWayRoundArea({ area, index = 0 }: { area: NwrArea; index?: num
     <Reveal index={index} className="flex flex-col gap-5 rounded-[14px] bg-keylime-wash p-6 sm:p-8">
       <div className="flex flex-col gap-1">
         <h3 className="type-title">{area.name}</h3>
-        <p className="text-base">
+        <p className="text-base text-pretty">
           {groupLabel(area.group)}: in {area.tests_in_group} of {TESTS} tests.
+          {area.tests.y2023 && area.tests.y2024
+            ? " It is in this group with the 2023 and 2024 figures too, so a change in how visits were recorded in one year does not explain it."
+            : ""}
         </p>
       </div>
       <div className="flex flex-col gap-2">
@@ -100,7 +103,7 @@ function TestsTable() {
         other routes&rdquo; when its GP wait is above the comparison point and both its occupational-health visits and
         its private-doctor use are below it.
       </p>
-      <div className="w-full overflow-x-auto rounded-[14px] bg-cream-paper">
+      <div className="relative w-full overflow-x-auto rounded-[14px] bg-cream-paper">
         <table className="w-full min-w-[40rem] border-collapse text-left text-base">
           <caption className="px-4 pt-4 pb-2 text-left font-semibold text-forest-ink">
             The six tests and the areas each puts in &ldquo;long wait, few other routes&rdquo;
