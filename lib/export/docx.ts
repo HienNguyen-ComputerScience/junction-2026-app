@@ -13,8 +13,11 @@ export type Block =
   | { type: "p"; runs: Run[] }
   /** Smaller, grey: captions, source lines, notes. */
   | { type: "note"; runs: Run[] }
-  /** A table. The first row is the header (bold, shaded, repeated on each page). `widths` are relative. */
-  | { type: "table"; widths: number[]; rows: Run[][][] };
+  /**
+   * A table. The first row is the header (bold, shaded, repeated on each page) unless `header` is
+   * false (a label/value table). `widths` are relative.
+   */
+  | { type: "table"; widths: number[]; rows: Run[][][]; header?: boolean };
 
 // A4 with 2 cm margins, in twentieths of a point. Text width: 11906 - 2 * 1134 = 9638.
 const TEXT_WIDTH = 9638;
@@ -34,7 +37,7 @@ function paragraph(runs: Run[], options: { style?: string; size?: number; color?
   return `<w:p>${props ? `<w:pPr>${props}</w:pPr>` : ""}${runs.map((run) => runXml(run, options.size, options.color)).join("")}</w:p>`;
 }
 
-function tableXml(widths: number[], rows: Run[][][]): string {
+function tableXml(widths: number[], rows: Run[][][], header = true): string {
   const total = widths.reduce((sum, width) => sum + width, 0);
   const cols = widths.map((width) => Math.round((width / total) * TEXT_WIDTH));
   const border = (side: string) => `<w:${side} w:val="single" w:sz="4" w:space="0" w:color="808080"/>`;
@@ -43,12 +46,13 @@ function tableXml(widths: number[], rows: Run[][][]): string {
     .map((row, r) => {
       const cells = row
         .map((cell, c) => {
-          const shade = r === 0 ? `<w:shd w:val="clear" w:color="auto" w:fill="E7E6E6"/>` : "";
-          const runs = r === 0 ? cell.map((run) => (typeof run === "string" ? { b: run } : run)) : cell;
+          const head = header && r === 0;
+          const shade = head ? `<w:shd w:val="clear" w:color="auto" w:fill="E7E6E6"/>` : "";
+          const runs = head ? cell.map((run) => (typeof run === "string" ? { b: run } : run)) : cell;
           return `<w:tc><w:tcPr><w:tcW w:w="${cols[c] ?? cols[0]}" w:type="dxa"/>${shade}</w:tcPr>${paragraph(runs, { size: 18, after: 40 })}</w:tc>`;
         })
         .join("");
-      return `<w:tr>${r === 0 ? "<w:trPr><w:tblHeader/></w:trPr>" : "<w:trPr><w:cantSplit/></w:trPr>"}${cells}</w:tr>`;
+      return `<w:tr>${header && r === 0 ? "<w:trPr><w:tblHeader/></w:trPr>" : "<w:trPr><w:cantSplit/></w:trPr>"}${cells}</w:tr>`;
     })
     .join("");
   return `<w:tbl><w:tblPr><w:tblW w:w="${TEXT_WIDTH}" w:type="dxa"/><w:tblBorders>${["top", "left", "bottom", "right", "insideH", "insideV"].map(border).join("")}</w:tblBorders><w:tblLayout w:type="fixed"/><w:tblCellMar><w:top w:w="60" w:type="dxa"/><w:left w:w="90" w:type="dxa"/><w:bottom w:w="60" w:type="dxa"/><w:right w:w="90" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${grid}</w:tblGrid>${body}</w:tbl>${paragraph([], { after: 120 })}`;
@@ -67,7 +71,7 @@ function blockXml(block: Block): string {
     case "note":
       return paragraph(block.runs, { size: 18, color: "595959", after: 120 });
     case "table":
-      return tableXml(block.widths, block.rows);
+      return tableXml(block.widths, block.rows, block.header);
   }
 }
 

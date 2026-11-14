@@ -4,7 +4,7 @@ import { cn } from "cn"
 
 // Two buttons, and no others: `default` (primary) and `outline` (secondary). The third level of
 // an action is a text link: `TextLink` in text-link.tsx.
-const buttonVariants = cva(
+const buttonClasses = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-base font-semibold whitespace-nowrap transition-[background-color,border-color,color,box-shadow,transform] duration-150 outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
@@ -39,10 +39,15 @@ function Button({
   return (
     <ButtonPrimitive
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(buttonClasses({ variant, size, className }))}
       {...props}
     />
   )
+}
+
+/** The button classes, merged, for links that look like buttons (e.g. `<Link className={buttonVariants({ variant: "outline" })}>`). */
+function buttonVariants({ className, ...variants }: VariantProps<typeof buttonClasses> & { className?: string } = {}): string {
+  return cn(buttonClasses(variants), className)
 }
 
 export { Button, buttonVariants }
