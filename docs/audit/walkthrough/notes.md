@@ -73,7 +73,7 @@ The two checkers are described separately, as the code has them. The brief check
 | Statement | "A county can start counting its own figures now." | — |
 | Figure | 18 counts in 6 groups, kept once a quarter | `starterDataset.sections[].fields` (`lib/insights`) |
 | Sentence | "Counts only: no names, identity codes or details about a patient." | `starterDataset.privacy` |
-| "Download the Excel template (.xlsx)" | The insights template, `GET /api/insights/starter-template` | `StarterDownload` |
+| "Get the recording template" | A link to the template on the insights page (`/insights#starter-dataset`); no download button here, as saving and sharing move to the shared control | `ForwardLink` |
 | "Show the counts to record" | Each group, why, its fields; all three privacy lines (including the "<5" rule); a link to the definitions on `/insights` | `starterDataset` |
 | End | "Start the guided briefing for your area", "See where access is hardest" | — |
 
@@ -93,7 +93,7 @@ The two checkers are described separately, as the code has them. The brief check
 | The publishers table (four columns), replaced by a two-column list behind the button | "We copied it" was the same date on every row; it is now one sentence on the page. |
 | "Only published figures" in "What we did about it" | It repeated topic 1. |
 | The four "What we did" cards, replaced by three rows in one list | No boxes inside a box. |
-| The six starter-group tiles | The figure says "18 counts in 6 groups". The names and fields are behind "Show the counts to record", next to the download. |
+| The six starter-group tiles | The figure says "18 counts in 6 groups". The names and fields are behind "Show the counts to record", next to the link to the template. |
 | "Where to go next" heading, its sage panel and the third link to `/sources` | The sources link is always in the top bar; two plain links are enough. |
 | "Back to On this page" link | The browser's own scrolling does it. |
 | The page title in the sticky bar | It repeated the h1. The bar now holds only the sources link. |
@@ -117,8 +117,8 @@ The Playwright MCP was not used; `playwright-core` drove the bundled Chromium ag
 - **Phone 390×844:** no sideways scroll, no element past the edge, both pictures static above their text (`screenshots/phone-390-full.png`).
 - **Keyboard only:** 72 Tab stops through the page, each with a visible focus ring and none hidden under the sticky bar. Enter on an "On this page" link lands the topic just under the bar.
 - **Print:** both pictures unstuck and final, every `<details>` open, the sticky bar hidden (`screenshots/print.pdf`, `screenshots/print-media-full.png`).
-- **Focus effect (`FocusGroup`), 1366×768 and 390×844:** 15 focus items, none nested. Scrolling through three topics, one item is in focus and 14 fade; story text blocks take focus in turn ("It counts visits, not people." → "It counts every non-urgent visit…"). The sticky sources link and both pictures stay at full strength. Opening a "Show …" in a faded chunk, or tabbing to a control in one, brings it back to full strength. Reduced motion, no JavaScript and print: nothing fades (`screenshots/focus-effect-1366x768.png`).
-- **Template download:** `firstline-cancer-pathway-starter-template.xlsx`, a valid zip (starts with PK).
+- **Focus effect (`FocusGroup`), 1366×768 and 390×844:** 15 focus items, none nested. At the very top, and on a phone before the first topic reaches the middle, nothing fades. Scrolling through three topics, one item is in focus and 14 fade; story text blocks take focus in turn ("It counts visits, not people." → "It counts every non-urgent visit…"). The sticky sources link and both pictures stay at full strength. Opening a "Show …" in a faded chunk, or tabbing to a control in one, brings it back to full strength. Reduced motion, no JavaScript and print: nothing fades (`screenshots/focus-effect-1366x768.png`).
+- **Template link:** no download, print or email button on the page. "Get the recording template" opens `/insights` at the starter dataset, where the download is.
 
 ## What still falls short
 
