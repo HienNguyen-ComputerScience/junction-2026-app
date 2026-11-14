@@ -1,5 +1,6 @@
 import { Disclosure, Reveal } from "@/components/motion";
-import { GradeGlyph } from "@/components/insights/confidence-badge";
+import { Search, TriangleAlert } from "lucide-react";
+
 import { SortableTable } from "@/components/insights/sortable-table";
 import { SourceChip } from "@/components/source-chip";
 import { earlyWarning, formatPoints, formatValue, INDICATOR_NAME, type WarningRow } from "@/lib/insights";
@@ -16,7 +17,11 @@ function Flag({ row }: { row: WarningRow }) {
   if (!row.flag) return <span>No flag</span>;
   return (
     <span className="inline-flex items-center gap-1.5 font-semibold text-forest-ink">
-      <GradeGlyph level={row.flag.kind === "warning" ? "solid" : "care"} />
+      {row.flag.kind === "warning" ? (
+        <TriangleAlert aria-hidden strokeWidth={1.75} className="size-4 shrink-0" />
+      ) : (
+        <Search aria-hidden strokeWidth={1.75} className="size-4 shrink-0" />
+      )}
       {row.flag.label}
     </span>
   );
@@ -106,8 +111,12 @@ export function EarlyWarning({
 
       <div className="flex flex-col gap-3">
         <h3 className="type-heading text-forest-ink">
-          Getting worse, recording steady ({warnings.length})
+          Getting worse, with no recording problem found ({warnings.length})
         </h3>
+        <p className="max-w-[60rem] text-base text-pretty">
+          For screening, the number of people invited changes with the programme&apos;s rounds by design, so the
+          recording check is not applied there; those flags rest on the published share alone.
+        </p>
         {warnings.length ? (
           <ul className="grid gap-4 md:grid-cols-2">
             {warnings.map((r, i) => (
