@@ -1,17 +1,23 @@
-import { TextLink } from "@/components/ui/text-link";
+import Link from "next/link";
+
+import { buttonVariants } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <main className="page-container flex flex-col gap-4 pt-4 sm:pt-6">
-      <h1 className="type-display text-[1.375rem] text-foreground sm:text-[1.75rem]">Page not found</h1>
-      <p className="text-muted-foreground">That area or page isn&apos;t in FirstLine.</p>
-      <div className="flex flex-wrap gap-x-6 gap-y-1">
-        <TextLink kind="nav" href="/">
+    <main className="page-container flex flex-col items-start gap-5 pt-8 pb-16 sm:pt-12">
+      <p className="type-eyebrow">Page not found</p>
+      <h1 className="type-display text-forest-ink">This page isn&apos;t in FirstLine</h1>
+      <p className="type-lede max-w-[60ch]">
+        The address may be mistyped, or the area may have a different name. Every wellbeing services
+        county, and Helsinki, has its own page.
+      </p>
+      <div className="flex flex-wrap gap-3">
+        <Link href="/" className={buttonVariants({ size: "lg" })}>
           Pick an area
-        </TextLink>
-        <TextLink kind="nav" href="/compare">
+        </Link>
+        <Link href="/compare" className={buttonVariants({ variant: "outline", size: "lg" })}>
           Compare all areas
-        </TextLink>
+        </Link>
       </div>
     </main>
   );

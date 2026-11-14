@@ -121,7 +121,7 @@ export function AskBox() {
             aria-busy={loading}
             placeholder="e.g. Is GP access improving in Kainuu?"
             autoComplete="off"
-            className="h-11 w-full min-w-0 bg-transparent text-[0.9375rem] outline-none placeholder:text-faint read-only:opacity-60"
+            className="h-11 w-full min-w-0 bg-transparent text-base outline-none placeholder:text-faint read-only:opacity-60"
           />
         </div>
         <Button
@@ -136,7 +136,7 @@ export function AskBox() {
       </form>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3" role="group" aria-label="Example questions">
-        <span aria-hidden className="type-caption text-muted-foreground sm:pt-2">Try</span>
+        <span aria-hidden className="text-base text-muted-foreground sm:pt-2">Try</span>
         <div className="flex flex-wrap gap-2">
           {EXAMPLES.map((ex) => (
             <button
@@ -147,10 +147,10 @@ export function AskBox() {
                 setQuestion(ex.label ?? ex.query);
                 ask(ex.query);
               }}
-              className="min-h-10 rounded-lg border border-input px-3 py-1.5 text-left type-caption text-foreground transition-colors outline-none hover:border-foreground/25 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60 sm:min-h-9"
+              className="min-h-10 rounded-lg border border-input px-3 py-1.5 text-left text-base text-foreground transition-colors outline-none hover:border-foreground/25 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60 sm:min-h-9"
             >
               {ex.fi ? (
-                <span className="mr-2 inline-flex h-5 items-center rounded-sm border border-input px-1 align-middle text-[0.6875rem] leading-none font-semibold text-muted-foreground">
+                <span className="mr-2 inline-flex h-5 items-center rounded-sm border border-input px-1 align-middle text-sm leading-none font-semibold text-muted-foreground">
                   FI<span className="sr-only"> (in Finnish)</span>
                 </span>
               ) : null}
@@ -163,17 +163,17 @@ export function AskBox() {
       <div aria-live="polite" className="-mt-5 [&>*]:mt-5">
           {state.kind !== "idle" && (
             <div className="flex items-center justify-between gap-2 border-t border-border pt-3">
-              <span className="type-caption text-muted-foreground">{loading ? "Searching" : "Results"}</span>
+              <span className="text-base text-muted-foreground">{loading ? "Searching" : "Results"}</span>
               <CloseButton onClick={close} label={loading ? "Cancel search" : "Close results"} />
             </div>
           )}
           {loading && <LoadingRows label="Searching and writing an answer from the results" rows={2} />}
-          {state.kind === "error" && state.message !== "" && <p className="text-sm text-muted-foreground">{state.message}</p>}
+          {state.kind === "error" && state.message !== "" && <p className="text-base text-muted-foreground">{state.message}</p>}
           {/* From the snapshot, not the search: shown first, and also when the live search is down. */}
           {reason && (
-            <p className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[0.9375rem] leading-relaxed text-pretty text-foreground">
+            <p className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-base leading-relaxed text-pretty text-foreground">
               <span>
-                <span className="block type-caption text-muted-foreground">
+                <span className="block text-base text-muted-foreground">
                   Dashboard data{data?.county ? ` for ${data.county.name}` : ""}, not from the search
                 </span>
                 {reason.text.replace(/^Main reason: /, "")}
@@ -198,10 +198,10 @@ export function AskBox() {
             <div className="space-y-5">
               {answered && data.answer && (
                 <div className="space-y-2 rounded-lg border border-dashed border-input bg-muted/40 p-4">
-                  <p className="type-caption text-muted-foreground">
+                  <p className="text-base text-muted-foreground">
                     Written by AI from the live results below. Read the sources before relying on it.
                   </p>
-                  <p className="text-[0.9375rem] leading-relaxed text-foreground/85">
+                  <p className="text-base leading-relaxed text-foreground/85">
                     {data.answer.sentences.map((s, i) => (
                       <span key={i}>
                         {s.text}{" "}
@@ -223,7 +223,7 @@ export function AskBox() {
                       </span>
                     ))}
                   </p>
-                  <p className="type-caption text-muted-foreground">
+                  <p className="text-base text-muted-foreground">
                     Numbers here come from the web sources cited and can measure something different from the dashboard&apos;s
                     indicators (share of GP visits waiting more than 7 days).
                   </p>
@@ -231,7 +231,7 @@ export function AskBox() {
               )}
 
               {!answered && data.nothingFound && (
-                <p className="rounded-lg border border-dashed border-input p-4 text-sm text-muted-foreground">
+                <p className="rounded-lg border border-dashed border-input p-4 text-base text-muted-foreground">
                   {data.message?.startsWith("Nothing found") || (typeof data.dropped === "number" && data.dropped > 0)
                     ? data.message
                     : `Nothing found. ${data.message || "The live results did not answer this question."}`}
@@ -239,12 +239,12 @@ export function AskBox() {
               )}
 
               {!answered && !data.nothingFound && data.message && (
-                <p className="text-sm text-muted-foreground">{data.message}</p>
+                <p className="text-base text-muted-foreground">{data.message}</p>
               )}
 
               {data.items.length > 0 && (
                 <div className="space-y-3">
-                  <h4 className="type-caption font-medium text-muted-foreground">Sources</h4>
+                  <h4 className="text-base font-medium text-muted-foreground">Sources</h4>
                   <ResultList items={data.items} numbered idPrefix="ask-src" />
                 </div>
               )}
