@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 
 import { FirstStep, plainTitle } from "@/components/act/action-card";
+import { OwnerRow } from "@/components/act/owner-row";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -128,10 +129,7 @@ function ActionRow({
             <Chips ids={sourceIds} chips={chips} />
           </span>
         </div>
-        <dl className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-3 type-caption text-muted-foreground">
-          <dt>Owner</dt>
-          <dd className="text-pretty">{layout.who}</dd>
-        </dl>
+        <OwnerRow owner={layout.who} />
       </div>
       <FirstStep compact>{layout.firstStep}</FirstStep>
     </li>
@@ -283,10 +281,11 @@ export function CountyBriefClient({
             </p>
           )}
         </div>
-        <div className="md:col-start-2 md:row-start-1">
+        <div className="flex flex-col items-start gap-1 md:col-start-2 md:row-start-1 md:items-end">
           <Button variant="outline" onClick={writeAiBrief} disabled={status === "loading"}>
-            {status === "loading" ? "Writing…" : triedAi ? "Rewrite with AI again" : "Rewrite with AI (checked against the figures)"}
+            {status === "loading" ? "Writing…" : triedAi ? "Rewrite with AI again" : "Rewrite with AI"}
           </Button>
+          <p className="text-[0.75rem] leading-4 text-muted-foreground">Checked against the figures</p>
         </div>
         {(status === "limited" || status === "error") && (
           <p

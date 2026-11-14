@@ -9,9 +9,8 @@ import { LimitationsBox, type LimitationItem } from "@/components/pathway/limita
 import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
 import { buildStepTabs } from "@/components/pathway/step-panels";
 import { StepTabs } from "@/components/pathway/step-tabs";
-import { HUS_FULL, reasonForDisplay } from "@/components/pathway/wording";
+import { HUS_FULL, shortReason } from "@/components/pathway/wording";
 import { BackLink } from "@/components/ui/back-link";
-import { BarKey } from "@/components/ui/measure-bar";
 import { buttonVariants } from "@/components/ui/button";
 import { getBottleneck } from "@/lib/act";
 import { getMainReason } from "@/lib/main-reason";
@@ -56,46 +55,23 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   // first is the step that sentence is about (the worst one), so the two always agree.
   const reason = getMainReason(county.id);
   const reasonStage = reason.gap?.stage ?? null;
-  const tabs = buildStepTabs(county.id, steps, reasonStage);
-  // The key names only the marks the three steps can draw.
-  const statuses = new Set(steps.map((step) => step.status));
-  const keyItems = (["finland", "red", "short", "amber", "no_data"] as const).filter((item) =>
-    item === "finland"
-      ? true
-      : item === "short"
-        ? steps.some((step) => step.stage === "referral" && step.status === "red")
-        : statuses.has(item),
-  );
+  const tabs = buildStepTabs(county.id, steps);
 
   return (
     <main className="page-container flex flex-col gap-10 pt-4 sm:gap-14 sm:pt-6">
       {/* Desktop: name, verdict and the three steps (one at a time) on the left, the limitations
           box beside them, so both are on the first screen. Below lg the limitations are a
           one-line disclosure under the main action instead (never both at the same width). */}
-      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_25rem] lg:items-start lg:gap-10">
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-start lg:gap-10">
         <header className="flex flex-col items-start gap-4">
           <BackLink href="/">Back to all areas</BackLink>
-          <div className="flex flex-col gap-1.5">
-            <p className="type-caption text-balance text-muted-foreground">
-              Path to early cancer care
-              <span className="max-sm:hidden"> · </span>
-              <span className="max-sm:block">{county.name_fi}</span>
-            </p>
-            <h1 className="type-page lg:text-[2.5rem] lg:leading-[1.1]">{county.name}</h1>
-          </div>
-          <p className="max-w-[44rem] text-base leading-relaxed text-pretty text-foreground">
-            {reasonForDisplay(reason.text)}
-          </p>
-          <section aria-labelledby="steps-heading" className="flex w-full flex-col gap-2">
-            <h2 id="steps-heading" className="type-caption font-medium text-muted-foreground">
+          <h1 className="type-page lg:text-[2.5rem] lg:leading-[1.1]">{county.name}</h1>
+          <p className="max-w-[44rem] text-base leading-relaxed text-pretty text-foreground">{shortReason(reason)}</p>
+          <section aria-labelledby="steps-heading" className="w-full">
+            <h2 id="steps-heading" className="sr-only">
               The first three steps, compared with Finland ({LATEST_YEAR})
             </h2>
-            <StepTabs
-              tabs={tabs}
-              defaultId={reasonStage ?? "gp_access"}
-              label={`The first three steps, ${LATEST_YEAR}`}
-              footer={<BarKey items={keyItems} />}
-            />
+            <StepTabs tabs={tabs} defaultId={reasonStage ?? "gp_access"} label={`The first three steps, ${LATEST_YEAR}`} />
           </section>
           <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
             {anyRed ? "See all actions" : "Actions to keep this level"}
@@ -120,6 +96,13 @@ const INDICATOR_TITLE: Record<string, string> = {
   [REFERRAL_LATE_ID]: "Over 21 days: context only",
 };
 
+/** The one grey line of each indicator limitation (twelve words or fewer); the full text is behind the chevron. */
+const INDICATOR_SHORT: Record<string, string> = {
+  [GP_WAIT_ID]: "Counts all non-urgent GP appointments, not only possible cancer.",
+  [REFERRAL_ID]: "Measures when assessment starts, not when a specialist is seen.",
+  [REFERRAL_LATE_ID]: "Whole percentages of 0-3% everywhere, so it barely separates counties.",
+};
+
 /** The first "HUS" of a text, spelled out. */
 const spellHus = (text: string) =>
   text.includes("the HUS-wide value")
@@ -134,6 +117,7 @@ function buildLimitations(county: County): LimitationItem[] {
     if (indicator) {
       items.push({
         title: INDICATOR_TITLE[indicatorId] ?? indicator.short_name,
+        short: INDICATOR_SHORT[indicatorId] ?? indicator.short_name,
         text: spellHus(indicator.limitation),
         sourceId: indicator.source_id,
       });
@@ -142,6 +126,7 @@ function buildLimitations(county: County): LimitationItem[] {
 
   items.push({
     title: "Public health centres only",
+    short: "Occupational and private doctors' visits are not in the GP wait.",
     text: "Visits to occupational or private doctors are not in the GP wait. In a Finnish study of lymphoma patients, those who started in public primary care waited a median 127 days from symptoms to treatment, against 76 days for private or occupational care.",
     sourceId: "kuitunen-2026",
   });
@@ -155,6 +140,7 @@ function buildLimitations(county: County): LimitationItem[] {
     const n = (value: number) => Math.round(value).toLocaleString("en-GB");
     items.push({
       title: "Many working-age visits skip the public queue",
+      short: "Many working-age visits happen outside the public queue.",
       text: `Working-age people (15-64) in ${county.name} made ${n(occupational.value)} occupational-health doctor visits per 1,000 residents in ${occupational.year}, against ${n(publicVisits.value)} public primary-care doctor visits (Finland ${n(occupationalFinland.value)} and ${n(publicFinland.value)}). These are visits, not people. People over 64, who are most cancer patients, are not in these numbers.`,
       sourceId: "sotkanet-2371",
     });
@@ -169,13 +155,16 @@ function buildLimitations(county: County): LimitationItem[] {
   if (bowel && breast && bowelFinland && breastFinland) {
     items.push({
       title: "Survival mixes early finding with treatment",
+      short: "Cancer stage by county is not published; small counties vary.",
       text: `5-year relative survival here was ${bowel.value}% for bowel cancer and ${breast.value}% for breast cancer (Finland ${bowelFinland.value}% and ${breastFinland.value}%), for patients diagnosed ${bowel.year - 9}-${bowel.year}. Cancer stage by county is not published. Small counties vary from year to year.`,
       sourceId: "sotkanet-3627",
     });
   }
 
   items.push({
+    id: "step-2",
     title: "Step 2 has no public indicator",
+    short: "Nothing measures GP recognition of possible cancer in Finland.",
     text: "GP recognition of possible cancer is not measured anywhere in Finland, so step 2 is grey for every area. One candidate would be the share of cancers first found through an emergency visit.",
   });
 
@@ -183,13 +172,17 @@ function buildLimitations(county: County): LimitationItem[] {
   const husWide = gaps.find((gap) => gap.shared)?.shared;
   if (shared) {
     items.push({
+      id: "referral",
       title: "The referral figure is not this area's own",
+      short: "One shared hospital-district figure covers four areas.",
       text: `${shared.name} handles hospital referrals from East, Central and West Uusimaa and Vantaa and Kerava, and THL publishes one ${shared.name}-wide number for them. So the step stays grey and is not used to rank or to pick actions. The link is the ${shared.name} report we used to check the number.`,
       sourceId: shared.confirmed_by,
     });
   } else if (stageStatus(county.id, "referral") === "no_data") {
     items.push({
+      id: "referral",
       title: "No referral data for this area",
+      short: "No county-level referral data is published here.",
       text: `Sotkanet publishes no county-level referral data for ${county.name}, so we cannot say whether referrals here are fast or slow.`,
     });
   } else {
@@ -199,12 +192,14 @@ function buildLimitations(county: County): LimitationItem[] {
     if (referralYears.length > 0 && referralYears.length < YEARS.length) {
       items.push({
         title: "Referral trend is incomplete",
+        short: "Some years have no published referral value.",
         text: `${county.name} has referral values for ${referralYears.join(", ")} only.`,
       });
     }
     if (county.id === "helsinki" && husWide) {
       items.push({
         title: "Helsinki's referral figure: city units only",
+        short: "The figure covers the city's own units; most referrals go to HUS.",
         text: `Most hospital referrals from Helsinki go to ${HUS_FULL}, which processed ${formatPct(husWide.value)} within 3 days in ${LATEST_YEAR}.`,
         sourceId: "sotkanet-13",
       });
@@ -214,6 +209,7 @@ function buildLimitations(county: County): LimitationItem[] {
   const nationalGpWait = getNationalValue(GP_WAIT_ID);
   items.push({
     title: "At or better than Finland's level does not mean good",
+    short: "Finland's level is itself a delay.",
     text: `Finland's level is itself a delay${
       nationalGpWait
         ? `: ${formatPct(nationalGpWait.value)} of non-urgent GP visits nationally come more than a week after the need for care was assessed`
@@ -222,6 +218,7 @@ function buildLimitations(county: County): LimitationItem[] {
   });
   items.push({
     title: "Colours compare with Finland, not a target",
+    short: "Colours compare with Finland; they are not a clinical standard.",
     text: `They compare this area's ${LATEST_YEAR} value with Finland's ${LATEST_YEAR} value on the same indicator. They are not a clinical standard.`,
   });
 

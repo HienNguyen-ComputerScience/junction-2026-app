@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import type { MouseEvent } from "react";
 
 type NavItem = {
   key: string;
@@ -17,28 +16,16 @@ const ITEMS: NavItem[] = [
     key: "areas",
     label: "Areas",
     short: "Areas",
-    match: (p) => p === "/" || (p.startsWith("/county") && !p.endsWith("/act")),
+    match: (p) => p === "/" || p.startsWith("/compare") || (p.startsWith("/county") && !p.endsWith("/act")),
   },
   { key: "actions", label: "Actions", short: "Actions", match: (p) => p.startsWith("/county") && p.endsWith("/act") },
-  { key: "ask", label: "Ask the evidence", short: "Ask", match: () => false },
+  { key: "ask", label: "Ask the evidence", short: "Ask", match: (p) => p.startsWith("/ask") },
   { key: "sources", label: "Sources & limitations", short: "Sources", match: (p) => p.startsWith("/sources") },
 ];
 
 /** The area id in /county/<id> or /county/<id>/act, else null. */
 function countyOf(pathname: string | null): string | null {
   return pathname?.match(/^\/county\/([^/]+)/)?.[1] ?? null;
-}
-
-/**
- * On the home page the ask box is already rendered: scroll to it ourselves. Letting the Link
- * navigate drops ?area= and does nothing once the URL already ends in #ask.
- */
-function scrollToAskOnHome(event: MouseEvent<HTMLAnchorElement>) {
-  const target = document.getElementById("ask");
-  if (window.location.pathname !== "/" || !target) return;
-  event.preventDefault();
-  target.scrollIntoView({ behavior: "smooth", block: "start" });
-  history.replaceState(history.state, "", `${window.location.search}#ask`);
 }
 
 /**
@@ -63,7 +50,7 @@ export function NavLinks({
   const hrefs: Record<string, string> = {
     areas: "/",
     actions: `/county/${actionsArea}/act`,
-    ask: "/#ask",
+    ask: "/ask",
     sources: "/sources",
   };
   return (
@@ -75,7 +62,6 @@ export function NavLinks({
             <li key={item.key}>
               <Link
                 href={hrefs[item.key]}
-                onClick={item.key === "ask" ? scrollToAskOnHome : undefined}
                 aria-current={active ? "page" : undefined}
                 className={`relative flex h-14 items-center px-1.5 type-caption font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset sm:px-2.5 ${
                   active

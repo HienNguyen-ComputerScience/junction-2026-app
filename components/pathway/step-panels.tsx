@@ -11,27 +11,43 @@ import { TextLink } from "@/components/ui/text-link";
 import { getValue, type Stage } from "@/lib/data";
 import { formatPct, getNationalValue, getTrend, GP_WAIT_ID, REFERRAL_ID, REFERRAL_LATE_ID, STATUS_LABEL } from "@/lib/ranking";
 
-/** What the share counts and which way is better, in one short line. */
-const EXPLAIN: Partial<Record<Stage, string>> = {
-  gp_access: "Share of non-urgent GP visits that wait over 7 days. Lower is better.",
-  referral: "Share of referrals processed within 3 days. Higher is better.",
+/** The bar's axis label: what the share counts and which way is better. */
+const AXIS: Partial<Record<Stage, string>> = {
+  gp_access: "% of non-urgent GP visits waiting over 7 days (lower is better)",
+  referral: "% of referrals processed within 3 days (higher is better)",
 };
+
+/** Where each empty tab's "see why" link goes: the limitation that explains it (ids set in the county page). */
+const WHY: Partial<Record<Stage, string>> = { gp_recognition: "#limit-step-2", referral: "#limit-referral" };
 
 const INDICATOR: Partial<Record<Stage, string>> = { gp_access: GP_WAIT_ID, referral: REFERRAL_ID };
 
 /**
  * The three steps as tabs for the county page: per tab the step's name, value, status word and
- * source chip; per panel only that step's detail (bar against Finland, a compact trend, one
- * short line). `reasonStage` is the step the main reason sentence already states the gap of,
- * so its panel does not say it again.
+ * source chip (a tab without a figure says why instead); per panel only that step's detail (the
+ * gap to Finland, the bar, a compact trend).
  */
-export function buildStepTabs(countyId: string, steps: PathwayStep[], reasonStage: Stage | null): StepTab[] {
-  return steps.map((step) => ({
-    id: step.stage,
-    tab: <TabFace step={step} />,
-    chip: step.measure ? <SourceChip sourceId={step.measure.sourceId} /> : undefined,
-    panel: <StepPanel countyId={countyId} step={step} showGap={step.stage !== reasonStage} />,
-  }));
+export function buildStepTabs(countyId: string, steps: PathwayStep[]): StepTab[] {
+  return steps.map((step) => {
+    const empty = !step.measure || step.measure.value === null;
+    const why = WHY[step.stage];
+    return {
+      id: step.stage,
+      tab: <TabFace step={step} />,
+      chip:
+        step.measure || (empty && why) ? (
+          <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            {step.measure ? <SourceChip sourceId={step.measure.sourceId} /> : null}
+            {empty && why ? (
+              <TextLink kind="jump" href={why} className="min-h-6 text-[0.8125rem]">
+                see why
+              </TextLink>
+            ) : null}
+          </span>
+        ) : undefined,
+      panel: <StepPanel countyId={countyId} step={step} />,
+    };
+  });
 }
 
 function TabFace({ step }: { step: PathwayStep }) {
@@ -40,7 +56,7 @@ function TabFace({ step }: { step: PathwayStep }) {
   const shared = value === null ? measure?.shared : undefined;
   return (
     <>
-      <span className="flex items-start gap-2 max-sm:w-full sm:min-h-10">
+      <span className="flex items-start gap-2 max-sm:w-full sm:h-10">
         <StepMark step={step.step} status={status} className="mt-px size-5 text-[0.6875rem]" />
         <span className="text-[0.9375rem] leading-5 font-semibold text-pretty text-foreground">
           <span className="sr-only">Step {step.step}: </span>
@@ -62,7 +78,7 @@ function TabFace({ step }: { step: PathwayStep }) {
   );
 }
 
-function StepPanel({ countyId, step, showGap }: { countyId: string; step: PathwayStep; showGap: boolean }) {
+function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) {
   const { measure, status } = step;
 
   // Step 2: nothing is published anywhere in Finland.
@@ -101,7 +117,16 @@ function StepPanel({ countyId, step, showGap }: { countyId: string; step: Pathwa
             <p className="text-sm text-pretty text-muted-foreground">{measure.note}</p>
           )}
         </div>
-        <MeasureBar value={null} finland={measure.finland} finlandLabel={finlandLabel} status={status} />
+        {/* A shared figure is drawn as a plain neutral bar: the hatch means no public data only. */}
+        <div className="flex flex-col gap-1.5">
+          {measure.shared && <p className="type-note text-muted-foreground">{AXIS[step.stage]}</p>}
+          <MeasureBar
+            value={measure.shared ? measure.shared.value : null}
+            finland={measure.finland}
+            finlandLabel={finlandLabel}
+            status={measure.shared ? null : status}
+          />
+        </div>
       </div>
     );
   }
@@ -114,24 +139,13 @@ function StepPanel({ countyId, step, showGap }: { countyId: string; step: Pathwa
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="grid gap-x-8 gap-y-3 md:grid-cols-[minmax(0,1fr)_11rem] md:items-end">
+      <div className="grid gap-x-8 gap-y-3 md:grid-cols-[minmax(0,1fr)_12.5rem] md:items-end">
         <div className="flex flex-col gap-2.5">
-          <p className="text-sm text-pretty text-muted-foreground">
-            {EXPLAIN[step.stage]}
-            {showGap && (
-              <>
-                {" "}
-                <span className="text-foreground">{gapWords(value, measure.finland)}.</span>
-              </>
-            )}
-          </p>
-          <MeasureBar
-            value={value}
-            finland={measure.finland}
-            finlandLabel={finlandLabel}
-            status={status}
-            className="pt-1"
-          />
+          <p className="text-sm text-pretty text-foreground">{gapWords(value, measure.finland)}.</p>
+          <div className="flex flex-col gap-1.5">
+            <p className="type-note text-muted-foreground">{AXIS[step.stage]}</p>
+            <MeasureBar value={value} finland={measure.finland} finlandLabel={finlandLabel} status={status} />
+          </div>
         </div>
         {trend.length > 1 && <CompactTrend trend={trend} finland={finlandLatest} status={status} />}
       </div>
@@ -186,7 +200,7 @@ function CompactTrend({ trend, finland, status }: { trend: Point[]; finland: num
       <figcaption className="type-caption text-muted-foreground">
         Trend, {trend[0].year}–{trend[last].year}
       </figcaption>
-      <span aria-hidden className="flex h-[3.75rem] items-end gap-3 border-b border-foreground/30 px-1">
+      <span aria-hidden className="flex h-[4.25rem] items-end gap-3 border-b border-foreground/30 pr-14 pl-1">
         {trend.map((point, i) => {
           const top = Math.max(point.value ?? 0, i === last && finland !== null ? finland : 0);
           return (
@@ -212,12 +226,21 @@ function CompactTrend({ trend, finland, status }: { trend: Point[]; finland: num
                       />
                     )}
                   </span>
-                  {i < last && (
+                  <span
+                    className={cn(
+                      "absolute inset-x-0 text-center figure whitespace-nowrap",
+                      i < last ? "type-note text-muted-foreground" : cn("text-[0.8125rem] font-semibold", STATUS_FIGURE[status]),
+                    )}
+                    style={{ bottom: (clamp(top) / 100) * PLOT + 3 }}
+                  >
+                    {formatPct(point.value)}
+                  </span>
+                  {i === last && finland !== null && (
                     <span
-                      className="absolute inset-x-0 text-center figure type-note whitespace-nowrap text-muted-foreground"
-                      style={{ bottom: (clamp(top) / 100) * PLOT + 3 }}
+                      className="absolute left-full ml-2 type-note whitespace-nowrap text-foreground"
+                      style={{ bottom: (clamp(finland) / 100) * PLOT - 8 }}
                     >
-                      {formatPct(point.value)}
+                      Finland
                     </span>
                   )}
                 </>
@@ -226,12 +249,16 @@ function CompactTrend({ trend, finland, status }: { trend: Point[]; finland: num
           );
         })}
       </span>
-      <span aria-hidden className="flex gap-3 px-1 type-note text-faint">
+      <span aria-hidden className="flex gap-3 pr-14 pl-1 type-note text-faint">
         {trend.map((point) => (
           <span key={point.year} className="flex flex-1 justify-center figure">
             {point.year}
           </span>
         ))}
+      </span>
+      <span aria-hidden className="flex items-center gap-1.5 type-note text-muted-foreground">
+        <span className={cn("h-2.5 w-5 rounded-[2px]", TREND_PAST_FILL)} />
+        Earlier years
       </span>
       <span className="sr-only">
         {trend.map((point) => `${point.year}: ${point.value === null ? "no data" : formatPct(point.value)}`).join(", ")}.

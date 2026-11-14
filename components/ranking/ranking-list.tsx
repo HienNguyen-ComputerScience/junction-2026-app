@@ -47,8 +47,8 @@ const ROW_DIVIDER =
 
 // Referral column: one short tag per state, so every cell has the same shape.
 const REFERRAL_TAG: Record<GapStatus, string> = {
-  red: "Worse than Finland's level",
-  amber: "At or better than Finland's level",
+  red: "Worse",
+  amber: "Better",
   no_data: "No public data",
 };
 
@@ -99,7 +99,17 @@ export function RankingList({
             </>
           }
           className={REFERRAL_COL}
-        />
+        >
+          {/* The full phrase of each row's short label, said once for the whole column. */}
+          <span className="mt-0.5 flex flex-col">
+            <StatusBadge status="red" variant="quiet">
+              Worse than Finland&apos;s level
+            </StatusBadge>
+            <StatusBadge status="amber" variant="quiet">
+              At or better than Finland&apos;s level
+            </StatusBadge>
+          </span>
+        </HeadCell>
       </div>
 
       {/* Below lg: one line that says what the bar and the line are, before the data. The key
@@ -183,10 +193,12 @@ function HeadCell({
   line1,
   line2,
   className = "",
+  children,
 }: {
   line1: string;
   line2?: ReactNode;
   className?: string;
+  children?: ReactNode;
 }) {
   return (
     <span className={`flex flex-col pt-3 pb-2 ${className}`}>
@@ -194,6 +206,7 @@ function HeadCell({
       {line2 && (
         <span className="flex h-5 items-center type-caption text-muted-foreground">{line2}</span>
       )}
+      {children}
     </span>
   );
 }
@@ -288,26 +301,31 @@ function GroupDivider({
  */
 function ReferralMiniBar({
   value,
+  shared,
   finland,
   status,
   index,
 }: {
   value: number | null;
+  /** A hospital group's one shared figure: a solid neutral bar, never the hatch of no data. */
+  shared: number | null;
   finland: number;
   status: GapStatus;
   index: number;
 }) {
+  const drawn = value ?? shared;
   return (
     <span
       aria-hidden
       className={`relative hidden h-2 w-24 shrink-0 rounded-[2px] sm:block ${
-        value === null ? "bg-hatch ring-1 ring-status-grey-border ring-inset" : "bg-track"
+        drawn === null ? "bg-hatch ring-1 ring-status-grey-border ring-inset" : "bg-track"
       }`}
     >
       {value !== null && (
         <BarFill value={value} finland={finland} status={status} index={index} higherIsBetter />
       )}
-      {value !== null && <FinlandTick finland={finland} className="-inset-y-1" />}
+      {value === null && shared !== null && <BarFill value={shared} status={null} index={index} />}
+      {drawn !== null && <FinlandTick finland={finland} className="-inset-y-1" />}
     </span>
   );
 }
@@ -412,6 +430,7 @@ function RankingRowLink({
             </span>
             <ReferralMiniBar
               value={row.referral === null ? null : row.referral.value}
+              shared={row.sharedReferral ? row.sharedReferral.value : null}
               finland={nationalReferral}
               status={referralStatus}
               index={index}
@@ -431,7 +450,7 @@ function RankingRowLink({
               )}
               {referralStatus !== "no_data" && (
                 <span className="sr-only">
-                  {referralStatus === "amber" && !cityUnitsOnly ? " as Finland" : ""} (Finland{" "}
+                  {referralStatus === "red" && !row.sharedReferral ? " than Finland's level" : referralStatus === "amber" && !cityUnitsOnly && !row.sharedReferral ? " (at or better than Finland's level)" : ""} (Finland{" "}
                   {formatPct(nationalReferral)})
                 </span>
               )}

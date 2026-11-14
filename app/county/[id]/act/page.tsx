@@ -5,8 +5,10 @@ import { ActionCard, ActionSummary } from "@/components/act/action-card";
 import { RedFlagHelper } from "@/components/act/red-flag-helper";
 import { AskBox } from "@/components/exa/ask-box";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
+import { WhatIfForArea } from "@/components/home/what-if-panel";
 import { SourceChip } from "@/components/source-chip";
 import { BackLink } from "@/components/ui/back-link";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Disclosure } from "@/components/ui/disclosure";
 import {
   Frame,
@@ -53,10 +55,9 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   return (
     <main className="page-container flex flex-col gap-8 pt-4 sm:pt-6">
       <header className="flex flex-col items-start gap-2">
-        <div className="flex flex-wrap items-center gap-x-6">
-          <BackLink href="/">Back to all areas</BackLink>
-          <BackLink href={`/county/${county.id}`}>Back to {county.name}</BackLink>
-        </div>
+        <Breadcrumb
+          items={[{ label: "Areas", href: "/" }, { label: county.name, href: `/county/${county.id}` }, { label: "Actions" }]}
+        />
         <div className="flex flex-col gap-2">
           <p className="type-caption text-balance text-muted-foreground">
             Path to early cancer care
@@ -71,6 +72,8 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           Finland, status and source. Each step's detail is on the county page, so Action 1 is
           on the first screen. */}
       <WhereStrip countyId={county.id} gap={lead} anyRed={bottleneck.anyRed} />
+
+      <WhatIfForArea countyId={county.id} areaName={county.name} />
 
       <Frame aria-labelledby="recommended">
         <FrameHeader>

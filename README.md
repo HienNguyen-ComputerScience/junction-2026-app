@@ -12,7 +12,7 @@ Three screens, all built from a committed data snapshot (`data/`, see `data/READ
 2. **County pathway** (`/county/[id]`): where the delay sits (getting to a GP, GP recognising warning signs, GP to specialist), as red / amber / grey stage cards; a limitations box that is always on screen; a plain-language brief for the county director (Claude writes it from the snapshot, a validator drops any claim whose number or source is not in the snapshot, and a precomputed brief is shown otherwise); and local news found live with Exa.
 3. **Act** (`/county/[id]/act`): up to three recommended actions for the county's red stages, each with an owner, a first step, a precedent and a checked source, plus a live Exa "find more evidence" panel per action (marked "Found live — unverified"); a red-flag helper for GPs (decision support, runs only in the browser, links to NICE NG12 and Käypä hoito instead of reproducing them); and a question box answered only from live Exa search results.
 
-The question box is also on the ranking page (`/#ask`). Sources and limitations: `/sources` (data sources, the evidence behind each recommended action, and what is found live and unverified).
+The question box is on its own page (`/ask`). Sources and limitations: `/sources` (data sources, the evidence behind each recommended action, and what is found live and unverified).
 
 ## Live demo
 URL: https://firstline-finland.vercel.app

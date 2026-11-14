@@ -44,9 +44,14 @@ export function NationalNews() {
         <FrameMeta>
           <LiveMark result={state.kind === "error" ? { freshness: "unavailable" } : data} />
         </FrameMeta>
-        <FrameDescription>
-          Recent national news on the cancer care pathway.
-          {data?.freshness === "stale-cache" && data.message ? ` ${data.message}` : ""}
+        <FrameDescription className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="inline-flex h-6 items-center rounded-sm border border-input px-1.5 text-[0.75rem] font-medium text-foreground/85">
+            In Finnish
+          </span>
+          <span>
+            Recent national news on the cancer care pathway.
+            {data?.freshness === "stale-cache" && data.message ? ` ${data.message}` : ""}
+          </span>
         </FrameDescription>
       </FrameHeader>
       <FramePanel padding="none" className="px-4 py-4 sm:px-6 sm:py-5">

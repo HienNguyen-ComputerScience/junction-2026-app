@@ -186,7 +186,6 @@ export function FinlandMap({
     })
     .sort((a, b) => Number(a.small) - Number(b.small) || a.shape.cy - b.shape.cy);
 
-  const hasNoData = drawn.some(({ area }) => area.status === "no_data");
   const labels = placeLabels(drawn.filter(({ area }) => highlight.includes(area.id)));
   const leftLabels = labels.filter((item) => item.side === "left");
   const rightLabels = labels.filter((item) => item.side === "right");
@@ -210,12 +209,8 @@ export function FinlandMap({
           style={hatchVars}
         >
           <defs>
-            {hasNoData && (
-              <>
-                <HatchPattern id={hatchId} ground="fill-status-grey-soft" />
-                <HatchPattern id={hatchLiftId} ground="fill-status-grey-border" />
-              </>
-            )}
+            <HatchPattern id={hatchId} ground="fill-status-grey-soft" />
+            <HatchPattern id={hatchLiftId} ground="fill-status-grey-border" />
             {drawn.map(({ area, shape }) => (
               <g key={area.id}>
                 <path id={pathId(area.id)} d={shape.d} vectorEffect="non-scaling-stroke" />
@@ -233,7 +228,7 @@ export function FinlandMap({
             d={ALAND_PATH}
             vectorEffect="non-scaling-stroke"
             strokeWidth={1}
-            className="fill-foreground/5 stroke-foreground/25"
+            className="stroke-foreground/25 [fill:var(--hatch)]"
           >
             <title>Åland: not one of the 22 areas in this data</title>
           </path>
@@ -298,14 +293,6 @@ export function FinlandMap({
           <Leader key={item.area.id} item={item} ring={picker} />
         ))}
 
-        {/* Åland is drawn but has no data: said in words just under it (below the map's box, so
-            it never covers an area), so the shape is not a puzzle. */}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute top-full left-0 mt-0.5 whitespace-nowrap type-note text-muted-foreground"
-        >
-          Åland: not in the data
-        </span>
       </div>
 
       <LabelColumn side="right" labels={rightLabels} nameOnly={picker} />
@@ -338,20 +325,39 @@ function Leader({ item, ring }: { item: Placed; ring: boolean }) {
   const x = `${((item.shape.cx / FINLAND_VIEWBOX.width) * 100).toFixed(2)}%`;
   const y = `${((item.shape.cy / FINLAND_VIEWBOX.height) * 100).toFixed(2)}%`;
   const line = "pointer-events-none absolute bg-foreground/70";
+  // The selected ring is 14px (2px stroke, no fill). Each line is cut by a circular hole of the
+  // ring's radius around the ring's centre, so it ends exactly on the ring's outer edge. A
+  // vertical drop has the centre at its anchored end; the horizontal line only has it at its
+  // start when the label sits level with the anchor, so its hole shrinks as the label moves off it.
+  const RING_R = 7;
+  const hole = (at: string, radius: string): CSSProperties | undefined =>
+    ring
+      ? (() => {
+          const image = `radial-gradient(circle at ${at}, transparent calc(${radius} - 0.5px), #000 ${radius})`;
+          return { maskImage: image, WebkitMaskImage: image };
+        })()
+      : undefined;
+  const levelRadius = `max(0px, ${RING_R}px - abs(calc(${item.y} - ${y})))`;
   return (
     <span aria-hidden>
       <span
         className={cn(line, "h-px -translate-y-1/2")}
-        style={
-          item.side === "right"
+        style={{
+          ...(item.side === "right"
             ? { top: item.y, left: x, right: -4 }
-            : { top: item.y, right: `calc(100% - ${x})`, left: -4 }
-        }
+            : { top: item.y, right: `calc(100% - ${x})`, left: -4 }),
+          ...hole(item.side === "right" ? "0 50%" : "100% 50%", levelRadius),
+        }}
       />
       {/* The drop: only one of the two has a height, whichever way the label is displaced. */}
       <span
         className={cn(line, "w-px -translate-x-1/2")}
-        style={{ left: x, top: y, height: `max(0px, calc(${item.y} - ${y}))` }}
+        style={{
+          left: x,
+          top: y,
+          height: `max(0px, calc(${item.y} - ${y}))`,
+          ...hole("50% 0", `${RING_R}px`),
+        }}
       />
       <span
         className={cn(line, "w-px -translate-x-1/2")}
@@ -359,12 +365,13 @@ function Leader({ item, ring }: { item: Placed; ring: boolean }) {
           left: x,
           top: item.y,
           height: `max(0px, calc(${y} - ${item.y}))`,
+          ...hole("50% 100%", `${RING_R}px`),
         }}
       />
       <span
         className={
           ring
-            ? "pointer-events-none absolute size-4 -translate-1/2 rounded-full border-2 border-brand"
+            ? "pointer-events-none absolute size-3.5 -translate-1/2 rounded-full border-2 border-brand"
             : "pointer-events-none absolute size-1 -translate-1/2 bg-foreground outline-1 outline-card"
         }
         style={{ left: x, top: y }}

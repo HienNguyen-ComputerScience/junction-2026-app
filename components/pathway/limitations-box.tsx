@@ -5,8 +5,13 @@ import { SourceChip } from "@/components/source-chip";
 import { Disclosure } from "@/components/ui/disclosure";
 
 export type LimitationItem = {
-  /** One short line in bold: the point of the limitation. The text under it is its detail. */
-  title?: string;
+  /** Anchor name: the box's own copy of the item is `#limit-<id>`, for links such as a tab's "see why". */
+  id?: string;
+  /** One short line in bold: the point of the limitation. */
+  title: string;
+  /** One grey line of twelve words or fewer under the title. */
+  short: string;
+  /** The full wording, behind the item's chevron. Nothing is cut. */
   text: string;
   sourceId?: string;
 };
@@ -14,11 +19,12 @@ export type LimitationItem = {
 const TITLE = "Limitations: read before acting on these numbers";
 
 /**
- * The caveats travel with the numbers. No wording is cut, and nothing is clipped.
+ * The caveats travel with the numbers. Each item shows its title, its source and one short grey
+ * line; its full wording opens behind the item's chevron, and nothing is clipped.
  *  - "box": the title and the first items always visible, the rest open in place.
  *  - "disclosure": one line that opens to every item, for narrow screens where the box would
  *    sit far below the first screen. The page shows one or the other at a given width, never
- *    both, so screen readers meet the content once.
+ *    both, so screen readers meet the content once, and only the box carries the anchors.
  */
 export function LimitationsBox({
   items,
@@ -52,9 +58,9 @@ export function LimitationsBox({
             </span>
           }
         >
-          <ul className="flex flex-col gap-3 border-t border-frame-border px-3.5 pt-3 pb-4">
+          <ul className="flex flex-col gap-1 border-t border-frame-border px-3.5 pt-3 pb-4">
             {items.map((item) => (
-              <Limitation key={item.text} item={item} />
+              <Limitation key={item.title} item={item} />
             ))}
           </ul>
         </Disclosure>
@@ -69,16 +75,16 @@ export function LimitationsBox({
     <aside
       aria-labelledby="limitations-heading"
       className={cn(
-        "flex flex-col gap-2.5 rounded-panel border border-frame-border px-4 pt-3.5 pb-2 sm:px-5",
+        "flex flex-col gap-2 rounded-panel border border-frame-border px-4 pt-3.5 pb-2 sm:px-5",
         className,
       )}
     >
       <h2 id="limitations-heading" className="font-sans text-[0.8125rem] leading-snug font-medium tracking-normal">
         {TITLE}
       </h2>
-      <ul className="flex flex-col gap-2.5">
+      <ul className="flex flex-col gap-1">
         {first.map((item) => (
-          <Limitation key={item.text} item={item} />
+          <Limitation key={item.title} item={item} anchor />
         ))}
       </ul>
       {rest.length > 0 && (
@@ -93,9 +99,9 @@ export function LimitationsBox({
           }
           className="-mt-1"
         >
-          <ul className="flex flex-col gap-2.5 pt-1 pb-2">
+          <ul className="flex flex-col gap-1 pt-1 pb-2">
             {rest.map((item) => (
-              <Limitation key={item.text} item={item} />
+              <Limitation key={item.title} item={item} anchor />
             ))}
           </ul>
         </Disclosure>
@@ -117,33 +123,35 @@ function withFigures(text: string): ReactNode {
   );
 }
 
-const BODY = "text-[0.8125rem] leading-[1.5] text-pretty text-muted-foreground";
+const BODY = "text-[0.8125rem] leading-[1.55] text-pretty text-muted-foreground";
 
-function Limitation({ item }: { item: LimitationItem }) {
-  // An item with a title: the title in bold with its source at the right end, the detail under
-  // it in the secondary grey. Indicator items without one read "Short name: limitation", and the
-  // name becomes the first line the same way; the words stay the same.
-  const split = item.title ? -1 : item.sourceId ? item.text.indexOf(": ") : -1;
-  const title = item.title ?? (split > 0 ? item.text.slice(0, split) : null);
-  const detail = split > 0 ? item.text.slice(split + 2) : item.text;
-  if (title === null) {
-    return (
-      <li className="flex flex-col gap-0.5">
-        <p className={BODY}>{withFigures(item.text)}</p>
-        {item.sourceId && <SourceChip sourceId={item.sourceId} />}
-      </li>
-    );
-  }
+/**
+ * One limitation: a chevron row with the bold title and one grey line, its source chip at the
+ * right end of the title line (a sibling of the row, never inside it) and the full wording
+ * under the chevron.
+ */
+function Limitation({ item, anchor = false }: { item: LimitationItem; anchor?: boolean }) {
   return (
-    <li className="flex flex-col gap-0.5">
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-[0.8125rem] leading-5 font-semibold text-pretty text-foreground">
-          {title}
-          <span className="sr-only">:</span>
-        </p>
-        {item.sourceId && <SourceChip sourceId={item.sourceId} />}
-      </div>
-      <p className={BODY}>{withFigures(detail)}</p>
+    <li id={anchor && item.id ? `limit-${item.id}` : undefined} className="relative scroll-mt-24">
+      <Disclosure
+        summaryClassName="min-h-0 w-full items-start gap-1.5 py-1 [&>svg]:mt-[3px]"
+        summary={
+          <span className="flex min-w-0 flex-col">
+            <span className={cn("text-[0.8125rem] leading-5 font-semibold text-pretty text-foreground", item.sourceId && "pr-[8.25rem]")}>
+              {item.title}
+              <span className="sr-only">:</span>
+            </span>
+            <span className={cn(BODY, "font-normal")}>{item.short}</span>
+          </span>
+        }
+      >
+        <p className={cn(BODY, "pr-1 pb-2 pl-[1.375rem]")}>{withFigures(item.text)}</p>
+      </Disclosure>
+      {item.sourceId && (
+        <span className="absolute top-0.5 right-0">
+          <SourceChip sourceId={item.sourceId} />
+        </span>
+      )}
     </li>
   );
 }
