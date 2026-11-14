@@ -1,5 +1,5 @@
 import { AskBox } from "@/components/exa/ask-box";
-import { RankingList } from "@/components/ranking/ranking-list";
+import { gapToFinland, RankingList } from "@/components/ranking/ranking-list";
 import { SourceChip } from "@/components/source-chip";
 import {
   Frame,
@@ -10,8 +10,8 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
-import { MeasureBar } from "@/components/ui/measure-bar";
-import { STATUS_INK, StatusBadge } from "@/components/ui/status-badge";
+import { BarKey, MeasureBar } from "@/components/ui/measure-bar";
+import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import { LATEST_YEAR, type GapStatus } from "@/lib/data";
 import {
   FIRST_YEAR,
@@ -43,14 +43,15 @@ export default function CountyRankingPage() {
   return (
     <main className="page-container flex flex-col gap-6 pt-4 sm:gap-8 sm:pt-6">
       {/* Hero: the single message. It leads by size and by its figures, on the same dark page as
-          everything else: the headline sits straight on the page, the comparison is the first card. */}
+          everything else. The two columns share a top edge: the eyebrow starts where the card does. */}
       <section
         aria-labelledby="home-title"
-        className="grid gap-6 pt-2 sm:pt-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-center lg:gap-12 lg:py-6"
+        className="grid gap-5 pt-2 sm:gap-6 sm:pt-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-start lg:gap-12 lg:pt-6 lg:pb-2"
       >
-        <div className="flex flex-col gap-4 sm:gap-5">
-            <p className="type-caption text-muted-foreground">
-              The first step towards early cancer care: getting in to see a GP
+        <div className="flex flex-col gap-4 sm:gap-5 lg:pt-1">
+            <p className="flex items-center gap-2.5 text-sm leading-6 font-medium text-foreground sm:text-[0.9375rem]">
+              <span aria-hidden className="h-4 w-0.5 shrink-0 bg-foreground" />
+              First step to early cancer care: getting to a GP
             </p>
             <h1 id="home-title" className="type-display max-w-[19ch] text-foreground">
               In Finland, where you live decides how fast you get to see a GP
@@ -64,17 +65,22 @@ export default function CountyRankingPage() {
               <strong className="font-semibold text-foreground">{gap.toFixed(1)} percentage point</strong>{" "}
               gap, {ratio.toFixed(1)} times the share, within one country.
             </p>
+            {/* The source line sits with the paragraph's figures on every screen size. */}
+            <p className="-mt-1 max-w-[35rem] type-caption text-pretty text-muted-foreground sm:mt-0 sm:border-t sm:border-border sm:pt-3">
+              Sotkanet indicator {GP_WAIT_ID}, {LATEST_YEAR}. Not specific to cancer: it covers
+              all non-urgent GP visits.
+            </p>
         </div>
 
         <Frame as="div">
           <FramePanel padding="none">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3 sm:px-5">
-              <h2 className="font-sans type-micro font-medium tracking-normal text-muted-foreground">
+              <h2 className="font-sans type-caption font-medium tracking-normal text-foreground">
                 Non-urgent GP visits waiting over 7 days
               </h2>
               <SourceChip sourceId={worst.gpWait.source_id} year={LATEST_YEAR} />
             </div>
-            <ul className="flex flex-col gap-5 px-4 pt-5 pb-4 sm:px-5">
+            <ul className="flex flex-col gap-4 px-4 py-4 sm:gap-6 sm:px-5 sm:pt-6 sm:pb-5">
               <CompareRow
                 name={worst.county.name}
                 value={worst.gpWait.value}
@@ -99,10 +105,6 @@ export default function CountyRankingPage() {
                 axisLabel={`Finland ${formatPct(nationalGpWait.value)}`}
               />
             </ul>
-            <p className="border-t border-border px-4 py-3 type-micro text-muted-foreground sm:px-5">
-              Sotkanet indicator {GP_WAIT_ID}, {LATEST_YEAR}. Not cancer-specific: it covers all
-              non-urgent GP visits.
-            </p>
           </FramePanel>
         </Frame>
       </section>
@@ -117,7 +119,9 @@ export default function CountyRankingPage() {
               {redCount} of {rows.length + unranked.length} worse than Finland
             </StatusBadge>
           </FrameMeta>
-          <FrameDescription className="max-w-none">
+          {/* Phones skip this line so the first rows start high; its content is in the note
+              under the list, and every row carries a chevron. */}
+          <FrameDescription className="max-w-none max-sm:hidden">
             21 wellbeing services counties and the City of Helsinki. Pick an area to see where its
             delay sits: getting to a GP, or getting from the GP to a specialist.
           </FrameDescription>
@@ -132,14 +136,21 @@ export default function CountyRankingPage() {
             referralSourceId={nationalReferral.source_id}
           />
         </FramePanel>
-        <FrameFooter className="max-w-4xl">
-          All values: Sotkanet, {LATEST_YEAR}, see chips above. Bars: share of non-urgent GP
-          (physician) visits in primary care that came more than 7 days after the need for care was
-          assessed (Sotkanet {GP_WAIT_ID}), from 0%. The white line is Finland. Red: worse than
-          Finland, with the share beyond Finland&apos;s line in solid red. Amber: at or better than
-          Finland&apos;s level, which is still a delay. Change: percentage points since {FIRST_YEAR}.
-          Referral column: Sotkanet {REFERRAL_ID}, higher is faster; Finland{" "}
-          {formatPct(nationalReferral.value)}.
+        <FrameFooter className="flex flex-col gap-2.5 pt-3.5 pb-3">
+          <BarKey kinds="wait" finlandLabel={`Finland ${formatPct(nationalGpWait.value)}`} />
+          <p className="max-w-[76ch] type-caption text-pretty">
+            <span className="sm:hidden">
+              The 22 areas are the 21 wellbeing services counties and the City of Helsinki.{" "}
+            </span>
+            Waits are counted from the day the need for care was assessed, for GP (physician)
+            visits in primary care. Bars start at 0%; change is in percentage points since{" "}
+            {FIRST_YEAR}.
+            <span className="lg:hidden">
+              {" "}
+              Referrals: the share processed within 3 days (Sotkanet {REFERRAL_ID}). Higher is
+              faster; Finland {formatPct(nationalReferral.value)}.
+            </span>
+          </p>
         </FrameFooter>
       </Frame>
 
@@ -189,8 +200,9 @@ function CompareRow({
           </span>
         )}
       </div>
+      {/* Only "worse than Finland" colours the figure; the calm rows stay in the text colour. */}
       <span
-        className={`numeral text-right ${emphasis ? "text-[2.75rem] sm:text-[3.5rem]" : "text-[2rem] sm:text-[2.25rem]"} ${status ? STATUS_INK[status] : "text-foreground"}`}
+        className={`numeral text-right ${emphasis ? "text-[2.75rem] sm:text-[3.5rem]" : "text-[2rem] sm:text-[2.25rem]"} ${status ? STATUS_FIGURE[status] : "text-foreground"}`}
       >
         {formatPct(value)}
       </span>
@@ -200,6 +212,8 @@ function CompareRow({
         finlandLabel={axisLabel}
         status={status}
         index={index * 6}
+        size="lg"
+        gapLabel={status ? gapToFinland(value, finland) : undefined}
         className="col-span-2"
       />
     </li>

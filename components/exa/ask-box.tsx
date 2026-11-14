@@ -80,7 +80,7 @@ export function AskBox() {
             Ask a question
           </h3>
           <Badge variant="secondary">Found live — unverified</Badge>
-          <span className="type-mark text-muted-foreground">via Exa</span>
+          <span className="type-note text-muted-foreground">via Exa</span>
         </div>
         <p className="max-w-2xl type-caption text-muted-foreground">
           Answered only from live Exa search results, with a numbered source for every sentence. Decision support, not medical advice.
@@ -149,7 +149,7 @@ export function AskBox() {
           {data && data.freshness !== "unavailable" && (
             <div className="space-y-5 border-t border-border pt-5">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="outline">{STATUS_LABEL[data.freshness]}</Badge>
+                <Badge variant="secondary">{STATUS_LABEL[data.freshness]}</Badge>
                 <span className="type-micro text-muted-foreground">Answered only from these Exa results.</span>
               </div>
 
