@@ -64,7 +64,7 @@ const HAND_TUNED: Record<string, { name: string; query: string }> = {
  */
 const AREA_EXTRA: Record<string, { site?: string; paper?: string; aliases: string[] }> = {
   "central-finland": { site: "hyvaks.fi", paper: "keskisuomalainen.fi", aliases: ["keski suom", "central finland", "jyvaskyl"] },
-  "central-ostrobothnia": { site: "soite.fi", paper: "keskipohjanmaa.fi", aliases: ["keski pohjanm", "central ostrobothnia", "kokkola", "soite ", "soiten ", "soitessa ", "soitesta ", "soiteen ", "soitelle ", "soitelta "] },
+  "central-ostrobothnia": { site: "soite.fi", paper: "keskipohjanmaa.fi", aliases: ["keski pohjanm", "central ostrobothnia", "kokkola", "soite ", "soiten ", "soites", "soitee", "soitelle ", "soitelta "] },
   "central-uusimaa": { site: "keusote.fi", paper: "keski-uusimaa.fi", aliases: ["keski uusi", "keski uuden", "central uusimaa", "hyvinkaa", "jarvenpaa", "keusote"] },
   "east-uusimaa": { paper: "uusimaa.fi", aliases: ["ita uusi", "ita uuden", "east uusimaa", "porvoo", "porvoon "] },
   helsinki: { site: "hel.fi", paper: "hs.fi", aliases: ["helsinki", "helsingi", "helsingfors"] },
@@ -73,7 +73,7 @@ const AREA_EXTRA: Record<string, { site?: string; paper?: string; aliases: strin
   kymenlaakso: { site: "kymenhva.fi", paper: "kouvolansanomat.fi", aliases: ["kymenlaak", "kotka", "kouvol"] },
   lapland: { site: "lapha.fi", paper: "lapinkansa.fi", aliases: ["lapland", "lappi ", "lapin ", "lapissa ", "lappiin ", "rovaniem"] },
   "north-karelia": { site: "siunsote.fi", paper: "karjalainen.fi", aliases: ["pohjois karjal", "north karelia", "joensu", "siun sote"] },
-  "north-ostrobothnia": { site: "pohde.fi", paper: "kaleva.fi", aliases: ["pohjois pohjanm", "north ostrobothnia", "oulu ", "oulun ", "oulussa ", "oulusta ", "ouluun ", "oululla ", "oululle ", "oululta ", "oululai"] },
+  "north-ostrobothnia": { site: "pohde.fi", paper: "kaleva.fi", aliases: ["pohjois pohjanm", "north ostrobothnia", "oulu ", "oulun ", "oulus", "ouluu", "oulul", "oulua"] },
   "north-savo": { site: "pshyvinvointialue.fi", paper: "savonsanomat.fi", aliases: ["pohjois savo", "north savo", "kuopio"] },
   ostrobothnia: { site: "pohjanmaanhyvinvointi.fi", paper: "pohjalainen.fi", aliases: ["pohjanmaa ", "pohjanmaan ", "pohjanmaalla ", "ostrobothnia ", "vaasa", "vasa "] },
   "paijat-hame": { site: "paijatsote.fi", paper: "ess.fi", aliases: ["paijat ham", "paijatsote", "lahti ", "lahden ", "lahdessa "] },

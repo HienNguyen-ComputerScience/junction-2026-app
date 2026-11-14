@@ -30,6 +30,8 @@ describe("unknownNames: two-sentence questions", () => {
     "My GP said I'll wait until March. Is that normal?",
     "Lääkäriaika vasta joulukuussa. Onko tämä normaalia?",
     "Waiting lists grew over Christmas and Easter, didn't they?",
+    "Do Finns wait longer than Danes for cancer care?",
+    "Is cancer care equal in every Wellbeing Services County?",
   ]) {
     test(q, () => {
       assert.deepEqual(unknownNames(q), []);
@@ -53,6 +55,13 @@ describe("unknownNames: unknown places are still rejected", () => {
       assert.equal(filterRelevant(q, withName, null).length, withName.length, "kept when a result names it");
     });
   }
+
+  // Known gap: a sentence-initial word is never treated as a name, so an unknown place that starts
+  // a sentence (or follows an abbreviation such as "e.g.") is not required in the results.
+  test("known gap: unknown name at a sentence start is not caught", () => {
+    assert.deepEqual(unknownNames("GP waits are long. Narnia too?"), []);
+    assert.deepEqual(unknownNames("Are waits longer in small towns, e.g. Narnia?"), []);
+  });
 
   test("known names need no confirmation", () => {
     assert.deepEqual(unknownNames("How do waits in Finland compare with Denmark and the NHS?"), []);
@@ -88,6 +97,10 @@ describe("detectCounty: inflected forms still resolve", () => {
     ["Hospital waits in Helsingfors", "helsinki"],
     ["Tampereelle lähete", "pirkanmaa"],
     ["Oululainen potilas", "north-ostrobothnia"],
+    ["Onko Oulussakin jonoja?", "north-ostrobothnia"],
+    ["Ouluun lähete", "north-ostrobothnia"],
+    ["Soitessakin on jonoja", "central-ostrobothnia"],
+    ["Soiteen yhteys", "central-ostrobothnia"],
     ["Soite.fi jonotilanne", "central-ostrobothnia"],
   ]) {
     test(`${q} -> ${id}`, () => assert.equal(county(q), id));
@@ -117,6 +130,11 @@ describe("isOnTopic: the gate", () => {
     "Miksi takaisinsoittoa ei soiteta?",
     "Why does nobody call back from the health centre?",
     "How long until I get a callback?",
+    "Milloin minulle soitetaan takaisin?",
+    "Miksi minulle ei soiteta takaisin?",
+    "Kukaan ei soittanut takaisin",
+    "Will they call me back?",
+    "Nobody called me back",
   ]) {
     test(`passes: ${q}`, () => assert.equal(isOnTopic(q, county(q)), true));
   }

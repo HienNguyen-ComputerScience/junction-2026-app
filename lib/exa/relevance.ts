@@ -29,7 +29,7 @@ const TOPIC = [
   "mortalit", "surviv", "lung", "breast", "bowel", "colorectal", "prostate", "skin cancer", "appointment",
   "primary care", "specialist", "emergency", "mental", "dental", "sote", "nhs ", "thl ", "kela ", "astrazeneca",
   "imaging", "ct scan", "mri ", "biopsy", "red flag", "guarantee", "fast track", "triage", "e consult", "econsult",
-  "health centre", "health center", "life expectancy", "vaccin", "elderly care", "pharma", "call back", "callback",
+  "health centre", "health center", "life expectancy", "vaccin", "elderly care", "pharma", "callback",
   // Finnish
   "terve", "hoit", "hoid", "laakar", "sairaa", "sairau", "syop", "kasvai", "potila", "jono", "odot", "lahete",
   "lahett", "hyvinvointialue", "diagno", "seulo", "seula", "oire", "kuolle", "laake", "hammas", "mielenterv",
@@ -42,6 +42,9 @@ const KNOWN_NAMES = new Set([
   "norwegian", "nordic", "uk", "england", "english", "britain", "british", "scotland", "europe", "european",
   "eu", "oecd", "who", "nhs", "thl", "stm", "kela", "gp", "gps", "ct", "mri", "nice", "astrazeneca", "covid",
   "omaolo", "sotkanet", "i",
+  // Demonyms and regions
+  "finn", "finns", "dane", "danes", "swede", "swedes", "norwegians", "brit", "brits", "nordics",
+  "scandinavia", "scandinavian", "scandinavians",
 ]);
 
 const STOPWORDS = new Set([
@@ -70,8 +73,12 @@ export function detectCounty(question: string, areas: readonly AreaAliases[]): s
   return best?.id ?? null;
 }
 
+/** Call-back questions ("soitetaan takaisin", "call me back"): about health-centre phone queues in this app. */
+const CALL_BACK = / (soit[a-z]* takaisin|takaisin soit|call(s|ed|ing)? (me |us |them |you |him |her )?back )/;
+
 export function isOnTopic(question: string, countyId: string | null): boolean {
-  return countyId !== null || hasStem(fold(question), TOPIC);
+  const text = fold(question);
+  return countyId !== null || hasStem(text, TOPIC) || CALL_BACK.test(text);
 }
 
 /** Content words (≥ 4 letters, not stopwords), folded, cut to a 5-letter stem for loose matching. */
@@ -89,6 +96,10 @@ const NOT_NAMES = new Set([
   "you", "she", "his", "her", "our", "your", "their", "any", "all", "some", "yes", "please",
   "thanks", "thank", "hello", "hey", "now", "today", "yesterday", "tomorrow", "also", "maybe", "however", "okay",
   "mrs", "prof", "new", "year",
+  // Generic words in institution names ("Wellbeing Services County", "Ministry of Social Affairs")
+  "service", "services", "county", "counties", "region", "regions", "area", "areas", "city", "municipality",
+  "municipalities", "district", "university", "institute", "ministry", "government", "agency", "social",
+  "affairs", "national", "central", "north", "south", "east", "west", "northern", "southern", "eastern", "western",
   // Finnish question and function words
   "miksi", "miten", "mita", "mika", "mitka", "missa", "mista", "mihin", "milloin", "kuinka", "kuka", "ketka",
   "onko", "ovatko", "oliko", "olisiko", "voiko", "voinko", "pitaako", "saako", "paaseeko", "kannattaako",
