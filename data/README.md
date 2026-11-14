@@ -22,7 +22,9 @@ Do not hand-edit the JSON; change `scripts/data/build-snapshot.mjs` and rebuild.
 4. `node scripts/insights/check-insights.mjs`: every derived row has a source and agrees with the snapshot.
 5. `node scripts/data/check-hardcoded.mjs`: figures typed into the app's copy still match the snapshot (see below).
 
-**When and where.** `.github/workflows/data-refresh.yml` runs it every day at 04:17 UTC, and on demand from the Actions tab ("Data refresh" → "Run workflow"). After the refresh it runs the full verify (`npm test`, `brief:check`, `typecheck`, `lint`, `build`). If nothing under `data/` changed it stops there. Otherwise it commits `data/` to the branch `data-refresh/auto` and opens or updates one PR titled "data: Sotkanet refresh <date>". The PR body lists the changed rows of `values.json` (from `scripts/data/diff-summary.mjs`). It never pushes to `main`: a person merges the PR, and Vercel deploys `main` as usual. A failed step means a red run and no PR. That includes a quoted anchor value or a hardcoded figure that no longer matches. Read the log, then fix the copy or the check.
+**When and where.** `.github/workflows/data-refresh.yml` runs it every day at 04:17 UTC, and on demand from the Actions tab ("Data refresh" → "Run workflow"). After the refresh it runs the full verify (`npm test`, `brief:check`, `typecheck`, `lint`, `build`). If nothing under `data/` changed it stops there. Otherwise it commits `data/` to the branch `data-refresh/auto` and opens or updates one PR titled "data: Sotkanet refresh <date>". The PR body lists the changed rows of `values.json` (from `scripts/data/diff-summary.mjs`). It never pushes to `main` directly: a person merges the PR, and Vercel deploys `main` as usual. A failed step means a red run and no PR. That includes a quoted anchor value that changed or a figure typed back into the copy. Read the log, then fix the copy or the check.
+
+**Auto-merge** is off by default. Set the repo variable `AUTO_MERGE` to `true` (Settings → Secrets and variables → Actions → Variables) and the workflow merges its own PR once every check has passed, so Vercel deploys the new figures. **Do not enable before peer review ends Sun 15 Nov 14:00.**
 
 **Retrieved dates.** A source keeps its previous `retrieved` date unless the source row itself (for example a new `data_updated`) or a row citing it changed. So a day with no new figures gives no diff and no PR, and `retrieved` means "the date our copy of this source last changed", not "the date we last checked". Set `RETRIEVED_DATE=YYYY-MM-DD` to run the build as if on another day.
 
@@ -30,14 +32,15 @@ Do not hand-edit the JSON; change `scripts/data/build-snapshot.mjs` and rebuild.
 
 ### Hardcoded figures
 
-Almost every number the app shows is read from `data/`. A few claims are typed into the copy, and `check-hardcoded.mjs` checks them. It finds each one by its text, not its line number. It fails with "COPY NOT FOUND" if the text was reworded (update the pattern) and with "FIGURE MISMATCH" if the data no longer supports the claim (update the copy):
+Every number the app shows is read from `data/`, so a merged refresh updates the pages with no code change. Three claims used to be typed into the copy; they are now computed from the data and read exactly as before with today's snapshot:
 
-- the anchor values 32.7, 85.4 and 54.7 (6411, 2025; `scripts/data/anchors.mjs`, quoted in `SPEC.md`, the pitch and the video);
-- "Most areas wait longer than Finland overall" (`app/compare/page.tsx`): more than half of the 22 areas are above Finland on 6411;
-- "0-3% everywhere" for 5033 (`app/county/[id]/page.tsx` and the 5033 limitation in `build-snapshot.mjs`): checked for the latest year only, because Satakunta was 6% in 2023;
-- the fixed axes of the no-way-round chart (`components/insights/no-way-round-chart.tsx`): GP wait 30–90, occupational-health visits 1,000–2,400, private-doctor use 15–35. Every point must fall inside them.
+- the `/compare` headline "Most areas wait longer than Finland overall" (`app/compare/page.tsx`) follows how many areas are above Finland on 6411 ("Fewer than half…", "Half…", and so on);
+- the 5033 range "0-3% everywhere" (`app/county/[id]/page.tsx`, and the 5033 limitation that `build-snapshot.mjs` writes) is the latest year's range. Satakunta was 6% in 2023;
+- the no-way-round chart axes (`components/insights/no-way-round-chart.tsx`) are fitted to the data with round ticks, and give today's 30–90, 1,000–2,400 and 15–35.
 
-Not checked, because a Sotkanet refresh cannot change them: England's 17% (`components/pathway/pathway-steps.tsx`, from the NDRS context source), "22 areas" and "four areas" (structure the build already enforces), and years (set in the build script).
+`scripts/data/check-hardcoded.mjs` is the safety net. It fails with "FIGURE MISMATCH" if a quoted anchor (32.7, 85.4, 54.7 for 6411 in 2025; `scripts/data/anchors.mjs`, quoted in `SPEC.md`, the pitch and the video) changed, or if the 5033 limitation does not state the data's range. It fails with "TYPED FIGURE" if one of the three claims is typed back into the code.
+
+Still typed, because a Sotkanet refresh cannot change them: England's 17% (`components/pathway/pathway-steps.tsx`, from the NDRS context source), "22 areas" and "four areas" (structure the build already enforces), and years (set in the build script).
 
 ## Files
 
