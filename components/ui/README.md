@@ -12,7 +12,7 @@
 - A step with a figure uses the six shared rows (subgrid). A step without one omits what it has none of: the "No public data" badge and source chip, one caption (the data's own sentence), then the hatched bar. Its card is as tall as its content; there are no fixed-height rows that leave a blank band.
 - Two densities. `density="full"` (county page): three divided columns on shared rows (subgrid). `density="compact"` (act page): one short strip, per step its name and value, what the value counts, a thin bar, the badge and the chip.
 - The section title gives the year ("… (2025)"), so the chip in a step leaves it out and the status row stays one row.
-- `ledStage`: the step whose figure already leads the page shows its gap to Finland in the slot instead, so **one number is on screen once per viewport**.
+- Every step with a value leads with its share (85.4%, 74.1%) as the big figure; the gap to Finland is on the caption line ("+30.7 pts vs Finland, lower is better"). There is no "show the gap instead" variant.
 - `TrendStrip` (`components/pathway/trend-strip.tsx`) is the panel under the full steps: per step a figure block (the change since 2023 in words) and the chart, as a grid (1fr / 2fr, `gap-8`), the chart capped at 640px and left-aligned. Only the latest year has a status, so it alone is drawn by the bar rule (upright); the earlier years are neutral grey, and the label strip says "Only 2025 has a status" once. The source chips sit in the strip's right slot, not under the chart.
 
 ## Bars: the Finland line
@@ -83,7 +83,8 @@ Bricolage Grotesque for headlines, Geist for text and numbers, Geist Mono for so
 - Action cards (act page and the county brief) use two tones: the action title in `text-foreground`; every other line (description, Owner, Precedent, Evidence, Who, labels) in `text-muted-foreground`, labels in `type-caption`. Only the "First step" box changes surface (`bg-muted`). No `text-faint` in body lines.
 - The red-flag helper before any input is one `FramePanel` with a label strip ("Warning-sign category"), a 16px icon, "No concern picked yet" and one caption. The result rows (how fast, what the GP does, the guideline links) appear only with a result.
 - A recommended action in the county brief is one row (title and "Who", the First step box, the source chip); the section has one link, "See the evidence and limitations", to the act page.
-- Phone (390px): one-row 56px header, stacked columns, tap targets 36px or more, no horizontal scroll, a source line directly under the figures it sources.
+- Home: the verdict card leads with the bottleneck step's share (`numeral`, 48px, `STATUS_FIGURE`), its status badge and source chip on the same row, and a caption in the county hero's wording; no numeral for a step without a value. The compact steps put the number under the title on shared rows (subgrid). "Owner" is a label/value pair everywhere (muted label, value beside it). The UI says "step", never "stage".
+- Phone (390px): on the home tool the outer frame has no border or padding, so cards sit at the page gutter, and the "See all actions" button is full width; one-row 56px header, stacked columns, tap targets 36px or more, no horizontal scroll, a source line directly under the figures it sources.
 
 **Motion**: `animate-bar-grow` (bars, staggered with `--i`) and `animate-fade-up`, one curve, under 0.6s, off with `prefers-reduced-motion`. Hover is a surface step or a text-colour change only.
 

@@ -15,10 +15,13 @@ export function TopAction({ action }: { action: Evidence }) {
         <h3 className="font-sans type-caption font-medium text-muted-foreground">Recommended action 1</h3>
         <SourceChip sourceId={action.source_id} />
       </FramePanelLabel>
-      <div className="flex flex-col gap-3 px-4 py-3 sm:px-5">
+      <div className="flex flex-col gap-2.5 px-4 py-2.5 sm:px-5">
         <p className="type-heading text-pretty text-foreground">{action.action}</p>
         <FirstStep compact>{action.first_step}</FirstStep>
-        <p className="type-caption text-pretty text-muted-foreground">Owner: {action.who_implements}</p>
+        <dl className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-3 type-caption text-muted-foreground">
+          <dt>Owner</dt>
+          <dd className="text-pretty">{action.who_implements}</dd>
+        </dl>
       </div>
     </FramePanel>
   );

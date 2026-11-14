@@ -152,24 +152,18 @@ function StepStatus({ step, children }: { step: PathwayStep; children?: ReactNod
 export function PathwaySteps({
   steps,
   density,
-  ledStage,
   renderExtra,
   className,
 }: {
   steps: PathwayStep[];
   density: "full" | "compact";
-  /**
-   * The step whose figure already leads the page (the county page's key figure). Its value slot
-   * shows the gap to Finland instead, so one number is on screen once.
-   */
-  ledStage?: Stage;
   /** Compact only: a link for a step, beside its status (the red-flag helper for step 2). */
   renderExtra?: (step: PathwayStep) => ReactNode;
   className?: string;
 }) {
   if (density === "compact") {
     return (
-      <ol className={cn("grid divide-y divide-border md:grid-cols-3 md:divide-x md:divide-y-0", className)}>
+      <ol className={cn("grid divide-y divide-border md:grid-cols-3 md:grid-rows-[repeat(5,auto)] md:divide-x md:divide-y-0", className)}>
         {steps.map((step) => (
           <CompactStep key={step.stage} step={step} extra={renderExtra?.(step)} />
         ))}
@@ -184,7 +178,7 @@ export function PathwaySteps({
       )}
     >
       {steps.map((step) => (
-        <FullStep key={step.stage} step={step} led={step.stage === ledStage} />
+        <FullStep key={step.stage} step={step} />
       ))}
     </ol>
   );
@@ -194,7 +188,7 @@ export function PathwaySteps({
 const SLOT = "flex h-11 items-end";
 const SLOT_FIGURE = "numeral text-[2.25rem] leading-none";
 
-function FullStep({ step, led }: { step: PathwayStep; led: boolean }) {
+function FullStep({ step }: { step: PathwayStep }) {
   const { measure, status } = step;
   const value = measure?.value ?? null;
   // A step with a figure shares the six rows of its neighbours (subgrid). A step without one has
@@ -216,15 +210,13 @@ function FullStep({ step, led }: { step: PathwayStep; led: boolean }) {
         <>
           <p className={cn(SLOT, "pt-3")}>
             <span className={cn(SLOT_FIGURE, STATUS_FIGURE[status])}>
-              {led ? gapToFinland(value, measure.finland) : formatPct(value)}
+              {formatPct(value)}
             </span>
           </p>
           <p className="pt-2 type-caption text-muted-foreground">
-            {!led && (
-              <span className={cn("figure font-medium", STATUS_FIGURE[status])}>
-                {gapToFinland(value, measure.finland)}{" "}
-              </span>
-            )}
+            <span className={cn("figure font-medium", STATUS_FIGURE[status])}>
+              {gapToFinland(value, measure.finland)}
+            </span>{" "}
             vs Finland, {measure.direction}
           </p>
           <p className="pt-1 type-caption text-pretty text-muted-foreground">{measure.counts}</p>
@@ -263,17 +255,17 @@ function CompactStep({ step, extra }: { step: PathwayStep; extra?: ReactNode }) 
   const { measure, status } = step;
   const value = measure?.value ?? null;
   return (
-    <li className="flex min-w-0 flex-col px-4 py-2.5 sm:px-5 md:py-2">
-      <div className="flex items-center justify-between gap-3">
-        <StepTitle step={step} compact />
+    <li className="flex min-w-0 flex-col px-4 py-2.5 sm:px-5 md:row-span-5 md:grid md:grid-rows-subgrid md:py-2">
+      <StepTitle step={step} compact />
+      <p className="min-h-8 pt-1.5">
         {measure && value !== null && (
-          <span className={cn("numeral text-[1.375rem] leading-6", STATUS_FIGURE[status])}>{formatPct(value)}</span>
+          <span className={cn("numeral text-[1.5rem] leading-6", STATUS_FIGURE[status])}>{formatPct(value)}</span>
         )}
         {measure && value === null && measure.shared && (
-          <span className="numeral text-[1.375rem] leading-6 text-foreground">{formatPct(measure.shared.value)}</span>
+          <span className="numeral text-[1.5rem] leading-6 text-foreground">{formatPct(measure.shared.value)}</span>
         )}
-      </div>
-      <p className="pt-0.5 type-caption text-muted-foreground">
+      </p>
+      <p className="type-caption text-muted-foreground">
         {measure ? measure.counts : "No public statistic measures this step"}
         {measure && value === null && measure.shared && <> · {sharedLabel(measure.shared.name)}</>}
       </p>

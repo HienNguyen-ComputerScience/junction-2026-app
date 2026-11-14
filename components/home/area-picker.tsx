@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "cn";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
@@ -30,6 +31,8 @@ type Props = {
   totalAreas: number;
   /** Server-rendered parts, so no snapshot data is shipped to the browser. */
   steps: Record<string, ReactNode>;
+  /** Per area: the bottleneck step's focal figure (absent when it has no value). */
+  leads: Record<string, ReactNode>;
   whatIfs: Record<string, ReactNode>;
   actions: Record<string, ReactNode>;
   mapChip: ReactNode;
@@ -55,6 +58,7 @@ export function AreaPicker({
   year,
   totalAreas,
   steps,
+  leads,
   whatIfs,
   actions,
   mapChip,
@@ -89,7 +93,7 @@ export function AreaPicker({
   return (
     <Frame
       aria-label="Pick an area"
-      className="grid gap-1.5 lg:grid-cols-[21rem_minmax(0,1fr)] lg:grid-rows-[auto_minmax(0,1fr)]"
+      className="grid gap-1.5 max-sm:rounded-none max-sm:border-0 max-sm:bg-transparent max-sm:p-0 lg:grid-cols-[21rem_minmax(0,1fr)] lg:grid-rows-[auto_minmax(0,1fr)]"
     >
       {/* The picker. */}
       <FramePanel padding="none" className="px-4 pt-3 pb-2 sm:px-5 lg:col-start-1 lg:row-start-1">
@@ -125,18 +129,19 @@ export function AreaPicker({
         ref={answerRef}
         className="grid scroll-mt-4 content-start gap-1.5 md:grid-cols-2 lg:col-start-2 lg:row-span-2 lg:row-start-1"
       >
-        <FramePanel padding="none" className="px-4 pt-3 pb-4 sm:px-5 md:col-span-2" aria-live="polite">
+        <FramePanel padding="none" className="px-4 pt-3 pb-3 sm:px-5 md:col-span-2" aria-live="polite">
           <p className="type-caption text-muted-foreground">
             {area.name}, {year}: where the pathway breaks
           </p>
-          <h2 className="mt-1 type-title text-pretty text-foreground">{area.verdict}</h2>
+          {leads[area.id] ?? null}
+          <h2 className="mt-2 type-title text-pretty text-foreground">{area.verdict}</h2>
         </FramePanel>
 
         {action && <div className={half}>{action}</div>}
         {what && <div className={half}>{what}</div>}
 
         <div className="flex flex-wrap items-center gap-x-5 gap-y-1 px-1 pt-1.5 pb-1 md:col-span-2">
-          <Link href={`/county/${area.id}/act`} className={buttonVariants({ size: "lg" })}>
+          <Link href={`/county/${area.id}/act`} className={cn(buttonVariants({ size: "lg" }), "max-sm:w-full")}>
             See all actions for {area.name}
             <ArrowRight aria-hidden data-icon="inline-end" />
           </Link>
