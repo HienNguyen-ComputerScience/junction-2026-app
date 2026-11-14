@@ -47,7 +47,7 @@ export default function HomePage({ searchParams }: PageProps<"/">) {
 
   return (
     <main className="page-container flex flex-col gap-5 pt-3 sm:pt-6">
-      <h1 className="type-display text-[1.375rem] text-foreground sm:text-[1.75rem] lg:whitespace-nowrap">
+      <h1 className="type-page max-w-[34ch] text-pretty">
         In Finland, your area decides how long a non-urgent GP visit waits
       </h1>
 
