@@ -221,7 +221,7 @@ export function BarKey({ className, items = KEY_ITEMS }: { className?: string; i
             </>
           }
         >
-          Worse than Finland's level
+          Worse than Finland&apos;s level
         </KeyItem>
       )}
       {items.includes("amber") && (
