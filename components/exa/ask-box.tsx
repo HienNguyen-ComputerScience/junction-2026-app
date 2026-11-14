@@ -66,11 +66,11 @@ export function AskBox() {
     <FramePanel padding="lg" aria-labelledby="ask-box-title" role="group" className="flex flex-col gap-5">
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <h3 id="ask-box-title" className="text-sm font-semibold">
+          <h3 id="ask-box-title" className="font-sans text-sm font-semibold tracking-normal">
             Ask a question
           </h3>
           <Badge variant="secondary">Found live — unverified</Badge>
-          <span className="type-micro text-muted-foreground">via Exa</span>
+          <span className="type-mark text-muted-foreground">via Exa</span>
         </div>
         <p className="max-w-2xl type-caption text-muted-foreground">
           Answered only from live Exa search results, with a numbered source for every sentence. Decision support, not medical advice.
@@ -78,7 +78,7 @@ export function AskBox() {
       </div>
 
       <form
-        className="flex flex-col gap-2 rounded-2xl border border-input bg-card p-1.5 shadow-[0_1px_2px_oklch(0.2_0.03_262/0.05)] transition-[border-color,box-shadow] focus-within:border-ring focus-within:ring-4 focus-within:ring-ring/15 sm:flex-row sm:items-center"
+        className="flex flex-col gap-2 rounded-xl border border-input bg-card p-1.5 shadow-[0_1px_2px_oklch(0.2_0.02_260/0.05)] transition-[border-color,box-shadow] focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/20 sm:flex-row sm:items-center"
         onSubmit={(e) => {
           e.preventDefault();
           ask(question);
@@ -88,7 +88,7 @@ export function AskBox() {
           Your question about health care access in Finland
         </label>
         <div className="flex min-w-0 flex-1 items-center gap-2.5 pl-2.5 sm:pl-3">
-          <Search aria-hidden className="hidden size-[1.125rem] shrink-0 text-muted-foreground sm:block" />
+          <Search aria-hidden strokeWidth={1.75} className="hidden size-[1.125rem] shrink-0 text-muted-foreground sm:block" />
           <input
             id="ask-box-input"
             type="text"
@@ -113,7 +113,7 @@ export function AskBox() {
       </form>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3" role="group" aria-label="Example questions">
-        <span aria-hidden className="pt-2 type-micro font-medium text-muted-foreground">Try</span>
+        <span aria-hidden className="type-micro font-medium text-muted-foreground sm:pt-2.5">Try</span>
         <div className="flex flex-wrap gap-2">
           {EXAMPLES.map((ex) => (
             <button
@@ -124,7 +124,7 @@ export function AskBox() {
                 setQuestion(ex);
                 ask(ex);
               }}
-              className="min-h-9 rounded-full border border-border bg-muted/60 px-3.5 py-1.5 text-left text-[0.8125rem] text-foreground/80 transition-colors outline-none hover:border-brand/30 hover:bg-brand-soft hover:text-brand-ink focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60"
+              className="min-h-10 rounded-lg border border-input bg-card px-3 py-1.5 text-left type-caption text-foreground transition-colors outline-none hover:border-brand/40 hover:bg-brand-soft hover:text-brand-ink focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60 sm:min-h-9"
             >
               {ex}
             </button>
@@ -144,7 +144,7 @@ export function AskBox() {
               </div>
 
               {answered && data.answer && (
-                <div className="space-y-2 rounded-xl border border-dashed border-input bg-muted/40 p-4">
+                <div className="space-y-2 rounded-lg border border-dashed border-input bg-muted/40 p-4">
                   <p className="type-micro text-muted-foreground">
                     Not checked by the team. Written by AI from the live results below; read the sources before relying on it.
                   </p>
@@ -174,7 +174,7 @@ export function AskBox() {
               )}
 
               {!answered && data.nothingFound && (
-                <p className="rounded-xl border border-dashed border-input p-4 text-sm text-muted-foreground">
+                <p className="rounded-lg border border-dashed border-input p-4 text-sm text-muted-foreground">
                   {data.message?.startsWith("Nothing found")
                     ? data.message
                     : `Nothing found. ${data.message || "The live results did not answer this question."}`}
@@ -187,7 +187,7 @@ export function AskBox() {
 
               {data.items.length > 0 && (
                 <div className="space-y-3">
-                  <h4 className="type-micro font-semibold text-muted-foreground">Sources</h4>
+                  <h4 className="type-micro font-medium text-muted-foreground">Sources</h4>
                   <ResultList items={data.items} numbered idPrefix="ask-src" />
                 </div>
               )}

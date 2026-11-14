@@ -1,5 +1,3 @@
-import type { CSSProperties } from "react";
-
 import { AskBox } from "@/components/exa/ask-box";
 import { RankingList } from "@/components/ranking/ranking-list";
 import { SourceChip } from "@/components/source-chip";
@@ -12,7 +10,8 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
-import { STATUS_FILL, StatusBadge } from "@/components/ui/status-badge";
+import { MeasureBar } from "@/components/ui/measure-bar";
+import { STATUS_INK, StatusBadge } from "@/components/ui/status-badge";
 import { LATEST_YEAR, type GapStatus } from "@/lib/data";
 import {
   FIRST_YEAR,
@@ -42,19 +41,18 @@ export default function CountyRankingPage() {
   const redCount = rows.filter((row) => row.gpStatus === "red").length;
 
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 pt-4 sm:gap-7 sm:px-6 sm:pt-6">
+    <main className="page-container flex flex-col gap-6 pt-4 sm:gap-8 sm:pt-6">
       {/* Hero: the single message, on the one dark surface of the page. */}
-      <Frame tone="inverse" aria-labelledby="home-title" className="p-1.5 sm:p-2">
-        <div className="grid gap-6 px-3.5 pt-5 pb-2 sm:px-6 sm:pt-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-center lg:gap-12 lg:px-8 lg:py-7">
-          <div className="flex flex-col gap-5">
-            <p className="flex items-center gap-2 type-caption font-medium text-brand-ink">
-              <span aria-hidden className="hidden h-px w-6 bg-brand-ink/60 sm:block" />
+      <Frame tone="inverse" aria-labelledby="home-title">
+        <div className="grid gap-6 px-3 pt-5 pb-1.5 sm:px-6 sm:pt-8 sm:pb-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-center lg:gap-12 lg:px-8 lg:py-8">
+          <div className="flex flex-col gap-4 sm:gap-5">
+            <p className="type-caption text-muted-foreground">
               The first step towards early cancer care: getting in to see a GP
             </p>
-            <h1 id="home-title" className="type-display max-w-[18ch] text-foreground">
-              In Finland, where you live decides how fast you get to see a GP.
+            <h1 id="home-title" className="type-display max-w-[19ch] text-foreground">
+              In Finland, where you live decides how fast you get to see a GP
             </h1>
-            <p className="max-w-[36rem] text-[0.9375rem] leading-relaxed text-pretty text-muted-foreground sm:type-lede">
+            <p className="max-w-[35rem] text-[0.9375rem] leading-relaxed text-pretty text-muted-foreground sm:type-lede">
               <strong className="font-semibold text-foreground">{formatPct(worst.gpWait.value)}</strong> of
               non-urgent GP visits in {worst.county.name} come more than a week after the need for
               care was assessed. In {best.county.name} it is{" "}
@@ -65,14 +63,14 @@ export default function CountyRankingPage() {
             </p>
           </div>
 
-          <FramePanel padding="none" className="overflow-hidden">
+          <FramePanel padding="none">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3 sm:px-5">
-              <h2 className="font-sans type-micro font-medium text-muted-foreground">
-                Non-urgent GP visits waiting over 7 days, {LATEST_YEAR}
+              <h2 className="font-sans type-micro font-medium tracking-normal text-muted-foreground">
+                Non-urgent GP visits waiting over 7 days
               </h2>
               <SourceChip sourceId={worst.gpWait.source_id} year={LATEST_YEAR} />
             </div>
-            <ul className="flex flex-col gap-4 px-4 py-5 sm:px-5">
+            <ul className="flex flex-col gap-5 px-4 pt-5 pb-4 sm:px-5">
               <CompareRow
                 name={worst.county.name}
                 value={worst.gpWait.value}
@@ -94,6 +92,7 @@ export default function CountyRankingPage() {
                 status={best.gpStatus}
                 finland={nationalGpWait.value}
                 index={2}
+                axisLabel={`Finland ${formatPct(nationalGpWait.value)}`}
               />
             </ul>
             <p className="border-t border-border px-4 py-3 type-micro text-muted-foreground sm:px-5">
@@ -132,9 +131,10 @@ export default function CountyRankingPage() {
         <FrameFooter className="max-w-4xl">
           All values: Sotkanet, {LATEST_YEAR}, see chips above. Bars: share of non-urgent GP
           (physician) visits in primary care that came more than 7 days after the need for care was
-          assessed (Sotkanet {GP_WAIT_ID}). Red: worse than Finland. Amber: at or better than
-          Finland&apos;s level, which is still a delay. Arrows: change in percentage points since{" "}
-          {FIRST_YEAR}. Referral column: Sotkanet {REFERRAL_ID}, higher is faster; Finland{" "}
+          assessed (Sotkanet {GP_WAIT_ID}), from 0%. The ink line is Finland. Red: worse than
+          Finland, with the share beyond Finland&apos;s line in solid red. Amber: at or better than
+          Finland&apos;s level, which is still a delay. Change: percentage points since {FIRST_YEAR}.
+          Referral column: Sotkanet {REFERRAL_ID}, higher is faster; Finland{" "}
           {formatPct(nationalReferral.value)}.
         </FrameFooter>
       </Frame>
@@ -158,6 +158,7 @@ function CompareRow({
   finland,
   index,
   emphasis = false,
+  axisLabel,
 }: {
   name: string;
   value: number;
@@ -166,10 +167,12 @@ function CompareRow({
   finland: number;
   index: number;
   emphasis?: boolean;
+  /** Set on the last row: labels the Finland line on the axis under the bars. */
+  axisLabel?: string;
 }) {
   return (
-    <li className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-4 gap-y-2.5">
-      <div className="flex min-w-0 flex-col gap-1.5">
+    <li className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-4 gap-y-3">
+      <div className="flex min-w-0 flex-col items-start gap-1.5">
         <span className="text-[0.9375rem] leading-snug font-semibold">{name}</span>
         {status ? (
           <StatusBadge status={status} size="xs">
@@ -177,26 +180,24 @@ function CompareRow({
           </StatusBadge>
         ) : (
           <span className="flex h-5 items-center gap-1.5 text-[0.6875rem] font-medium text-muted-foreground">
-            <span aria-hidden className="h-3 w-0.5 rounded-full bg-foreground" />
+            <span aria-hidden className="h-3 w-0.5 bg-foreground" />
             Reference line on each bar
           </span>
         )}
       </div>
       <span
-        className={`numeral text-right ${emphasis ? "text-[2.75rem] sm:text-[3.5rem]" : "text-[2rem] sm:text-[2.375rem]"} ${status === "red" ? "text-status-red-ink" : status === "amber" ? "text-status-amber-ink" : "text-foreground"}`}
+        className={`numeral text-right ${emphasis ? "text-[2.75rem] sm:text-[3.5rem]" : "text-[2rem] sm:text-[2.25rem]"} ${status ? STATUS_INK[status] : "text-foreground"}`}
       >
         {formatPct(value)}
       </span>
-      <div aria-hidden className="relative col-span-2 h-2.5 rounded-full bg-white/8">
-        <div
-          className={`animate-bar-grow h-full rounded-full ${status ? STATUS_FILL[status] : "bg-foreground/85"}`}
-          style={{ width: `${value}%`, "--i": index * 6 } as CSSProperties}
-        />
-        <span
-          className="absolute -inset-y-1.5 w-0.5 -translate-x-1/2 rounded-full bg-foreground"
-          style={{ left: `${finland}%` }}
-        />
-      </div>
+      <MeasureBar
+        value={value}
+        finland={finland}
+        finlandLabel={axisLabel}
+        status={status}
+        index={index * 6}
+        className="col-span-2"
+      />
     </li>
   );
 }
