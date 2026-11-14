@@ -224,7 +224,7 @@ export const pathwayGapCount = pathway.filter((slot) => !slot.published).length;
 /** The other unpublished figures in data/data-gaps.json that sit on a published step. */
 export const suspectedCancerGap = dataGaps.find((gap) => gap.id === "suspected-cancer-gp-wait") ?? null;
 
-// ---- 7. What a county can do from Monday --------------------------------------------------
+// ---- 7. What a county can do --------------------------------------------------
 
 export const starter = {
   sections: starterDataset.sections.map((section) => ({

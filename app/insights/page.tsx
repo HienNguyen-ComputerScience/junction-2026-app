@@ -247,7 +247,7 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
       {/* 4–6. What a county can record: the empty steps, the template, Goal 3. */}
       <Chunk
         id="starter-dataset"
-        eyebrow="What to record from Monday"
+        eyebrow="What to start recording"
         statement={`${capital(word(notPublished))} of ${word(steps.length)} steps of the cancer pathway are not published by area.`}
         figure={<PathwayStepsRow />}
         meaning={

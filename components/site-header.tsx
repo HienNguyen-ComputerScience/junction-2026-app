@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { BriefingHeaderButton, MainNav, NavLinks } from "@/components/site-nav";
+import { MainNav, NavLinks } from "@/components/site-nav";
 import { counties } from "@/lib/data";
 import { getRanking } from "@/lib/ranking";
 
@@ -36,8 +36,6 @@ export function SiteHeader() {
             </span>
           </Link>
         </div>
-        {/* The guided briefing's button, on every page but home, where the first screen holds it. */}
-        <BriefingHeaderButton />
       </div>
       <div className="border-t border-frame-border">
         <Suspense fallback={<NavLinks pathname={null} defaultArea={defaultArea} areaIds={areaIds} />}>

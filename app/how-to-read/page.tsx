@@ -51,7 +51,7 @@ const SECTIONS = [
   { id: "trust", name: "How much to trust a figure" },
   { id: "not-published", name: "What Finland does not publish" },
   { id: "what-we-did", name: "What we did about it" },
-  { id: "from-monday", name: "What a county can do from Monday" },
+  { id: "from-monday", name: "What a county can do" },
 ] as const;
 
 const LINK =
@@ -646,7 +646,7 @@ export default function HowToReadPage() {
             </ul>
           </Chunk>
 
-          {/* 6. What a county can do from Monday */}
+          {/* 6. What a county can do */}
           <Chunk
             id={SECTIONS[5].id}
             eyebrow={SECTIONS[5].name}

@@ -34,7 +34,7 @@ export function StarterDataset({ headingLevel = 2 }: { headingLevel?: 2 | 3 }) {
   return (
     <section id="starter-dataset" aria-labelledby="starter-heading" className="flex scroll-mt-20 flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <p className="type-eyebrow">What to start counting on Monday</p>
+        <p className="type-eyebrow">What to start recording</p>
         <Heading id="starter-heading" className="type-title">
           A starter dataset for your own cancer pathway
         </Heading>

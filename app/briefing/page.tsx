@@ -41,7 +41,7 @@ export default function BriefingStartPage() {
         <div className="relative flex flex-1 flex-col">
           <EdgeLines className="absolute top-[13.5rem] left-0 max-lg:hidden" />
           <div className="flex flex-1 flex-col gap-[21px] px-[21px] pt-[28px] pb-[42px] sm:px-[42px] lg:pr-[84px] lg:pl-[126px]">
-            <Pill className="animate-fade-up">About two minutes, {BRIEFING_STEP_COUNT} steps</Pill>
+            <Pill className="animate-fade-up">{BRIEFING_STEP_COUNT} steps</Pill>
             <h1 className={`animate-fade-up ${STATEMENT}`} style={i(1)}>
               Early cancer care in your area, brought to you one piece at a time: where you stand, where the delay is,
               and what to do about it.
@@ -59,11 +59,6 @@ export default function BriefingStartPage() {
             <div className="animate-fade-up" style={i(3)}>
               <AreaChooser areas={areas} defaultId={defaultId} />
             </div>
-
-            <p className="animate-fade-up text-base leading-6 text-pretty text-charcoal" style={i(4)}>
-              Nothing moves until you press a button. Every figure names its public source, and you can go back at any
-              step. The list opens on the area where the most non-urgent GP visits come late.
-            </p>
           </div>
         </div>
       </div>

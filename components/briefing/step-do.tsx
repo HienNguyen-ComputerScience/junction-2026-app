@@ -11,18 +11,18 @@ const i = (index: number) => ({ "--i": index }) as CSSProperties;
 const COUNT_WORD = ["No", "One", "Two", "Three"];
 
 /**
- * Step 4, "What to do on Monday": the recommended actions for the step where the delay is,
+ * Step 4, "What to do": the recommended actions for the step where the delay is,
  * all three named at once in three short rows; a button on each opens its first step.
  * The actions and their order come from lib/act (the same rule as the act page).
  */
 export function StepDo({ briefing }: { briefing: Briefing }) {
   const { county, actions, anyRed } = briefing;
   const count = COUNT_WORD[actions.length] ?? String(actions.length);
-  const things = actions.length === 1 ? "thing" : "things";
+  const things = actions.length === 1 ? "action" : "actions";
 
   return (
     <>
-      <Pill className="animate-fade-up">What to do on Monday</Pill>
+      <Pill className="animate-fade-up">What to do</Pill>
       <h1
         data-briefing-heading
         tabIndex={-1}
@@ -32,8 +32,8 @@ export function StepDo({ briefing }: { briefing: Briefing }) {
         {actions.length === 0
           ? `No action is recommended for ${county.name}: no measured step has a figure to act on.`
           : anyRed
-            ? `${count} ${things} ${county.name} can start on Monday.`
-            : `${count} ${things} that help ${county.name} keep its level.`}
+            ? `${count} ${things} for ${county.name}.`
+            : `${count} ${things} that ${actions.length === 1 ? "helps" : "help"} ${county.name} keep its level.`}
       </h1>
 
       {actions.length > 0 ? (

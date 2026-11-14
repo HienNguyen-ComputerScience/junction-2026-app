@@ -1,11 +1,9 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useSyncExternalStore } from "react";
 
-import { buttonVariants } from "@/components/ui/button";
 
 type NavItem = {
   key: string;
@@ -104,22 +102,6 @@ export function NavLinks({
         })}
       </ul>
     </nav>
-  );
-}
-
-/**
- * "Start the guided briefing" in the header: on every page except home, whose first screen
- * already holds the briefing's start button (the only large filled button there).
- */
-export function BriefingHeaderButton() {
-  const pathname = usePathname();
-  if (pathname === "/" || pathname.startsWith("/briefing")) return null;
-  return (
-    <Link href="/briefing" className={buttonVariants({ variant: "default", size: "default", className: "shrink-0" })}>
-      <span className="sm:hidden">Guided briefing</span>
-      <span className="hidden sm:inline">Start the guided briefing</span>
-      <ArrowRight aria-hidden strokeWidth={1.75} />
-    </Link>
   );
 }
 

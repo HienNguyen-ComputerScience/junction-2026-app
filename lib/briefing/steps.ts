@@ -23,7 +23,7 @@ export const BRIEFING_STEPS: BriefingStep[] = [
   { id: "stand", number: 1, slug: null, label: "Where you stand", next: "where you stand" },
   { id: "where", number: 2, slug: "where-the-delay-is", label: "Where the delay is", next: "where the delay is" },
   { id: "means", number: 3, slug: "what-it-means", label: "What it means", next: "what it means" },
-  { id: "do", number: 4, slug: "what-to-do", label: "What to do on Monday", next: "what to do on Monday" },
+  { id: "do", number: 4, slug: "what-to-do", label: "What to do", next: "what to do" },
   { id: "change", number: 5, slug: "what-it-could-change", label: "What it could change", next: "what it could change" },
   // The slug is older than the label; it stays because proxy.ts lists it (see docs/audit/export/notes.md).
   { id: "share", number: 6, slug: "save-or-share", label: "Save or share this briefing", next: "save or share" },
