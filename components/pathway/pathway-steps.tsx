@@ -139,7 +139,11 @@ function StepStatus({ step }: { step: PathwayStep }) {
       <StatusBadge status={step.status} size="xs">
         {step.measure?.shared && step.measure.value === null ? "No county figure" : STATUS_LABEL[step.status]}
       </StatusBadge>
-      {step.measure && <SourceChip sourceId={step.measure.sourceId} />}
+      {step.measure ? (
+        <SourceChip sourceId={step.measure.sourceId} />
+      ) : step.stage === "gp_recognition" ? (
+        <SourceChip sourceId={STEP2_SOURCE} />
+      ) : null}
     </div>
   );
 }
@@ -174,11 +178,16 @@ export function PathwaySteps({
   );
 }
 
+/** Step 2 has no Finnish data: what England publishes instead, as a suggestion, never as a Finnish figure. */
+export const STEP2_NOTE =
+  "Not measured in Finland. England publishes, for every area, the share of cancers first found through an emergency visit, a sign of late detection: 17% in 2024/25, from 10% to 21% by area. Finland could publish the same by linking Cancer Registry and hospital records (THL, Finnish Cancer Registry).";
+export const STEP2_SOURCE = "ndrs-emergency-presentations";
+
 /** What a step without any measure says (step 2: no public statistic exists). */
-const NO_STATISTIC = "No public statistic shows how often GPs spot possible cancer at the first visit.";
+const NO_STATISTIC = STEP2_NOTE;
 
 /** The same, in one short line for the compact strip. */
-const NO_STATISTIC_SHORT = "No public statistic measures this step";
+const NO_STATISTIC_SHORT = "Not measured in Finland. England publishes it by area: 17% of cancers first found through an emergency visit.";
 
 /** The label that always stands with a wider value shown in place of an area's own. */
 const sharedLabel = (name: string) => `${name}-wide value, not a county figure`;

@@ -48,3 +48,19 @@ Using any of these as "GP recognises warning signs" would mislabel a county, whi
 - Cancer Registry bowel cancer report (news): https://www.verkkouutiset.fi/a/suolistosyopaan-sairastuneet-kayvat-useasti-laakarissa-ennen-diagnoosia/
 - ICBP emergency presentation study: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9046095/
 - HUS access to cancer treatment (403 when fetched): https://www.hus.fi/en/access-to-cancer-treatment
+
+## What Finland should measure (proposal, 14 Nov)
+
+The step experts call the bottleneck has no county data, so we show what to start measuring and who owns it. Both sources read in Europe PMC on 14 Nov:
+
+- **England records how every cancer was found.** Linking cancer registrations with hospital and waiting-time data, every cancer diagnosed in England in 2006–2008 was put into one of eight "Routes to Diagnosis". "Most cancers were diagnosed through one of Emergency Presentation (24%), TWW (26%) or GP Referral (21%)". "Patients presenting via Emergency routes have substantially lower 1-year relative survival." Elliss-Brookes et al., *Br J Cancer* 2012, [PMC3494426](https://pmc.ncbi.nlm.nih.gov/articles/PMC3494426/).
+- **England audits GP diagnostic work practice by practice.** The National Cancer Diagnosis Audit 2018 covered 53,252 patients in 1,868 practices and found "very large variation between practices in use of investigation". Akter et al., *BMJ Qual Saf* 2025, [PMC12171502](https://pmc.ncbi.nlm.nih.gov/articles/PMC12171502/).
+- **Finland has the same building blocks:** the Finnish Cancer Registry and THL's hospital care register (Hilmo). Linking them would give each wellbeing county its share of cancers found through an emergency visit.
+
+Proposed step-2 card (short, per booth feedback): "Not measured in Finland. England records how every cancer is found: 24% after an emergency visit, with much lower survival. Owner to start it here: THL and the Finnish Cancer Registry, by linking registry and hospital records."
+
+**England publishes it by area today (verified 14 Nov through the open Fingertips API, no bypass needed; the NHS Digital pages themselves sit behind a CAPTCHA).** Fingertips "Cancer Services" profile, indicators 91356 (emergency presentations) and 91357 (other, non-emergency presentations), source NHS England, National Disease Registration Service, at England, Integrated Care Board, sub-ICB, primary care network and GP practice level, 2009/10 to 2024/25. Our calculation from the published counts, 2024/25: **England 17.0%** of cancer presentations were emergencies; by ICB (42 areas) from **10.4%** (Cornwall and the Isles of Scilly) to **21.3%** (South Yorkshire). API: `https://fingertips.phe.org.uk/api/all_data/csv/by_indicator_id?indicator_ids=91356,91357&child_area_type_id=221&parent_area_type_id=15`. Caveats: the share is computed by us from two published counts; the Fingertips metadata gives names and source but no long definition.
+
+Updated card text: "Not measured in Finland. England publishes, for every area, the share of cancers found through an emergency visit (17% in 2024/25, 10–21% by area). Owner to start it here: THL and the Finnish Cancer Registry, by linking registry and hospital records."
+
+**Cross-check against the official NHS publication (Luan opened it in a browser, 14 Nov):** NHS Digital, "Routes to Diagnosis 2018" (published 1 Dec 2022), file `RtD2018_Cancer_alliance_v2.ods`, all malignant neoplasms excl. NMSC, diagnosed 2016-2018, by Cancer Alliance (19 areas): emergency presentation from 17% (Peninsula, Thames Valley, Wessex, Surrey and Sussex) to 22% (South Yorkshire, Bassetlaw, North Derbyshire and Hardwick). Same direction as Fingertips 2024/25 (South Yorkshire highest). The page also says "emergency presentations continue to decline gradually".

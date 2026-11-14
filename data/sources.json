@@ -135,6 +135,15 @@
     "data_updated": "2026-05-01"
   },
   {
+    "source_id": "ndrs-emergency-presentations",
+    "kind": "statistic",
+    "name": "NHS England, National Disease Registration Service: cancers diagnosed after emergency and other presentations, by area, 2024/25 (Fingertips Cancer Services profile, indicators 91356 and 91357)",
+    "url": "https://fingertips.phe.org.uk/profile/cancerservices",
+    "publisher": "NHS England, Fingertips 2024/25",
+    "retrieved": "2026-11-14",
+    "data_updated": null
+  },
+  {
     "source_id": "sotkanet-13",
     "kind": "statistic",
     "name": "Sotkanet 13: Referrals for specialised health care received processed within 3 days, % of referrals received",

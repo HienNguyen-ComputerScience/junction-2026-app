@@ -56,3 +56,10 @@ Copy this block once per conversation.
 - They want the main reason an area is red, in one short sentence a normal person gets at a glance. "Ask the evidence" lists a lot of sources but gives no main reason.
 - They want the dashboard cleaner, with fewer words.
 - Changes this causes: passed to Phương on the board (UI is Phương's). No change to `evidence.json`.
+
+### AstraZeneca booth, answer on step 2 (GP recognition) — 2026-11-14 (Sat)
+- Role / organisation: AstraZeneca booth staff (name not recorded). Consent to cite by name: not asked.
+- Said: yes, primary care does not always recognise cancer symptoms; this is one of the bottlenecks. Pointed us to Yle MOT, "Syöpäpotilaan hoito voi viivästyä Suomessa kuukausia – Heidi Rintahaka kyllästyi odottamaan", 12 Oct 2026, https://yle.fi/a/74-20242733 (read in full 14 Nov).
+- Checked in the article: the expert is **Outi Kuittinen**, professor of oncology, University of Eastern Finland. Not Hanne Kuitunen (challenge talk). Her points: train primary-care doctors to recognise cancer symptoms; let them order CT scans directly; "Tärkein olisi kuitenkin pikakaista syöpäepäilyssä" ("the most important thing would be a fast lane for suspected cancer"). The lines that a nurse may not see the case as urgent and that a GP may make diagnostic errors are the article's narration, not her quote.
+- Numbers in the article (unpublished lung-cancer delay study in Kuopio, Tampere, Turku and Rovaniemi, seen first by MOT): symptoms to treatment about five months on average; patient delay over 50 days, primary care 41 days, specialist care 58 days. National, not by county; not peer-reviewed yet.
+- Changes this causes: still no county data for step 2. Background only; see `challenge-brief.md`. Matches our actions: GP training/red-flag helper, direct CT access (`ev-rec-direct-ct-training`), fast-track pathways (`ev-ref-denmark-cpp`).

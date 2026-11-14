@@ -182,6 +182,17 @@ const CONTEXT_SOURCES = [
     retrieved: "2026-11-14",
     data_updated: "2026-05-01",
   },
+  // Step 2 has no Finnish data. England's share of cancers first found through an emergency
+  // visit, by area: shown as what Finland could publish, never as a Finnish figure.
+  {
+    source_id: "ndrs-emergency-presentations",
+    kind: "statistic",
+    name: "NHS England, National Disease Registration Service: cancers diagnosed after emergency and other presentations, by area, 2024/25 (Fingertips Cancer Services profile, indicators 91356 and 91357)",
+    url: "https://fingertips.phe.org.uk/profile/cancerservices",
+    publisher: "NHS England, Fingertips 2024/25",
+    retrieved: "2026-11-14",
+    data_updated: null,
+  },
 ];
 
 async function get(path) {
