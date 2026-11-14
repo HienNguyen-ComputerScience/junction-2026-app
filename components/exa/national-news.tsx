@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { Frame, FrameDescription, FrameHeader, FrameMeta, FramePanel, FrameTitle } from "@/components/ui/frame";
 
-import { NewsCarousel } from "./news-carousel";
+import { NewsList } from "./news-list";
 import { LiveMark, LoadingRows, Unavailable } from "./result-list";
 import { isItemsResponse, type ItemsResponse } from "./types";
 
@@ -51,10 +51,10 @@ export function NationalNews() {
         {state.kind === "loading" && <LoadingRows label="Searching national news with Exa" />}
         {unavailable && <Unavailable />}
         {data && !unavailable && data.items.length === 0 && (
-          <p className="text-sm text-muted-foreground">No national news found this month.</p>
+          <p className="text-base text-muted-foreground">No national news found this month.</p>
         )}
         {data && !unavailable && data.items.length > 0 && (
-          <NewsCarousel items={data.items} label="National news" />
+          <NewsList items={data.items} label="National news" />
         )}
       </FramePanel>
     </Frame>
