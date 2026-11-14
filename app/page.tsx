@@ -32,9 +32,10 @@ async function Tool({
 }
 
 /**
- * Home: the headline and one composed block, the picker and the map on the left and the answer
- * for the chosen area on the right. The ranking of all areas is on /compare, the actions and the
- * what-if on the act page, the question box and the news on /ask.
+ * Home: the headline, then the guided briefing's opening (choose the area, start the briefing,
+ * and a preview of its step 1), then "Or look through the data yourself" with the map, the
+ * area's three steps and its first action. The ranking of all areas is on /compare, the actions
+ * and the what-if on the act page, the question box and the news on /ask.
  */
 export default function HomePage({ searchParams }: PageProps<"/">) {
   const rows = getRanking();
@@ -55,7 +56,7 @@ export default function HomePage({ searchParams }: PageProps<"/">) {
         fallback={
           <div
             aria-busy
-            className="min-h-[36rem] rounded-panel border border-border bg-card p-6 type-caption text-muted-foreground"
+            className="min-h-[30rem] rounded-panel border border-border bg-card p-6 text-base text-muted-foreground"
           >
             Loading the areas…
           </div>

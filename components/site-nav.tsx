@@ -1,8 +1,11 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useSyncExternalStore } from "react";
+
+import { buttonVariants } from "@/components/ui/button";
 
 type NavItem = {
   key: string;
@@ -13,6 +16,7 @@ type NavItem = {
 };
 
 const ITEMS: NavItem[] = [
+  { key: "briefing", label: "Guided briefing", short: "Briefing", match: (p) => p.startsWith("/briefing") },
   {
     key: "areas",
     label: "Areas",
@@ -27,15 +31,15 @@ const ITEMS: NavItem[] = [
     match: (p) => p.startsWith("/county") && (p.endsWith("/act") || p.endsWith("/plan")),
   },
   { key: "insights", label: "Where access is hardest", short: "Access", match: (p) => p.startsWith("/insights") },
+  { key: "ask", label: "Ask the evidence", short: "Ask", match: (p) => p.startsWith("/ask") },
   // The walkthrough of where the numbers come from and what they cannot say (app/how-to-read).
   { key: "how-to-read", label: "How to read these numbers", short: "How to read", match: (p) => p.startsWith("/how-to-read") },
-  { key: "ask", label: "Ask the evidence", short: "Ask", match: (p) => p.startsWith("/ask") },
   { key: "sources", label: "Sources & limitations", short: "Sources", match: (p) => p.startsWith("/sources") },
 ];
 
-/** The area id in /county/<id> or /county/<id>/act, else null. */
+/** The area id in /county/<id>…, or in a briefing's /briefing/<id>…, else null. */
 function countyOf(pathname: string | null): string | null {
-  return pathname?.match(/^\/county\/([^/]+)/)?.[1] ?? null;
+  return pathname?.match(/^\/(?:county|briefing)\/([^/]+)/)?.[1] ?? null;
 }
 
 /**
@@ -63,8 +67,10 @@ export function NavLinks({
   const fromUrl = pathname === "/" && areaParam && areaIds.includes(areaParam) ? areaParam : null;
   // Home always shows an area (its ?area=, else the default), so the remembered one is not used there.
   const remembered = pathname === "/" ? null : lastArea;
-  const actionsArea = countyOf(pathname) ?? fromUrl ?? remembered ?? defaultArea;
+  const inPath = countyOf(pathname);
+  const actionsArea = (inPath && areaIds.includes(inPath) ? inPath : null) ?? fromUrl ?? remembered ?? defaultArea;
   const hrefs: Record<string, string> = {
+    briefing: "/briefing",
     areas: "/",
     actions: `/county/${actionsArea}/act`,
     insights: "/insights",
@@ -74,7 +80,7 @@ export function NavLinks({
   };
   return (
     <nav aria-label="Main" className="page-container">
-      <ul className="-mx-2 flex flex-wrap items-center gap-x-0.5 gap-y-1 py-1.5 sm:-mx-3 sm:gap-x-1.5">
+      <ul className="-mx-2 flex flex-wrap items-center gap-x-0.5 gap-y-1 py-1.5 sm:gap-x-1 xl:-mx-3">
         {ITEMS.map((item) => {
           const active = pathname !== null && item.match(pathname);
           return (
@@ -82,7 +88,7 @@ export function NavLinks({
               <Link
                 href={hrefs[item.key]}
                 aria-current={active ? "page" : undefined}
-                className={`flex h-11 items-center rounded-sm px-2 text-[0.9375rem] whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:px-3 sm:text-base ${
+                className={`flex h-11 items-center rounded-sm px-2 text-base whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 xl:px-3 ${
                   active
                     ? "bg-mint-veil font-semibold text-forest-ink"
                     : "text-foreground hover:bg-keylime-wash hover:text-forest-ink"
@@ -98,6 +104,22 @@ export function NavLinks({
         })}
       </ul>
     </nav>
+  );
+}
+
+/**
+ * "Start the guided briefing" in the header: on every page except home, whose first screen
+ * already holds the briefing's start button (the only large filled button there).
+ */
+export function BriefingHeaderButton() {
+  const pathname = usePathname();
+  if (pathname === "/") return null;
+  return (
+    <Link href="/briefing" className={buttonVariants({ variant: "default", size: "default", className: "shrink-0" })}>
+      <span className="sm:hidden">Guided briefing</span>
+      <span className="hidden sm:inline">Start the guided briefing</span>
+      <ArrowRight aria-hidden strokeWidth={1.75} />
+    </Link>
   );
 }
 
