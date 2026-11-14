@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-import { LiveMark, LoadingRows, ResultList, Unavailable } from "./result-list";
+import { CloseButton, LiveMark, LoadingRows, ResultList, Unavailable } from "./result-list";
 import { isItemsResponse, TOO_MANY, type ItemsResponse } from "./types";
 
 type State =
@@ -38,6 +38,11 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
       });
   }
 
+  function close() {
+    ctrlRef.current?.abort();
+    setState({ kind: "idle" });
+  }
+
   const loading = state.kind === "loading";
   const data = state.kind === "done" ? state.data : null;
   const limited = state.kind === "error" && state.limited;
@@ -63,7 +68,10 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
       <div id={panelId} className="empty:hidden">
         {showResults && (
           <div className="flex flex-col gap-3 rounded-lg border border-dashed border-input bg-muted/40 p-4">
-            <LiveMark result={data} />
+            <div className="-my-1.5 -mr-2 flex items-center justify-between gap-2">
+              <LiveMark result={data} />
+              <CloseButton onClick={close} label="Close live search results" />
+            </div>
             {data?.freshness === "stale-cache" && data.message && (
               <p className="text-sm text-muted-foreground">{data.message}</p>
             )}
@@ -76,12 +84,20 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
             </div>
           </div>
         )}
-        {limited && (
-          <p role="status" className="rounded-lg border border-input bg-muted px-4 py-3 text-sm text-foreground">
-            {TOO_MANY}
-          </p>
+        {(limited || unavailable) && (
+          <div className="flex items-start gap-2">
+            <div className="min-w-0 flex-1">
+              {limited ? (
+                <p role="status" className="rounded-lg border border-input bg-muted px-4 py-3 text-sm text-foreground">
+                  {TOO_MANY}
+                </p>
+              ) : (
+                <Unavailable />
+              )}
+            </div>
+            <CloseButton onClick={close} label="Close message" />
+          </div>
         )}
-        {unavailable && <Unavailable />}
       </div>
     </section>
   );
