@@ -6,6 +6,26 @@ const PAD = { left: 52, right: 18, top: 18, bottom: 56 };
 
 type Axis = { min: number; max: number; ticks: number[] };
 
+/**
+ * An axis fitted to the data with round ticks: the bottom rounded down to `floorTo`, the top rounded
+ * up to `ceilTo`, a tick every `tick` from the bottom. The steps below give today's axes (30–90%,
+ * 1,000–2,400, 15–35%), so the chart only moves when a data refresh puts a dot outside them.
+ */
+function fitAxis(key: "wait" | "occupational" | "private", floorTo: number, ceilTo: number, tick: number): Axis {
+  const values = [noWayRound.finland[key], ...noWayRound.areas.map((a) => a[key].value)];
+  const min = Math.floor(Math.min(...values) / floorTo) * floorTo;
+  const max = Math.ceil(Math.max(...values) / ceilTo) * ceilTo;
+  const ticks: number[] = [];
+  for (let at = min; at <= max; at += tick) ticks.push(at);
+  return { min, max, ticks };
+}
+
+const AXES = {
+  wait: fitAxis("wait", 15, 15, 15),
+  occupational: fitAxis("occupational", 1000, 200, 400),
+  private: fitAxis("private", 5, 5, 5),
+};
+
 function scale(axis: Axis, size: number, from: number) {
   return (v: number) => from + ((v - axis.min) / (axis.max - axis.min)) * size;
 }
@@ -27,7 +47,7 @@ function Panel({
   xLabel: string;
   formatX: (v: number) => string;
 }) {
-  const yAxis: Axis = { min: 30, max: 90, ticks: [30, 45, 60, 75, 90] };
+  const yAxis = AXES.wait;
   const plotW = W - PAD.left - PAD.right;
   const plotH = H - PAD.top - PAD.bottom;
   const x = scale(xAxis, plotW, PAD.left);
@@ -150,14 +170,14 @@ export function NoWayRoundChart() {
         <Panel
           title="GP wait and occupational-health doctor visits"
           xKey="occupational"
-          xAxis={{ min: 1000, max: 2400, ticks: [1000, 1400, 1800, 2200] }}
+          xAxis={AXES.occupational}
           xLabel="Occupational-health doctor visits per 1,000 aged 15–64"
           formatX={(v) => v.toLocaleString("en-GB")}
         />
         <Panel
           title="GP wait and private doctor use"
           xKey="private"
-          xAxis={{ min: 15, max: 35, ticks: [15, 20, 25, 30, 35] }}
+          xAxis={AXES.private}
           xLabel="Residents reimbursed for a private doctor visit"
           formatX={(v) => `${v}%`}
         />
