@@ -1,5 +1,53 @@
 # /sources redesign: notes
 
+## Third pass (design polish, branch `t3/polish-sources-page-design`)
+
+Built on `t3/post-freeze-build-integration` (merged at the start and again before the final checks, which include the in-place Save or share and the static numbers). Checked on a production build (`npm run start -- -p 3112`) with playwright-core and its bundled Chromium.
+
+What the judges marked down (rounds 1–4: 6.5 → 8.0, motion 7.5) and what changed:
+
+1. **"Areas ›" breadcrumb** (R2, R4): removed. /sources is a top-level page, not under Areas; /compare and /insights have none either. Top padding now matches /compare (`pt-6 sm:pt-8`).
+2. **First screen at 1366×768**: the first row of limitation cards used to end at y=769, cut by the fold. The counts line and the "Read how to read them" link now share one row, and the breadcrumb is gone, so the row ends at **y=669** and is wholly on screen.
+3. **Ranking cards**: the `FocusGroup` cards were capped at 52rem, sat 8px outside the page edge when in focus and changed surface as you scrolled (one cream, one mint). They are now two static framed cards side by side (stacked on a phone), at the page's full width like every other unit, with `items-start` so opening one doesn't stretch the other.
+4. **Plain words**: "Sotkanet 6411 sets the order; 13 sets the referral status shown beside it." now reads "“GP wait over 7 days” sets the order. “Referrals processed within 3 days” sets the referral status shown beside each county's rank.". The names come from `indicator.short_name`, not typed; the ids are still in each card's "definition and scope" (sotkanet-6411, sotkanet-13).
+5. **Page ending**: "Back to areas" assumed the same hierarchy as the breadcrumb. It is replaced by the shared `MoreCard` "Read next" as on /how-to-read: How to read these numbers, Where access is hardest (/compare), Areas. Screen only (`print:hidden`), as the back link was.
+6. `SourceCard` lost its now-unused `focus` option.
+
+Unchanged on purpose: the one-claim h1, the 10 always-visible limitation cards (default stretch, so closed rows stay even), the rank/context split, the evidence and other-source lists.
+
+### Numbers (same script, before = round-4 state on this branch's base)
+
+Visible words in `<main>` with every "Show …" closed, screen-reader-only text excluded, tokens without a letter or digit (the "·" separators) not counted, so it reads lower than the second-pass method.
+
+| | Before (round 4) | After |
+|---|---|---|
+| Visible words | 408 | 448 (+40: the Read next card and the longer plain-name ranking line, less the breadcrumb and back link) |
+| Height at 1366 | 3,486px | 3,347px |
+| Height at 390 | 5,269px | 5,619px (+350: the Read next card) |
+| First limitation row ends (1366×768) | y=769 (cut) | y=669 (on screen) |
+| Print, all expanded | 1,957 words, 0 of 23 closed, 34 links | 1,963 words, 0 of 23 closed, 35 links |
+| Sideways scroll at 390 | none | none |
+| Text under 16px (except eyebrows) | 0 | 0, also with every panel open |
+| Reduced motion / no JavaScript | complete, 408 words, 23 native `<details>` | complete, 448 words, 23 native `<details>` |
+| Console errors | 0 | 0 |
+
+### Fact-diff (third pass)
+
+Print render after `beforeprint` (PrintExpand opened all 23 panels, 0 closed), split into 170 sentences and lines, then each one searched for in the after text:
+
+- **Missing (3):** "Areas" and "Sources & limitations" (the breadcrumb; the page name is still the eyebrow and the nav), and the 6411/13 ranking line, **reworded** as in item 4 with the same fact.
+- **Links:** all 34 before links are present; one added (`/compare`, in Read next, screen only). That covers all 31 `data/sources.json` URLs and the map boundaries link.
+- **No new numbers.** "7 days" and "3 days" come from the indicators' own short names, already on the page.
+- "Finland's level" and a bare "worse than Finland" do not appear.
+
+### Screenshots (third pass)
+
+`screenshots/r4-*.png` = before (round-4 state): `desktop`, `desktop-first`, `mobile`, `mobile-first`, `reduced`, `nojs`, `print`. `screenshots/after3-*.png` = after, same set. Full page unless `-first`.
+
+---
+
+# Earlier passes
+
 Branch `t3/redesign-sources-page`, built on `t3/post-freeze-build-integration` (merged locally). Checked on a production build (`npm run start -- -p 3093`) with playwright-core and its bundled Chromium. The header's "Start the guided briefing" button in the screenshots comes from the integration branch before `0a4457d`. This branch does not touch it.
 
 ## The page now (second pass)

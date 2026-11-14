@@ -186,12 +186,13 @@ function Definition({ row, withLead }: { row: SourceRow; withLead: boolean }) {
 }
 
 /**
- * The two indicators the ranking reads, side by side as two framed cards of the same height: name,
- * main caveat, publisher, years, link. Static, like every other framed unit on the page.
+ * The two indicators the ranking reads, side by side as two framed cards: name, main caveat,
+ * publisher, years, link. Static, like every other framed unit on the page. Each keeps its own
+ * height, so opening one card's definition does not stretch the other.
  */
 function RankingCards({ rows }: { rows: SourceRow[] }) {
   return (
-    <ul className="grid gap-3 md:grid-cols-2">
+    <ul className="grid items-start gap-3 md:grid-cols-2">
       {rows.map((row) => (
         <li key={row.indicator.indicator_id} className="print-keep">
           <SourceCard
