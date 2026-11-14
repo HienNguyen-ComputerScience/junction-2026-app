@@ -86,7 +86,10 @@ export function AreaPicker({
     const top = answerRef.current?.getBoundingClientRect().top ?? 0;
     if (fromMap && top < 0) {
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      answerRef.current?.scrollIntoView({ block: "start", behavior: reduce ? "auto" : "smooth" });
+      answerRef.current?.scrollIntoView({
+        block: "start",
+        behavior: reduce ? "auto" : "smooth",
+      });
     }
   }
 
@@ -98,7 +101,7 @@ export function AreaPicker({
     // No outer frame: the panels sit on the page, so the deepest nesting is panel > First step box.
     <section
       aria-label="Pick an area"
-      className="grid gap-2 lg:grid-cols-[21rem_minmax(0,1fr)] lg:grid-rows-[auto_minmax(0,1fr)_auto]"
+      className="grid gap-2 lg:grid-cols-[21rem_minmax(0,1fr)] lg:grid-rows-[auto_minmax(0,1fr)]"
     >
       {/* The picker. */}
       <FramePanel padding="none" className="px-5 pt-5 pb-4 sm:px-6 lg:col-start-1 lg:row-start-1">
@@ -133,52 +136,45 @@ export function AreaPicker({
         </TextLink>
       </FramePanel>
 
-      {/* The answer for the selected area. */}
-      <div
-        ref={answerRef}
-        className="grid scroll-mt-4 content-start gap-2 md:grid-cols-2 lg:col-start-2 lg:row-span-2 lg:row-start-1"
-      >
-        {/* The answer: the figure and the verdict on the left, the way to the actions on the
-            right (under them on a phone), so the main button is on the first screen. */}
-        <FramePanel
-          padding="none"
-          className="grid gap-x-8 gap-y-5 px-5 pt-5 pb-5 sm:px-6 md:col-span-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-end"
-        >
-          <div className="flex flex-col gap-3" aria-live="polite">
-            <p className="type-caption font-medium text-muted-foreground">
-              {area.name}, {year}: {area.status === "red" ? "where the pathway breaks" : "where the pathway stands"}
-            </p>
-            {leads[area.id] ?? null}
-            <h2 className="type-heading text-pretty text-foreground">{area.verdict}</h2>
+      {/* The answer for the selected area: the hero card (figure, verdict, the way to the actions,
+          and the top action as its second row), then the what-if, then the three steps. */}
+      <div ref={answerRef} className="grid scroll-mt-4 content-start gap-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+        <FramePanel padding="none">
+          <div className="flex flex-col gap-5 px-5 pt-5 pb-5 sm:px-6">
+            <div className="flex flex-col gap-3" aria-live="polite">
+              <p className="type-caption font-medium text-muted-foreground">
+                {area.name}, {year}: {area.status === "red" ? "where the pathway breaks" : "where the pathway stands"}
+              </p>
+              {leads[area.id] ?? null}
+              <h2 className="type-heading text-pretty text-foreground">{area.verdict}</h2>
+            </div>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+              <Link href={`/county/${area.id}/act`} className={cn(buttonVariants({ size: "lg" }), "max-sm:w-full")}>
+                See all actions
+                <ArrowRight aria-hidden data-icon="inline-end" />
+              </Link>
+              <TextLink kind="nav" href={`/county/${area.id}`} className="text-sm">
+                Full pathway for {area.name}
+              </TextLink>
+            </div>
           </div>
-          <div className="flex flex-col items-start gap-3 md:items-end">
-            <Link href={`/county/${area.id}/act`} className={cn(buttonVariants({ size: "lg" }), "max-sm:w-full")}>
-              See all actions
-              <ArrowRight aria-hidden data-icon="inline-end" />
-            </Link>
-            <TextLink kind="nav" href={`/county/${area.id}`} className="text-sm">
-              Full pathway for {area.name}
-            </TextLink>
-          </div>
+          {action}
         </FramePanel>
 
-        {action && <div className="md:col-span-2">{action}</div>}
-        {what && <div className="md:col-span-2">{what}</div>}
+        {what}
+
+        <FramePanel padding="none">
+          <FramePanelLabel>
+            <h3 className="font-sans type-caption font-medium text-muted-foreground">
+              The three steps to a specialist ({year})
+            </h3>
+          </FramePanelLabel>
+          {steps[area.id]}
+        </FramePanel>
       </div>
 
-      {/* The three steps sit under the answer and the map, the full width of the tool, so each
-          step has room for its status and source on one row. */}
-      <FramePanel padding="none" className="lg:col-span-2 lg:row-start-3">
-        <FramePanelLabel>
-          <h3 className="font-sans type-caption font-medium text-muted-foreground">
-            The three steps to a specialist ({year})
-          </h3>
-        </FramePanelLabel>
-        {steps[area.id]}
-      </FramePanel>
-
       {/* The map: last on a phone, under the picker from lg. */}
-      <FramePanel padding="none" className="max-lg:order-last lg:col-start-1 lg:row-start-2 lg:self-start">
+      <FramePanel padding="none" className="max-lg:order-last lg:col-start-1 lg:row-start-2">
         <FramePanelLabel>
           <span>Worst measured step against Finland</span>
           {mapChip}
@@ -193,10 +189,9 @@ export function AreaPicker({
             className="mb-5 h-[16.25rem] lg:h-[20rem]"
           />
           <p className="self-start type-caption text-pretty text-muted-foreground">
-            Each area is coloured by the worse of its two measured steps, the GP wait and the
-            referral, against Finland (the same status as its answer). An area is red if either is
-            worse. Not specific to cancer: the GP wait covers all non-urgent GP visits. Map: Statistics
-            Finland, CC BY 4.0
+            Each area is coloured by the worse of its two measured steps, the GP wait and the referral, against Finland
+            (the same status as its answer). An area is red if either is worse. Not specific to cancer: the GP wait
+            covers all non-urgent GP visits. Map: Statistics Finland, CC BY 4.0
           </p>
         </div>
         {/* The page's one key: the map's fills and the steps' bars use the same marks. */}

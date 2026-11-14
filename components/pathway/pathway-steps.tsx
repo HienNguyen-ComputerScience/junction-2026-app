@@ -82,7 +82,10 @@ export function buildPathwaySteps(countyId: string): PathwayStep[] {
         counts: COUNTS[stage],
         direction: DIRECTION[stage],
         note: gap.note,
-        shared: gap.shared && { name: gap.shared.name, value: gap.shared.value },
+        shared: gap.shared && {
+          name: gap.shared.name,
+          value: gap.shared.value,
+        },
       },
     };
   });
@@ -96,15 +99,7 @@ const MARK: Record<GapStatus, string> = {
 };
 
 /** The mark of a step: a numbered dot in the status colour. Decorative; the title carries the number. */
-export function StepMark({
-  step,
-  status,
-  className,
-}: {
-  step: number;
-  status: GapStatus;
-  className?: string;
-}) {
+export function StepMark({ step, status, className }: { step: number; status: GapStatus; className?: string }) {
   return (
     <span
       aria-hidden
@@ -167,7 +162,7 @@ export function PathwaySteps({
       className={cn(
         "grid divide-y divide-border",
         compact
-          ? "md:grid-cols-3 md:grid-rows-[repeat(6,auto)] md:divide-x md:divide-y-0"
+          ? "md:grid-cols-3 md:grid-rows-[repeat(5,auto)] md:divide-x md:divide-y-0"
           : "lg:grid-cols-3 lg:grid-rows-[repeat(6,auto)] lg:divide-x lg:divide-y-0",
         className,
       )}
@@ -182,6 +177,9 @@ export function PathwaySteps({
 /** What a step without any measure says (step 2: no public statistic exists). */
 const NO_STATISTIC = "No public statistic shows how often GPs spot possible cancer at the first visit.";
 
+/** The same, in one short line for the compact strip. */
+const NO_STATISTIC_SHORT = "No public statistic measures this step";
+
 /** The label that always stands with a wider value shown in place of an area's own. */
 const sharedLabel = (name: string) => `${name}-wide value, not a county figure`;
 
@@ -190,24 +188,28 @@ const sharedLabel = (name: string) => `${name}-wide value, not a county figure`;
  * six subgrid rows, so every part lines up across the three): title; value with its gap to
  * Finland (or the hospital group's note) beside it; one description line; the bar with
  * "Finland xx.x%" under its tick; the status and source chips on one row; and, for a step
- * with one, a link on its own line.
+ * with one, a link on its own line (compact: on the chips' row).
  */
 function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; extra?: ReactNode }) {
   const { measure, status } = step;
   const value = measure?.value ?? null;
   const shared = value === null ? measure?.shared : undefined;
   const shown = value ?? shared?.value ?? null;
-  const description = shown !== null && measure ? measure.counts : measure ? measure.note : NO_STATISTIC;
+  const description =
+    shown !== null && measure ? measure.counts : measure ? measure.note : compact ? NO_STATISTIC_SHORT : NO_STATISTIC;
   return (
     <li
       className={cn(
-        "flex min-w-0 flex-col px-4 pt-4 pb-5 sm:px-6",
-        compact ? "md:row-span-6 md:grid md:grid-rows-subgrid" : "lg:row-span-6 lg:grid lg:grid-rows-subgrid",
+        "flex min-w-0 flex-col px-4",
+        compact ? "" : "sm:px-6",
+        compact
+          ? "pt-3 pb-3.5 md:row-span-5 md:grid md:grid-rows-subgrid"
+          : "pt-4 pb-5 lg:row-span-6 lg:grid lg:grid-rows-subgrid",
       )}
     >
       <StepTitle step={step} compact={compact} />
 
-      <div className={cn("flex items-end gap-x-3 pt-3", compact ? "min-h-[3.25rem]" : "min-h-[3.75rem]")}>
+      <div className={cn("flex flex-wrap items-end gap-x-2.5 gap-y-1", compact ? "pt-1.5" : "min-h-[3.75rem] pt-3")}>
         {shown !== null ? (
           <span
             className={cn(
@@ -224,20 +226,22 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
           </span>
         )}
         {value !== null && measure && (
-          <span className="pb-px type-caption text-muted-foreground">
+          <span className="pb-px type-caption whitespace-nowrap text-muted-foreground">
             <span className={cn("figure font-medium", STATUS_FIGURE[status])}>
               {gapToFinland(value, measure.finland)}
             </span>{" "}
             vs Finland
           </span>
         )}
-        {shared && <span className="pb-px type-caption text-pretty text-muted-foreground">{sharedLabel(shared.name)}</span>}
+        {shared && (
+          <span className="pb-px type-caption text-pretty text-muted-foreground">{sharedLabel(shared.name)}</span>
+        )}
       </div>
 
-      <p className="pt-2 type-caption text-pretty text-muted-foreground">{description}</p>
+      <p className={cn("type-caption text-pretty text-muted-foreground", compact ? "pt-0.5" : "pt-2")}>{description}</p>
 
       <MeasureBar
-        className="pt-3"
+        className={compact ? "pt-2.5" : "pt-3"}
         size={compact ? "sm" : "md"}
         value={value}
         finland={measure ? measure.finland : null}
@@ -245,10 +249,20 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
         status={status}
       />
 
-      <div className="pt-3">
-        <StepStatus step={step} />
-      </div>
-      {extra ? <div className="pt-2">{extra}</div> : null}
+      {compact ? (
+        // One row: the status chip, the source chip and the step's link (step 2).
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-2">
+          <StepStatus step={step} />
+          {extra}
+        </div>
+      ) : (
+        <>
+          <div className="pt-3">
+            <StepStatus step={step} />
+          </div>
+          {extra ? <div className="pt-2">{extra}</div> : null}
+        </>
+      )}
     </li>
   );
 }

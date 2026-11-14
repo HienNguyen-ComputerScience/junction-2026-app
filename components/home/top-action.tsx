@@ -1,22 +1,18 @@
 import { FirstStep, plainTitle } from "@/components/act/action-card";
 import { SourceChip } from "@/components/source-chip";
-import { FramePanel } from "@/components/ui/frame";
 import type { Evidence } from "@/lib/data";
 
 /**
- * The first recommended action for an area, condensed from the act page's action card: the
+ * The first recommended action for an area, as the second row of the home answer card, condensed from the act page's action card: the
  * action, its First step box, its owner and its evidence source. The rest (precedent, evidence,
  * limitations, "Source checked") is on the act page. `keepLevel`: no measured step is worse
  * than Finland, so the label reads as keeping the level, not fixing a break.
  */
 export function TopAction({ action, keepLevel = false }: { action: Evidence; keepLevel?: boolean }) {
   return (
-    // Wide: the action and its owner on the left, the First step box and the evidence source on
-    // the right. No title strip: the small heading leads the left column.
-    <FramePanel
-      padding="none"
-      className="grid h-full gap-x-8 gap-y-4 px-5 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-start"
-    >
+    // The hero card's second row, under a hairline: the action and its owner on the left, the
+    // First step box and the evidence source on the right.
+    <div className="grid gap-x-8 gap-y-4 border-t border-border px-5 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-start">
       <div className="flex flex-col gap-2.5">
         <h3 className="font-sans type-caption font-medium text-muted-foreground">
           {keepLevel ? "Action to keep this level" : "Recommended action 1"}
@@ -33,6 +29,6 @@ export function TopAction({ action, keepLevel = false }: { action: Evidence; kee
           Evidence <SourceChip sourceId={action.source_id} />
         </p>
       </div>
-    </FramePanel>
+    </div>
   );
 }
