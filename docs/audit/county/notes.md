@@ -26,10 +26,12 @@ How, with nothing removed (`area-lead.tsx`, `page.tsx`):
 - **From 640px the unit runs on one line beside the numeral**: "85.4% of non-urgent GP visits waited more than 7 days" now reads as one sentence. This saves about 33px. It uses a local `LeadFigure` with the same face and sizes as the shared `ChunkFigure`, whose unit is capped at 22ch.
 - **On a phone, the eyebrow drops the Finnish name** ("Vantaan ja Keravan hyvinvointialue · ") so it stays on one line. Desktop keeps it.
 - **Spacing:** the hero gap is 16px (was 20px), the stray `pt-2` above the buttons is gone, and the page's top padding is 16px at every width (was 24px from 640px).
+- **No false floor:** with the shorter hero, the space under it had become a blank band at 1366×768, which made the page look finished. The steps section's top gap is now 40px (32px on a phone; it was 96px / 64px). "Where care is delayed" now shows on the first screen: its top is at y=701 (y=671 for referral-led areas such as Kainuu), and the button doesn't move (`after-vantaa-kerava-d-s00.png`).
+- Settled positions are listed above. Measured straight after `networkidle`, while the focus card is still scaling in, the phone button ends 4px lower: y=818 for most areas, and up to y=844 for Kainuu, Central Ostrobothnia and Pirkanmaa.
 
 ### 2. Hierarchy: step titles outranked their section heading
 Measured before: h1 40px, section h2 "Where care is delayed" 28px, and each step's h3 **40px** (32/24/32 on a phone). The step titles were larger than the heading above them, which is the pattern R3-04 docked on the act page.
-- After: h1 40, h2 28, h3 **24** (phone: 32/24/24), the same scale the act page uses since R3-04.
+- After: h1 40, h2 28, h3 **24** (phone: 32/24/**20**), the same steps the act page has used since R3-04, so a section heading outranks its step titles at both widths.
 - The two section h2s now use `type-title`. Their old `text-[2rem] sm:text-[2.75rem] max-w-[24ch]` classes never applied, because the unlayered `h2` rule in `globals.css` wins. The visible size is unchanged, but "What these figures cannot tell you" now fits on one line instead of breaking after "figures".
 
 ### 3. Clarity: each step's text now reads as a sentence
@@ -44,7 +46,10 @@ The pill was in the sticky step list and again on the text card beside it. It is
 ### 5. Step list: the status tag wrapped
 "Same as or better than Finland overall" wrapped to two lines on desktop (Kainuu, step 1), and on a phone "Longer wait than Finland overall" took three. Each step is now a small grid: number, name and figure on the first row, and the status tag on the second, running under the figure too.
 - Desktop: one line for every label.
-- Phone: two lines at most (`after-vantaa-kerava-m-s02.png`).
+- Phone: two lines at most, on the longest label too ("Same as or better than Finland overall": `after-kainuu-m-s02.png`, `after-east-uusimaa-m-s02.png`, `after-vantaa-kerava-m-s02.png`).
+
+### Not seen in the build
+The "Sotkanet publishes no figure for this area" branch of the step text is unreachable with today's data. The only steps without a figure of their own are the four HUS-shared referral steps (Central, East and West Uusimaa, Vantaa and Kerava), and those take the shared-figure branch. That branch was type-checked but never rendered.
 
 ## Kept as it was
 - The scroll-driven reveal (`motion-loud`), the sticky step picture, the mint focus card (`FocusGroup`) and the step story. None of the motion changed.
@@ -63,9 +68,9 @@ I dumped the main text of Vantaa and Kerava, Kainuu, East Uusimaa and Helsinki w
 - **Sideways scroll at 390px:** none on any of the 22 areas, including with "Why?" open.
 - **Text under 16px:** none, apart from the 11px eyebrows.
 - **Console errors:** none.
-- **"Why?":** opens at both widths (`after-vantaa-kerava-{d,m}-why-open.png`).
+- **"Why?":** the hero's "Why?" opens on all 22 areas at both widths, with no sideways scroll when open (`after-vantaa-kerava-{d,m}-why-open.png`).
 - **Reduced motion:** 0 elements left below full opacity, and the full page is present (`after-vantaa-kerava-reduced-full.png`).
-- **No JavaScript:** the full page renders (`after-vantaa-kerava-nojs-full.png`).
+- **No JavaScript:** after 2.5s, 0 text elements are below full opacity at both widths, and the full page and the button are visible (`after-vantaa-kerava-nojs-{d,m}-full.png`). A capture taken at once catches the CSS-only stagger mid-play. Round 4's build does the same, so this is not new.
 - **Print:** everything is expanded, the steps print in sequence and the caveats are open (`after-vantaa-kerava-print-full.png`).
 - **Contrast:** no colour changed. The same tokens sit on the same surfaces, so AA holds as measured in the contract.
 
@@ -86,6 +91,9 @@ I dumped the main text of Vantaa and Kerava, Kainuu, East Uusimaa and Helsinki w
 | Motion & interaction 10% | 8.5 | 8.5 | Unchanged by design. The long 75vh slots between short step cards are the shared ScrollStory's. |
 | Accessibility 5% | 9.0 | 9.0 | Unchanged: the same contrast, ≥16px text, DOM order kept (the status is still read before the figure). |
 | **Weighted** | **8.7** | **≈8.95** | 0.25×9 + 0.25×9 + 0.2×9 + 0.15×9 + 0.1×8.5 + 0.05×9 = 8.95. That is at the 9.0 line, not clearly over it: a judge who holds clarity or hierarchy at 8.5 lands at about 8.85. |
+
+## For the team lead to decide
+- On a phone, the hero eyebrow drops the Finnish area name ("Vantaan ja Keravan hyvinvointialue") so it fits on one line. Desktop and print keep it. If the Finnish name matters on phones too, revert that one `<span className="max-sm:hidden">`; the phone button then ends about 16px lower, still on the first screen for most areas.
 
 ## Needs from owners of shared components
 - **`components/pathway/limitations-box.tsx` (shared):** the page's h2 "What these figures cannot tell you" sits directly above the box's own h2, "Limitations: read before acting on these numbers". That is two headings saying the same thing. Suggestion: an optional `title={null}` (or a `hideTitle` prop), so the county page can keep its section h2 alone.
