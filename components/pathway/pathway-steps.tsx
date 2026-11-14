@@ -92,7 +92,7 @@ export function buildPathwaySteps(countyId: string): PathwayStep[] {
 }
 
 const MARK: Record<GapStatus, string> = {
-  // Dark ink on the saturated fills: 5.0:1 on red, 9.7:1 on slate.
+  // Cream text on the solid fills: 5.5:1 on rust, 6.2:1 on slate.
   red: "bg-status-red text-background",
   amber: "bg-status-amber text-background",
   no_data: "border border-dashed border-status-grey-ink/60 text-status-grey-ink",

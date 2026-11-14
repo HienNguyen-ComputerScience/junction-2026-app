@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
+import { PrintExpand } from "@/components/motion/print-expand";
 import { LogoMark, SiteHeader } from "@/components/site-header";
 
 // One sans and one serif. Inter carries body copy, labels and every figure (300, 400, 600).
@@ -35,9 +36,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} ${cormorant.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <PrintExpand />
         <SiteHeader />
         <div className="flex-1">{children}</div>
-        <footer className="mt-12 border-t border-border">
+        <footer className="mt-16 border-t border-frame-border print:hidden">
           <div className="page-container flex flex-col gap-3 py-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <LogoMark className="size-5" />
