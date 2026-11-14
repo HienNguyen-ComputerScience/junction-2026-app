@@ -1,8 +1,5 @@
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { cn } from "cn";
 
 import { ActionSummary } from "@/components/act/action-card";
 import { lowerFirst, STEP_SHORT } from "@/components/act/action-copy";
@@ -10,10 +7,10 @@ import { ActionItem } from "@/components/act/action-item";
 import { ReferralRoutes } from "@/components/act/referral-routes";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
 import { AnimatedNumber, CaveatNote, Disclosure, FocusGroup, Reveal } from "@/components/motion";
+import { SaveShare, type ShareOption } from "@/components/share";
 import { SourceChip } from "@/components/source-chip";
 import { BackLink } from "@/components/ui/back-link";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { buttonVariants } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { SELECTION_RULE, STAGE_LABELS, getBottleneck, otherActions, pickActions, type Bottleneck } from "@/lib/act";
 import { plainTitle } from "@/lib/action-title";
@@ -79,18 +76,24 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   const unmeasured = others.filter((group) => group.unmeasured && group.stage !== "gp_recognition");
   const remaining = others.filter((group) => !unmeasured.includes(group));
   const otherCount = others.reduce((total, group) => total + group.actions.length, 0);
-  const planHref = `/county/${county.id}/plan?actions=${recommended.map((action) => action.id).join(",")}`;
   const lead = bottleneck.focus[0];
   const leadValue = lead?.value ?? null;
   // The step pill only says something when the actions work on more than one step; otherwise the H1 already names it.
   const showStep = new Set(recommended.map((action) => action.stage)).size > 1;
 
-  const planButton = (
-    <Link href={planHref} className={cn(buttonVariants({ size: "lg" }), "h-auto max-w-full shrink whitespace-normal text-left")}>
-      Make the action plan for the board
-      <ArrowRight aria-hidden data-icon="inline-end" />
-    </Link>
-  );
+  // The plan as a file: the same model and writers the plan page used, with blank lines for names, dates and cost.
+  const fileHref = (format: "docx" | "xlsx") =>
+    `/county/${county.id}/plan/export?${new URLSearchParams({ format, actions: recommended.map((action) => action.id).join(",") })}`;
+  const shareOptions: ShareOption[] = [
+    { kind: "print" },
+    ...(recommended.length > 0
+      ? ([
+          { kind: "word", href: fileHref("docx"), hint: "The action plan, with blank lines for names, dates and cost" },
+          { kind: "excel", href: fileHref("xlsx"), hint: "The same plan as tables" },
+        ] satisfies ShareOption[])
+      : []),
+    { kind: "email", subject: `What to do: early cancer care in ${county.name}`, intro: `The recommended actions for ${county.name}, from published figures:` },
+  ];
 
   return (
     <main className={`page-container flex flex-col pt-4 sm:pt-6 ${MOTION_LOUD_CLASS}`}>
@@ -102,11 +105,14 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
       <FocusGroup>
         {/* 1. The main delay, its figure, and the one thing to do with it. */}
         <section data-focus-item aria-labelledby="act-title" className="mt-6 flex flex-col gap-6 rounded-lg bg-keylime-wash px-7 py-9 sm:px-12 sm:py-12">
-          <Reveal index={0}>
-            <h1 id="act-title" className="type-page max-w-[22ch] text-pretty">
-              {statement(county.name, bottleneck)}
-            </h1>
-          </Reveal>
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+            <Reveal index={0}>
+              <h1 id="act-title" className="type-page max-w-[22ch] text-pretty">
+                {statement(county.name, bottleneck)}
+              </h1>
+            </Reveal>
+            <SaveShare options={shareOptions} align="end" className="sm:shrink-0 sm:items-end" />
+          </div>
           {lead && leadValue !== null ? (
             <Reveal index={1} className="flex flex-col gap-2">
               <p className="numeral text-[4rem] leading-none text-forest-ink sm:text-[5rem]">
@@ -136,11 +142,6 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
               </ul>
             </Disclosure>
           </Reveal>
-          {recommended.length > 0 ? (
-            <Reveal index={3} className="pt-1">
-              <div data-print="hide">{planButton}</div>
-            </Reveal>
-          ) : null}
         </section>
 
         {/* 2. The actions, one card each. */}
@@ -156,9 +157,6 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
                 </li>
               ))}
             </ol>
-            <Reveal className="mt-16 md:mt-[18vh]">
-              <div data-print="hide">{planButton}</div>
-            </Reveal>
           </section>
         ) : null}
       </FocusGroup>

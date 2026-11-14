@@ -22,7 +22,7 @@ type Choices = {
   /** Index of the action in focus (0 to 2): chosen in step 4, read by steps 5 and 6. */
   action: number;
   setAction: (index: number) => void;
-  /** The target year chosen in step 5, passed on to the plan page in step 6. */
+  /** The target year chosen in step 5, passed on to the plan download in step 6. */
   year: number;
   setYear: (year: number) => void;
 };

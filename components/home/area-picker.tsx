@@ -101,7 +101,7 @@ export function AreaPicker({ areas, defaultId, totalAreas, previews }: Props) {
               <ArrowRight aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />
             </Link>
             <p className="text-base leading-6 text-pretty text-charcoal">
-              {BRIEFING_STEP_COUNT} short steps · about 2 minutes · ends in a plan you can print for your board
+              {BRIEFING_STEP_COUNT} short steps · about 2 minutes · download or print at the end
             </p>
           </div>
         </FramePanel>

@@ -1,13 +1,12 @@
-import { FileSpreadsheet } from "lucide-react";
 import type { Metadata } from "next";
 
 import { CompareTable } from "@/components/compare/compare-table";
 import { EarlyWarning } from "@/components/home/early-warning";
 import { CompareBars } from "@/components/compare/compare-story";
 import { StoryFact } from "@/components/compare/story-fact";
-import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, FocusGroup, MoreCard, PrintButton, Reveal, ScrollStory } from "@/components/motion";
+import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, FocusGroup, MoreCard, Reveal, ScrollStory } from "@/components/motion";
+import { SaveShare } from "@/components/share";
 import { SourceChip } from "@/components/source-chip";
-import { buttonVariants } from "@/components/ui/button";
 import { FramePanel } from "@/components/ui/frame";
 import { BarKey } from "@/components/ui/measure-bar";
 import { FIRST_YEAR, getCompareLead, getCompareRows, LATEST_YEAR } from "@/lib/compare";
@@ -51,13 +50,10 @@ export default function ComparePage() {
         source={chip}
         caveat={{ short: "counts visits, not people, and every non-urgent GP visit, not only possible cancer", why: gpIndicator?.limitation }}
       >
-        <div data-print="hide" className="flex flex-wrap gap-2.5 pt-2">
-          <a href="/compare/export" download className={buttonVariants({ size: "lg" })}>
-            <FileSpreadsheet aria-hidden strokeWidth={1.75} data-icon="inline-start" />
-            Download the table for Excel
-          </a>
-          <PrintButton size="lg" />
-        </div>
+        <SaveShare
+          className="pt-2"
+          options={[{ kind: "print" }, { kind: "excel", href: "/compare/export", hint: "The table of all areas" }]}
+        />
       </Chunk>
 
       <section aria-labelledby="spread-heading" className="flex flex-col gap-8 py-16 sm:py-24 print:break-before-page print:py-0">

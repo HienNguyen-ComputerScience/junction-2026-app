@@ -1,5 +1,5 @@
 // A minimal .docx writer: headings, paragraphs, bullet-style lines and bordered tables on A4.
-// Enough for a board paper that opens in Word, can be edited there and prints cleanly.
+// Enough for a plan document that opens in Word, can be edited there and prints cleanly.
 
 import { xml, zip } from "@/lib/export/zip";
 
