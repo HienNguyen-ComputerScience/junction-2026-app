@@ -171,6 +171,24 @@ Never put a headline figure, its source chip or its main limitation inside one.
 
 `<PrintButton label="Print or save as PDF" variant="outline" size="default" />` calls `window.print()`. `PrintExpand` (mounted once in the layout) opens every closed `<details>` for the print. The print stylesheet hides the header, the footer and anything marked `print:hidden` or `data-print="hide"`, shows every Reveal, and keeps colours. A new full-screen layout should mark its own chrome `print:hidden`. Panels may break across pages (a tall panel that may not break pushes a blank page ahead of itself); add `print-keep` to a small unit that must stay whole.
 
+### `StatUnit` (`components/stat/stat-unit.tsx`)
+
+The lead figure of a page or section, as one self-contained unit: eyebrow, a big figure that counts up once, `unit` set smaller after it, an optional status badge, the meaning in one or two plain sentences (children), the one limitation that applies (always visible), source chips, and optional `detail` behind a quiet "Show {detailLabel}" button.
+
+```tsx
+<StatUnit eyebrow="Worse than Finland" value={14} decimals={0} final="14" unit="of 22 areas" tone="alarm"
+  status={{ status: "red", label: "Worse than Finland's level" }} sources={[{ sourceId: "sotkanet-6411", year: 2025 }]}
+  limitation="Counts visits, not people." detail={…} detailLabel="what this figure counts" index={1}>
+  <p>have a larger share of non-urgent GP visits waiting more than 7 days than Finland.</p>
+</StatUnit>
+```
+
+Use it for 2–4 figures at the top of a page (grid `md:grid-cols-2`), never inside a table. `tone="alarm"` only for a figure that is worse than Finland. The compare page (`/compare`) is the reference page for the pattern.
+
+### Link that looks like a button
+
+`buttonVariants({ variant, size, className })` returns merged classes (it runs `cn`), so `<Link className={buttonVariants({ variant: "outline" })}>` gets the outline border. Two variants only: `default` (primary, one per view) and `outline`.
+
 ### Tables on a phone
 
 `<table className="stack-table">`: below 640px each row reads as label/value lines. Give every `<td>` a `data-label="Column name"` and wrap its content in one element. The plan page's `Td` helper does both.
@@ -272,6 +290,7 @@ type DataGap = {
 | Sources | `getSource(sourceId): Source`; `<SourceChip sourceId year />` | `lib/data`, `components/source-chip` |
 | Limitations | `getIndicator(id).limitation`; `gap.note`; `getRecordingCaveat(areaId): { tag, text } \| null` (show it wherever a rise in the GP-wait share is shown); `CITY_UNITS_ONLY_REFERRAL` (Helsinki); `gap.shared` (the HUS-wide referral value, never a county's own figure) | `lib/ranking`, `lib/recording` |
 | Best area, gap to it | `bestForStage(stage)`, `betterFor(indicatorId)`; `whatIf(…)`, `diff1(a, b)` | `lib/main-reason`, `lib/what-if` |
+| Every area side by side | `getCompareRows(): CompareRow[]` (rank, 2023–2025 GP values, vs Finland, change, recording caveat, own/shared/city-only referral); `getCompareLead(rows)` (the four lead counts); `changeText`, `vsFinlandText` (client-safe, `lib/compare-text`). Excel: `GET /compare/export` | `lib/compare` |
 | Formatting | `formatPct(value)` → `"85.4%"` | `lib/ranking` |
 
 ### Wording rules that travel with the data
