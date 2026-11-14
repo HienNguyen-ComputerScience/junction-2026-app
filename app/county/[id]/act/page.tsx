@@ -1,15 +1,17 @@
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { ActionCard, ActionSummary, plainTitle } from "@/components/act/action-card";
+import { ActionCard, ActionSummary } from "@/components/act/action-card";
 import { ReferralRoutes } from "@/components/act/referral-routes";
 import { EvidenceFinder } from "@/components/exa/evidence-finder";
 import { WhatIfForArea } from "@/components/home/what-if-panel";
 import { buildPathwaySteps, PathwaySteps } from "@/components/pathway/pathway-steps";
 import { BackLink } from "@/components/ui/back-link";
-import { CardCarousel } from "@/components/ui/card-carousel";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { Disclosure } from "@/components/ui/disclosure";
+import { Disclosure, PrintButton, Reveal } from "@/components/motion";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Frame,
   FrameDescription,
@@ -50,6 +52,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   const unmeasured = others.filter((group) => group.unmeasured && group.stage !== "gp_recognition");
   const remaining = others.filter((group) => !unmeasured.includes(group));
   const otherCount = others.reduce((total, group) => total + group.actions.length, 0);
+  const planHref = `/county/${county.id}/plan?actions=${recommended.map((action) => action.id).join(",")}`;
 
   return (
     <main className="page-container flex flex-col gap-8 pt-4 sm:pt-6">
@@ -65,6 +68,18 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           </p>
           <h1 className="type-page">{county.name}: what to do next</h1>
         </div>
+        <p className="type-lede max-w-[62ch] text-pretty text-foreground">{bottleneckLede(bottleneck)}</p>
+        <div data-print="hide" className="flex flex-wrap gap-2.5 pt-2">
+          <Link href={planHref} className={buttonVariants({ size: "lg" })}>
+            Make the action plan for the board
+            <ArrowRight aria-hidden data-icon="inline-end" />
+          </Link>
+          <PrintButton variant="outline" size="lg" />
+        </div>
+        <p data-print="hide" className="max-w-[62ch] text-sm text-muted-foreground">
+          The plan has these {recommended.length} actions filled in. You add who is responsible, a review date and the cost, then
+          print it or download it for Word or Excel.
+        </p>
       </header>
 
       <Frame aria-labelledby="recommended">
@@ -77,34 +92,26 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
             {bottleneck.anyRed ? "Ordered by where the pathway breaks" : "Ordered by closeness to Finland's level"}
           </FrameMeta>
         </FrameHeader>
-        {/* One action at a time, a peek of the next; the same height for all. */}
-        <CardCarousel
-          label={`Recommended actions for ${county.name}`}
-          noun="action"
-          showSteps
-          items={recommended.map((action, index) => ({
-            id: action.id,
-            label: plainTitle(action.action),
-            node: (
-              <ActionCard action={action} index={index + 1} showIndex={false}>
+        {/* Every recommended action in order, numbered, one under the other. */}
+        <ol aria-label={`Recommended actions for ${county.name}`} className="flex flex-col gap-1.5">
+          {recommended.map((action, index) => (
+            <Reveal as="li" key={action.id} index={index} className="print-flow">
+              <ActionCard action={action} index={index + 1}>
                 <EvidenceFinder actionId={action.id} actionTitle={action.action} />
               </ActionCard>
-            ),
-          }))}
-        />
+            </Reveal>
+          ))}
+        </ol>
+        <div data-print="hide" className="flex flex-col items-start gap-2 px-1 pt-3 pb-1 sm:flex-row sm:items-center sm:gap-4">
+          <Link href={planHref} className={buttonVariants()}>
+            Make the action plan for the board
+            <ArrowRight aria-hidden data-icon="inline-end" />
+          </Link>
+          <p className="text-sm text-muted-foreground">With these {recommended.length} actions, ready to print or download.</p>
+        </div>
 
         {otherCount > 0 ? (
-          <Disclosure
-            className="mt-1.5"
-            summaryClassName="min-h-11 w-full gap-2 rounded-panel px-3 sm:px-4"
-            summary={
-              <span>
-                <span className="group-open/disc:hidden">Show</span>
-                <span className="hidden group-open/disc:inline">Hide</span> {otherCount} other evidence-backed{" "}
-                {otherCount === 1 ? "option" : "options"}
-              </span>
-            }
-          >
+          <Disclosure className="mt-3" label={`${otherCount} other evidence-backed ${otherCount === 1 ? "option" : "options"}`}>
             <div className="flex flex-col gap-1.5 pt-1.5">
               {unmeasured.map((group) => (
                 <section key={group.stage} aria-labelledby={`unmeasured-${group.stage}`}>

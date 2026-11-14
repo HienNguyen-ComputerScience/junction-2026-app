@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import { FramePanel } from "@/components/ui/frame";
 import { STAGE_LABELS } from "@/lib/act";
+import { plainTitle } from "@/lib/action-title";
 import type { Evidence } from "@/lib/data";
 
 /** A plain text tag (step, checked): the chip shape in the UI sans, so it never reads as a source. */
@@ -40,12 +41,8 @@ export function FirstStep({ children, compact = false }: { children: ReactNode; 
   );
 }
 
-/** An action title without its trailing full stop (stripped at render; the data keeps its text). */
-export const plainTitle = (title: string) =>
-  title
-    .replace(/\.+\s*$/, "")
-    // Omaolo is named with what it is at its first use, which is the title of its own action.
-    .replace("the national digital symptom assessment (Omaolo)", "Omaolo (the national online symptom checker)");
+// The title helper lives in lib/ so the plan's exports can use it without importing a component.
+export { plainTitle };
 
 type Effect = NonNullable<Evidence["effect_size"]>;
 
@@ -151,7 +148,7 @@ export function ActionCard({
     >
       <div className="grid gap-x-10 gap-y-2.5 @3xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-3">
-          <h3 className="font-heading text-[1.5rem] leading-[1.2] font-semibold tracking-[-0.01em] text-pretty">
+          <h3 className="font-display text-[1.75rem] leading-[1.2] font-light text-pretty text-forest-ink">
             {plainTitle(action.action)}
           </h3>
           <FirstStep compact>{action.first_step}</FirstStep>

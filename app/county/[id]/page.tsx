@@ -3,18 +3,19 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { CountyBrief } from "@/components/brief/county-brief";
 import { CountyNews } from "@/components/exa/county-news";
 import { LimitationsBox, type LimitationItem } from "@/components/pathway/limitations-box";
 import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
-import { RecordingNote } from "@/components/pathway/recording-note";
 import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { buildStepTabs } from "@/components/pathway/step-panels";
-import { StepAside, StepTabs, StepTabsProvider } from "@/components/pathway/step-tabs";
-import { HUS_FULL, shortReason } from "@/components/pathway/wording";
+import { AreaLead, spellHus } from "@/components/county/area-lead";
+import { StepsPicture, StepStoryText } from "@/components/county/step-story";
+import { Disclosure, FocusGroup, MoreCard, PrintButton, Reveal, ScrollStory } from "@/components/motion";
+import { HUS_FULL } from "@/components/pathway/wording";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { buttonVariants } from "@/components/ui/button";
-import { getBottleneck } from "@/lib/act";
+import { getBottleneck, pickActions } from "@/lib/act";
+import { getAreaSteps } from "@/lib/plan-model";
 import { getMainReason } from "@/lib/main-reason";
 import { counties, gaps, getCounty, getValue, LATEST_YEAR, type County } from "@/lib/data";
 import {
@@ -51,56 +52,91 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const county = getCounty(id);
   if (!county) notFound();
 
-  const steps = buildPathwaySteps(county.id);
   const limitations = buildLimitations(county);
-  const { anyRed } = getBottleneck(county.id);
-  // The verdict is the main reason sentence, the same one as on the home card. The tab selected
-  // first is the step that sentence is about (the worst one), so the two always agree.
+  const bottleneck = getBottleneck(county.id);
+  // The main reason is the same sentence as on the home card; the step it is about is flagged as
+  // the main delay and leads the page, so the two always agree.
   const reason = getMainReason(county.id);
-  const reasonStage = reason.gap?.stage ?? null;
-  const tabs = buildStepTabs(county.id, steps);
+  const reasonStage = bottleneck.anyRed ? (reason.gap?.stage ?? null) : null;
+  const steps = getAreaSteps(county.id);
+  // Each step's trend (2023-2025), from the same builder the old tabs used.
+  const trends = new Map(buildStepTabs(county.id, buildPathwaySteps(county.id)).map((tab) => [tab.id, tab.aside]));
+  const actions = pickActions(bottleneck);
+  const planHref = `/county/${county.id}/plan?actions=${actions.map((action) => action.id).join(",")}`;
 
   return (
-    <main className="page-container flex flex-col gap-10 pt-4 sm:gap-14 sm:pt-6">
-      {/* Desktop: name, verdict and the three steps (one at a time) on the left, the limitations
-          box beside them, so both are on the first screen. Below lg the limitations are a
-          one-line disclosure under the main action instead (never both at the same width). */}
-      <StepTabsProvider tabs={tabs} defaultId={reasonStage ?? "gp_access"}>
-        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-start lg:gap-10">
-          <header className="flex flex-col items-start gap-4">
-            <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
-            <h1 className="type-page lg:text-[2.5rem] lg:leading-[1.1]">{county.name}</h1>
-            <p className="max-w-[44rem] text-base leading-relaxed text-pretty text-foreground">{shortReason(reason)}</p>
-            {reason.caveat && <RecordingNote caveat={reason.caveat} className="max-w-[44rem]" />}
-            <section aria-labelledby="steps-heading" className="w-full">
-              <h2 id="steps-heading" className="sr-only">
-                The first three steps, compared with Finland ({LATEST_YEAR})
-              </h2>
-              <StepTabs
-                label={`The first three steps, ${LATEST_YEAR}`}
-                action={
-                  <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
-                    {anyRed ? "See all actions" : "Actions to keep this level"}
-                    <ArrowRight aria-hidden data-icon="inline-end" />
-                  </Link>
-                }
-              />
-            </section>
-            <LimitationsBox items={limitations} variant="disclosure" className="mt-2 w-full lg:hidden" />
-          </header>
+    <main className="page-container flex flex-col pt-4 sm:pt-6">
+      <FocusGroup>
+      <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
 
-          {/* Right column: the limitations, then the selected step's trend under them. */}
-          <div className="flex flex-col gap-4 max-lg:mt-4">
-            <LimitationsBox items={limitations} className="max-lg:hidden" />
-            <StepAside />
-          </div>
+      <AreaLead countyId={county.id}>
+        <div data-print="hide" className="flex flex-wrap gap-2.5 pt-2">
+          <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
+            {bottleneck.anyRed ? "See what to do" : "Actions to keep this level"}
+            <ArrowRight aria-hidden data-icon="inline-end" />
+          </Link>
+          <Link href={planHref} className={buttonVariants({ variant: "outline", size: "lg" })}>
+            Make the action plan for the board
+          </Link>
+          <PrintButton size="lg" />
         </div>
-      </StepTabsProvider>
+      </AreaLead>
 
-      <PathwayStrip countyId={county.id} />
+      <section aria-labelledby="steps-heading" className="flex flex-col gap-8 py-16 sm:py-24">
+        <Reveal className="motion-loud">
+          <h2 id="steps-heading" className="max-w-[24ch] font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.75rem]">
+            {bottleneck.anyRed ? "Where care is delayed" : "Where the pathway stands"}
+          </h2>
+        </Reveal>
+        <ScrollStory
+          label={`The first three steps in ${county.name}`}
+          picture={<StepsPicture steps={steps} mainStage={reasonStage} year={LATEST_YEAR} />}
+          steps={steps.map((step) => (
+            <StepStoryText
+              key={step.stage}
+              step={step}
+              flag={step.stage === reasonStage ? "The main delay" : undefined}
+              trend={trends.get(step.stage)}
+            />
+          ))}
+        />
+      </section>
 
-      <CountyBrief countyId={county.id} />
-      <CountyNews key={county.id} countyId={county.id} />
+      <section aria-labelledby="limits-heading" className="flex flex-col gap-5 pb-16 sm:pb-24">
+        <Reveal className="motion-loud">
+          <h2 id="limits-heading" className="max-w-[24ch] font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.75rem]">
+            What these figures cannot tell you
+          </h2>
+        </Reveal>
+        <LimitationsBox items={limitations} visibleCount={4} />
+      </section>
+
+      <MoreCard
+        title={`More for ${county.name}`}
+        className="mb-8"
+        rows={[
+          {
+            key: "path",
+            label: "The whole path to treatment",
+            children: (
+              <Disclosure show="Show the eight steps" hide="Hide the eight steps">
+                <PathwayStrip countyId={county.id} />
+              </Disclosure>
+            ),
+          },
+          {
+            key: "news",
+            print: false,
+            label: "Local news, last 12 months (found live, unverified)",
+            children: (
+              <Disclosure show="Show the news" hide="Hide the news">
+                <CountyNews key={county.id} countyId={county.id} />
+              </Disclosure>
+            ),
+          },
+        ]}
+      />
+      </FocusGroup>
     </main>
   );
 }
@@ -118,12 +154,6 @@ const INDICATOR_SHORT: Record<string, string> = {
   [REFERRAL_ID]: "Measures when assessment starts, not when a specialist is seen.",
   [REFERRAL_LATE_ID]: "Whole percentages of 0-3% everywhere, so it barely separates counties.",
 };
-
-/** The first "HUS" of a text, spelled out. */
-const spellHus = (text: string) =>
-  text.includes("the HUS-wide value")
-    ? text.replace("the HUS-wide value", `one value for ${HUS_FULL}`)
-    : text.replace(/\bHUS\b(?! \()/, HUS_FULL);
 
 function buildLimitations(county: County): LimitationItem[] {
   const items: LimitationItem[] = [];

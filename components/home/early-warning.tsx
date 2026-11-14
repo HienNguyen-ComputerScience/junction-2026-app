@@ -61,7 +61,7 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
             {finland !== null && (
               <>
                 {" "}
-                · White line: Finland <span className="figure text-foreground">{formatPct(finland)}</span>
+                · Dark line: Finland <span className="figure text-foreground">{formatPct(finland)}</span>
               </>
             )}
           </h3>

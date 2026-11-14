@@ -92,7 +92,7 @@ export function buildPathwaySteps(countyId: string): PathwayStep[] {
 }
 
 const MARK: Record<GapStatus, string> = {
-  // Dark ink on the saturated fills: 5.0:1 on red, 9.7:1 on slate.
+  // Cream text on the solid fills: 5.5:1 on rust, 6.2:1 on slate.
   red: "bg-status-red text-background",
   amber: "bg-status-amber text-background",
   no_data: "border border-dashed border-status-grey-ink/60 text-status-grey-ink",
@@ -121,8 +121,8 @@ function StepTitle({ step, compact = false }: { step: PathwayStep; compact?: boo
       <StepMark step={step.step} status={step.status} className={compact ? undefined : "size-7 text-[0.8125rem]"} />
       <h3
         className={cn(
-          "min-w-0 font-heading font-semibold tracking-normal text-pretty",
-          compact ? "text-[0.9375rem] leading-6" : "text-base leading-7",
+          "min-w-0 font-sans font-semibold tracking-normal text-pretty text-forest-ink",
+          compact ? "text-base leading-6" : "text-[1.0625rem] leading-7",
         )}
       >
         <span className="sr-only">Step {step.step}: </span>

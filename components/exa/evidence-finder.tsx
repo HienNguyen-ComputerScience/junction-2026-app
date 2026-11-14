@@ -50,7 +50,7 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
   const showResults = loading || (data !== null && !unavailable);
 
   return (
-    <section aria-label={`Live evidence search for: ${actionTitle}`} className="flex w-full flex-col gap-2">
+    <section data-print="hide" aria-label={`Live evidence search for: ${actionTitle}`} className="flex w-full flex-col gap-2">
       {/* A secondary action: the action's own checked source comes first. */}
       <Button
         type="button"
@@ -59,10 +59,10 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
         disabled={loading}
         aria-expanded={state.kind !== "idle"}
         aria-controls={panelId}
-        className="w-fit text-[0.8125rem]"
+        className="w-fit max-w-full whitespace-normal text-left"
       >
         <Search aria-hidden strokeWidth={1.75} className="size-4" />
-        {state.kind === "idle" ? "Find more evidence live" : loading ? "Searching…" : "Search again"}
+        {state.kind === "idle" ? "Search for newer studies" : loading ? "Searching…" : "Search again"}
       </Button>
 
       <div id={panelId} className="empty:hidden">
@@ -73,12 +73,12 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
               <CloseButton onClick={close} label="Close live search results" />
             </div>
             {data?.freshness === "stale-cache" && data.message && (
-              <p className="text-sm text-muted-foreground">{data.message}</p>
+              <p className="text-base text-muted-foreground">{data.message}</p>
             )}
             <div className="border-t border-border pt-3">
               {loading && <LoadingRows label="Searching for more evidence with Exa" rows={2} />}
               {data && data.items.length === 0 && (
-                <p className="text-sm text-muted-foreground">Nothing found for this action.</p>
+                <p className="text-base text-muted-foreground">Nothing found for this action.</p>
               )}
               {data && data.items.length > 0 && <ResultList items={data.items} />}
             </div>
@@ -88,7 +88,7 @@ export function EvidenceFinder({ actionId, actionTitle }: { actionId: string; ac
           <div className="flex items-start gap-2">
             <div className="min-w-0 flex-1">
               {limited ? (
-                <p role="status" className="rounded-lg border border-input bg-muted px-4 py-3 text-sm text-foreground">
+                <p role="status" className="rounded-lg border border-input bg-muted px-4 py-3 text-base text-foreground">
                   {TOO_MANY}
                 </p>
               ) : (

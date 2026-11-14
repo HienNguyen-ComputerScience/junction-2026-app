@@ -1,0 +1,3512 @@
+[
+  {
+    "county_id": "central-finland",
+    "name": "Central Finland",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 85.1,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 76.5,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 70.7,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 73.5,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure fell 36% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 78.1,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 72,
+            "shared": null,
+            "finland": 68,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 92,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "central-ostrobothnia",
+    "name": "Central Ostrobothnia",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 85.4,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 73.3,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "same",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 69.2,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 52.9,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure more than doubled from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 71.7,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 70,
+            "shared": null,
+            "finland": 68,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 91,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "central-uusimaa",
+    "name": "Central Uusimaa",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 80.5,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 74,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "same",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 75.9,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 46.7,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 74.1,
+            "shared": {
+              "name": "HUS",
+              "confirmed_by": "hus-referrals-2024"
+            },
+            "finland": 76.8,
+            "versus": null,
+            "grade": {
+              "level": "shared",
+              "label": "Shared hospital value",
+              "reason": "Only a HUS-wide value is published (74.1% in 2025); it covers several areas, not Central Uusimaa alone."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 74,
+            "shared": null,
+            "finland": 68,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 92,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "east-uusimaa",
+    "name": "East Uusimaa",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 79.8,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 72,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 75.7,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 51.8,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure rose 38% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 74.1,
+            "shared": {
+              "name": "HUS",
+              "confirmed_by": "hus-referrals-2024"
+            },
+            "finland": 76.8,
+            "versus": null,
+            "grade": {
+              "level": "shared",
+              "label": "Shared hospital value",
+              "reason": "Only a HUS-wide value is published (74.1% in 2025); it covers several areas, not East Uusimaa alone."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 72,
+            "shared": null,
+            "finland": 68,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 90,
+            "shared": null,
+            "finland": 92,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "helsinki",
+    "name": "Helsinki",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 74.3,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 69.6,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 71.4,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 75.9,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 76.8,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "same",
+            "grade": {
+              "level": "care",
+              "label": "Read with care",
+              "reason": "Covers the city's own specialist units only; most Helsinki referrals go to HUS."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 71,
+            "shared": null,
+            "finland": 68,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 91,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "kainuu",
+    "name": "Kainuu",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 84.1,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 76.5,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 78.5,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 38.4,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure more than doubled from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 75.2,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 64,
+            "shared": null,
+            "finland": 68,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 89,
+            "shared": null,
+            "finland": 92,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "kanta-hame",
+    "name": "Kanta-Häme",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 83.4,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 74.3,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "same",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 70.4,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 65.6,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure fell 35% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 88.7,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 66,
+            "shared": null,
+            "finland": 68,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 92,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "kymenlaakso",
+    "name": "Kymenlaakso",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 82,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 70,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 76.5,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 61.8,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure fell 23% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 82,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 70,
+            "shared": null,
+            "finland": 68,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 93,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "lapland",
+    "name": "Lapland",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 83.8,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 73.7,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "same",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 79.9,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 48.6,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 80.2,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 73,
+            "shared": null,
+            "finland": 68,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 92,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "north-karelia",
+    "name": "North Karelia",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 84.2,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 73.2,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "same",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 68,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 59.3,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure fell 43% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 76.9,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 66,
+            "shared": null,
+            "finland": 68,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 90,
+            "shared": null,
+            "finland": 92,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "north-ostrobothnia",
+    "name": "North Ostrobothnia",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 85.6,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 75.6,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 73.6,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 63.3,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure fell 21% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 78,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 69,
+            "shared": null,
+            "finland": 68,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 90,
+            "shared": null,
+            "finland": 92,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "north-savo",
+    "name": "North Savo",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 85.1,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 75.4,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 70,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 60.5,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 71.5,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 64,
+            "shared": null,
+            "finland": 68,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 93,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "ostrobothnia",
+    "name": "Ostrobothnia",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 84.9,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 75.9,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 72.4,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 56.7,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure fell 68% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 76.5,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 71,
+            "shared": null,
+            "finland": 68,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 92,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "paijat-hame",
+    "name": "Päijät-Häme",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 81.8,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 75.2,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 68.9,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 32.7,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure rose 50% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 85.3,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 63,
+            "shared": null,
+            "finland": 68,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 91,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "pirkanmaa",
+    "name": "Pirkanmaa",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 83.5,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 74.3,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "same",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 71.5,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 45.8,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 72.4,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 66,
+            "shared": null,
+            "finland": 68,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 93,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "satakunta",
+    "name": "Satakunta",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 84.9,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 72.6,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "same",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 71.3,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 56.6,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure fell 50% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 77.7,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 64,
+            "shared": null,
+            "finland": 68,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 92,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "south-karelia",
+    "name": "South Karelia",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 83.2,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 74,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "same",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 75.8,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 60.3,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 88.1,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of referrals behind this figure rose 23% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 65,
+            "shared": null,
+            "finland": 68,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 92,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "south-ostrobothnia",
+    "name": "South Ostrobothnia",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 85,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 74.6,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 82.3,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": true
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 67.8,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure fell 48% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 68.9,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 65,
+            "shared": null,
+            "finland": 68,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 93,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "south-savo",
+    "name": "South Savo",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 82.2,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 76.9,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 82.3,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": true
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 69.7,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure fell 22% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 78.1,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 72,
+            "shared": null,
+            "finland": 68,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 91,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "southwest-finland",
+    "name": "Southwest Finland",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 82.7,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": true
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 73.5,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "same",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 77.6,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 57.9,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure rose 55% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 78.2,
+            "shared": null,
+            "finland": 76.8,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 67,
+            "shared": null,
+            "finland": 68,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 94,
+            "shared": null,
+            "finland": 92,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "vantaa-kerava",
+    "name": "Vantaa and Kerava",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 76.7,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 71.3,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 70.7,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 85.4,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read with care",
+              "reason": "THL reports visits missing from Vantaa's and Kerava's records (about 20% and 30% of visits in 2024)."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 74.1,
+            "shared": {
+              "name": "HUS",
+              "confirmed_by": "hus-referrals-2024"
+            },
+            "finland": 76.8,
+            "versus": null,
+            "grade": {
+              "level": "shared",
+              "label": "Shared hospital value",
+              "reason": "Only a HUS-wide value is published (74.1% in 2025); it covers several areas, not Vantaa and Kerava alone."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 73,
+            "shared": null,
+            "finland": 68,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 94,
+            "shared": null,
+            "finland": 92,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "county_id": "west-uusimaa",
+    "name": "West Uusimaa",
+    "steps": [
+      {
+        "id": "detection",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3621",
+            "year": 2024,
+            "value": 76.1,
+            "shared": null,
+            "finland": 81.6,
+            "versus": "worse",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to breast screening who attended.",
+            "source_id": "sotkanet-3621",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "6103",
+            "year": 2024,
+            "value": 71.5,
+            "shared": null,
+            "finland": 73.5,
+            "versus": "worse",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The bowel screening programme started in 2022 and is still adding age groups, so years are not fully comparable."
+            },
+            "scope": "People invited to bowel screening who attended.",
+            "source_id": "sotkanet-6103",
+            "target": 80,
+            "meets_target": false
+          },
+          {
+            "indicator_id": "3620",
+            "year": 2024,
+            "value": 73.6,
+            "shared": null,
+            "finland": 73.4,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Women invited to cervical screening who attended.",
+            "source_id": "sotkanet-3620",
+            "target": 80,
+            "meets_target": false
+          }
+        ]
+      },
+      {
+        "id": "gp_recognition",
+        "published": false,
+        "items": [],
+        "data_gap_id": "route-to-diagnosis"
+      },
+      {
+        "id": "gp_access",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "6411",
+            "year": 2025,
+            "value": 40,
+            "shared": null,
+            "finland": 54.7,
+            "versus": "better",
+            "grade": {
+              "level": "care",
+              "label": "Read the trend with care",
+              "reason": "The number of visits behind this figure rose 25% from 2024, so part of the change may be in what was recorded."
+            },
+            "scope": "Covers all non-urgent GP visits, not only cancer. Counts visits, not people.",
+            "source_id": "sotkanet-6411"
+          }
+        ]
+      },
+      {
+        "id": "referral",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "13",
+            "year": 2025,
+            "value": 74.1,
+            "shared": {
+              "name": "HUS",
+              "confirmed_by": "hus-referrals-2024"
+            },
+            "finland": 76.8,
+            "versus": null,
+            "grade": {
+              "level": "shared",
+              "label": "Shared hospital value",
+              "reason": "Only a HUS-wide value is published (74.1% in 2025); it covers several areas, not West Uusimaa alone."
+            },
+            "scope": "Counts all referrals to the hospital, not only cancer, by the hospital that received them.",
+            "source_id": "sotkanet-13"
+          }
+        ]
+      },
+      {
+        "id": "diagnosis",
+        "published": false,
+        "items": [],
+        "data_gap_id": "diagnostic-interval"
+      },
+      {
+        "id": "treatment",
+        "published": false,
+        "items": [],
+        "data_gap_id": "treatment-within-target"
+      },
+      {
+        "id": "outcome",
+        "published": true,
+        "items": [
+          {
+            "indicator_id": "3627",
+            "year": 2024,
+            "value": 70,
+            "shared": null,
+            "finland": 68,
+            "versus": "better",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3627"
+          },
+          {
+            "indicator_id": "3625",
+            "year": 2024,
+            "value": 92,
+            "shared": null,
+            "finland": 92,
+            "versus": "same",
+            "grade": {
+              "level": "solid",
+              "label": "Solid",
+              "reason": "Published for this area and year; the count behind it is steady."
+            },
+            "scope": "Patients diagnosed over ten years; published in whole percent.",
+            "source_id": "sotkanet-3625"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -193,7 +193,218 @@ const CONTEXT_SOURCES = [
     retrieved: "2026-11-14",
     data_updated: null,
   },
+  // The national cancer strategy itself: the four main goals (Goal 3 on pp. 32-33). The roadmap
+  // that carries its measures is an evidence source (see ROADMAP_SOURCE below).
+  {
+    source_id: "stm-cancer-strategy-2026-2035",
+    kind: "evidence",
+    name: "Kansallinen syöpästrategia 2026–2035: Yhdessä syöpää vastaan, ihmislähtöistä syövän ehkäisyä ja hoitoa (STM 2025)",
+    url: "https://files.hackjunction.app/resources/Kansallinen_syopastrategia_2026_2035_FINAL.pdf",
+    publisher: "National cancer strategy 2026–2035",
+    retrieved: "2026-11-14",
+    data_updated: null,
+  },
 ];
+
+// ------------------------------------------------------------ roadmap measures
+// The measures of the strategy's implementation roadmap 2026-2031 that the app's actions and
+// data gaps point at: who is responsible, how it is funded, the schedule and the indicator, as
+// the roadmap states them. The English is our translation; `pages` gives the printed page of
+// the Finnish original. Euro figures are the roadmap's national funding needs, never a county's
+// cost. `evidence_ids` lists the actions (docs/evidence) whose own text names this measure or
+// the model it is built on; an action that the roadmap does not name is linked to nothing.
+const ROADMAP_SOURCE = "ev-files-kansallinen-syopastrategia-toimeenpanon-tiekartta-2";
+const ROADMAP = [
+  {
+    measure_id: "2.5.1",
+    goal: 2,
+    goal_title: "Reduce the cancer burden through prevention and early detection",
+    title:
+      "Improve access to care by adding GP capacity in primary care, for example by extending the named-GP model nationwide",
+    responsible:
+      "STM (national named-GP programme: implementation, steering and funding); wellbeing services counties, HUS and the City of Helsinki (adopting the model)",
+    funding:
+      "Part of the national named-GP (omalääkäri) programme, which supports adoption with state grants. The roadmap gives no euro figure for this measure.",
+    schedule: [
+      {
+        period: "2026–2028",
+        text: "The named-GP programme expands, and continuity-of-care models cover a growing share of the population in every wellbeing services county.",
+      },
+      {
+        period: "2028–2031",
+        text: "Continuity-of-care models are in routine use in every county. GP capacity in primary care has grown and delays in access to care have shortened.",
+      },
+    ],
+    indicator: null,
+    pages: "pp. 51–52",
+    evidence_ids: ["ev-gp-capacity-roadmap", "ev-gp-continuity"],
+  },
+  {
+    measure_id: "2.5.2",
+    goal: 2,
+    goal_title: "Reduce the cancer burden through prevention and early detection",
+    title:
+      "Support a smooth move to specialist care with standardised referral criteria in the national care pathways, so that patients with possible cancer symptoms are sent quickly to the tests they need",
+    responsible: "FICAN (coordination and roll-out) with the national multi-professional cancer groups",
+    funding:
+      "Part of the national care-pathway and guideline work (included in the funding need of measure 3.1.1: €5,000,000 a year nationally, shared with four other measures).",
+    schedule: [
+      {
+        period: "2026–2028",
+        text: "Standardised referral criteria and symptom-based operating models are in the national care pathway descriptions of at least the five most common cancers. Piloting and adoption have started in the wellbeing services counties.",
+      },
+      {
+        period: "2029–2031",
+        text: "The criteria are in all major cancer pathway descriptions. Adoption is nationwide and monitoring is a routine part of managing the pathways.",
+      },
+    ],
+    indicator: "At least 70% of cancers are diagnosed at stages I–II by 2035.",
+    pages: "pp. 52–53",
+    evidence_ids: ["ev-ref-national-criteria", "ev-rec-nice-threshold", "ev-rec-direct-ct-training"],
+  },
+  {
+    measure_id: "3.1.2",
+    goal: 3,
+    goal_title: "Ensure equal and effective cancer care",
+    title:
+      "Write national care pathway descriptions for each cancer, with regional pathways based on them and a way to maintain and manage them",
+    responsible:
+      "FICAN (national coordination, regional adoption and monitoring) with the national multidisciplinary cancer groups (content); wellbeing services counties and HUS (carrying out the pathways)",
+    funding:
+      "Part of the resourcing of measure 3.1.1: €5,000,000 a year nationally, shared with four other measures.",
+    schedule: [
+      {
+        period: "2026–2028",
+        text: "National care pathway descriptions exist for five cancers and the target times for access to care are set for each. The wellbeing services counties, HUS and the collaborative areas have agreed by contract who is responsible for the regional pathways.",
+      },
+      {
+        period: "2029–2031",
+        text: "Pathway descriptions exist for all major cancers. Access to care and the effect of treatment are assessed continuously.",
+      },
+    ],
+    indicator: "Patients get to care within the target times.",
+    pages: "pp. 56–57",
+    evidence_ids: ["ev-ref-denmark-cpp", "ev-ref-sweden-svf"],
+  },
+  {
+    measure_id: "3.1.4",
+    goal: 3,
+    goal_title: "Ensure equal and effective cancer care",
+    title: "Define national quality and effectiveness targets and the indicators for following the care pathways",
+    responsible:
+      "FICAN (coordination) with the national steering group for cancer diagnostics and treatment (shared indicators) and the national cancer groups (cancer-specific targets and indicators); THL (method support)",
+    funding:
+      "Part of the resourcing of measure 3.1.1: €5,000,000 a year nationally, shared with four other measures.",
+    schedule: [
+      {
+        period: "2026–2028",
+        text: "National quality and effectiveness indicators and targets are defined for at least the five largest cancer groups.",
+      },
+      {
+        period: "2029–2031",
+        text: "Indicators and targets are defined for all major cancer groups, are in use, and give comparable information for developing care and for decisions.",
+      },
+    ],
+    indicator: "National, uniform targets and the key effectiveness indicators are defined for the agreed cancers.",
+    pages: "pp. 58–59",
+    evidence_ids: [],
+  },
+  {
+    measure_id: "3.2.1",
+    goal: 3,
+    goal_title: "Ensure equal and effective cancer care",
+    title: "Create the legal basis for a national cancer care quality register at THL's Finnish Cancer Registry",
+    responsible: "STM (decree); THL / Finnish Cancer Registry (setting up and running the register); FICAN",
+    funding: "Estimated national appropriation needed: €2,500,000.",
+    schedule: [
+      { period: "2026–2028", text: "The quality-register decree is updated to cover cancer." },
+      {
+        period: "2029–2031",
+        text: "The register produces yearly reports for at least five cancers, and the information steers national and regional cancer care.",
+      },
+    ],
+    indicator:
+      "The register's data, including stage at diagnosis, allow quality and effectiveness to be assessed and compared reliably (coverage 90%).",
+    pages: "pp. 59–60",
+    evidence_ids: [],
+  },
+].map((row) => ({ ...row, source_id: ROADMAP_SOURCE }));
+
+// ------------------------------------------------------------------ data gaps
+// What nobody publishes yet, as a to-do list: the missing figure, what exists today, who could
+// publish it (our proposal, labelled as one in the app), the roadmap measure it would fall
+// under, and what a county can do in the meantime. `step` places it on the pathway;
+// `applies_to` limits a row to the named areas (null: every area). `source_id` is the source
+// of the "today" statement.
+const DATA_GAPS = [
+  {
+    id: "suspected-cancer-gp-wait",
+    step: "gp_access",
+    missing: "How long people with possible cancer symptoms wait for a GP appointment",
+    today: "Sotkanet 6411 counts all non-urgent GP visits, not only those where cancer is possible.",
+    could_publish: "THL, which publishes Sotkanet 6411",
+    measure_id: null,
+    county_can: "Mark the contacts where cancer is suspected in the booking system and follow their wait separately.",
+    applies_to: null,
+    source_id: "sotkanet-6411",
+  },
+  {
+    id: "route-to-diagnosis",
+    step: "gp_recognition",
+    missing: "How each cancer was first found (GP referral, screening or emergency visit), by area",
+    today: "Not published in Finland. England publishes, by area, the share of cancers first found through an emergency visit.",
+    could_publish: "THL / Finnish Cancer Registry, in the cancer care quality register",
+    measure_id: "3.2.1",
+    county_can: "For each new cancer diagnosis, record how it was found: GP referral, screening or emergency visit.",
+    applies_to: null,
+    source_id: "ndrs-emergency-presentations",
+  },
+  {
+    id: "diagnostic-interval",
+    step: "referral",
+    missing: "Days from GP referral to diagnosis, by area",
+    today: "Sotkanet 13 shows how fast a hospital starts handling a referral, not when the patient is seen or diagnosed. Denmark measured this interval before and after its fast-track pathways.",
+    could_publish: "FICAN with THL, when the national indicators for the care pathways are defined",
+    measure_id: "3.1.4",
+    county_can: "Measure the time from GP referral to the first specialist test for 2–3 cancers, to set a baseline.",
+    applies_to: null,
+    source_id: "ev-pmc-pmc4412104",
+  },
+  {
+    id: "hus-area-referrals",
+    step: "referral",
+    missing: "Referral handling for East, Central and West Uusimaa and for Vantaa and Kerava, each on its own",
+    today: "Sotkanet 13 has one HUS-wide value for the four areas, so none of them has a referral figure of its own.",
+    could_publish: "HUS and THL",
+    measure_id: null,
+    county_can: "Ask HUS for the area's own share of referrals processed within 3 days.",
+    applies_to: ["central-uusimaa", "east-uusimaa", "vantaa-kerava", "west-uusimaa"],
+    source_id: "sotkanet-13",
+  },
+  {
+    id: "stage-by-area",
+    step: "diagnosis",
+    missing: "Cancer stage at diagnosis, by area",
+    today: "The roadmap's target is that at least 70% of cancers are diagnosed at stages I–II by 2035. Stage by wellbeing services county is not published.",
+    could_publish: "THL / Finnish Cancer Registry (the quality register's data are to include stage)",
+    measure_id: "3.2.1",
+    county_can: "Ask the Finnish Cancer Registry for the area's stage distribution for the most common cancers.",
+    applies_to: null,
+    source_id: ROADMAP_SOURCE,
+  },
+  {
+    id: "treatment-within-target",
+    step: "treatment",
+    missing: "Share of patients who start treatment within the target time, by area",
+    today: "This is the roadmap's indicator for Goal 3 (measure 3.1.2). The target times are due in 2026–2028; nothing is published by area yet.",
+    could_publish: "FICAN, the wellbeing services counties and HUS",
+    measure_id: "3.1.2",
+    county_can: "Record the dates of referral, diagnosis and start of treatment for the most common cancers now, so the figure exists when the target times are set.",
+    applies_to: null,
+    source_id: ROADMAP_SOURCE,
+  },
+];
+
 
 async function get(path) {
   const res = await fetch(`${API}${path}`, { headers: { "User-Agent": USER_AGENT } });
@@ -467,6 +678,25 @@ for (const [file, rows] of Object.entries(files)) {
       problems.push(`${file}[${i}]: unknown indicator_id "${row.indicator_id}"`);
   });
 }
+// Roadmap measures and data gaps: every id they point at must exist.
+const evidenceIds = new Set(evidence.map((row) => row.id));
+const measureIds = new Set(ROADMAP.map((row) => row.measure_id));
+const linked = new Set();
+ROADMAP.forEach((row, i) => {
+  if (!sourceIds.has(row.source_id)) problems.push(`roadmap[${i}]: source_id "${row.source_id}" is not in sources`);
+  for (const id of row.evidence_ids) {
+    if (!evidenceIds.has(id)) problems.push(`roadmap[${i}]: unknown evidence id "${id}"`);
+    if (linked.has(id)) problems.push(`roadmap[${i}]: evidence id "${id}" is linked to two measures`);
+    linked.add(id);
+  }
+});
+DATA_GAPS.forEach((row, i) => {
+  if (!sourceIds.has(row.source_id)) problems.push(`data-gaps[${i}]: source_id "${row.source_id}" is not in sources`);
+  if (row.measure_id !== null && !measureIds.has(row.measure_id))
+    problems.push(`data-gaps[${i}]: unknown measure_id "${row.measure_id}"`);
+  for (const id of row.applies_to ?? [])
+    if (!countyIds.has(id)) problems.push(`data-gaps[${i}]: unknown county id "${id}"`);
+});
 for (const a of ANCHORS) {
   const got = valueOf(a.county_id, a.indicator_id, a.year)?.value;
   if (got !== a.value)
@@ -486,3 +716,5 @@ write("indicators.json", indicators);
 write("values.json", values);
 write("gaps.json", gaps);
 write("evidence.json", evidence);
+write("roadmap.json", ROADMAP);
+write("data-gaps.json", DATA_GAPS);

@@ -1,0 +1,108 @@
+/* Choreography of the guided briefing: the loud end of the site's motion language.
+   The shared pieces do most of it: the briefing's root carries `motion-loud`, and its elements
+   use the shared utilities (animate-fade-up, animate-line-in) and components (AnimatedNumber,
+   AnimatedBar) from components/motion, so timings and easing come from lib/motion.ts
+   (rise 500ms, stagger 120ms, bar 700ms, 14px). This file only adds what is the briefing's
+   own. Rules:
+   - Every keyframe only has a `from`: the final state is the element's own style, so the
+     server HTML, reduced motion and print all show the finished step.
+   - Only opacity and transform move. Nothing changes size, so nothing jumps.
+   - Nothing here starts by itself after the step is on screen: a step plays once when its
+     button is pressed, and stops. */
+
+@keyframes bf-slide-in {
+  from {
+    transform: translateX(-110%);
+  }
+}
+@keyframes bf-rank {
+  from {
+    transform: translateX(0);
+  }
+}
+@keyframes bf-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+/* The thin lines at the card's left edge: each slides in from the edge, one after the other. */
+.bf-line {
+  animation: bf-slide-in 640ms var(--motion-ease) both;
+  animation-delay: calc(120ms + var(--i, 0) * 55ms);
+}
+
+/* The area's marker sliding from the low end of the rank line to its own place. The wrapper is
+   as wide as the line, so translateX(n%) is n% of the line. */
+.bf-rank {
+  animation: bf-rank 700ms var(--motion-ease) both;
+  animation-delay: 520ms;
+}
+
+/* A mark placed on something: the "delay is here" bar, a dot of the hundred. */
+.bf-pop {
+  animation: bf-pop 360ms var(--motion-ease) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+
+/* A dot of the hundred changing state when a year is chosen. Colour only. */
+.bf-dot {
+  transition:
+    background-color 320ms var(--motion-ease),
+    border-color 320ms var(--motion-ease);
+  transition-delay: calc(var(--t, 0) * 1ms);
+}
+
+/* Diagonal hatching: "no public data" drawn as absence, never as a zero. */
+.bf-hatch {
+  background-image: repeating-linear-gradient(135deg, var(--status-grey) 0 1px, transparent 1px 7px);
+}
+
+/* The button bar stays at the bottom of the window. Anything that takes the keyboard focus is
+   scrolled far enough up that the bar never covers it. */
+.bf-root :is(a, button, select, summary, [tabindex]) {
+  scroll-margin-bottom: 7rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bf-root *,
+  .bf-root *::before,
+  .bf-root *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Print: the whole briefing for the chosen area as one document. The on-screen card, its
+   buttons and the site's own header and footer stay off the paper; the print document (the
+   same model, written out in full) takes their place. Scoped with :has() so it only applies
+   while a briefing is on the page. */
+@media print {
+  .bf-root * {
+    animation: none !important;
+    transition: none !important;
+  }
+  body:has(.bf-print) > header,
+  body:has(.bf-print) > footer {
+    display: none !important;
+  }
+  .bf-print {
+    color: #222222;
+  }
+  .bf-print a {
+    color: #0f3e17;
+    text-decoration: underline;
+  }
+  /* A step may run on to the next page; its heading stays with its first lines, and no
+     paragraph, list item or action is split. Avoiding a break inside a whole step pushed
+     short steps onto a page of their own. */
+  .bf-print h1,
+  .bf-print h2 {
+    break-after: avoid;
+  }
+  .bf-print p,
+  .bf-print li {
+    break-inside: avoid;
+  }
+}

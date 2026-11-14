@@ -56,16 +56,16 @@ export function StatusBadge({
       data-slot="status-badge"
       data-status={status}
       className={cn(
-        "inline-flex w-fit shrink-0 items-center gap-1.5 rounded-sm font-medium whitespace-nowrap",
+        "inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full font-medium whitespace-nowrap",
         // Quiet is a line of secondary text (13px), not a tag: it has one size.
-        variant === "quiet" && "h-5 text-[0.8125rem] leading-5",
+        variant === "quiet" && "h-6 text-[0.875rem] leading-6",
         // xs is as tall as the source chip it sits beside.
-        variant !== "quiet" && size === "xs" && "h-6 text-[0.6875rem]",
-        variant !== "quiet" && size === "sm" && "h-6 text-[0.75rem]",
-        variant !== "quiet" && size === "md" && "h-7 text-[0.8125rem]",
+        variant !== "quiet" && size === "xs" && "h-6 text-[0.75rem]",
+        variant !== "quiet" && size === "sm" && "h-7 text-[0.8125rem]",
+        variant !== "quiet" && size === "md" && "h-8 text-[0.875rem]",
         variant === "chip" && [
           "border",
-          size === "xs" ? "px-1.5" : size === "sm" ? "px-2" : "px-2.5",
+          size === "xs" ? "px-2" : size === "sm" ? "px-2.5" : "px-3",
           status === "no_data" && "border-dashed",
           CHIP[status],
         ],

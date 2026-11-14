@@ -3,9 +3,11 @@
 // every row's source_id, county_id and indicator_id resolve before writing.
 
 import countiesJson from "@/data/counties.json";
+import dataGapsJson from "@/data/data-gaps.json";
 import evidenceJson from "@/data/evidence.json";
 import gapsJson from "@/data/gaps.json";
 import indicatorsJson from "@/data/indicators.json";
+import roadmapJson from "@/data/roadmap.json";
 import sourcesJson from "@/data/sources.json";
 import valuesJson from "@/data/values.json";
 
@@ -97,6 +99,44 @@ export type Evidence = {
   source_id: SourceId;
 };
 
+/**
+ * A measure of the national cancer strategy's implementation roadmap 2026-2031, as the roadmap
+ * states it (our English; `pages` is the printed page of the Finnish original). Euro figures in
+ * `funding` are national funding needs, never a county's cost.
+ */
+export type RoadmapMeasure = {
+  measure_id: string; // "2.5.1"
+  goal: number; // the strategy's main goal, 1 to 4
+  goal_title: string;
+  title: string;
+  responsible: string;
+  funding: string;
+  schedule: { period: string; text: string }[];
+  indicator: string | null;
+  pages: string;
+  /** Actions (evidence ids) whose own text names this measure or the model it builds on. */
+  evidence_ids: string[];
+  source_id: SourceId;
+};
+
+/** Where on the way to treatment a missing figure sits: the three steps, then the hospital's. */
+export type GapStep = Stage | "diagnosis" | "treatment";
+
+/** A figure nobody publishes yet, as a to-do: who could publish it and what a county can do now. */
+export type DataGap = {
+  id: string;
+  step: GapStep;
+  missing: string;
+  today: string;
+  /** Our proposal, shown labelled as one. */
+  could_publish: string;
+  measure_id: string | null;
+  county_can: string;
+  /** Null: every area. Otherwise only the named areas. */
+  applies_to: string[] | null;
+  source_id: SourceId;
+};
+
 // JSON imports are typed structurally (e.g. kind: string); the build script
 // guarantees the narrower types, so the casts here are safe.
 export const sources = sourcesJson as Source[];
@@ -105,6 +145,24 @@ export const indicators = indicatorsJson as Indicator[];
 export const values = valuesJson as IndicatorValue[];
 export const gaps = gapsJson as Gap[];
 export const evidence = evidenceJson as Evidence[];
+export const roadmap = roadmapJson as RoadmapMeasure[];
+export const dataGaps = dataGapsJson as DataGap[];
+
+/** The roadmap measure an action belongs to, if the roadmap names it or its model. */
+export function getMeasureForAction(evidenceId: string): RoadmapMeasure | undefined {
+  return roadmap.find((measure) => measure.evidence_ids.includes(evidenceId));
+}
+
+export function getMeasure(measureId: string): RoadmapMeasure | undefined {
+  return roadmap.find((measure) => measure.measure_id === measureId);
+}
+
+/** The data gaps that apply to an area (all the national ones, plus any named for it). */
+export function getDataGaps(countyId?: string): DataGap[] {
+  return dataGaps.filter(
+    (gap) => gap.applies_to === null || (countyId !== undefined && gap.applies_to.includes(countyId)),
+  );
+}
 
 export const LATEST_YEAR = 2025;
 export const STAGES: Stage[] = ["gp_access", "gp_recognition", "referral"];

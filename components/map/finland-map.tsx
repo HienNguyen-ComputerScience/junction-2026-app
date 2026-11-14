@@ -68,16 +68,16 @@ type Props = {
 // The fills of the bars, at the strength of the bars: an area that is worse than Finland is the
 // solid red of a bar's gap, an area at or better is the slate of a bar. The map's key and the
 // bars' key are therefore one key, with identical swatches. Hover and keyboard focus lift the
-// fill a step towards white.
+// fill a step darker.
 const AREA_FILL: Record<GapStatus, string> = {
-  red: "fill-status-red group-hover:[fill:color-mix(in_oklch,var(--status-red),white_18%)] group-focus-visible:[fill:color-mix(in_oklch,var(--status-red),white_18%)]",
+  red: "fill-status-red group-hover:[fill:color-mix(in_oklch,var(--status-red),black_22%)] group-focus-visible:[fill:color-mix(in_oklch,var(--status-red),black_22%)]",
   amber:
-    "fill-status-amber-bar group-hover:[fill:color-mix(in_oklch,var(--status-amber-bar),white_18%)] group-focus-visible:[fill:color-mix(in_oklch,var(--status-amber-bar),white_18%)]",
+    "fill-status-amber-bar group-hover:[fill:color-mix(in_oklch,var(--status-amber-bar),black_22%)] group-focus-visible:[fill:color-mix(in_oklch,var(--status-amber-bar),black_22%)]",
   no_data:
     "[fill:var(--hatch)] group-hover:[fill:var(--hatch-lift)] group-focus-visible:[fill:var(--hatch-lift)]",
 };
 
-// The selected area keeps exactly its status fill (red, slate or the hatch): the 2px cyan
+// The selected area keeps exactly its status fill (red, slate or the hatch): the 2px Forest Ink
 // outline drawn over it is what marks it as picked, so its status stays readable.
 const SELECTED_FILL: Record<GapStatus, string> = {
   red: "fill-status-red",
@@ -267,10 +267,9 @@ export function FinlandMap({
                   strokeWidth={small ? 0.75 : 1}
                   className={cn(
                     "transition-colors group-focus-visible:stroke-ring group-focus-visible:[stroke-width:4px]",
-                    // Selected: lighter fill; its accent outline is drawn on top, after the loop.
-                    // While one area is selected the others step back a little.
+                    // Selected: its Forest Ink outline is drawn on top, after the loop. The other
+                    // areas keep their full fill: dimmed on a light panel they wash out below 3:1.
                     "stroke-card",
-                    selectedId !== undefined && !selected && "opacity-[0.72] group-hover:opacity-100 group-focus-visible:opacity-100",
                     selected ? SELECTED_FILL[area.status] : small ? SMALL_AREA[area.status] : AREA_FILL[area.status],
                   )}
                 />
