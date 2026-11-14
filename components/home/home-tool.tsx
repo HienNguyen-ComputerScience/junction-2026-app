@@ -7,7 +7,7 @@ import { BriefingPreview } from "@/components/home/briefing-preview";
 import { TopAction } from "@/components/home/top-action";
 import type { FinlandMapArea } from "@/components/map/finland-map";
 import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
-import { RecordingNote } from "@/components/pathway/recording-note";
+import { Disclosure } from "@/components/motion";
 import { shortReason } from "@/components/pathway/wording";
 import { SourceChip } from "@/components/source-chip";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -16,6 +16,7 @@ import { buildBriefing } from "@/lib/briefing/model";
 import { LATEST_YEAR, type County } from "@/lib/data";
 import { getMainReason } from "@/lib/main-reason";
 import { GP_WAIT_ID, REFERRAL_ID, STATUS_LABEL, type RankingRow } from "@/lib/ranking";
+import type { RecordingCaveat } from "@/lib/recording";
 
 /**
  * Server half of the home tool: computes, for all 22 areas, the briefing's step 1 (the first
@@ -61,7 +62,7 @@ export function HomeTool({
 
     // The verdict and its recording note sit below the divider, with the three steps.
     const reason = getMainReason(county.id);
-    if (reason.caveat) notes[county.id] = <RecordingNote caveat={reason.caveat} />;
+    if (reason.caveat) notes[county.id] = <CaveatNote caveat={reason.caveat} />;
 
     areas.push({
       id: county.id,
@@ -154,6 +155,26 @@ function ThreeSteps({ countyId }: { countyId: string }) {
           </li>
         ))}
       </ol>
+    </div>
+  );
+}
+
+/**
+ * The caveat on a rise in the GP-wait share, under the verdict that names the rise: what it means
+ * stays visible; the recorded-visit figure behind it, with its source, is behind "Why?".
+ */
+function CaveatNote({ caveat }: { caveat: RecordingCaveat }) {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <p className="text-base text-foreground">
+        <span className="font-semibold">Read with care:</span> part of the rise may be how visits are recorded.
+      </p>
+      <Disclosure show="Why?" hide="Hide why" tone="quiet" contentClassName="pt-1">
+        <p className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-base text-pretty text-foreground">
+          <span>{caveat.text}</span>
+          <SourceChip sourceId={`sotkanet-${GP_WAIT_ID}`} />
+        </p>
+      </Disclosure>
     </div>
   );
 }

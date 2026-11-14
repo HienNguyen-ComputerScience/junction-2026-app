@@ -5,14 +5,20 @@ import type { BriefingStand } from "@/lib/briefing/model";
 import { BRIEFING_STEP_COUNT, BRIEFING_STEPS } from "@/lib/briefing/steps";
 import { formatPct } from "@/lib/ranking";
 
+/** The limitation's first sentence: "Visits, not people; all non-urgent GP visits, not only cancer-related ones." */
+function mainCaveat(limitation: string): string {
+  const end = limitation.indexOf(". ");
+  return end === -1 ? limitation : limitation.slice(0, end + 1);
+}
+
 /**
  * Step 1 of the guided briefing ("Where you stand"), as the home page's first card: the same
  * figure, statement, bars, comparison and source line as the briefing's own step 1, built from
  * the same model (`buildBriefing(id).stand`), so the home page shows the briefing working.
  *
  * Differences from `StepStand`: the statement is an h2 (the home page has its own h1), the count
- * is the site's quiet one and plays on entering view, and the rank line and the two in-step
- * buttons are left to the briefing itself. The "Next" button is the picker's (it needs the area).
+ * is the site's quiet one and plays on entering view, and the rank, the GP definition and the
+ * two in-step buttons are left to the briefing itself. The "Next" button is the picker's (it needs the area).
  */
 export function BriefingPreview({ name, stand }: { name: string; stand: BriefingStand }) {
   const tone = stand.status === "red" ? "red" : "amber";
@@ -55,11 +61,11 @@ export function BriefingPreview({ name, stand }: { name: string; stand: Briefing
           {stand.gapText}
           {relation}
         </StatusLabel>
-        <span>{stand.rankText}</span>
       </p>
 
+      {/* The main caveat only; the briefing's step 1 adds what a GP is. */}
       <SourceLine sourceId={stand.sourceId} year={stand.year}>
-        {stand.limitation}
+        {mainCaveat(stand.limitation)}
       </SourceLine>
     </div>
   );

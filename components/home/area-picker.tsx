@@ -141,32 +141,15 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, previ
               {BRIEFING_STEP_COUNT} short steps · about 2 minutes · ends in a plan you can print for your board
             </p>
           </div>
-          {/* The steps by name, where the wide layout has room beside the step-1 card. */}
-          <div className="flex flex-col gap-2 border-t border-border pt-5 max-lg:hidden">
-            <p className="text-base leading-6 font-semibold text-forest-ink">What the briefing covers</p>
-            <ol className="flex flex-col gap-1.5 text-base leading-6 text-charcoal">
-              {BRIEFING_STEPS.map((step) => (
-                <li key={step.id} className="flex gap-2.5">
-                  <span className="w-5 shrink-0 font-semibold text-forest-ink tabular-nums">{step.number}.</span>
-                  <span>{step.label}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
         </FramePanel>
 
         {/* The briefing's step 1 for the chosen area. */}
-        <div
-          aria-live="polite"
-          className="flex flex-col gap-6 rounded-lg border border-frame-border bg-cream-paper p-5 sm:p-7"
-        >
-          {preview ?? (
-            <p className="text-base leading-6 text-charcoal">
-              {area.name} has no published figure for the briefing&rsquo;s first step. The briefing&rsquo;s list of areas
-              opens on the area with the highest share.
-            </p>
-          )}
-          {preview ? (
+        {preview ? (
+          <div
+            aria-live="polite"
+            className="flex flex-col gap-6 rounded-lg border border-frame-border bg-cream-paper p-5 sm:p-7"
+          >
+            {preview}
             <Link
               href={briefingHref(area.id, "where")}
               onClick={markArrival}
@@ -175,8 +158,8 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, previ
               <span>Next: {BRIEFING_STEPS[1].next}</span>
               <ArrowRight aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />
             </Link>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </section>
 
       {/* Everything else, below a clear divider. */}
@@ -215,11 +198,8 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, previ
 
           {/* The map: after the answer on a phone, on the left from lg. */}
           <FramePanel padding="none" className="flex flex-col lg:col-start-1 lg:row-start-1">
-            <FramePanelLabel className="flex-col items-start gap-0 text-base">
-              <span>Where a step is worse than Finland</span>
-              <span className="pt-0.5 text-base font-normal text-muted-foreground">
-                Choose an area on the map
-              </span>
+            <FramePanelLabel>
+              <span className="text-base">Where a step is worse than Finland</span>
             </FramePanelLabel>
             <div className="flex flex-col items-center px-5 pt-3 pb-3 sm:px-6">
               <FinlandMap
@@ -246,8 +226,8 @@ export function AreaPicker({ areas, mapAreas, defaultId, year, totalAreas, previ
         </Reveal>
 
         <Reveal index={1}>
-          <nav aria-label="More pages" className="rounded-lg bg-keylime-wash p-5 sm:p-7">
-            <ul className="grid gap-x-8 gap-y-1 sm:grid-cols-2">
+          <nav aria-label="More pages" className="rounded-lg bg-keylime-wash px-5 py-2 sm:px-7">
+            <ul className="flex flex-col divide-y divide-border [&>li]:py-1.5">
               <li>
                 <TextLink kind="nav" href="/compare" className="text-base">
                   Compare all {totalAreas} areas

@@ -35,9 +35,6 @@ export function SiteHeader() {
               FirstLine
             </span>
           </Link>
-          <p className="hidden truncate border-l border-border pl-3 type-caption text-muted-foreground md:block">
-            For county directors: where early cancer care slows, and what to do
-          </p>
         </div>
         {/* The guided briefing's button, on every page but home, where the first screen holds it. */}
         <BriefingHeaderButton />
