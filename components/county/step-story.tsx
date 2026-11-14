@@ -85,7 +85,7 @@ export function StepStoryText({
             {step.finland !== null ? (
               <>
                 {" "}
-                Finland: <span className="figure font-semibold">{formatPct(step.finland)}</span>.
+                Finland overall: <span className="figure font-semibold">{formatPct(step.finland)}</span>.
               </>
             ) : null}
             {step.changeText ? ` ${step.changeText.charAt(0).toUpperCase()}${step.changeText.slice(1)}.` : null}
