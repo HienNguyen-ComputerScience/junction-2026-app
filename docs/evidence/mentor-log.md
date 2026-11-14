@@ -47,3 +47,11 @@ Copy this block once per conversation.
 - Consent to cite by name: not asked. We cite her published paper and the public talk slides, not a private remark.
 - Said (slides): the question "do two patients with the same cancer have an equal chance of recovery, regardless of where they live…?" (slide 6); public, occupational and private care run side by side (slide 5); an 8-step delay pathway with system causes such as "symptoms not recognized" and "limited access to primary care physicians" (slide 10); lymphoma patients who start in public primary care reach treatment later (slide 11).
 - Changes this causes: the pitch itself is unchanged. `docs/pitch/demo-script.md` gets backup answers on lymphoma-only data, income/education and why steps 3–5. Numbers checked in `challenge-brief.md`. No new row in `evidence.json`: the talk gives context numbers, not a new action with an owner, first step and precedent. Questions 10–11 above are new.
+
+### AstraZeneca booths (Luan's visit) — 2026-11-14 (Sat)
+- Role / organisation: AstraZeneca booth staff (names not recorded)
+- Consent to cite by name: not asked; refer to as "AstraZeneca booth feedback"
+- First impression: the map of regions, which works as the hook.
+- Second impression: "why are they so high, so red?" They need to see how the benchmark works: what the % means, why red (compared with Finland's own level, which is itself 54.7%), and what a good level would be.
+- They want the main reason an area is red, in one short sentence a normal person gets at a glance. "Ask the evidence" lists a lot of sources but gives no main reason.
+- Changes this causes: passed to Phương on the board (UI is Phương's). No change to `evidence.json`.
