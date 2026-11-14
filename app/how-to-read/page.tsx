@@ -93,8 +93,6 @@ function Lead({ children }: { children: ReactNode }) {
 export default function HowToReadPage() {
   const lead = gpWaitAreas[0];
   const gaps = pathway.filter((slot) => !slot.published);
-  const careMeaning =
-    gradeLevels.find((level) => level.level === "care")?.meaning ?? "";
 
   return (
     <main
@@ -150,8 +148,8 @@ export default function HowToReadPage() {
                     />
                   </p>
                   <p className="text-base text-pretty text-foreground">
-                    of non-urgent GP visits in {lead.name} waited over 7 days,{" "}
-                    {YEAR}.
+                    of non-urgent GP (health-centre doctor) visits in{" "}
+                    {lead.name} waited over 7 days, {YEAR}.
                   </p>
                   <p className="flex flex-wrap items-center gap-2">
                     <SourceChip sourceId="sotkanet-6411" year={YEAR} />
@@ -345,9 +343,6 @@ export default function HowToReadPage() {
             <p className="text-base font-semibold text-pretty text-foreground">
               Most often because the way visits were recorded changed.
             </p>
-            <p className="text-base text-pretty text-foreground">
-              {careMeaning}
-            </p>
           </ReadCard>
 
           {/* 3. Gaps stay gaps */}
@@ -525,7 +520,7 @@ export default function HowToReadPage() {
             ? [
                 {
                   key: "act",
-                  label: "What an area can do about its wait",
+                  label: `What ${lead.name} can do about its wait`,
                   action: (
                     <TextLink kind="nav" href={`/county/${lead.id}/act`}>
                       Recommended actions
