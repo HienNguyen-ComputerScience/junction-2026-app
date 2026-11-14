@@ -78,6 +78,28 @@ check("drops a claim whose text contains an undeclared number", !kept(undeclared
 check("drops spelled-out numbers", !kept(claim("Nearly ninety percent of non-urgent GP visits waited.", [], ["sotkanet-6411"])));
 check("drops 'people' for a 6411 share", !kept(claim("85.4% of people waited more than 7 days in 2025.", [85.4, 7, 2025], ["sotkanet-6411"])));
 
+// Small spelled-out numbers and fractions can't be checked either.
+const spelledReason = (text) => checkClaim(claim(text, [], ["sotkanet-6411"]), ctx) ?? "";
+for (const text of [
+  "Two in three GP visits here come after more than a week.",
+  "About two thirds of GP visits wait more than a week.",
+  "One in three visits waits more than a week.",
+]) {
+  check(`drops small spelled-out number: "${text}"`, /spelled-out/.test(spelledReason(text)), spelledReason(text) || "was kept");
+}
+// The "visits, not people" rule applies even when the text has no percent.
+check(
+  "drops 'patients' for a 6411 claim with no percent",
+  /not people/.test(spelledReason("Most patients here wait more than a week for a GP.")),
+  spelledReason("Most patients here wait more than a week for a GP.") || "was kept",
+);
+// "one" in ordinary phrases must not be treated as a number.
+check(
+  "keeps 'no one' / 'the one closest' (not a number)",
+  kept(claim("No one step explains the whole delay, and the one closest to Finland is referral.", [], ["sotkanet-13"])),
+  checkClaim(claim("No one step explains the whole delay, and the one closest to Finland is referral.", [], ["sotkanet-13"]), ctx),
+);
+
 // The headline is validated too.
 const result = validateBrief({ headline: fabricated, claims: [good, undeclared] }, ctx);
 check(
