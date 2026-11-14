@@ -145,8 +145,11 @@ export async function POST(request: NextRequest) {
   }
 
   async function compute(): Promise<Outcome> {
+    // Only an expired *answer* is worth serving again. An expired nothing-found may have come from an
+    // older prompt or thinner sources: never re-serve it, so the request falls through to the saved
+    // demo sources (outage) or the 429 (limited).
     const stale = (): Outcome | null =>
-      cached ? { body: { ...cached.value, ...scope, freshness: "stale-cache", retrievedAt: cached.retrievedAt } } : null;
+      cached && !cached.value.nothingFound ? { body: { ...cached.value, ...scope, freshness: "stale-cache", retrievedAt: cached.retrievedAt } } : null;
 
     // Counts this request once, just before it first spends. Returns what to send if over the limit.
     let counted = false;

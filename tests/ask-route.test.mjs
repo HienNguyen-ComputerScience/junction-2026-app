@@ -43,18 +43,58 @@ const irrelevantItems = [
   { url: "https://example.fi/a", title: "Ice hockey results", publishedDate: "2026-10-01", highlights: ["The match ended."] },
 ];
 
-globalThis.fetch = async (input) => {
+// Finnish-language results, as Exa returns them for a South Ostrobothnia question (trimmed from the
+// live reply of 14 Nov 2026 that came back with an empty written answer).
+const finnishItems = [
+  {
+    url: "https://www.hyvaep.fi/thl-etela-pohjanmaalla-myonteista-kehitysta",
+    title: "THL: Etelä-Pohjanmaalla myönteistä kehitystä, toiminnan uudistamista ja talouden tasapainottamista tulee jatkaa",
+    publishedDate: "2026-11-04T00:00:00.000Z",
+    highlights: ["Erikoissairaanhoidossa on lisätty kevyempiä hoitomuotoja, mikä on nopeuttanut hoitoon pääsyä. Hoitoa odottavien määrä väheni aiemmasta."],
+  },
+  {
+    url: "https://www.iltalehti.fi/terveys/a/uudet-luvut",
+    title: "Uudet luvut suomalaisten hoidosta – Kaksi huolestuttavaa käännettä",
+    publishedDate: "2026-09-17T00:00:00.000Z",
+    highlights: ["Yli kuuden kuukauden hoitotakuuajan odottaneiden määrä on vähentynyt yli 60 prosenttia alkuvuonna. 92 prosenttia pääsee erikoissairaanhoitoon alle kolmessa kuukaudessa."],
+  },
+  {
+    url: "https://yle.fi/a/etela-pohjanmaa-sote-karsinta",
+    title: "Etelä-Pohjanmaan sote-palveluista pitää etsiä lisää karsittavaa, toteaa arviointiryhmä",
+    publishedDate: "2026-10-08T00:00:00.000Z",
+    highlights: ["Arviointiryhmä esittää, että Etelä-Pohjanmaa etsii karsittavaa sote-keskuksista. Alueen pitää parantaa lääkäripalveluja."],
+  },
+];
+let lastClaudeBody = null;
+
+globalThis.fetch = async (input, init) => {
   const url = String(input);
   if (url.startsWith("https://api.exa.ai")) {
     calls.exa++;
     await pause(mode.delay);
     if (mode.exa === "fail") return new Response("down", { status: 503 });
-    return Response.json({ results: mode.exa === "irrelevant" ? irrelevantItems : exaItems });
+    const results = mode.exa === "irrelevant" ? irrelevantItems : mode.exa === "finnish" ? finnishItems : exaItems;
+    return Response.json({ results });
   }
   if (url.startsWith("https://api.anthropic.com")) {
     calls.claude++;
+    lastClaudeBody = JSON.parse(init.body);
     await pause(mode.delay);
     if (mode.claude === "fail") return new Response("overloaded", { status: 529 });
+    if (mode.claude === "finnish") {
+      // English sentences over Finnish sources: the numbers 60 and 92 are in source 2, so they are kept;
+      // "six months" as 6 is not written that way in any source, so that sentence is dropped.
+      const input = {
+        sentences: [
+          { text: "The sources do not explain the dashboard figure for South Ostrobothnia.", sources: [1, 3] },
+          { text: "An evaluation group says the area must improve its doctor services.", sources: [3] },
+          { text: "Nationally, those waiting over the care guarantee fell by more than 60 percent, and 92 percent reach specialist care within three months.", sources: [2] },
+          { text: "Patients waited over 6 months.", sources: [2] },
+        ],
+        nothing_found: false,
+      };
+      return Response.json({ stop_reason: "tool_use", content: [{ type: "tool_use", name: "submit_answer", input }] });
+    }
     // "unbacked": every sentence has a number that is in no source, so the checker removes all three.
     const input =
       mode.claude === "nothing"
@@ -84,6 +124,7 @@ beforeEach(() => {
   mode.claude = "answer";
   mode.delay = 0;
   offset = 0;
+  lastClaudeBody = null;
 });
 
 // ---------- helpers ----------
@@ -509,4 +550,61 @@ test("main reason: absent when the question names no area", async () => {
   const r = await ask("Did Denmark's cancer fast-track pathways shorten diagnosis times in health care?");
   assert.equal(r.status, 200);
   assert.equal(r.json.mainReason, undefined);
+});
+
+// ---------- empty answer with relevant Finnish sources (board, 14 Nov) ----------
+
+const SO_Q = "Why is South Ostrobothnia had a huge spike in the benchmark";
+
+test("Finnish sources: an English 'why' question gets an answer; backed numbers kept, unbacked dropped", async () => {
+  mode.exa = "finnish";
+  mode.claude = "finnish";
+  const r = await ask(SO_Q);
+  assert.equal(r.status, 200);
+  assert.equal(r.json.county.id, "south-ostrobothnia");
+  assert.equal(r.json.items.length, 3, "all three Finnish results pass the relevance bar");
+  assert.equal(r.json.nothingFound, false);
+  assert.equal(r.json.answer.sentences.length, 3);
+  assert.equal(r.json.answer.dropped, 1, "the sentence with a number in no source is still dropped");
+  assert.ok(r.json.answer.sentences.every((s) => s.sources.length > 0), "every kept sentence cites a source");
+  // The Finnish snippets reach Claude unchanged, and the prompt tells it how to treat them and dashboard words.
+  const prompt = lastClaudeBody.messages[0].content;
+  assert.match(prompt, /Hoitoa odottavien määrä väheni/);
+  assert.match(lastClaudeBody.system, /Finnish or Swedish/);
+  assert.match(lastClaudeBody.system, /benchmark/);
+  assert.match(lastClaudeBody.system, /Never state a cause/);
+});
+
+test("Finnish sources: Claude saying nothing found still gives the plain nothing-found, never an invented answer", async () => {
+  mode.exa = "finnish";
+  mode.claude = "nothing";
+  const r = await ask(SO_Q);
+  assert.equal(r.json.answer, null);
+  assert.equal(r.json.nothingFound, true);
+  assert.equal(r.json.items.length, 3);
+});
+
+test("an expired empty answer is never served again when Exa is down: the saved sources are re-answered", async () => {
+  mode.exa = "finnish";
+  mode.claude = "nothing";
+  await ask(SO_Q);
+  advance(25 * HOUR);
+  mode.exa = "fail";
+  mode.claude = "finnish";
+  const r = await ask(SO_Q);
+  assert.equal(r.status, 200);
+  assert.equal(r.json.freshness, "stale-cache", "old search items, labelled as such");
+  assert.equal(r.json.nothingFound, false, "not the cached empty answer");
+  assert.equal(r.json.answer.sentences.length, 3);
+  assert.equal(calls.claude, 2, "Claude asked again instead of replaying the empty answer");
+});
+
+test("an expired empty answer is not served to a rate-limited request either", async () => {
+  mode.exa = "finnish";
+  mode.claude = "nothing";
+  await ask(SO_Q);
+  advance(25 * HOUR);
+  await askMany(PER_IP, (i) => `GP waits in Vantaa health centres, case ${i}`, { outage: true });
+  const r = await ask(SO_Q);
+  assert.equal(r.status, 429);
 });
