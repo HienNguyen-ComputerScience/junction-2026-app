@@ -1,5 +1,103 @@
 # /compare rework: notes
 
+## Pass 2 (15 Nov): toward 9.0
+
+**Base:** `t3/post-freeze-build-integration` at `ac1e752`, which already has R4-02 and R4-05. Judge round 4 scored this page 8.4. What held it back:
+- the `*` key sat about 1,900px under its marker;
+- the status words were repeated 44 times;
+- on a 1366×768 screen the first screen showed the hero only, with the picture below the fold.
+
+**Checked on:** a production build (`npm run start -- -p 3121`), with playwright-core 1.65.1 and its bundled Chromium. I stopped the server by its PID; port 3121 is free.
+
+### What changed
+
+1. **The picture is on the first screen.**
+   - From 1024px wide, the hero (claim, **14**, Finland overall, chip, caveat, Save or share) sits in the left 5/12 and the 22-bar chart in the right 7/12.
+   - At 1366×768 the first screen shows the headline, the 14 and 18 of the 22 bars, including all 14 rust bars and the dashed Finland overall line (`pass2-d-first.png`; before: `pass2-before-d-first.png`).
+   - The h1 is set smaller in that column (a local `lg:[&_h1]` size; `Chunk` is not edited). Measured: two lines at 1024, 1280 and 1366, no sideways scroll. At 1024 the first screen still shows all 14 rust bars and the Finland line (`pass2-1024-first.png`).
+   - Phones, print and narrower screens stack as before. Print forces one column (`print:block`).
+   - The h2 "Where you live decides how long a visit waits" is cut. The h1 makes the claim, and the chart's own caption names what it shows.
+2. **The chart key comes before the bars** (the R4-06 lesson): the two statuses, then Finland overall.
+3. **The bars grow once from the left** (the existing `animate-bar-grow` inside a `Reveal`, 420ms, 7ms stagger). Measured: scale 0 at 50ms, 1.00 at 1s. Under reduced motion they are 1.00 at 50ms, and without script and on paper they are at their value. Nothing else moves.
+4. **Table rows are one line from 1280px wide.**
+   - The status words are short in the wide table only: "Longer wait" / "Same or shorter wait", and for referrals "Slower" / "Same or faster".
+   - Each heading now reads "Compared with Finland overall: 54.7%" (or 76.8% for referrals), so the comparison is named once per column. Screen readers still get the full label in every cell (`sr-only`).
+   - The phone list keeps the full labels, because it has no column headings.
+   - On the desktop table, the HUS cells read "HUS-wide: 74.1%, not its own". The phone list keeps "No figure of its own. HUS-wide: 74.1%".
+   - The table body fell from 1,572px to 1,117px. Table `scrollWidth` equals its wrapper at 1024, 1280, 1366, 1440 and 1920 (932/932, 1060/1060).
+5. **A dashed "Finland overall: 54.7%" row** sits between rank 14 and rank 15 in the default order, on the desktop table and the phone list (`pass2-m-line.png`). It is the chart's line, repeated where the table splits the same way. The line is computed from the rows' status, and other sort orders have no line.
+6. **The `*` key says what it means where you meet it:** "* Read with care: recorded visits changed by more than 20% since 2023". It appears under the "Change since 2023" heading and in the phone key. The text is built from `RECORDING_CHANGE_ABOVE` and `FIRST_YEAR`, not typed in.
+7. **One unit under the table.** The `*` note, the status and brackets note, and the sources line are now one framed unit with hairlines between them, where there were three. The unit is `print-flow`, because opened on paper it is tall.
+8. **Table rows tint** Keylime on hover. This is decoration only: no information is shown on hover.
+
+**Tried and removed:** a fade on `<tbody>` each time the sort changed. In the full-page capture it left the table body caught pale, so it was cut.
+
+### Measured (same counter before and after: visible text only, closed `<details>` and `sr-only` excluded)
+
+| | Before (`ac1e752`) | After |
+|---|---|---|
+| Page height, 1366 | 4,861px | **3,287px** |
+| Page height, 1366, every "Show …" open | 6,236px | **4,602px** |
+| Page height, 390 | 6,711px | 6,668px |
+| Page height, 390, every "Show …" open | 9,464px | 9,421px |
+| Visible words, 1366 / 390 | 922 / 1,023 | **795** / 1,020 |
+| Print (A4 landscape PDF) | 6 pages | 6 pages, one column, 4 of 4 `<details>` open |
+
+### Fact-diff
+
+Compared `main.innerText` before and after, with every "Show …" open: at 1366 and at 390 on screen, and the print render after `beforeprint`.
+- **Numbers:** 146 distinct numbers before and 146 after, in all three renders. None is missing and none is new.
+- **Sources and caveats:** the same count of each, before and after:
+  - the Sotkanet 6411 chips (5) and the Sotkanet 13 chip (1);
+  - "HUS-wide" (5), "City units only" (2), "About the same" (3);
+  - "clinical standard", "not only possible cancer" and "itself a delay".
+- **"changed by more than 20%"** appears once more on screen, because the `*` key now says it.
+- **Wording:** every "Finland" on the page, other than in area names (Central Finland, Southwest Finland), is "Finland overall". The computed headline is unchanged, and `check-hardcoded` passes.
+
+### Checks
+
+| Check | Result |
+|---|---|
+| 1366×768 and 390×844, closed and every "Show …" open | No sideways scroll, nothing under 16px except the 11px eyebrows, no console errors |
+| Sorting | The select reorders both views ("Slowest referrals first" puts South Ostrobothnia, North Savo, Central Ostrobothnia first). Clicking the "Area" heading sets `aria-sort="ascending"` and the select follows (`name`). There is no Finland line outside the default order. |
+| Reduced motion | Same 795 words, 0 reveals left hidden, bars at full value from the first frame |
+| No JavaScript | Same 795 words, same 3,287px height; the "Show …" are native `<details>` |
+| Print | One column; all 4 `<details>` open; the paper table is shown and the screen table and phone list are hidden; 6 pages, none blank (`pass2-print.pdf`) |
+| `npm test && npm run brief:check && npm run typecheck && npm run lint && npm run build` | 517 pass, 0 fail; the brief check, types, lint and build are clean |
+| `check-insights.mjs`, `check-hardcoded.mjs` | OK (930 rows; 3 anchors, 4 computed claims) |
+
+### Self-score against the rubric
+
+| Clarity 25% | Ease 25% | Hierarchy & consistency 20% | Type & spacing 15% | Motion & interaction 10% | Accessibility 5% | Weighted |
+|---|---|---|---|---|---|---|
+| 9.0 | 9.0 | 8.5 | 8.5 | 8.5 | 9.0 | **8.8** |
+
+- **Clarity and ease go up because of the first screen.** The claim, the 14 and the rust bars that are those 14 areas are now together, and the table repeats the chart's split with the same line.
+- **Hierarchy stays at 8.5.** "Worse than in 2023" still gives a serif h2 to one sentence, and the nav lights "Areas" on this page (see below).
+- **The phone page is about the same height** (6,668px). Its gain is the Finland line and the self-contained `*` key, not length.
+- I don't claim 9.0. A judge who weighs the phone first would land nearer 8.7.
+
+### Needed from others
+
+- **Nav (shared, `components/site-nav.tsx`):**
+  - The "Where access is hardest" item points to `/insights`, but `/sources` (line 395) uses that text to link to `/compare`.
+  - On `/compare` the nav highlights "Areas".
+  - One label should mean one page.
+- **`components/home/early-warning.tsx`:** fixed in R4-03, nothing more needed.
+
+### Screenshots (pass 2)
+
+- First screen and full page at 1366: `pass2-d-first.png`, `pass2-d-full.png`.
+- Every "Show …" open: `pass2-d-open.png`, `pass2-m-open.png`.
+- Sorted by referrals: `pass2-d-sorted.png`, `pass2-m-sorted.png`.
+- Phone: `pass2-m-first.png`, `pass2-m-full.png`, `pass2-m-chart.png`, `pass2-m-line.png`.
+- Reduced motion, no JavaScript and print: `pass2-reduced.png`, `pass2-nojs.png`, `pass2-print.png`, `pass2-print.pdf`.
+- Before, for comparison: `pass2-before-d-first.png`, `pass2-before-d-full.png`.
+
+---
+
+## Pass 1
+
 Built on `t3/post-freeze-build-integration` (merged locally). I checked it on a production build (`npm run start -- -p 3101`) with playwright-core and its bundled Chromium. The design judge's round-3 notes asked for this rework: "Bigger moves", `/compare` (7.8).
 
 ## The page now
