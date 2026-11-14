@@ -45,7 +45,7 @@ export function ActionItem({ action, index, showStep }: { action: Evidence; inde
         <span aria-hidden className="numeral text-[3.5rem] leading-none text-forest-ink">
           {index}
         </span>
-        <h3 id={`action-${index}-title`} className="font-display text-[1.75rem] leading-[1.2] font-light text-pretty text-forest-ink">
+        <h3 id={`action-${index}-title`} className="font-display text-2xl leading-[1.2] font-light text-pretty text-forest-ink">
           <span className="sr-only">Action {index}: </span>
           {copy.title}
         </h3>
