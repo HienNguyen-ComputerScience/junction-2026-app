@@ -61,7 +61,7 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
             {finland !== null && (
               <>
                 {" "}
-                · Dark line: Finland <span className="figure text-foreground">{formatPct(finland)}</span>
+                · Dark line: Finland overall <span className="figure text-foreground">{formatPct(finland)}</span>
               </>
             )}
           </h3>
@@ -196,7 +196,7 @@ function MiniTrend({
       </span>
       <span className="sr-only">
         {trend.map((point) => `${point.year}: ${point.value === null ? "no data" : formatPct(point.value)}`).join(", ")}
-        {finland !== null && `; Finland ${formatPct(finland)} in ${trend[last]?.year}`}; {STATUS_LABEL[status]}.
+        {finland !== null && `; Finland overall ${formatPct(finland)} in ${trend[last]?.year}`}; {STATUS_LABEL[status]}.
       </span>
     </span>
   );
