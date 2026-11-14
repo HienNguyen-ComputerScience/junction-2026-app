@@ -2,7 +2,7 @@
 
 Related: `final-description-draft.md` (a newer draft of the description that supersedes it once checked).
 
-Ready to paste. Written 13 Nov 2026 from repo state; status text updated 14 Nov (morning) from main 17a9c20, after the new UI and audit fixes (PRs #85–#97), checked on a local production build; production was not yet redeployed. Anything in `TODO (human)` can only be filled by a person. Re-check the sentences listed at the bottom after feature freeze (Sat 18:00) and before switching to FINAL (Sun 10:00, aim 08:00).
+Ready to paste. Written 13 Nov 2026 from repo state; status text updated 14 Nov (morning) from main 9032e79, after the new UI and audit fixes (PRs #85–#98), checked on a local production build; production was not yet redeployed. Anything in `TODO (human)` can only be filled by a person. Re-check the sentences listed at the bottom after feature freeze (Sat 18:00) and before switching to FINAL (Sun 10:00, aim 08:00).
 
 ## Project name
 
@@ -35,7 +35,7 @@ Whether you get early cancer care in Finland depends on where you live. FirstLin
 
 **The Exa live layer.** Checked data shows where care breaks. Exa shows what is happening about it right now: recent county news (last 12 months, Finnish sources), a finder for research papers and Nordic reports under each action, a national news strip on the home page, and a question box that answers only from Exa results and says so when nothing is found. Live finds are labelled "Found live — unverified" and kept apart from our checked evidence table. If live search is down, the app shows saved results with their date.
 
-**What is real and what is planned (14 Nov, main 17a9c20).** Built and merged:
+**What is real and what is planned (14 Nov, main 9032e79).** Built and merged:
 - the three screens: a home page with a map, verdict, top action and what-if, plus the ranking of all 22 areas; a county pathway with step cards and a limitations box; and recommended actions with owner, first step, precedent and source;
 - the red-flag helper (it always shows "call 112" for emergencies);
 - the data snapshot (22 areas; 3 indicators used on screen: 6411, 13, and 5033 as context; plus 3 cancer-screening attendance indicators listed on the sources page as context) and the evidence table (14 verified rows);
@@ -115,10 +115,10 @@ https://github.com/HienNguyen-ComputerScience/junction-2026-app
 
 Re-check each of these against the deployed app before 08:00 Sunday:
 
-1. The "What is real and what is planned" paragraph. Updated 14 Nov from main 17a9c20 (local build). After the final deploy, a test run must see every listed item on the live site; drop any it doesn't.
+1. The "What is real and what is planned" paragraph. Updated 14 Nov from main 9032e79 (local build). After the final deploy, a test run must see every listed item on the live site; drop any it doesn't.
 2. The numbers 85.4%, 32.7%, 54.7% (Sotkanet 6411, 2025): compare with `data/values.json` and the app screen.
 3. "14 verified rows", "22 areas", the indicator count: compare with `data/evidence.json`, `data/indicators.json` and `data/counties.json` (22 areas plus a Finland row).
-4. "Last 12 months" for county news and the "Found live — unverified" label: both match the UI at 17a9c20. Re-check against the final UI.
+4. "Last 12 months" for county news and the "Found live — unverified" label: both match the UI at 9032e79. Re-check against the final UI.
 5. "Validator drops any claim..." and "works if Sotkanet or the model is down". The brief and question box are on pages since PR #39 (Run 3), so "by design" was dropped. Both validators were tested through the API (`/api/ask`, `/api/brief`); the brief fallback and saved demo results were tested in Run 3. Re-check after freeze.
 6. Technologies list: remove or keep Supabase; add anything new in `package.json`.
 7. Red-flag helper sentence: screen 3 shipped with the helper (PR #26, Run 2). Keep the sentence. The helper must link to guidelines, never copy NICE or Käypä hoito text.

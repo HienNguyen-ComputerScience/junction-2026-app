@@ -4,8 +4,8 @@ Related: `deck-outline.md` (older, longer outline) and the 16-slide draft in `de
 
 Files: `docs/submission/deck.html` (source) and `docs/submission/firstline-deck.pdf` (rendered: 9 slides, 1280×720, about 960 KB). Draft v3 (14 Nov) uses the screenshots retaken at commit c4f067d, adds a crop of the live local news panel to slide 7, and updates the built-vs-next status to `docs/submission/test-runs.md` Run 3 (pre-freeze).
 
-**Draft v4 (14 Nov, morning, main 17a9c20, by fraidfax on Phương's handoff).** The new UI (PRs #85–#97) made v3 stale. What changed in `deck.html` and the PDF, and what to read instead of the v3 notes below:
-- Screenshots 01–06 and 09 retaken from a local production build of main 17a9c20 at 1440×900 (the app is dark-only now). `01-ranking.png` is now the home page (map, verdict, top action, what-if); the ranking sits below it on the same page. The slide-7 news crop was re-fitted (`.livecrop` offsets).
+**Draft v4 (14 Nov, morning, main 9032e79, by fraidfax on Phương's handoff).** The new UI (PRs #85–#98) made v3 stale. What changed in `deck.html` and the PDF, and what to read instead of the v3 notes below:
+- Screenshots 01–06 and 09 retaken from a local production build of main 9032e79 at 1440×900 (the app is dark-only now). `01-ranking.png` is now the home page (map, verdict, top action, what-if); the ranking sits below it on the same page. The slide-7 news crop was re-fitted (`.livecrop` offsets).
 - Colours and labels match the app: red "Worse than Finland's level", slate grey-blue "At or better than Finland's level" (the `--amber` variable now holds the slate colour), grey "No public data". There is no amber in the app any more.
 - Slide 3: "GP spots possible cancer" → "GP recognises warning signs" (the app's step 2 name).
 - Slide 4: "Rank" → "Pick an area". Slide 6: the four HUS areas now show the HUS-wide referral value, labelled as not a county figure (no longer a grey card). Say: "Where only a wider figure exists, we show it and say so."

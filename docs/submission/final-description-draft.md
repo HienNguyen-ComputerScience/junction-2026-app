@@ -21,7 +21,7 @@ FirstLine shows each wellbeing services county where its own first step breaks: 
 
 Every number carries its source and year. Where no public data exists, the app says so and shows a grey card instead of a guess. Where only a wider figure exists (the HUS-wide referral value for four Uusimaa areas), it is labelled as not a county figure. The limitations are always on screen. Only public aggregate data is used.
 
-A live-search layer built on Exa adds what no dataset or model has. The home page shows this month's national news on the cancer pathway, and each county page shows recent local news on GP access (last 12 months, dated, with links). Each recommended action has a "Find more evidence live" button, and a question box on the home page answers only from linked search results, or says when nothing is found. Live results are labelled "Found live — unverified" and kept apart from our checked evidence table. [Updated 14 Nov from main 17a9c20 (new UI, local build). Re-check these panels on the final deploy before pasting.]
+A live-search layer built on Exa adds what no dataset or model has. The home page shows this month's national news on the cancer pathway, and each county page shows recent local news on GP access (last 12 months, dated, with links). Each recommended action has a "Find more evidence live" button, and a question box on the home page answers only from linked search results, or says when nothing is found. Live results are labelled "Found live — unverified" and kept apart from our checked evidence table. [Updated 14 Nov from main 9032e79 (new UI, local build). Re-check these panels on the final deploy before pasting.]
 
 ## Still to fill in on the form (Sunday)
 - Live demo URL: https://firstline-finland.vercel.app
