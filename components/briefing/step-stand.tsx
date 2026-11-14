@@ -4,9 +4,9 @@ import { ButtonPanels } from "@/components/briefing/button-panels";
 import { CompareArea } from "@/components/briefing/compare-area";
 import { CountUp } from "@/components/briefing/motion";
 import { SourceDetails, SourceLine } from "@/components/briefing/source-line";
-import { Pill, ShareBar, StatusLabel } from "@/components/briefing/ui";
+import { Pill, ShareBar, STATEMENT, StatusLabel } from "@/components/briefing/ui";
 import type { Briefing } from "@/lib/briefing/model";
-import { formatPct, GP_WAIT_ID, STATUS_LABEL } from "@/lib/ranking";
+import { formatPct, GP_WAIT_ID } from "@/lib/ranking";
 
 const i = (index: number) => ({ "--i": index }) as CSSProperties;
 
@@ -33,7 +33,7 @@ export function StepStand({ briefing, confidence }: { briefing: Briefing; confid
       <div className="flex flex-col gap-1">
         <div className="bf-rise flex flex-wrap items-end gap-x-5 gap-y-2" style={i(1)}>
           {/* The figure as drawn. The heading below carries it for screen readers. */}
-          <p aria-hidden className="font-display text-[3.5rem] leading-[1.05] font-light tracking-[-0.03em] text-forest-ink sm:text-[4.625rem]">
+          <p aria-hidden className="font-display text-[3.5rem] leading-[1.05] font-light tracking-[-0.03em] text-forest-ink lining-nums sm:text-[4.625rem]">
             <CountUp value={stand.value} final={figure} suffix="%" delay={240} />
           </p>
           {confidence ? <div data-slot="briefing-confidence" className="pb-2 text-base leading-6 text-charcoal">{confidence}</div> : null}
@@ -41,7 +41,7 @@ export function StepStand({ briefing, confidence }: { briefing: Briefing; confid
         <h1
           data-briefing-heading
           tabIndex={-1}
-          className="bf-rise type-statement outline-none sm:text-[1.75rem] sm:leading-[1.45]"
+          className={`bf-rise ${STATEMENT}`}
           style={i(2)}
         >
           <span className="sr-only">{figure} </span>
@@ -57,7 +57,8 @@ export function StepStand({ briefing, confidence }: { briefing: Briefing; confid
       <div className="bf-rise flex flex-col gap-3" style={i(4)}>
         <p className="flex flex-wrap items-start gap-x-3 gap-y-1 text-base leading-6 text-charcoal">
           <StatusLabel status={stand.status}>
-            {stand.gapText}: {STATUS_LABEL[stand.status].toLowerCase()}.
+            {stand.gapText}
+            {stand.value === stand.finland ? "." : stand.status === "red" ? ", which is worse." : ", which is better."}
           </StatusLabel>
           <span>{stand.rankText}</span>
         </p>

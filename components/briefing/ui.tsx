@@ -15,6 +15,16 @@ export const PRIMARY_BUTTON =
 export const SECONDARY_BUTTON =
   "inline-flex min-h-[3.25rem] items-center justify-center gap-2.5 rounded-[14px] border border-input bg-cream-paper px-[21px] py-[13px] text-center text-base leading-6 font-semibold text-forest-ink transition-colors outline-none hover:bg-keylime-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink aria-expanded:bg-mint-veil aria-pressed:bg-mint-veil";
 
+/** One of a few choices (a year, an action): the chosen one is filled, so it reads without colour. */
+export const CHOICE_BUTTON =
+  "inline-flex min-h-[3.25rem] items-center justify-center gap-2.5 rounded-[14px] border border-input bg-cream-paper px-[21px] py-[13px] text-center text-base leading-6 font-semibold text-forest-ink transition-colors outline-none hover:bg-keylime-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink aria-pressed:border-forest-ink aria-pressed:bg-forest-ink aria-pressed:text-cream-paper";
+
+/**
+ * A step's one statement: the light serif at 23px (28px from a tablet up), with lining figures
+ * so "100" and "2025" read as numbers. It takes the keyboard focus when its step comes on screen.
+ */
+export const STATEMENT = "type-statement lining-nums outline-none sm:text-[1.75rem] sm:leading-[1.45]";
+
 /** A plain text link inside the briefing: Forest Ink, underlined, 16px. */
 export const TEXT_LINK =
   "rounded-sm text-base font-semibold text-forest-ink underline underline-offset-4 outline-none hover:text-forest-shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink";

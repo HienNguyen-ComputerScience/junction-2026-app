@@ -88,7 +88,7 @@
   transition:
     background-color 320ms var(--bf-ease),
     border-color 320ms var(--bf-ease);
-  transition-delay: calc(var(--d, 0) * 1ms);
+  transition-delay: calc(var(--t, 0) * 1ms);
 }
 
 /* Diagonal hatching: "no public data" drawn as absence, never as a zero. */

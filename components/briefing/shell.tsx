@@ -91,7 +91,7 @@ export function BriefingShell({
       <div className="bf-root bg-keylime-wash px-4 py-6 sm:px-6 sm:py-10 print:hidden">
         <div
           ref={cardRef}
-          className="relative mx-auto flex w-full max-w-[60rem] scroll-mt-4 flex-col overflow-hidden rounded-[14px] border border-border-mist bg-cream-paper lg:min-h-[41rem]"
+          className="relative mx-auto flex w-full max-w-[60rem] scroll-mt-4 flex-col overflow-clip rounded-[14px] border border-border-mist bg-cream-paper lg:min-h-[41rem]"
         >
           {/* Where am I, and the way out. Always visible. */}
           <div className="flex flex-col gap-3 px-[21px] pt-[21px] sm:px-[42px] sm:pt-[28px]">
@@ -129,23 +129,27 @@ export function BriefingShell({
             </div>
           </div>
 
-          {/* The way on and the way back: always two plainly labelled buttons in the same place. */}
+          {/* The way on and the way back: two plainly labelled buttons, always in the same place.
+              The bar stays at the bottom of the window while a long step scrolls, so the way on is
+              never below the fold. */}
           <nav
             aria-label="Briefing steps"
-            className="flex flex-col-reverse gap-3 border-t border-border-mist px-[21px] py-[21px] sm:flex-row sm:items-center sm:justify-between sm:px-[42px]"
+            className="sticky bottom-0 z-10 flex items-stretch justify-between gap-3 rounded-b-[14px] border-t border-border-mist bg-cream-paper px-[21px] py-[14px] sm:px-[42px] sm:py-[21px]"
           >
-            <Link href={previous ? briefingHref(areaId, previous) : "/briefing"} className={SECONDARY_BUTTON}>
+            <Link href={previous ? briefingHref(areaId, previous) : "/briefing"} className={cn(SECONDARY_BUTTON, "shrink-0 max-sm:px-4")}>
               <ArrowLeft aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />
-              {previous ? "Back" : "Back: choose another area"}
+              <span>
+                Back<span className="max-sm:sr-only">{previous ? "" : ": choose another area"}</span>
+              </span>
             </Link>
             {next ? (
-              <Link href={briefingHref(areaId, next)} className={PRIMARY_BUTTON}>
-                Next: {next.next}
+              <Link href={briefingHref(areaId, next)} className={cn(PRIMARY_BUTTON, "max-sm:flex-1 max-sm:px-4")}>
+                <span>Next: {next.next}</span>
                 <ArrowRight aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />
               </Link>
             ) : (
-              <Link href="/briefing" className={SECONDARY_BUTTON}>
-                Start again with another area
+              <Link href="/briefing" className={cn(SECONDARY_BUTTON, "max-sm:flex-1 max-sm:px-4")}>
+                Start again<span className="max-sm:sr-only"> with another area</span>
               </Link>
             )}
           </nav>

@@ -1,8 +1,14 @@
 import { notFound } from "next/navigation";
 
 import "../briefing.css";
+import { BriefingPrint } from "@/components/briefing/print-document";
 import { BriefingShell } from "@/components/briefing/shell";
+import { StepBoard } from "@/components/briefing/step-board";
+import { StepChange } from "@/components/briefing/step-change";
+import { StepDo } from "@/components/briefing/step-do";
+import { StepMeans } from "@/components/briefing/step-means";
 import { StepStand } from "@/components/briefing/step-stand";
+import { StepWhere } from "@/components/briefing/step-where";
 import { buildBriefing } from "@/lib/briefing/model";
 
 /**
@@ -17,20 +23,26 @@ export default async function BriefingAreaLayout({ params, children }: LayoutPro
   if (!briefing) notFound();
 
   return (
-    <BriefingShell
-      areaId={briefing.county.id}
-      areaName={briefing.county.name}
-      defaultYear={briefing.defaultTargetYear}
-      steps={{
-        stand: <StepStand briefing={briefing} />,
-        where: <p>where</p>,
-        means: <p>means</p>,
-        do: <p>do</p>,
-        change: <p>change</p>,
-        board: <p>board</p>,
-      }}
-    >
-      {children}
-    </BriefingShell>
+    <main>
+      <BriefingShell
+        areaId={briefing.county.id}
+        areaName={briefing.county.name}
+        defaultYear={briefing.defaultTargetYear}
+        steps={{
+          stand: <StepStand briefing={briefing} />,
+          where: <StepWhere briefing={briefing} />,
+          means: <StepMeans briefing={briefing} />,
+          do: <StepDo briefing={briefing} />,
+          change: <StepChange briefing={briefing} />,
+          board: <StepBoard briefing={briefing} />,
+        }}
+      >
+        {children}
+      </BriefingShell>
+      {/* The same briefing as one document: only on paper, where it replaces the card. */}
+      <div className="page-container">
+        <BriefingPrint briefing={briefing} />
+      </div>
+    </main>
   );
 }

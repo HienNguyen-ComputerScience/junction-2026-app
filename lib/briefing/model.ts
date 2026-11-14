@@ -217,7 +217,9 @@ function buildStand(county: County): BriefingStand | null {
       ? `The highest share of Finland's ${ranked} areas.`
       : row.rank === ranked
         ? `The lowest share of Finland's ${ranked} areas.`
-        : `The ${ordinal(row.rank)} highest share of Finland's ${ranked} areas.`;
+        : row.rank <= ranked / 2
+          ? `The ${ordinal(row.rank)} highest share of Finland's ${ranked} areas.`
+          : `The ${ordinal(ranked - row.rank + 1)} lowest share of Finland's ${ranked} areas.`;
 
   return {
     value: row.gpWait.value,
