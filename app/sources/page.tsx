@@ -18,6 +18,14 @@ export const metadata: Metadata = { title: "Sources & limitations | FirstLine" }
 
 const evidenceSources = sources.filter((source) => source.kind === "evidence");
 
+// Statistic sources cited by chips on the county page that are not an indicator (e.g. the HUS report, the Kuitunen study).
+const otherSources = sources.filter(
+  (source) =>
+    source.kind === "statistic" &&
+    source.source_id !== "sotkanet-regions" &&
+    !indicators.some((indicator) => indicator.source_id === source.source_id),
+);
+
 const sourceRows = indicators.map((indicator) => ({
   indicator,
   source: sources.find((source) => source.source_id === indicator.source_id),
@@ -67,7 +75,7 @@ export default function SourcesPage() {
         <Frame aria-labelledby="indicator-sources">
           <FrameHeader>
             <FrameTitle id="indicator-sources">The public indicators</FrameTitle>
-            <FrameDescription>Publisher: Finnish Institute for Health and Welfare (THL), Sotkanet. Links open the official definitions.</FrameDescription>
+            <FrameDescription>Published on Sotkanet by the Finnish Institute for Health and Welfare (THL), and by the Finnish Cancer Registry for the three screening indicators. Links open the official definitions.</FrameDescription>
           </FrameHeader>
           <div className="flex flex-col gap-1.5">
             {sourceRows.map(({ indicator, source, years }) => (
@@ -88,7 +96,7 @@ export default function SourcesPage() {
                 </dl>
                 {source && (
                   <TextLink kind="external" href={source.url} className="text-sm">
-                    Official THL definition
+                    Official definition on Sotkanet
                   </TextLink>
                 )}
               </FramePanel>
@@ -146,6 +154,25 @@ export default function SourcesPage() {
           Map boundaries: Statistics Finland, wellbeing services counties 2025 (1:4 500 000), CC BY 4.0.{" "}
           <TextLink kind="external" inline href="https://www.stat.fi/org/avoindata/paikkatietoaineistot_en.html">Statistics Finland open data</TextLink>
         </p>
+      </Frame>
+
+      <Frame aria-labelledby="other-sources">
+        <FrameHeader>
+          <FrameTitle id="other-sources">Other sources cited on county pages</FrameTitle>
+          <FrameDescription>Background figures shown with a source chip. They are not county indicators and do not change any ranking, status or action.</FrameDescription>
+        </FrameHeader>
+        <ul className="grid gap-1.5 md:grid-cols-2">
+          {otherSources.map((source) => (
+            <li key={source.source_id}>
+              <FramePanel padding="sm" className="flex h-full flex-col gap-1">
+                <TextLink kind="external" inline href={source.url} className="text-sm text-pretty max-sm:py-2">
+                  {source.name}
+                </TextLink>
+                <p className="type-caption text-muted-foreground">{source.publisher} · retrieved {source.retrieved}</p>
+              </FramePanel>
+            </li>
+          ))}
+        </ul>
       </Frame>
 
       <nav aria-label="Page">

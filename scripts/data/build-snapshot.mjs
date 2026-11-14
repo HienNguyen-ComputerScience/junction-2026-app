@@ -64,7 +64,7 @@ const INDICATORS = [
     stage: null,
     years: SCREENING_YEARS,
     limitation:
-      "Share of women invited to mammography screening who attended, so it says nothing about people who were not invited. Latest year is 2024. Shown as context only, not used for ranking or stage status.",
+      "Share of women invited to mammography screening who attended, so it says nothing about people who were not invited. Latest year is 2024. Listed on this page as context only: not shown on county pages and not used for ranking or stage status.",
   },
   {
     indicator_id: "6103",
@@ -74,7 +74,7 @@ const INDICATORS = [
     stage: null,
     years: SCREENING_YEARS,
     limitation:
-      "Share of invited women and men who attended. The programme started in 2022 and is still widening its age band, so years and counties are not fully comparable. Latest year is 2024. Shown as context only, not used for ranking or stage status.",
+      "Share of invited women and men who attended. The programme started in 2022 and is still widening its age band, so years and counties are not fully comparable. Latest year is 2024. Listed on this page as context only: not shown on county pages and not used for ranking or stage status.",
   },
   {
     indicator_id: "3620",
@@ -84,7 +84,7 @@ const INDICATORS = [
     stage: null,
     years: SCREENING_YEARS,
     limitation:
-      "Share of women invited to cervical screening who attended. Tests taken outside the programme (private or occupational care) are not counted. Latest year is 2024. Shown as context only, not used for ranking or stage status.",
+      "Share of women invited to cervical screening who attended. Tests taken outside the programme (private or occupational care) are not counted. Latest year is 2024. Listed on this page as context only: not shown on county pages and not used for ranking or stage status.",
   },
 ];
 
