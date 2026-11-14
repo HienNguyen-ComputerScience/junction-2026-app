@@ -405,8 +405,14 @@ function RankingRowLink({
           <span className="flex h-5 items-center gap-x-2.5">
             {/* No value: nothing here, the "No public data" tag says it. The cell keeps its
                 width so the bars line up down the column. */}
-            <span className="w-11 shrink-0 figure text-[0.8125rem] font-medium text-foreground empty:hidden sm:empty:block lg:w-12 lg:text-sm">
-              {row.referral === null ? null : formatPct(row.referral.value)}
+            <span
+              className={`w-11 shrink-0 figure text-[0.8125rem] font-medium empty:hidden sm:empty:block lg:w-12 lg:text-sm ${row.referral === null ? "text-muted-foreground" : "text-foreground"}`}
+            >
+              {row.referral !== null
+                ? formatPct(row.referral.value)
+                : row.sharedReferral
+                  ? formatPct(row.sharedReferral.value)
+                  : null}
             </span>
             <ReferralMiniBar
               value={row.referral === null ? null : row.referral.value}
@@ -417,7 +423,14 @@ function RankingRowLink({
           </span>
           <StatusBadge status={referralStatus} variant="quiet">
             <span>
-              {REFERRAL_TAG[referralStatus]}
+              {row.referral === null && row.sharedReferral ? (
+                <>
+                  {row.sharedReferral.name}-wide
+                  <span className="sr-only">, no figure for this area alone</span>
+                </>
+              ) : (
+                REFERRAL_TAG[referralStatus]
+              )}
               {referralStatus !== "no_data" && (
                 <span className="sr-only">
                   {referralStatus === "amber" ? " as Finland" : ""} (Finland{" "}

@@ -196,6 +196,21 @@ export function buildContextFromSnapshot(snapshot: Snapshot, countyId: string): 
         : gap.status === "amber"
           ? "amber: at Finland's level or better, but still a delay, not a pass"
           : "no public data for this county";
+    if (gap.shared) {
+      // A wider value (HUS) for an area with none of its own. Labelled in the
+      // fact text so the brief can never pass it off as the county's figure.
+      const name = gap.shared.name;
+      facts.push({
+        fact_id: `${name.toLowerCase()}-${gap.indicator_id}-${LATEST}`,
+        text: `In ${LATEST}, ${fmt(gap.shared.value, 1)}% of referrals to specialist care were processed within 3 days at ${name}, the hospital group that handles referrals from ${county.name} and other areas. This is a ${name}-wide value, not a figure for ${county.name} alone.`,
+        value: round(gap.shared.value, 1),
+        unit: "%",
+        decimals: 1,
+        year: LATEST,
+        indicator_id: gap.indicator_id,
+        source_id: gap.source_id,
+      });
+    }
     stages.push({
       stage,
       label: STAGE_LABEL[stage],

@@ -117,6 +117,24 @@
     "data_updated": null
   },
   {
+    "source_id": "hus-referrals-2024",
+    "kind": "statistic",
+    "name": "HUS: Hoitoa odottavat potilaat erikoisaloittain 31.12.2024 (table 3, referrals received and processing times)",
+    "url": "https://www.hus.fi/sites/default/files/2025-01/hoitoa-odottavat-potilaat-erikoisaloittain-2024-joulukuu.pdf",
+    "publisher": "HUS",
+    "retrieved": "2026-11-14",
+    "data_updated": "2024-12-31"
+  },
+  {
+    "source_id": "kuitunen-2026",
+    "kind": "statistic",
+    "name": "Kuitunen J. et al. Socioeconomic Status and Access to Treatment in Diffuse Large B-Cell Lymphoma. Cancer Medicine 2026;15(5):e71920",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13158131/",
+    "publisher": "Kuitunen et al., Cancer Medicine",
+    "retrieved": "2026-11-14",
+    "data_updated": "2026-05-01"
+  },
+  {
     "source_id": "sotkanet-13",
     "kind": "statistic",
     "name": "Sotkanet 13: Referrals for specialised health care received processed within 3 days, % of referrals received",
