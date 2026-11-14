@@ -61,7 +61,7 @@ export default function ComparePage() {
       <Chunk
         lead
         as="h1"
-        className="pt-0 pb-0 sm:pt-0 sm:pb-0 lg:[&_h1]:text-[3rem]"
+        className="pt-0 pb-0 sm:pt-0 sm:pb-0"
         eyebrow={`Compare all ${lead.total} areas, ${LATEST_YEAR}`}
         statement={howManyLonger(lead.worse, lead.total)}
         figure={

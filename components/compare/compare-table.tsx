@@ -93,7 +93,7 @@ function Heading({
       ) : (
         children
       )}
-      {sub ? <span className="block max-w-[15rem] font-normal text-muted-foreground">{sub}</span> : null}
+      {sub ? <span className="block font-normal text-muted-foreground">{sub}</span> : null}
     </th>
   );
 }
@@ -251,7 +251,7 @@ export function CompareTable({
             <Heading sort={sort} onSort={setSort} keyName="gp" sub={<>Compared with Finland overall: <span className="figure">{pct(finland)}</span></>}>
               GP visits waiting over 7 days, 2025
             </Heading>
-            <Heading sort={sort} onSort={setSort} keyName="change" sub={<>{RECORDING_MARK} {recordingKey}</>}>
+            <Heading sort={sort} onSort={setSort} keyName="change" sub={<span className="block max-w-[15rem]">{RECORDING_MARK} {recordingKey}</span>}>
               Change since 2023
             </Heading>
             <Heading sort={sort} onSort={setSort} keyName="referral" sub={<>Compared with Finland overall: <span className="figure">{pct(finlandReferral)}</span></>}>
