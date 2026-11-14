@@ -572,10 +572,13 @@ h2:not([class*="type-"], .font-sans) {
     height: auto !important;
     opacity: 1 !important;
   }
-  [data-slot="frame-panel"],
+  /* Small units stay whole; a panel taller than a page is allowed to break, or it would push a
+     blank page ahead of itself. Mark a small panel with print-keep to keep it whole. */
+  .print-keep,
   [data-slot="disclosure"],
   tr,
-  li {
+  li,
+  dl > div {
     break-inside: avoid;
   }
   h1,
@@ -585,5 +588,36 @@ h2:not([class*="type-"], .font-sans) {
   }
   a {
     text-decoration: none;
+  }
+}
+
+/* ---- A table that reads as labelled rows on a phone. Give each <td> a data-label and wrap its
+   content in one element. Screen and print above phone width keep the real table. ---- */
+@media screen and (max-width: 639px) {
+  .stack-table,
+  .stack-table tbody,
+  .stack-table tr,
+  .stack-table td {
+    display: block;
+    width: 100%;
+  }
+  /* Each cell carries its column name (td::before, read by screen readers too). */
+  .stack-table thead {
+    display: none;
+  }
+  .stack-table tr {
+    padding-block: 0.875rem;
+  }
+  .stack-table td {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    gap: 0.75rem;
+    padding: 0.25rem 0;
+  }
+  .stack-table td::before {
+    content: attr(data-label);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--muted-foreground);
   }
 }
