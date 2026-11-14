@@ -34,11 +34,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         <SiteHeader />
         <div className="flex-1">{children}</div>
-        <footer className="mt-12 border-t border-border/80">
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-            <div className="flex items-center gap-2 text-sm font-semibold tracking-tight">
+        <footer className="mt-12 border-t border-border">
+          <div className="page-container flex flex-col gap-3 py-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2">
               <LogoMark className="size-5" />
-              <span className="font-display">FirstLine</span>
+              <span className="font-display text-[0.9375rem] leading-none font-[560] tracking-[-0.02em]">
+                FirstLine
+              </span>
             </div>
             <p className="type-caption text-muted-foreground">
               Decision support for service planning. Not medical advice. No patient

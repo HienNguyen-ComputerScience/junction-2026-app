@@ -3,40 +3,35 @@ import { Suspense } from "react";
 
 import { MainNav, NavLinks } from "@/components/site-nav";
 
-/** FirstLine mark: an F drawn as a path with a starting point. Decorative. */
-export function LogoMark({ className = "size-7" }: { className?: string }) {
+/**
+ * FirstLine mark: an F built from the product's own chart. The stem is the reference line
+ * (ink), the two arms are bars measured from it (lake indigo). Flat, no tile. Decorative.
+ */
+export function LogoMark({ className = "size-6" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 28 28" aria-hidden className={className}>
-      <rect width="28" height="28" rx="8" className="fill-brand" />
-      {/* An F drawn as a path: a start point, a stem, and two lines leading out. */}
-      <path
-        d="M10 19.5V9.5h9.5M10 14.5h6"
-        fill="none"
-        stroke="white"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="10" cy="19.75" r="2.1" fill="white" />
+    <svg viewBox="0 0 24 24" aria-hidden className={className}>
+      <rect x="3" y="2" width="2.5" height="20" className="fill-foreground" />
+      <rect x="7.5" y="4" width="14" height="5.5" rx="1" className="fill-brand" />
+      <rect x="7.5" y="12" width="8.5" height="5.5" rx="1" className="fill-brand" />
     </svg>
   );
 }
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-border/80 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-2.5 px-4 py-2.5 sm:h-16 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-0">
-        <div className="flex items-center gap-3">
+    <header className="border-b border-border bg-background">
+      <div className="page-container flex h-14 items-center justify-between gap-4 sm:gap-6">
+        <div className="flex min-w-0 items-center gap-3">
           <Link
             href="/"
-            className="flex w-fit items-center gap-2.5 rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="flex h-11 w-fit shrink-0 items-center gap-2 rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             <LogoMark />
-            <span className="font-display text-[1.1875rem] font-semibold tracking-[-0.025em]">
+            <span className="font-display text-[1.125rem] leading-none font-[560] tracking-[-0.02em]">
               FirstLine
             </span>
           </Link>
-          <p className="hidden border-l border-border pl-3 text-[0.8125rem] text-muted-foreground lg:block">
+          <p className="hidden truncate border-l border-border pl-3 type-caption text-muted-foreground lg:block">
             Where early cancer care breaks down, county by county
           </p>
         </div>
