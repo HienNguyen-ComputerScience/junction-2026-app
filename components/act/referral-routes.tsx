@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 
 import { SourceChip } from "@/components/source-chip";
+import { Disclosure } from "@/components/ui/disclosure";
 import {
   FINNISH_ROADMAP,
   KAYPA_HOITO,
@@ -49,7 +50,8 @@ function canonical(link: GuidelineLink): GuidelineLink {
 
 /** The chip's visible name: "NICE NG12", "Käypä hoito", or a study's country and author. */
 function chipName(link: GuidelineLink): string {
-  if (link.source_id && STUDY_NAME[link.source_id]) return STUDY_NAME[link.source_id];
+  if (link.source_id && STUDY_NAME[link.source_id])
+    return STUDY_NAME[link.source_id];
   const name = link.label
     .split(": ")[0]
     .split(",")[0]
@@ -66,9 +68,7 @@ function tierLinks(urgency: Urgency): GuidelineLink[] {
           (category) => category.urgency === urgency,
         ).flatMap((category) => category.links);
   return [
-    ...new Map(
-      links.map(canonical).map((link) => [link.url, link]),
-    ).values(),
+    ...new Map(links.map(canonical).map((link) => [link.url, link])).values(),
   ];
 }
 
@@ -109,6 +109,7 @@ export function ReferralRoutes() {
       <ol className="grid gap-3 md:grid-cols-2">
         {ROUTES.map(({ urgency, label }, index) => {
           const tier = TIERS[urgency];
+          const links = tierLinks(urgency);
           const concerns = RED_FLAG_CATEGORIES.filter(
             (category) => category.urgency === urgency,
           );
@@ -141,16 +142,20 @@ export function ReferralRoutes() {
                   </span>
                 )}
               </div>
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                <span className={ROW_LABEL}>Evidence</span>
-                <LinkChips links={tierLinks(urgency)} />
-              </div>
               <p className="text-sm leading-snug text-pretty">
                 <span className="type-note mr-2 text-muted-foreground">
                   GP does
                 </span>
                 {firstSentence(tier.gpAction)}
               </p>
+              <Disclosure
+                summary={`Evidence (${links.length})`}
+                summaryClassName="min-h-7"
+              >
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pt-1 pb-1">
+                  <LinkChips links={links} />
+                </div>
+              </Disclosure>
             </li>
           );
         })}
