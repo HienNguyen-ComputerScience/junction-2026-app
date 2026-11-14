@@ -106,13 +106,13 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
       <FocusGroup>
         {/* 1. The main delay, its figure, and the one thing to do with it. */}
         <section data-focus-item aria-labelledby="act-title" className="mt-6 flex flex-col gap-6 rounded-lg bg-keylime-wash px-7 py-9 sm:px-12 sm:py-12">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-col gap-5 max-sm:contents sm:flex-row sm:items-start sm:justify-between">
             <Reveal index={0}>
               <h1 id="act-title" className="type-page max-w-[22ch] text-pretty">
                 {statement(county.name, bottleneck)}
               </h1>
             </Reveal>
-            <SaveShare options={shareOptions} align="end" className="sm:shrink-0 sm:items-end" />
+            <SaveShare options={shareOptions} align="end" className="max-sm:order-1 sm:shrink-0 sm:items-end" />
           </div>
           {lead && leadValue !== null ? (
             <Reveal index={1} className="flex flex-col gap-2">
