@@ -8,11 +8,11 @@ import type { GapStatus } from "@/lib/data";
  * marker at Finland's value. Used wherever a share is drawn (hero, ranking, county step,
  * act stats), so the same mark means the same thing everywhere.
  *
- * One treatment for every bar that is worse than Finland, whichever way the share runs:
- * tinted red for the share itself, solid red for the gap to Finland.
- *  - a wait share (lower is better) runs PAST the line: tinted up to the line, solid beyond it;
- *  - a referral share (higher is faster) stops SHORT of the line: tinted up to the value, solid
- *    from the value to the line.
+ * One treatment for a bar that is worse than Finland:
+ *  - a wait share (lower is better) runs PAST the line: tinted red up to the line, solid red
+ *    beyond it (the gap to Finland);
+ *  - a referral share (higher is faster) stops SHORT of the line: the tinted fill ends at the
+ *    value and the shortfall up to the line is faded red hatching on the track, not fill.
  * At or better: the slate status tone. Grey is only the "Finland overall" bar (status null).
  */
 
@@ -44,7 +44,7 @@ const BAR_FILL: Record<GapStatus, string> = {
 };
 /** The share itself on a bar that is worse than Finland; the gap to Finland is BAR_FILL.red. */
 const RED_TINT = "bg-status-red-tint";
-/** The "Finland overall" bar, and nothing else. */
+/** The "Finland overall" bar. */
 const NEUTRAL_FILL = "bg-foreground/45";
 
 /**
@@ -86,8 +86,8 @@ export function BarFill({
   const grow = { "--i": index } as CSSProperties;
   const referral = readsHigherIsBetter(value, finland, status, higherIsBetter);
 
-  // Referral share that stops short of Finland: tinted red up to the value, then the missing
-  // part, solid red, up to the line. The same two reds as a wait bar that runs past the line.
+  // Referral share that stops short of Finland: the fill ends at the value (tint); the
+  // shortfall up to the line is faded red hatching, drawn on the track, not as fill.
   if (referral && status === "red" && finland != null && value < finland) {
     const f = clamp(finland);
     return (
@@ -97,13 +97,20 @@ export function BarFill({
           style={{ width: `${v}%`, ...grow }}
         />
         <span
-          className="animate-bar-grow absolute inset-y-0 rounded-r-[2px] bg-status-red"
-          style={{ left: `${v}%`, width: `${f - v}%`, "--i": index + 14 } as CSSProperties}
+          className="animate-bar-grow absolute inset-y-0 rounded-r-[2px] bg-shortfall"
+          style={
+            {
+              left: `${v}%`,
+              width: `${f - v}%`,
+              "--i": index + 14,
+            } as CSSProperties
+          }
         />
       </>
     );
   }
 
+  // Wait share past Finland: tinted up to the line, solid red beyond it.
   const fill = status ? BAR_FILL[status] : NEUTRAL_FILL;
   const split = !referral && status === "red" && finland != null && value > finland;
   return (
@@ -113,7 +120,7 @@ export function BarFill({
     >
       {split ? (
         <>
-          <span className={cn("h-full", RED_TINT)} style={{ width: `${(finland / value) * 100}%` }} />
+          <span className={cn("h-full", RED_TINT)} style={{ width: `${(clamp(finland) / v) * 100}%` }} />
           <span className={cn("h-full flex-1", fill)} />
         </>
       ) : (
@@ -156,8 +163,17 @@ export function FinlandAxis({
   // instead, ending on the line. Elsewhere it is centred on the tick.
   const leftOfTick = x >= 72;
   const box: CSSProperties = leftOfTick
-    ? { left: 0, right: `${100 - x}%`, justifyContent: "flex-end", paddingRight: 6 }
-    : { left: `${x - reach}%`, right: `${100 - x - reach}%`, justifyContent: "safe center" };
+    ? {
+        left: 0,
+        right: `${100 - x}%`,
+        justifyContent: "flex-end",
+        paddingRight: 6,
+      }
+    : {
+        left: `${x - reach}%`,
+        right: `${100 - x - reach}%`,
+        justifyContent: "safe center",
+      };
   return (
     <div aria-hidden className={cn("relative h-4 type-note text-faint", className)}>
       {x > 30 && <span className="absolute left-0 figure">0%</span>}
@@ -181,24 +197,21 @@ function KeyItem({ swatch, children }: { swatch: ReactNode; children: ReactNode 
   );
 }
 
-type KeyKind = "finland" | "red" | "amber" | "no_data";
-const KEY_ITEMS: KeyKind[] = ["finland", "red", "amber", "no_data"];
+type KeyKind = "finland" | "red" | "short" | "amber" | "no_data";
+const KEY_ITEMS: KeyKind[] = ["finland", "red", "short", "amber", "no_data"];
 
 /**
  * The key for reading the bars and the map: one row of swatches, drawn like the marks they
  * name. One key per page, and nothing else in it.
  *  - `items`: which swatches to show, when a view has no hatched track or names the Finland
- *    line elsewhere. Default: all four.
+ *    line elsewhere. Default: all five ("Short of Finland's level" names the faded shortfall of a referral bar).
  * One item per line on a phone, one wrapping row from `sm`.
  */
 export function BarKey({ className, items = KEY_ITEMS }: { className?: string; items?: KeyKind[] }) {
   return (
     <ul
       data-slot="bar-key"
-      className={cn(
-        "flex flex-col gap-x-6 gap-y-1.5 type-legend sm:flex-row sm:flex-wrap sm:items-center",
-        className,
-      )}
+      className={cn("flex flex-col gap-x-6 gap-y-1.5 type-legend sm:flex-row sm:flex-wrap sm:items-center", className)}
     >
       {items.includes("finland") && (
         <KeyItem
@@ -224,6 +237,18 @@ export function BarKey({ className, items = KEY_ITEMS }: { className?: string; i
           Worse than Finland&apos;s level
         </KeyItem>
       )}
+      {items.includes("short") && (
+        <KeyItem
+          swatch={
+            <>
+              <span className={cn("h-full w-1/2 rounded-l-[2px]", RED_TINT)} />
+              <span className="h-full w-1/2 rounded-r-[2px] bg-shortfall" />
+            </>
+          }
+        >
+          Short of Finland&apos;s level
+        </KeyItem>
+      )}
       {items.includes("amber") && (
         <KeyItem swatch={<span className="h-full w-full rounded-[2px] bg-status-amber-bar" />}>
           At or better than Finland&apos;s level
@@ -231,9 +256,7 @@ export function BarKey({ className, items = KEY_ITEMS }: { className?: string; i
       )}
       {items.includes("no_data") && (
         <KeyItem
-          swatch={
-            <span className="h-full w-full rounded-[2px] bg-hatch ring-1 ring-status-grey-border ring-inset" />
-          }
+          swatch={<span className="h-full w-full rounded-[2px] bg-hatch ring-1 ring-status-grey-border ring-inset" />}
         >
           No public data
         </KeyItem>
@@ -295,11 +318,7 @@ export function MeasureBar({
               below ? "justify-end pr-1.5" : "justify-start pl-1.5",
               status === "red" ? "text-status-red-ink" : "text-muted-foreground",
             )}
-            style={
-              below
-                ? { left: 0, right: `${100 - clamp(finland)}%` }
-                : { left: `${clamp(finland)}%`, right: 0 }
-            }
+            style={below ? { left: 0, right: `${100 - clamp(finland)}%` } : { left: `${clamp(finland)}%`, right: 0 }}
           >
             {gapLabel}
           </span>
@@ -313,13 +332,7 @@ export function MeasureBar({
         )}
       >
         {value !== null && (
-          <BarFill
-            value={value}
-            finland={finland}
-            status={status}
-            index={index}
-            higherIsBetter={higherIsBetter}
-          />
+          <BarFill value={value} finland={finland} status={status} index={index} higherIsBetter={higherIsBetter} />
         )}
         {hasGap && size === "lg" && value !== null && finland !== null && (
           <span

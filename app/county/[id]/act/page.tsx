@@ -80,7 +80,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
             {bottleneck.anyRed ? "Where the delay sits" : "Where the pathway stands"} ({LATEST_YEAR})
           </FrameTitle>
           <p className="text-sm text-pretty text-foreground">{bottleneckLede(bottleneck)}</p>
-          <BarKey items={["finland"]} className="sm:ml-auto" />
+          <BarKey items={["finland", "short"]} className="sm:ml-auto" />
         </FrameHeader>
         <FramePanel padding="none">
           <PathwaySteps

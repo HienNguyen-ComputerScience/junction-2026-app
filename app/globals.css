@@ -320,6 +320,17 @@ h2:not([class*="type-"], .font-sans) {
   color: color-mix(in oklch, var(--foreground), var(--muted-foreground) 45%);
 }
 
+/* The shortfall of a referral bar that stops short of Finland's line: faded red hatching on the
+   track, so it reads as "missing", not as fill. The bar visibly ends at its value. */
+@utility bg-shortfall {
+  background-image: repeating-linear-gradient(
+    135deg,
+    color-mix(in oklch, var(--status-red) 70%, transparent) 0 1.5px,
+    transparent 1.5px 5px
+  );
+  background-color: color-mix(in oklch, var(--status-red) 14%, transparent);
+}
+
 /* Empty measure track: "no public data" drawn as absence, not as a zero. */
 @utility bg-hatch {
   background-image: repeating-linear-gradient(
