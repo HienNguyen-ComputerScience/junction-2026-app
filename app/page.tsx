@@ -59,7 +59,7 @@ export default function CountyRankingPage() {
           </p>
           <h1
             id="home-title"
-            className="mt-2 type-display max-w-[19ch] text-[2rem] text-foreground sm:mt-3 sm:text-[2.75rem] lg:text-[3.25rem]"
+            className="mt-2 type-display max-w-[19ch] text-[1.75rem] text-foreground sm:mt-3 sm:text-[2.75rem] lg:text-[3.25rem]"
           >
             In Finland, where you live decides how fast you get to see a GP
           </h1>
@@ -73,8 +73,9 @@ export default function CountyRankingPage() {
             <strong className="font-semibold text-foreground">{gap.toFixed(1)} percentage point</strong>{" "}
             gap, {ratio.toFixed(1)} times the share, within one country.
           </p>
-          {/* The source line sits with the paragraph's figures on every screen size. */}
-          <p className="mt-2 max-w-[35rem] type-caption text-pretty text-muted-foreground sm:mt-3 sm:border-t sm:border-border sm:pt-3">
+          {/* The source line sits with the paragraph's figures from sm up. On a phone it moves
+              under the comparison card, whose own source chip is on the same screen as the lede. */}
+          <p className="mt-2 max-w-[35rem] type-caption text-pretty text-muted-foreground max-sm:hidden sm:mt-3 sm:border-t sm:border-border sm:pt-3">
             Sotkanet indicator {GP_WAIT_ID}, {LATEST_YEAR}. Not specific to cancer: it covers
             all non-urgent GP visits.
           </p>
@@ -126,6 +127,10 @@ export default function CountyRankingPage() {
             </ul>
           </FramePanel>
         </Frame>
+        <p className="type-caption text-pretty text-muted-foreground sm:hidden">
+          Sotkanet indicator {GP_WAIT_ID}, {LATEST_YEAR}. Not specific to cancer: it covers all
+          non-urgent GP visits.
+        </p>
       </section>
 
       <Frame id="ranking" aria-labelledby="ranking-heading" className="scroll-mt-4">
