@@ -24,25 +24,25 @@ const GROUPS: { id: string; who: string; what: string; ids: string[] }[] = [
   {
     id: "thl",
     who: "THL, the Finnish Institute for Health and Welfare, on its Sotkanet service",
-    what: "How long non-urgent GP visits wait, how fast hospitals process referrals, and how many doctor visits people make.",
+    what: "Waits for a GP (a health-centre doctor), referral speed and doctor visits.",
     ids: ["sotkanet-6411", "sotkanet-13", "sotkanet-5033", "sotkanet-293", "sotkanet-2371"],
   },
   {
     id: "registry",
     who: "The Finnish Cancer Registry, also on Sotkanet",
-    what: "Who attends cancer screening when invited, and five-year survival for breast and bowel cancer.",
+    what: "Cancer screening attendance, and survival for breast and bowel cancer.",
     ids: ["sotkanet-3621", "sotkanet-3620", "sotkanet-6103", "sotkanet-3625", "sotkanet-3627"],
   },
   {
     id: "kela",
     who: "Kela, the Social Insurance Institution, also on Sotkanet",
-    what: "How many people were paid back part of a private doctor visit.",
+    what: "How many people claimed back part of a private doctor visit.",
     ids: ["sotkanet-692"],
   },
   {
     id: "hus",
     who: "HUS, the Helsinki University Hospital group",
-    what: "Its own report on referrals received and how fast they were processed.",
+    what: "Its own report on referrals and how fast it processed them.",
     ids: ["hus-referrals-2024"],
   },
 ];

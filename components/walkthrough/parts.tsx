@@ -49,15 +49,6 @@ export function Statement({ children, index = 1 }: { children: ReactNode; index?
   );
 }
 
-/** A plain sentence: what the statement or figure means. */
-export function Plain({ children, index = 0, className }: { children: ReactNode; index?: number; className?: string }) {
-  return (
-    <Reveal index={index} className={cn("max-w-[44rem]", className)}>
-      <p className="text-lg leading-8 text-pretty text-charcoal">{children}</p>
-    </Reveal>
-  );
-}
-
 /** A large forward link at the end of the page. */
 export function ForwardLink({ href, children }: { href: string; children: ReactNode }) {
   return (

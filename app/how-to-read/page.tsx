@@ -1,20 +1,20 @@
 import { ArrowUp } from "lucide-react";
 import type { Metadata } from "next";
-import { Fragment, type CSSProperties } from "react";
 import Link from "next/link";
+import { Fragment, type CSSProperties, type ReactNode } from "react";
 import { cn } from "cn";
 
 import "./how-to-read.css";
-import { SourceLine } from "@/components/briefing/source-line";
 import { GradeGlyph } from "@/components/insights/confidence-badge";
 import { StarterDownload } from "@/components/insights/starter-dataset";
 import { AnimatedBar, AnimatedNumber, Disclosure, Reveal } from "@/components/motion";
 import { SourceChip } from "@/components/source-chip";
 import { Badge } from "@/components/ui/badge";
 import { FigurePicture } from "@/components/walkthrough/figure-picture";
-import { ForwardLink, Plain, Section, Statement, longDate } from "@/components/walkthrough/parts";
+import { ForwardLink, Section, Statement, longDate } from "@/components/walkthrough/parts";
 import { PathwayPicture } from "@/components/walkthrough/pathway-picture";
 import { Story } from "@/components/walkthrough/story";
+import type { GradeLevel } from "@/lib/insights";
 import { MOTION_LOUD_CLASS } from "@/lib/motion";
 import {
   YEAR,
@@ -55,13 +55,51 @@ const LINK =
   "rounded-sm font-semibold text-forest-ink underline underline-offset-4 hover:text-forest-shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink";
 
 const PANEL = "rounded-[14px] bg-keylime-wash p-7 sm:p-10";
+/** What a "Show …" button opens. */
+const DETAIL = "flex flex-col gap-3 rounded-[14px] bg-keylime-wash p-5 text-base leading-6 text-charcoal sm:p-7";
+/** A figure set large. */
+const NUMERAL = "numeral text-7xl leading-none text-forest-ink";
+/** A short statement inside a story block or a panel. */
+const SMALL_STATEMENT = "font-display text-[1.75rem] leading-[1.3] font-light text-forest-ink";
 
-const GLYPHS = {
+const GLYPHS: Record<GradeLevel, ReactNode> = {
   solid: <GradeGlyph level="solid" />,
   care: <GradeGlyph level="care" />,
   shared: <GradeGlyph level="shared" />,
   none: <GradeGlyph level="none" />,
 };
+
+/** The grades in a few words each. The full meaning and the rules are behind "Show the rules". */
+const LEVEL_SHORT: Record<GradeLevel, string> = {
+  solid: "Published, and the count behind it is steady.",
+  care: "Published, but how it was recorded or what it covers may mislead.",
+  shared: "One value for a wider hospital area, not this area alone.",
+  none: "Nobody publishes it for this area and year.",
+};
+
+/** Source chips, with "Source:" before them. */
+function Sources({ items }: { items: { id: string; year?: number }[] }) {
+  return (
+    <p className="flex flex-wrap items-center gap-2 text-base font-semibold text-forest-ink">
+      Source:
+      {items.map((item) => (
+        <SourceChip key={item.id} sourceId={item.id} year={item.year} />
+      ))}
+    </p>
+  );
+}
+
+/** A caveat in one short line beside its figure; the detail sits behind "Why?". */
+function Caveat({ children, why }: { children: ReactNode; why: ReactNode }) {
+  return (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-[14px] bg-cream-paper px-4 py-2">
+      <span className="text-base leading-6 font-semibold text-forest-ink">{children}</span>
+      <Disclosure show="Why?" hide="Hide why" tone="quiet" className="basis-full sm:basis-auto">
+        <div className="flex flex-col gap-2 pb-2 text-base leading-6 text-charcoal">{why}</div>
+      </Disclosure>
+    </div>
+  );
+}
 
 /**
  * /how-to-read: where FirstLine's numbers come from and what they cannot say, as one long page
@@ -70,11 +108,11 @@ const GLYPHS = {
  */
 export default function HowToReadPage() {
   const gpLead = gpWaitAreas[0];
-  const fieldsTotal = starter.fieldCount;
+  const gaps = pathway.filter((slot) => !slot.published);
 
   return (
     <main className={cn("htr-root", MOTION_LOUD_CLASS)}>
-      {/* Always in view: what this page is, and the way to the full list of sources. */}
+      {/* Always in view: the way to the full list of sources. */}
       <div className="sticky top-0 z-20 border-b border-frame-border bg-cream-paper print:hidden">
         <div className="page-container flex min-h-14 flex-wrap items-center justify-between gap-x-6 gap-y-1 py-2">
           <p className="text-base font-semibold text-forest-ink">How to read these numbers</p>
@@ -85,20 +123,13 @@ export default function HowToReadPage() {
       </div>
 
       <div className="page-container">
-        <header className="flex max-w-[52rem] flex-col gap-6 pt-12 pb-16 sm:pt-20">
+        <header className="flex max-w-[52rem] flex-col gap-8 pt-12 pb-16 sm:pt-20">
           <Reveal>
             <h1 className="font-display text-[2.5rem] leading-[1.1] font-light text-forest-ink sm:text-[3.5rem]">
               How to read these numbers
             </h1>
           </Reveal>
           <Reveal index={1}>
-            <p className="text-lg leading-8 text-pretty text-charcoal">
-              Where FirstLine&apos;s figures come from, what each one really counts, how far to trust it, and what Finland
-              does not publish at all. Seven short parts; reading it all takes about two minutes. Keep scrolling: each
-              part shows itself as you reach it.
-            </p>
-          </Reveal>
-          <Reveal index={2}>
             <nav aria-labelledby="on-this-page" className="rounded-[14px] bg-keylime-wash p-7">
               <h2 id="on-this-page" className="text-base font-semibold text-forest-ink">
                 On this page
@@ -119,20 +150,13 @@ export default function HowToReadPage() {
 
         {/* 1. Where the numbers come from */}
         <Section id={SECTIONS[0].id} name={SECTIONS[0].name}>
-          <Statement>Every number on FirstLine comes from a public source you can open yourself.</Statement>
+          <Statement>Every number here comes from a public source you can open.</Statement>
           <Reveal index={2} className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-            <span className="numeral text-7xl leading-none text-forest-ink">
+            <span className={NUMERAL}>
               <AnimatedNumber value={sourceCount} final={String(sourceCount)} decimals={0} level="loud" />
             </span>
-            <span className="text-lg text-charcoal">
-              public sources: official statistics, one hospital report, and {studyCount} published studies and national
-              documents.
-            </span>
+            <span className="text-lg text-charcoal">public sources, {studyCount} of them studies and national documents.</span>
           </Reveal>
-          <Plain index={3}>
-            We copied them on {longDate(retrieved)} and change nothing in them. The figures are shown as published: one
-            value per area per year, for the three latest years each publisher has released.
-          </Plain>
           <ol className="grid gap-4 md:grid-cols-2">
             {sourceGroups.map((group, index) => (
               <Reveal as="li" key={group.id} index={index} className={cn(PANEL, "flex flex-col gap-3")}>
@@ -146,7 +170,10 @@ export default function HowToReadPage() {
               </Reveal>
             ))}
           </ol>
-          <Reveal>
+          <Reveal className="flex flex-col items-start gap-4">
+            <Caveat why={<p>We change nothing in them. Each publisher&apos;s last update is in the table below.</p>}>
+              Our copy was taken on {longDate(retrieved)}.
+            </Caveat>
             <Disclosure show="Show who publishes each one, and when" hide="Hide who publishes each one, and when">
               <div className="overflow-x-auto rounded-[14px] bg-keylime-wash p-5 sm:p-7">
                 <table className="stack-table w-full text-left text-base leading-6 text-charcoal">
@@ -181,7 +208,7 @@ export default function HowToReadPage() {
                   </tbody>
                 </table>
                 <p className="mt-4 text-base leading-6 text-charcoal">
-                  The studies and national documents are listed with their links on{" "}
+                  The studies are on{" "}
                   <Link href="/sources" className={LINK}>
                     the full list of sources
                   </Link>
@@ -195,44 +222,39 @@ export default function HowToReadPage() {
         {/* 2. What one figure really counts */}
         {gpLead ? (
           <Section id={SECTIONS[1].id} name={SECTIONS[1].name}>
-            <Statement>A figure counts exactly one thing. Read it as that, and no more.</Statement>
-            <Plain index={2}>
-              Our main figure is THL&apos;s Sotkanet 6411: the share of non-urgent GP visits that came more than 7 days
-              after the need for care was assessed. A GP here means a doctor at a public health centre.
-            </Plain>
+            <Statement>A figure counts exactly one thing.</Statement>
             <Story
-              label={`${gpLead.name}'s share of non-urgent GP visits that waited more than 7 days, and what the figure counts`}
-              picture={<FigurePicture areas={gpWaitAreas} finland={finlandGpWait} year={YEAR} glyphs={GLYPHS} />}
+              label={`${gpLead.name}'s share of non-urgent GP visits that waited more than a week, and what the figure counts`}
+              picture={
+                <FigurePicture
+                  areas={gpWaitAreas}
+                  finland={finlandGpWait}
+                  year={YEAR}
+                  glyphs={GLYPHS}
+                  source={<Sources items={[{ id: "sotkanet-6411", year: YEAR }]} />}
+                />
+              }
               blocks={[
-                <Fragment key="b1">
-                  <p className="font-display text-[1.75rem] leading-[1.3] font-light text-forest-ink">It counts visits, not people.</p>
-                  <p className="text-lg leading-8 text-charcoal">
-                    So we say &ldquo;{gpLead.text} of non-urgent GP visits in {gpLead.name} came more than a week after people
-                    asked&rdquo;, never &ldquo;{gpLead.text} of people&rdquo;. One person can make several visits.
-                  </p>
+                <Fragment key="visits">
+                  <p className={SMALL_STATEMENT}>It counts visits, not people.</p>
+                  <p className="text-lg leading-8 text-charcoal">One person can make several visits.</p>
                 </Fragment>,
-                <Fragment key="b2">
-                  <p className="font-display text-[1.75rem] leading-[1.3] font-light text-forest-ink">
-                    It counts every non-urgent visit, not only cancer.
-                  </p>
-                  <p className="text-lg leading-8 text-charcoal">
-                    It shows how hard it is to get a GP appointment at all, which is the first step for anyone with a
-                    possible cancer. How long people with possible cancer symptoms wait is not published.
-                  </p>
+                <Fragment key="cancer">
+                  <p className={SMALL_STATEMENT}>It counts every non-urgent visit, not only cancer.</p>
+                  <p className="text-lg leading-8 text-charcoal">It shows how hard any GP appointment is to get.</p>
                 </Fragment>,
               ]}
             />
-            <Reveal className="flex flex-col gap-4">
-              <SourceLine sourceId="sotkanet-6411" year={YEAR}>
-                {gpDefinition.limitation}
-              </SourceLine>
+            <Reveal>
               <Disclosure show="Show the official definition" hide="Hide the official definition">
-                <div className="flex flex-col gap-2 rounded-[14px] bg-keylime-wash p-5 sm:p-7">
-                  <p className="text-base leading-6 font-semibold text-forest-ink">Official name (THL, in English)</p>
-                  <p className="text-base leading-6 text-charcoal">{gpDefinition.officialName}</p>
-                  <p className="text-base leading-6 text-charcoal">
-                    &ldquo;Appointments kept&rdquo; means visits that took place.
+                <div className={DETAIL}>
+                  <p className="font-semibold text-forest-ink">Sotkanet 6411, THL&apos;s name in English</p>
+                  <p>{gpDefinition.officialName}</p>
+                  <p>
+                    In plain words: the share of kept non-urgent GP appointments that came more than 7 days after the need
+                    for care was assessed.
                   </p>
+                  <p>{gpDefinition.limitation}</p>
                 </div>
               </Disclosure>
             </Reveal>
@@ -242,14 +264,7 @@ export default function HowToReadPage() {
         {/* 3. Why some areas share a number */}
         {sharedReferral ? (
           <Section id={SECTIONS[2].id} name={SECTIONS[2].name}>
-            <Statement>
-              {sharedReferral.areas.length} areas in Uusimaa show the same referral figure, because only one is published
-              for all of them.
-            </Statement>
-            <Plain index={2}>
-              Their hospital referrals go to {sharedReferral.hospital}, the Helsinki University Hospital group. Sotkanet
-              publishes how fast {sharedReferral.hospital} processes referrals as one value, not one per area.
-            </Plain>
+            <Statement>{sharedReferral.areas.length} areas in Uusimaa share one referral figure.</Statement>
             <Reveal className={cn(PANEL, "grid items-center gap-6 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]")}>
               <ul className="flex flex-col gap-2">
                 {sharedReferral.areas.map((area) => (
@@ -260,42 +275,55 @@ export default function HowToReadPage() {
               </ul>
               <div aria-hidden className="flex flex-col gap-[38px] max-md:hidden">
                 {sharedReferral.areas.map((area, index) => (
-                  <span key={area.id} className="block h-px w-16 animate-line-in bg-forest-ink" style={{ "--i": index + 1 } as CSSProperties} />
+                  <span
+                    key={area.id}
+                    className="block h-px w-16 animate-line-in bg-forest-ink"
+                    style={{ "--i": index + 1 } as CSSProperties}
+                  />
                 ))}
               </div>
               <div className="flex flex-col gap-2 rounded-[14px] bg-cream-paper p-6">
-                <p className="text-base font-semibold text-forest-ink">One value for all {sharedReferral.areas.length}: {sharedReferral.hospital}</p>
+                <p className="text-base font-semibold text-forest-ink">
+                  One value for all {sharedReferral.areas.length}: {sharedReferral.hospital}, the Helsinki University Hospital
+                  group
+                </p>
                 <p className="numeral text-6xl leading-none text-forest-ink">
                   <AnimatedNumber value={sharedReferral.value} final={sharedReferral.text} decimals={1} level="loud" />
                 </p>
                 <p className="text-base leading-6 text-charcoal">
-                  of referrals processed within 3 days in {YEAR}
+                  of referrals processed within 3 days, {YEAR}
                   {sharedReferral.finland ? ` (Finland ${sharedReferral.finland})` : ""}.
                 </p>
               </div>
             </Reveal>
-            <Plain>
-              On FirstLine this value is always labelled &ldquo;shared&rdquo; or &ldquo;no county figure&rdquo;. It is never
-              shown as one area&apos;s own result.
-            </Plain>
-            <Reveal className="flex flex-col gap-4">
-              <SourceLine sourceId="sotkanet-13" year={YEAR}>
-                Counts all referrals to the hospital, not only cancer.
-                {sharedReferral.confirmedBy ? " Checked against HUS's own report:" : ""}
-              </SourceLine>
-              {sharedReferral.confirmedBy ? (
-                <p className="flex">
-                  <SourceChip sourceId={sharedReferral.confirmedBy} />
-                </p>
-              ) : null}
+            <Reveal className="flex flex-col items-start gap-4">
+              <Caveat
+                why={
+                  <>
+                    <p>
+                      Their referrals go to {sharedReferral.hospital}, and Sotkanet publishes one value for it, not one per
+                      area.
+                    </p>
+                    <p>On FirstLine it is always labelled shared. It counts all referrals, not only cancer.</p>
+                  </>
+                }
+              >
+                Never one area&apos;s own figure.
+              </Caveat>
+              <Sources
+                items={[
+                  { id: "sotkanet-13", year: YEAR },
+                  ...(sharedReferral.confirmedBy ? [{ id: sharedReferral.confirmedBy }] : []),
+                ]}
+              />
               {sharedReferral.gap ? (
-                <Disclosure show="Show what is missing, and who could publish it" hide="Hide what is missing, and who could publish it">
-                  <dl className="grid gap-x-6 gap-y-2 rounded-[14px] bg-keylime-wash p-5 text-base leading-6 text-charcoal sm:grid-cols-[12rem_minmax(0,1fr)] sm:p-7">
+                <Disclosure show="Show what is missing, and who could publish it" hide="Hide what is missing">
+                  <dl className="grid gap-x-6 gap-y-2 rounded-[14px] bg-keylime-wash p-5 text-base leading-6 text-charcoal sm:grid-cols-[14rem_minmax(0,1fr)] sm:p-7">
                     <dt className="font-semibold text-forest-ink">Not published</dt>
                     <dd>{sharedReferral.gap.missing}</dd>
                     <dt className="font-semibold text-forest-ink">What exists instead</dt>
                     <dd>{sharedReferral.gap.today}</dd>
-                    <dt className="font-semibold text-forest-ink">Our proposal</dt>
+                    <dt className="font-semibold text-forest-ink">Who could publish it (our proposal)</dt>
                     <dd>{sharedReferral.gap.couldPublish}</dd>
                   </dl>
                 </Disclosure>
@@ -306,7 +334,7 @@ export default function HowToReadPage() {
 
         {/* 4. How much to trust a figure */}
         <Section id={SECTIONS[3].id} name={SECTIONS[3].name}>
-          <Statement>Every figure carries a plain label that says how far to trust it, and why.</Statement>
+          <Statement>Every figure carries a label: how far to trust it.</Statement>
           <ul className="grid gap-4 sm:grid-cols-2">
             {gradeLevels.map((level, index) => (
               <Reveal as="li" key={level.level} index={index} className={cn(PANEL, "flex flex-col gap-2")}>
@@ -314,27 +342,21 @@ export default function HowToReadPage() {
                   <GradeGlyph level={level.level} className="size-4" />
                   {level.label}
                 </p>
-                <p className="text-base leading-6 text-charcoal">{level.meaning}</p>
+                <p className="text-base leading-6 text-charcoal">{LEVEL_SHORT[level.level]}</p>
               </Reveal>
             ))}
           </ul>
           <Reveal className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-            <span className="numeral text-7xl leading-none text-forest-ink">
+            <span className={NUMERAL}>
               <AnimatedNumber value={gpGradeCounts.care} final={String(gpGradeCounts.care)} decimals={0} level="loud" />
             </span>
             <span className="text-lg text-charcoal">
-              of the {gpGradeCounts.areas} areas&apos; GP-wait figures for {YEAR} are labelled &ldquo;Read with care&rdquo; or
-              &ldquo;Read the trend with care&rdquo;. {gpGradeCounts.solid} are &ldquo;Solid&rdquo;.
+              of {gpGradeCounts.areas} areas&apos; GP-wait figures for {YEAR} are labelled &ldquo;read with care&rdquo;.
             </span>
           </Reveal>
-          <Plain>
-            The most common reason is a change in how visits were recorded. Here is one area where that happened.
-          </Plain>
           {recordingExample ? (
             <Reveal className={cn(PANEL, "flex flex-col gap-6")}>
-              <h3 className="text-lg leading-7 font-semibold text-forest-ink">
-                {recordingExample.name}: the share of non-urgent GP visits waiting more than 7 days
-              </h3>
+              <h3 className={SMALL_STATEMENT}>{recordingExample.name}: the share rose while recorded visits fell.</h3>
               <div className="flex flex-col gap-4">
                 {[recordingExample.before, recordingExample.after].map((row, index) => (
                   <div key={row.year} className="grid grid-cols-[3.5rem_minmax(0,1fr)_4.5rem] items-center gap-3">
@@ -352,35 +374,42 @@ export default function HowToReadPage() {
                   </div>
                 ))}
               </div>
-              <p className="flex items-start gap-2 text-base leading-6 text-charcoal">
-                <GradeGlyph level={recordingExample.grade.level} className="mt-[5px] text-forest-ink" />
-                <span>
-                  <strong className="font-semibold text-forest-ink">{recordingExample.grade.label}.</strong>{" "}
-                  {recordingExample.grade.reason}
+              <Caveat
+                why={
+                  <>
+                    <p>{recordingExample.grade.reason}</p>
+                    <p>Recorded visits are the published count of late visits divided by the published share.</p>
+                    <p>We show the published figure unchanged, with this label.</p>
+                  </>
+                }
+              >
+                <span className="inline-flex items-center gap-2">
+                  {GLYPHS[recordingExample.grade.level]}
+                  {recordingExample.grade.label}: part of the rise may be in the recording.
                 </span>
-              </p>
-              <p className="text-base leading-6 text-charcoal">
-                The share went up, but it now rests on far fewer recorded visits. Part of the rise may be in what was
-                recorded, not in how long visits waited. We show the published figure unchanged, with this label.
-              </p>
-              <SourceLine sourceId="sotkanet-6411" year={recordingExample.after.year}>
-                Recorded visits are the published count of late visits divided by the published share.
-              </SourceLine>
+              </Caveat>
+              <Sources items={[{ id: "sotkanet-6411", year: recordingExample.after.year }]} />
             </Reveal>
           ) : null}
           <Reveal>
             <Disclosure show="Show the rules, in the order we apply them" hide="Hide the rules">
-              <ol className="flex list-decimal flex-col gap-3 rounded-[14px] bg-keylime-wash p-5 pl-10 text-base leading-6 text-charcoal sm:p-7 sm:pl-12">
-                {gradeRules.map((rule) => (
-                  <li key={rule.id}>
-                    <strong className="font-semibold text-forest-ink">{rule.label}:</strong> {rule.rule}
-                  </li>
-                ))}
-              </ol>
-              <p className="mt-3 text-base leading-6 text-charcoal">
-                The first rule that applies sets the label. The labels are worked out from the published data and THL&apos;s
-                own notes; they are ours, not THL&apos;s.
-              </p>
+              <div className={DETAIL}>
+                <ul className="flex flex-col gap-2">
+                  {gradeLevels.map((level) => (
+                    <li key={level.level}>
+                      <strong className="font-semibold text-forest-ink">{level.label}:</strong> {level.meaning}
+                    </li>
+                  ))}
+                </ul>
+                <ol className="flex list-decimal flex-col gap-2 pl-6">
+                  {gradeRules.map((rule) => (
+                    <li key={rule.id}>
+                      <strong className="font-semibold text-forest-ink">{rule.label}:</strong> {rule.rule}
+                    </li>
+                  ))}
+                </ol>
+                <p>The first rule that applies sets the label. The labels are ours, not THL&apos;s.</p>
+              </div>
             </Disclosure>
           </Reveal>
         </Section>
@@ -388,64 +417,41 @@ export default function HowToReadPage() {
         {/* 5. What Finland does not publish */}
         <Section id={SECTIONS[4].id} name={SECTIONS[4].name}>
           <Statement>
-            Of the {pathway.length} steps from screening to survival, {pathwayGapCount} have no public figure for any area.
+            Of {pathway.length} steps from screening to survival, {pathwayGapCount} have no public figure by area.
           </Statement>
-          <Plain index={2}>
-            The challenge brief says Finnish cancer-care data is limited, and that addressing this data gap is part of the
-            challenge. Here is exactly where the gaps are.
-          </Plain>
           <Story
             label={`The cancer pathway in ${pathway.length} steps: which have a published figure by area, and which do not`}
             picture={<PathwayPicture slots={pathway} />}
             blocks={[
-              <Fragment key="b3">
-                <p className="font-display text-[1.75rem] leading-[1.3] font-light text-forest-ink">
-                  {pathway.length - pathwayGapCount} steps are published for every area.
-                </p>
-                <p className="text-lg leading-8 text-charcoal">
-                  Screening, getting to a GP, the hospital&apos;s referral handling and survival each have a figure on
-                  Sotkanet. For four Uusimaa areas the referral figure is the shared HUS value.
-                </p>
+              <Fragment key="published">
+                <p className={SMALL_STATEMENT}>{pathway.length - pathwayGapCount} steps are published.</p>
               </Fragment>,
-              <Fragment key="b4">
-                <p className="font-display text-[1.75rem] leading-[1.3] font-light text-forest-ink">
-                  {pathwayGapCount} steps are empty.
-                </p>
-                <ul className="flex flex-col gap-3 text-lg leading-8 text-charcoal">
-                  {pathway
-                    .filter((slot) => !slot.published)
-                    .map((slot) => (
-                      <li key={slot.id}>
-                        <strong className="font-semibold text-forest-ink">{slot.title}:</strong> {slot.text}
-                      </li>
-                    ))}
-                </ul>
+              <Fragment key="empty">
+                <p className={SMALL_STATEMENT}>{pathwayGapCount} steps are empty.</p>
               </Fragment>,
-              <Fragment key="b5">
-                <p className="font-display text-[1.75rem] leading-[1.3] font-light text-forest-ink">
-                  We draw a gap as a gap, never as a zero.
-                </p>
-                <p className="text-lg leading-8 text-charcoal">
-                  Where a figure is missing, FirstLine says &ldquo;No public data&rdquo; and names who could publish it. We
-                  do not fill it with an estimate.
-                </p>
+              <Fragment key="gap">
+                <p className={SMALL_STATEMENT}>A gap stays a gap.</p>
+                <p className="text-lg leading-8 text-charcoal">We never fill one with an estimate.</p>
               </Fragment>,
             ]}
           />
           <Reveal>
-            <Disclosure show="Show what exists instead of each missing figure" hide="Hide what exists instead">
+            <Disclosure show="Show what is missing, and what exists instead" hide="Hide what is missing">
               <dl className="grid gap-x-6 gap-y-3 rounded-[14px] bg-keylime-wash p-5 text-base leading-6 text-charcoal sm:grid-cols-[14rem_minmax(0,1fr)] sm:p-7">
-                {pathway
-                  .filter((slot) => !slot.published)
-                  .map((slot) => (
-                    <div key={slot.id} className="contents">
-                      <dt className="font-semibold text-forest-ink">{slot.title}</dt>
-                      <dd className="flex flex-col items-start gap-2">
-                        <span>{slot.today}</span>
-                        {slot.sourceId ? <SourceChip sourceId={slot.sourceId} /> : null}
-                      </dd>
-                    </div>
-                  ))}
+                {gaps.map((slot) => (
+                  <div key={slot.id} className="contents">
+                    <dt className="font-semibold text-forest-ink">{slot.title}</dt>
+                    <dd className="flex flex-col items-start gap-2">
+                      <span>
+                        <strong className="font-semibold">Missing:</strong> {slot.text}
+                      </span>
+                      <span>
+                        <strong className="font-semibold">Instead:</strong> {slot.today}
+                      </span>
+                      {slot.sourceId ? <SourceChip sourceId={slot.sourceId} /> : null}
+                    </dd>
+                  </div>
+                ))}
               </dl>
             </Disclosure>
           </Reveal>
@@ -457,101 +463,86 @@ export default function HowToReadPage() {
           <ol className="grid gap-4 md:grid-cols-2">
             <Reveal as="li" index={0} className={cn(PANEL, "flex flex-col gap-2")}>
               <h3 className="text-lg leading-7 font-semibold text-forest-ink">Only published figures</h3>
-              <p className="text-base leading-6 text-charcoal">
-                Every number is a published value with its source and year beside it. Where nothing is published, we say so.
-              </p>
+              <p className="text-base leading-6 text-charcoal">Each number shows its source and year.</p>
             </Reveal>
             <Reveal as="li" index={1} className={cn(PANEL, "flex flex-col gap-2")}>
-              <h3 className="text-lg leading-7 font-semibold text-forest-ink">What happened elsewhere, not a prediction</h3>
-              <p className="text-base leading-6 text-charcoal">
-                Where an action has been tried, we show what the study reported there, in its own words, and say it is not
-                a forecast for your area.
-              </p>
+              <h3 className="text-lg leading-7 font-semibold text-forest-ink">Results elsewhere, not predictions</h3>
+              <p className="text-base leading-6 text-charcoal">A tried action shows the study&apos;s own result, never a forecast.</p>
             </Reveal>
-            <Reveal as="li" index={2} className={cn(PANEL, "flex flex-col gap-2")}>
+            <Reveal as="li" index={2} className={cn(PANEL, "flex flex-col items-start gap-2")}>
               <h3 className="text-lg leading-7 font-semibold text-forest-ink">The AI writes words, not numbers</h3>
-              <p className="text-base leading-6 text-charcoal">
-                On an area&apos;s page the AI writes a short summary around the fixed figures. A checker on our server then
-                removes every sentence whose number is not in our data for the source it names. If the AI is unavailable,
-                a summary written from the same data in advance is shown instead.
-              </p>
+              <p className="text-base leading-6 text-charcoal">A checker deletes any AI sentence whose number is not in our data.</p>
+              <Disclosure show="Show what the checker removes" hide="Hide what the checker removes" tone="quiet">
+                <div className="flex flex-col gap-2 text-base leading-6 text-charcoal">
+                  <p>The AI summary on an area&apos;s page keeps a sentence only if:</p>
+                  <ol className="flex list-decimal flex-col gap-1.5 pl-6">
+                    <li>it names a source, and every source it names is in our data;</li>
+                    <li>every number in it matches a figure we hold for that source, at the precision written;</li>
+                    <li>every statistic it names backs at least one of its numbers;</li>
+                    <li>no number is written in words (&ldquo;two in three&rdquo;), as those cannot be checked;</li>
+                    <li>if it uses the GP-visits figure, it never calls the visits people or patients.</li>
+                  </ol>
+                  <p>If the AI is unavailable, a summary written in advance from the same data is shown.</p>
+                </div>
+              </Disclosure>
             </Reveal>
-            <Reveal as="li" index={3} className={cn(PANEL, "flex flex-col gap-2")}>
+            <Reveal as="li" index={3} className={cn(PANEL, "flex flex-col items-start gap-2")}>
               <h3 className="text-lg leading-7 font-semibold text-forest-ink">Live web results are labelled</h3>
-              <p>
-                <Badge variant="unverified">Found live — unverified</Badge>
-              </p>
-              <p className="text-base leading-6 text-charcoal">
-                News and studies found by the live web search carry this label. The question box answers only from those
-                results, and its checker removes any sentence whose numbers are not in the results it names.
-              </p>
+              <Badge variant="unverified">Found live — unverified</Badge>
+              <Disclosure show="Show how live results are checked" hide="Hide how live results are checked" tone="quiet">
+                <p className="text-base leading-6 text-charcoal">
+                  The question box answers only from the live results, and removes any sentence whose numbers are not in the
+                  results it cites. Nobody checks the results themselves.
+                </p>
+              </Disclosure>
             </Reveal>
           </ol>
-          <Reveal>
-            <Disclosure show="Show exactly what the summary checker removes" hide="Hide what the summary checker removes">
-              <div className="flex flex-col gap-3 rounded-[14px] bg-keylime-wash p-5 text-base leading-6 text-charcoal sm:p-7">
-                <p>A sentence of the AI summary is kept only if all of these hold:</p>
-                <ol className="flex list-decimal flex-col gap-2 pl-6">
-                  <li>It names at least one source, and every source it names is in our data.</li>
-                  <li>
-                    Every number in it matches a figure we hold for a source it names, at the precision written (a year of
-                    such a figure also counts). A percentage only matches a percentage.
-                  </li>
-                  <li>Every statistic it names backs at least one of its numbers.</li>
-                  <li>It has no numbers written out in words (&ldquo;two in three&rdquo;, &ldquo;doubled&rdquo;), because those cannot be checked.</li>
-                  <li>If it uses the GP-visits figure (Sotkanet 6411), it never calls the visits people or patients.</li>
-                </ol>
-                <p>
-                  This page itself uses no AI and no live search: everything here is fixed text and published figures.
-                </p>
-              </div>
-            </Disclosure>
-          </Reveal>
         </Section>
 
         {/* 7. What a county can do from Monday */}
         <Section id={SECTIONS[6].id} name={SECTIONS[6].name}>
-          <Statement>A county does not have to wait for the national figures. It can start counting its own.</Statement>
+          <Statement>A county can start counting its own figures now.</Statement>
           <Reveal className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-            <span className="numeral text-7xl leading-none text-forest-ink">
-              <AnimatedNumber value={fieldsTotal} final={String(fieldsTotal)} decimals={0} level="loud" />
+            <span className={NUMERAL}>
+              <AnimatedNumber value={starter.fieldCount} final={String(starter.fieldCount)} decimals={0} level="loud" />
             </span>
-            <span className="text-lg text-charcoal">
-              counts in {starter.sections.length} groups, kept once a quarter, fill the empty steps for your own area.
-            </span>
+            <span className="text-lg text-charcoal">counts in {starter.sections.length} groups, kept once a quarter.</span>
           </Reveal>
           <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {starter.sections.map((section, index) => (
-              <Reveal as="li" key={section.id} index={index} className="flex flex-col gap-1 rounded-[14px] bg-keylime-wash p-6">
+              <Reveal as="li" key={section.id} index={index} className="rounded-[14px] bg-keylime-wash p-6">
                 <span className="text-base leading-6 font-semibold text-forest-ink">{section.title}</span>
-                <span className="text-base leading-6 text-charcoal">
-                  {section.fields.length} {section.fields.length === 1 ? "count" : "counts"}
-                </span>
               </Reveal>
             ))}
           </ol>
-          <Plain>
-            {starter.privacy[0]} {starter.privacy[1]}
-          </Plain>
           <Reveal className="flex flex-col items-start gap-4">
+            <Caveat
+              why={
+                <>
+                  {starter.privacy.map((line) => (
+                    <p key={line}>{line}</p>
+                  ))}
+                </>
+              }
+            >
+              Counts only: no patient data.
+            </Caveat>
             <StarterDownload />
             <Disclosure show="Show the counts to record" hide="Hide the counts to record">
-              <div className="flex flex-col gap-4 rounded-[14px] bg-keylime-wash p-5 sm:p-7">
+              <div className={DETAIL}>
                 {starter.sections.map((section) => (
                   <div key={section.id} className="flex flex-col gap-1">
-                    <p className="text-base leading-6 font-semibold text-forest-ink">{section.title}</p>
-                    <p className="text-base leading-6 text-charcoal">{section.why}</p>
-                    <ul className="list-disc pl-6 text-base leading-6 text-charcoal">
+                    <p className="font-semibold text-forest-ink">{section.title}</p>
+                    <p>{section.why}</p>
+                    <ul className="list-disc pl-6">
                       {section.fields.map((field) => (
                         <li key={field}>{field}</li>
                       ))}
                     </ul>
                   </div>
                 ))}
-                <p className="text-base leading-6 text-charcoal">{starter.privacy[2]}</p>
-                <p className="text-base leading-6 text-charcoal">
-                  The full dataset, with the definitions behind each count and {starter.indicatorCount} figures to work out
-                  from it, is on{" "}
+                <p>
+                  Definitions and {starter.indicatorCount} figures to work out from the counts:{" "}
                   <Link href="/insights#starter-dataset" className={LINK}>
                     the insights page
                   </Link>
@@ -561,7 +552,7 @@ export default function HowToReadPage() {
             </Disclosure>
           </Reveal>
           <Reveal className="mt-8 flex flex-col gap-4 rounded-[14px] bg-sage-mist p-7 sm:p-10">
-            <p className="font-display text-[1.75rem] leading-[1.3] font-light text-forest-ink">Where to go next</p>
+            <h3 className={SMALL_STATEMENT}>Where to go next</h3>
             <div className="grid gap-3 md:grid-cols-3">
               <ForwardLink href="/briefing">Start the guided briefing for your area</ForwardLink>
               <ForwardLink href="/insights">See where access is hardest</ForwardLink>
@@ -570,7 +561,7 @@ export default function HowToReadPage() {
           </Reveal>
         </Section>
 
-        <p className="pb-8 text-base leading-6 text-charcoal">
+        <p className="pb-8 text-base leading-6 print:hidden">
           <a href="#on-this-page" className={cn(LINK, "inline-flex items-center gap-2")}>
             Back to &ldquo;On this page&rdquo; <ArrowUp aria-hidden className="size-4" />
           </a>

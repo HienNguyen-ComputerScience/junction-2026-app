@@ -3,7 +3,7 @@
 import { Check } from "lucide-react";
 import { useId, useState, type ReactNode } from "react";
 
-import { AnimatedBar, AnimatedNumber } from "@/components/motion";
+import { AnimatedBar, AnimatedNumber, Disclosure } from "@/components/motion";
 import type { GradeLevel } from "@/lib/insights";
 import type { AreaFigure } from "@/lib/walkthrough/model";
 
@@ -17,10 +17,13 @@ export function FigurePicture({
   finland,
   year,
   glyphs,
+  source,
 }: {
   areas: AreaFigure[];
   /** The insights grade shapes, drawn on the server (GradeGlyph), so no grade data ships to the browser. */
   glyphs: Record<GradeLevel, ReactNode>;
+  /** The figure's source chip, drawn on the server. */
+  source: ReactNode;
   finland: { value: number; text: string } | null;
   year: number;
 }) {
@@ -55,61 +58,60 @@ export function FigurePicture({
           <AnimatedNumber key={area.id} value={area.value} final={area.text} decimals={1} level="loud" />
         </p>
         <p className="text-base leading-6 text-charcoal">
-          of non-urgent GP visits in <strong className="font-semibold">{area.name}</strong> came more than a week
-          after people asked ({year}).
+          of non-urgent GP (health-centre doctor) visits in <strong className="font-semibold">{area.name}</strong> came
+          more than a week after people asked, {year}.
         </p>
-        {area.grade ? (
-          <p className="flex items-start gap-2 text-base leading-6 text-charcoal">
-            <span className="mt-[5px] text-forest-ink">{glyphs[area.grade.level]}</span>
-            <span>
-              <strong className="font-semibold text-forest-ink">{area.grade.label}.</strong> {area.grade.reason}
-            </span>
-          </p>
-        ) : null}
       </div>
-
-      {finland ? (
-        <div className="flex flex-col gap-2">
-          <AnimatedBar
-            key={area.id}
-            value={area.value}
-            marker={finland.value}
-            markerLabel={`Finland ${finland.text}`}
-            tone={area.value > finland.value ? "red" : "slate"}
-            label={`${area.name} ${area.text}, Finland ${finland.text}`}
-          />
+      {area.grade ? (
+        // The caveat in a few words; the reason behind "Why?". Re-keyed so it closes on a new area.
+        <div key={`grade-${area.id}`} className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-[14px] bg-cream-paper px-4 py-2">
+          <span className="flex items-center gap-2 text-base leading-6 font-semibold text-forest-ink">
+            {glyphs[area.grade.level]}
+            {area.grade.label}
+          </span>
+          <Disclosure show="Why?" hide="Hide why" tone="quiet" className="basis-full sm:basis-auto">
+            <p className="pb-2 text-base leading-6 text-charcoal">{area.grade.reason}</p>
+          </Disclosure>
         </div>
       ) : null}
 
+      {finland ? (
+        <AnimatedBar
+          key={`bar-${area.id}`}
+          value={area.value}
+          marker={finland.value}
+          markerLabel={`Finland ${finland.text}`}
+          tone={area.value > finland.value ? "red" : "slate"}
+          label={`${area.name} ${area.text}, Finland ${finland.text}`}
+        />
+      ) : null}
+
       <div className="grid gap-3 sm:grid-cols-2" data-at="1">
-        <Counted title="Counted: visits">Each kept appointment counts once.</Counted>
-        <NotCounted title="Not counted: people">One person can make several visits, so this is not a share of people.</NotCounted>
+        <Counted>Counted: visits</Counted>
+        <NotCounted>Not counted: people</NotCounted>
       </div>
       <div className="grid gap-3 sm:grid-cols-2" data-at="2">
-        <Counted title="Counted: every non-urgent GP visit">Whatever the reason for the visit, possible cancer included.</Counted>
-        <NotCounted title="Not published: cancer-related visits alone">No figure picks out visits where cancer was suspected.</NotCounted>
+        <Counted>Counted: every non-urgent GP visit</Counted>
+        <NotCounted>Not published: cancer-related visits alone</NotCounted>
       </div>
+      {source}
     </div>
   );
 }
 
-function Counted({ title, children }: { title: string; children: string }) {
+function Counted({ children }: { children: string }) {
   return (
-    <div className="flex flex-col gap-1 rounded-[14px] bg-cream-paper p-4">
-      <p className="flex items-center gap-2 text-base leading-6 font-semibold text-forest-ink">
-        <Check aria-hidden className="size-5 shrink-0" strokeWidth={2} />
-        {title}
-      </p>
-      <p className="text-base leading-6 text-charcoal">{children}</p>
-    </div>
+    <p className="flex items-start gap-2 rounded-[14px] bg-cream-paper p-4 text-base leading-6 font-semibold text-forest-ink">
+      <Check aria-hidden className="mt-0.5 size-5 shrink-0" strokeWidth={2} />
+      {children}
+    </p>
   );
 }
 
-function NotCounted({ title, children }: { title: string; children: string }) {
+function NotCounted({ children }: { children: string }) {
   return (
-    <div className="htr-hatch flex flex-col gap-1 rounded-[14px] border border-dashed border-status-grey p-4">
-      <p className="text-base leading-6 font-semibold text-forest-ink">{title}</p>
-      <p className="text-base leading-6 text-charcoal">{children}</p>
-    </div>
+    <p className="htr-hatch rounded-[14px] border border-dashed border-status-grey p-4 text-base leading-6 font-semibold text-forest-ink">
+      {children}
+    </p>
   );
 }
