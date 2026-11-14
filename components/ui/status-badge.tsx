@@ -35,7 +35,7 @@ const CHIP: Record<GapStatus, string> = {
 };
 
 /**
- * Status chip: a small square mark plus a text label, so status never relies on colour alone.
+ * Status chip: an 8px square mark plus a text label, so status never relies on colour alone.
  * Always pass the label text (e.g. STATUS_LABEL[status] from lib/ranking).
  */
 export function StatusBadge({
@@ -57,9 +57,12 @@ export function StatusBadge({
       data-status={status}
       className={cn(
         "inline-flex w-fit shrink-0 items-center gap-1.5 rounded-sm font-medium whitespace-nowrap",
-        size === "xs" && "h-5 text-[0.6875rem]",
-        size === "sm" && "h-6 text-[0.75rem]",
-        size === "md" && "h-7 text-[0.8125rem]",
+        // Quiet is a line of secondary text (13px), not a tag: it has one size.
+        variant === "quiet" && "h-5 text-[0.8125rem] leading-5",
+        // xs is as tall as the source chip it sits beside.
+        variant !== "quiet" && size === "xs" && "h-6 text-[0.6875rem]",
+        variant !== "quiet" && size === "sm" && "h-6 text-[0.75rem]",
+        variant !== "quiet" && size === "md" && "h-7 text-[0.8125rem]",
         variant === "chip" && [
           "border",
           size === "xs" ? "px-1.5" : size === "sm" ? "px-2" : "px-2.5",
@@ -74,11 +77,7 @@ export function StatusBadge({
     >
       <span
         aria-hidden
-        className={cn(
-          "size-1.5 shrink-0 rounded-[1.5px]",
-          size === "md" && "size-2",
-          STATUS_FILL[status],
-        )}
+        className={cn("size-2 shrink-0 rounded-[2px]", STATUS_FILL[status])}
       />
       {children}
     </span>

@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "cn";
 
 /**
- * Framed card: a tinted outer frame with a label row, holding one or more white panels.
+ * Framed card: an outer frame with a label row, holding one or more panels.
  *
  *   <Frame aria-labelledby="x">
  *     <FrameHeader>
@@ -75,7 +75,8 @@ function FrameMeta({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="frame-meta"
       className={cn(
-        "col-start-2 row-start-1 flex flex-wrap items-center justify-end gap-2 type-caption text-muted-foreground",
+        // Beside the title from sm up; under it, left-aligned, on a phone.
+        "col-span-2 col-start-1 row-start-2 flex flex-wrap items-center gap-2 type-caption text-muted-foreground sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:justify-end",
         className,
       )}
       {...props}
@@ -118,14 +119,41 @@ function FramePanel({
   );
 }
 
-function FrameFooter({ className, ...props }: React.ComponentProps<"div">) {
+/**
+ * The label strip of a panel that has a title: the title on the left, its chip (a source, a
+ * provenance tag) on the right, a hairline under it. Use it as the first child of a
+ * `FramePanel padding="none"`; a panel without a title has no strip.
+ */
+function FramePanelLabel({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      data-slot="frame-footer"
-      className={cn("px-3 pt-3 pb-2 type-micro text-muted-foreground sm:px-4", className)}
+      data-slot="frame-panel-label"
+      className={cn(
+        "flex min-h-11 flex-wrap items-center justify-between gap-x-4 gap-y-1.5 border-b border-border px-4 py-2 type-caption font-medium text-foreground sm:px-6",
+        className,
+      )}
       {...props}
     />
   );
 }
 
-export { Frame, FrameHeader, FrameTitle, FrameMeta, FrameDescription, FramePanel, FrameFooter };
+function FrameFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="frame-footer"
+      className={cn("px-3 pt-3 pb-2 type-caption text-muted-foreground sm:px-4", className)}
+      {...props}
+    />
+  );
+}
+
+export {
+  Frame,
+  FrameHeader,
+  FrameTitle,
+  FrameMeta,
+  FrameDescription,
+  FramePanel,
+  FramePanelLabel,
+  FrameFooter,
+};

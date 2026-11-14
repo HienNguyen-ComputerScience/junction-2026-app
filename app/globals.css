@@ -25,6 +25,7 @@
   --color-status-red-soft: var(--status-red-soft);
   --color-status-red-border: var(--status-red-border);
   --color-status-red-ink: var(--status-red-ink);
+  --color-status-red-tint: var(--status-red-tint);
   --color-status-amber: var(--status-amber);
   --color-status-amber-soft: var(--status-amber-soft);
   --color-status-amber-border: var(--status-amber-border);
@@ -95,13 +96,13 @@
   --font-chip: var(--font-geist-mono), ui-monospace, monospace;
 
   /* Surfaces, deepest to highest: near-black, neutral, only barely cool, so the page never
-     reads as blue. The steps are small on purpose; the hairlines below carry the edges. Depth
-     comes from these steps and from hairlines, never from shadows. */
+     reads as blue. Three levels must read at a glance: page, frame, panel. Each is a clear
+     step above the last and edged with a hairline; depth never comes from shadows. */
   --background: oklch(0.115 0.003 255); /* page    #050506 */
-  --frame: oklch(0.162 0.003 255); /*      frame   #0d0e0f */
-  --card: oklch(0.19 0.003 255); /*        panel   #131415 */
-  --muted: oklch(0.222 0.004 255); /*      raised  #1a1b1d: inputs, chips, inner blocks */
-  --accent: oklch(0.258 0.004 255); /*     raised, hovered #222425: also the hover of a row on a panel */
+  --frame: oklch(0.172 0.003 255); /*      frame   #0f1011 */
+  --card: oklch(0.215 0.004 255); /*       panel   #18191b */
+  --muted: oklch(0.25 0.004 255); /*       raised  #202123: inputs, chips, inner blocks */
+  --accent: oklch(0.29 0.004 255); /*      raised, hovered #292b2d: also the hover of a row on a panel */
   --popover: var(--muted);
   --secondary: var(--muted);
 
@@ -114,10 +115,10 @@
   --secondary-foreground: var(--foreground);
   --accent-foreground: var(--foreground);
 
-  /* Hairlines: the text colour at 8 to 10%. They do the work of the small surface steps. */
-  --frame-border: oklch(0.94 0.003 255 / 8%);
-  --border: oklch(0.94 0.003 255 / 9%);
-  --input: oklch(0.94 0.003 255 / 10%);
+  /* Hairlines: the text colour at 10 to 14%, so every surface step also has an edge. */
+  --frame-border: oklch(0.94 0.003 255 / 10%);
+  --border: oklch(0.94 0.003 255 / 12%);
+  --input: oklch(0.94 0.003 255 / 14%);
   /* Empty part of a bar, so the 100% end is visible on a panel (#2d2e2f on a panel). A tinted
      red fill is 1.9:1 against it and the solid red 1.8:1 against the tint. */
   --track: oklch(0.94 0.003 255 / 12%);
@@ -142,6 +143,9 @@
   --status-red-soft: oklch(0.63 0.185 25 / 14%);
   --status-red-border: oklch(0.63 0.185 25 / 36%);
   --status-red-ink: oklch(0.75 0.135 23); /*  #f88985 */
+  /* The tinted part of a red bar (the share up to Finland's line), as an opaque colour so a
+     bar and the key's swatch are the same pixels. */
+  --status-red-tint: color-mix(in oklch, var(--status-red) 56%, var(--card));
   /* "At or better than Finland's level" is a cool slate (hue 255), so red is the only alarm
      colour on any screen. The token name status-amber is historical and the data value stays
      "amber"; nothing here is amber any more. One hue for marker, bar, border and text. */
@@ -200,13 +204,6 @@
   }
   summary::-webkit-details-marker {
     display: none;
-  }
-  /* Text links: an underlined link with no colour of its own takes the accent. A colour
-     utility on the element still wins (utilities sit above this layer). */
-  a:where(.underline) {
-    color: var(--brand-ink);
-    text-decoration-color: color-mix(in oklch, var(--brand-ink), transparent 55%);
-    text-decoration-thickness: 1px;
   }
   ::selection {
     background: oklch(0.94 0.003 255 / 22%);
@@ -277,10 +274,6 @@ h2:not([class*="type-"], .font-sans) {
 @utility type-caption {
   font-size: 0.8125rem;
   line-height: 1.25rem;
-}
-@utility type-micro {
-  font-size: 0.75rem;
-  line-height: 1rem;
 }
 /* Notes on a chart or a card ("via Exa", "No indicator, so nothing to draw", dates): the text
    face, 12px. Pair with text-muted-foreground. Words are never mono; a number inside a note

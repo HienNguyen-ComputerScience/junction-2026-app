@@ -8,12 +8,12 @@ import type { GapStatus } from "@/lib/data";
  * marker at Finland's value. Used wherever a share is drawn (hero, ranking, county step,
  * act stats), so the same mark means the same thing everywhere.
  *
- * Two kinds of share are drawn, and the red part always shows the distance from Finland:
- *  - a wait share (lower is better) is worse when it runs PAST the line: tinted red up to the
- *    line, solid red beyond it;
- *  - a referral share (higher is faster) is worse when it stops SHORT of the line: a neutral
- *    fill up to the value, then solid red from the value to the line.
- * Either way the solid red part is the gap to Finland, drawn at the full height of the bar.
+ * One treatment for every bar that is worse than Finland, whichever way the share runs:
+ * tinted red for the share itself, solid red for the gap to Finland.
+ *  - a wait share (lower is better) runs PAST the line: tinted up to the line, solid beyond it;
+ *  - a referral share (higher is faster) stops SHORT of the line: tinted up to the value, solid
+ *    from the value to the line.
+ * At or better: the slate status tone. Grey is only the "Finland overall" bar (status null).
  */
 
 const clamp = (n: number) => Math.min(100, Math.max(0, n));
@@ -36,12 +36,15 @@ export function withFigures(text: string): ReactNode {
   );
 }
 
-/** Bar fills. Amber is quieter as a bar than as a marker, so the calm end of a chart stays calm. */
+/** Bar fills. Slate is quieter as a bar than as a marker, so the calm end of a chart stays calm. */
 const BAR_FILL: Record<GapStatus, string> = {
   red: "bg-status-red",
   amber: "bg-status-amber-bar",
   no_data: "bg-status-grey",
 };
+/** The share itself on a bar that is worse than Finland; the gap to Finland is BAR_FILL.red. */
+const RED_TINT = "bg-status-red-tint";
+/** The "Finland overall" bar, and nothing else. */
 const NEUTRAL_FILL = "bg-foreground/45";
 
 /**
@@ -83,18 +86,14 @@ export function BarFill({
   const grow = { "--i": index } as CSSProperties;
   const referral = readsHigherIsBetter(value, finland, status, higherIsBetter);
 
-  // Referral share that stops short of Finland: the missing part is the problem, so it is the
-  // red part, in the same solid red and at the same height as the part of a wait bar that runs
-  // past the line. The value itself is a neutral fill.
+  // Referral share that stops short of Finland: tinted red up to the value, then the missing
+  // part, solid red, up to the line. The same two reds as a wait bar that runs past the line.
   if (referral && status === "red" && finland != null && value < finland) {
     const f = clamp(finland);
     return (
       <>
         <span
-          className={cn(
-            "animate-bar-grow absolute inset-y-0 left-0 rounded-l-[2px]",
-            NEUTRAL_FILL,
-          )}
+          className={cn("animate-bar-grow absolute inset-y-0 left-0 rounded-l-[2px]", RED_TINT)}
           style={{ width: `${v}%`, ...grow }}
         />
         <span
@@ -114,10 +113,7 @@ export function BarFill({
     >
       {split ? (
         <>
-          <span
-            className={cn("h-full opacity-55", fill)}
-            style={{ width: `${(finland / value) * 100}%` }}
-          />
+          <span className={cn("h-full", RED_TINT)} style={{ width: `${(finland / value) * 100}%` }} />
           <span className={cn("h-full flex-1", fill)} />
         </>
       ) : (
@@ -185,25 +181,17 @@ function KeyItem({ swatch, children }: { swatch: ReactNode; children: ReactNode 
   );
 }
 
+type KeyKind = "finland" | "red" | "amber" | "no_data";
+const KEY_ITEMS: KeyKind[] = ["finland", "red", "amber", "no_data"];
+
 /**
- * The key for reading the bars: four swatches in plain words, drawn like the marks they name.
- *  - `kinds="both"` (default): wherever wait bars and referral bars sit together. Red is the
- *    solid part of either bar, i.e. the gap to Finland.
- *  - `kinds="wait"`: a chart of wait bars only (the ranking). Red is drawn as on those bars,
- *    tinted then solid.
- *  - `finlandLabel`: names the line with its value ("Finland 54.7%") when one value applies to
- *    every bar in view; leave it out where bars have different Finland values.
+ * The key for reading the bars and the map: one row of swatches, drawn like the marks they
+ * name. One key per page, and nothing else in it.
+ *  - `items`: which swatches to show, when a view has no hatched track or names the Finland
+ *    line elsewhere. Default: all four.
  * One item per line on a phone, one wrapping row from `sm`.
  */
-export function BarKey({
-  className,
-  kinds = "both",
-  finlandLabel,
-}: {
-  className?: string;
-  kinds?: "both" | "wait";
-  finlandLabel?: string;
-}) {
+export function BarKey({ className, items = KEY_ITEMS }: { className?: string; items?: KeyKind[] }) {
   return (
     <ul
       data-slot="bar-key"
@@ -212,40 +200,44 @@ export function BarKey({
         className,
       )}
     >
-      <KeyItem
-        swatch={
-          <>
-            <span className="h-full w-full rounded-[2px] bg-track" />
-            <span className="absolute -inset-y-0.5 left-1/2 w-0.5 -translate-x-1/2 bg-foreground" />
-          </>
-        }
-      >
-        {finlandLabel ? withFigures(finlandLabel) : "Finland's value"}
-      </KeyItem>
-      <KeyItem
-        swatch={
-          kinds === "wait" ? (
+      {items.includes("finland") && (
+        <KeyItem
+          swatch={
             <>
-              <span className="h-full w-1/2 rounded-l-[2px] bg-status-red opacity-55" />
+              <span className="h-full w-full rounded-[2px] bg-track" />
+              <span className="absolute -inset-y-0.5 left-1/2 w-0.5 -translate-x-1/2 bg-foreground" />
+            </>
+          }
+        >
+          Finland&apos;s value
+        </KeyItem>
+      )}
+      {items.includes("red") && (
+        <KeyItem
+          swatch={
+            <>
+              <span className={cn("h-full w-1/2 rounded-l-[2px]", RED_TINT)} />
               <span className="h-full w-1/2 rounded-r-[2px] bg-status-red" />
             </>
-          ) : (
-            <span className="h-full w-full rounded-[2px] bg-status-red" />
-          )
-        }
-      >
-        Worse than Finland
-      </KeyItem>
-      <KeyItem swatch={<span className="h-full w-full rounded-[2px] bg-status-amber-bar" />}>
-        At or better than Finland&apos;s level
-      </KeyItem>
-      <KeyItem
-        swatch={
-          <span className="h-full w-full rounded-[2px] bg-hatch ring-1 ring-status-grey-border ring-inset" />
-        }
-      >
-        No public data
-      </KeyItem>
+          }
+        >
+          Worse than Finland
+        </KeyItem>
+      )}
+      {items.includes("amber") && (
+        <KeyItem swatch={<span className="h-full w-full rounded-[2px] bg-status-amber-bar" />}>
+          At or better than Finland&apos;s level
+        </KeyItem>
+      )}
+      {items.includes("no_data") && (
+        <KeyItem
+          swatch={
+            <span className="h-full w-full rounded-[2px] bg-hatch ring-1 ring-status-grey-border ring-inset" />
+          }
+        >
+          No public data
+        </KeyItem>
+      )}
     </ul>
   );
 }
@@ -256,7 +248,8 @@ export function BarKey({
  *  - value null: an empty hatched track ("no public data"), never a zero-length bar.
  *  - finland null: no line (there is no indicator to compare).
  *  - higherIsBetter: optional override of the inferred direction (see BarFill).
- *  - size "lg": the tall bar of the home comparison card (16px on a phone, 20px from sm).
+ *  - size "lg": the tall bar of the home comparison card (16px on a phone, 20px from sm);
+ *    size "sm": the 6px bar of the compact step strip.
  *  - gapLabel: the distance to Finland in words ("+30.7 pts", "−7.9 pts"; use `gapToFinland`),
  *    for wait bars and referral bars alike. With size "lg" it is written inside the span between
  *    the bar's end and the Finland line, i.e. on the distance it measures (hidden if that span
@@ -281,7 +274,7 @@ export function MeasureBar({
   index?: number;
   className?: string;
   higherIsBetter?: boolean;
-  size?: "md" | "lg";
+  size?: "sm" | "md" | "lg";
   gapLabel?: string;
 }) {
   const hasGap = Boolean(gapLabel) && value !== null && finland !== null && value !== finland;
@@ -315,7 +308,7 @@ export function MeasureBar({
       <div
         className={cn(
           "relative rounded-[2px]",
-          size === "lg" ? "h-4 sm:h-5" : "h-2.5",
+          size === "lg" ? "h-4 sm:h-5" : size === "sm" ? "h-1.5" : "h-2.5",
           value === null ? "bg-hatch ring-1 ring-status-grey-border ring-inset" : "bg-track",
         )}
       >
@@ -347,7 +340,7 @@ export function MeasureBar({
             </span>
           </span>
         )}
-        {finland !== null && <FinlandTick finland={finland} />}
+        {finland !== null && <FinlandTick finland={finland} className={size === "sm" ? "-inset-y-1" : undefined} />}
       </div>
       {finland !== null && finlandLabel && <FinlandAxis finland={finland} label={finlandLabel} />}
     </div>

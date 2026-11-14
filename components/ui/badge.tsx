@@ -7,7 +7,7 @@ const QUIET_TAG =
   "border-border bg-transparent font-normal text-muted-foreground [a]:hover:border-foreground/30 [a]:hover:text-foreground"
 
 const PROVENANCE =
-  "gap-1.5 px-0 font-normal text-muted-foreground before:size-1.5 before:shrink-0 before:rounded-[1.5px] before:content-['']"
+  "gap-1.5 px-0 font-normal text-muted-foreground before:size-2 before:shrink-0 before:rounded-[2px] before:content-['']"
 
 const badgeVariants = cva(
   "group/badge inline-flex h-6 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-sm border border-transparent px-2 py-0.5 text-[0.75rem] leading-none font-medium whitespace-nowrap transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 [&>svg]:pointer-events-none [&>svg]:size-3!",
@@ -20,14 +20,14 @@ const badgeVariants = cva(
         default: QUIET_TAG,
         brand: QUIET_TAG,
         secondary: QUIET_TAG,
-        // Provenance: where a piece of content comes from. Quiet text with a 6px mark and no
+        // Provenance: where a piece of content comes from. Quiet text with an 8px mark and no
         // box: hollow for content nobody has checked ("Found live — unverified"), solid for
         // content the team checked or computed ("Source checked", "Precomputed from the
         // snapshot").
-        unverified: `${PROVENANCE} before:border before:border-current`,
+        unverified: `${PROVENANCE} before:border-[1.5px] before:border-current`,
         checked: `${PROVENANCE} before:bg-current`,
         // Alias of `unverified`: a provenance tag is unchecked unless it says `checked`.
-        provenance: `${PROVENANCE} before:border before:border-current`,
+        provenance: `${PROVENANCE} before:border-[1.5px] before:border-current`,
         destructive:
           "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 [a]:hover:bg-destructive/20",
         // The reference tag: drawn exactly like SourceChip (components/source-chip.tsx), so a
