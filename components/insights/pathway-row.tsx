@@ -1,6 +1,7 @@
 import { cn } from "cn";
 
 import { ConfidenceBadge } from "@/components/insights/confidence-badge";
+import { CaveatNote } from "@/components/motion";
 import { SourceChip } from "@/components/source-chip";
 import { getSource } from "@/lib/data";
 import {
@@ -105,7 +106,16 @@ function Item({ item }: { item: PathwayItem }) {
  * published, each against Finland with source, year and grade, and the steps nobody publishes
  * shown empty as "Not published". Side by side only: no step is said to cause another.
  */
-export function PathwayRow({ areaId, headingLevel = 3 }: { areaId: string; headingLevel?: 2 | 3 }) {
+export function PathwayRow({
+  areaId,
+  headingLevel = 3,
+  strip = true,
+}: {
+  areaId: string;
+  headingLevel?: 2 | 3;
+  /** False leaves out the at-a-glance strip (for a page that shows its own row of steps). */
+  strip?: boolean;
+}) {
   const row = getPathwayRow(areaId);
   if (!row) return null;
   const Heading = headingLevel === 2 ? "h2" : "h3";
@@ -114,12 +124,9 @@ export function PathwayRow({ areaId, headingLevel = 3 }: { areaId: string; headi
   return (
     <div data-slot="pathway-row" className="flex flex-col gap-5">
       <Heading className="type-title">The whole pathway in {row.name}</Heading>
-      <div className="max-w-[60rem] rounded-[14px] bg-mint-veil p-6 text-base">
-        <p className="font-semibold text-forest-ink">Read this row side by side, not as cause and effect</p>
-        <ul className="mt-2 flex list-disc flex-col gap-1.5 pl-5">
-          <li className="text-pretty">
-            With 22 areas, the data cannot show that one step causes another.
-          </li>
+      <CaveatNote short="side by side, not cause and effect">
+        <ul className="flex list-disc flex-col gap-1.5 pl-5">
+          <li className="text-pretty">With 22 areas, the data cannot show that one step causes another.</li>
           <li className="text-pretty">
             Survival covers people diagnosed over ten years ({survivalYear - 9}–{survivalYear}), so it reflects care in
             earlier years, not this year&apos;s waits.
@@ -134,21 +141,23 @@ export function PathwayRow({ areaId, headingLevel = 3 }: { areaId: string; headi
             2.4.1, p. 48). <SourceChip sourceId="stm-cancer-strategy-2026-2035" />
           </li>
         </ul>
-      </div>
-      <ol aria-label={`The seven steps in ${row.name} at a glance`} className="grid gap-2 sm:grid-cols-4 xl:grid-cols-7">
-        {row.steps.map((step) => (
-          <li
-            key={step.id}
-            className={cn(
-              "flex flex-col gap-1 rounded-lg p-3 text-base",
-              step.published ? "bg-mint-veil" : "border-2 border-dashed border-forest-ink/50 bg-cream-paper",
-            )}
-          >
-            <span className="font-semibold text-forest-ink">{STEP[step.id].title}</span>
-            <span className="text-pretty">{stepSummary(step)}</span>
-          </li>
-        ))}
-      </ol>
+      </CaveatNote>
+      {strip ? (
+        <ol aria-label={`The seven steps in ${row.name} at a glance`} className="grid gap-2 sm:grid-cols-4 xl:grid-cols-7">
+          {row.steps.map((step) => (
+            <li
+              key={step.id}
+              className={cn(
+                "flex flex-col gap-1 rounded-lg p-3 text-base",
+                step.published ? "bg-mint-veil" : "border-2 border-dashed border-forest-ink/50 bg-cream-paper",
+              )}
+            >
+              <span className="font-semibold text-forest-ink">{STEP[step.id].title}</span>
+              <span className="text-pretty">{stepSummary(step)}</span>
+            </li>
+          ))}
+        </ol>
+      ) : null}
       <ol aria-label="Each step in detail" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {row.steps.map((step) => {
           const meta = STEP[step.id];

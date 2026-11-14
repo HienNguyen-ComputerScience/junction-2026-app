@@ -72,7 +72,7 @@ export function ConfidenceBadge({
     <span data-slot="confidence-badge" className={cn("inline-flex max-w-full flex-col items-start gap-1", className)}>
       <span
         className={cn(
-          "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 whitespace-nowrap text-[0.8125rem] leading-5 font-semibold text-forest-ink",
+          "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 whitespace-nowrap text-sm leading-6 font-semibold text-forest-ink",
           SURFACE[resolved.level],
         )}
       >
