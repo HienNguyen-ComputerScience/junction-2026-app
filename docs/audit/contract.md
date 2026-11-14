@@ -169,7 +169,11 @@ Never put a headline figure, its source chip or its main limitation inside one.
 
 ### `PrintButton` and print
 
-`<PrintButton label="Print or save as PDF" variant="outline" size="default" />` calls `window.print()`. `PrintExpand` (mounted once in the layout) opens every closed `<details>` for the print. The print stylesheet hides the header, the footer and anything marked `print:hidden` or `data-print="hide"`, shows every Reveal, and keeps colours. A new full-screen layout should mark its own chrome `print:hidden`.
+`<PrintButton label="Print or save as PDF" variant="outline" size="default" />` calls `window.print()`. `PrintExpand` (mounted once in the layout) opens every closed `<details>` for the print. The print stylesheet hides the header, the footer and anything marked `print:hidden` or `data-print="hide"`, shows every Reveal, and keeps colours. A new full-screen layout should mark its own chrome `print:hidden`. Panels may break across pages (a tall panel that may not break pushes a blank page ahead of itself); add `print-keep` to a small unit that must stay whole.
+
+### Tables on a phone
+
+`<table className="stack-table">`: below 640px each row reads as label/value lines. Give every `<td>` a `data-label="Column name"` and wrap its content in one element. The plan page's `Td` helper does both.
 
 ## 3. Plan page: route and query format
 
@@ -192,7 +196,7 @@ Example: `/county/vantaa-kerava/plan?actions=ev-gp-continuity,ev-gp-capacity-roa
 
 In code: `buildPlan(countyId, params: URLSearchParams, today?: Date): Plan | null` and `readPlanInput` in `lib/plan-model.ts`; `plan.query` is the query string that reproduces a plan. Target arithmetic: `targetPath({ value, target, better, fromYear, toYear })` in `lib/plan.ts` (an even pace in percentage points; labelled as arithmetic, not a forecast).
 
-Until the plan page lands on this branch, the link 404s; the route and parameters above are fixed.
+Live on this branch since `5e333ff`. Word and Excel builders for the plan: `planToDocx(plan)`, `planToSheets(plan)`, `planFileName(plan, ext)` in `lib/plan-export.ts`. Tests: `tests/plan.test.mjs`.
 
 ## 4. Word and Excel writers (`lib/export/`)
 
