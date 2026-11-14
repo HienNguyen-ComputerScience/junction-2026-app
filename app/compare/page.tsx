@@ -1,4 +1,4 @@
-import { ArrowDown, FileSpreadsheet } from "lucide-react";
+import { FileSpreadsheet } from "lucide-react";
 import type { Metadata } from "next";
 
 import { CompareTable } from "@/components/compare/compare-table";
@@ -51,11 +51,7 @@ export default function ComparePage() {
         caveat={{ short: "counts visits, not people, and every non-urgent GP visit, not only possible cancer", why: gpIndicator?.limitation }}
       >
         <div data-print="hide" className="flex flex-wrap gap-2.5 pt-2">
-          <a href="#table-heading" className={buttonVariants({ size: "lg" })}>
-            Go to the full table
-            <ArrowDown aria-hidden data-icon="inline-end" />
-          </a>
-          <a href="/compare/export" download className={buttonVariants({ variant: "outline", size: "lg" })}>
+          <a href="/compare/export" download className={buttonVariants({ size: "lg" })}>
             <FileSpreadsheet aria-hidden strokeWidth={1.75} data-icon="inline-start" />
             Download the table for Excel
           </a>

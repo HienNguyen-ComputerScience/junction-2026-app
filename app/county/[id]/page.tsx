@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { CountyBrief } from "@/components/brief/county-brief";
 import { CountyNews } from "@/components/exa/county-news";
 import { LimitationsBox, type LimitationItem } from "@/components/pathway/limitations-box";
 import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
@@ -121,15 +120,6 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             children: (
               <Disclosure show="Show the eight steps" hide="Hide the eight steps">
                 <PathwayStrip countyId={county.id} />
-              </Disclosure>
-            ),
-          },
-          {
-            key: "brief",
-            label: "A short brief in words, with an AI rewrite checked against the figures",
-            children: (
-              <Disclosure show="Show the brief" hide="Hide the brief">
-                <CountyBrief countyId={county.id} />
               </Disclosure>
             ),
           },

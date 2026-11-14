@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "cn";
 
-import { AnimatedNumber, CaveatNote, Disclosure, Reveal } from "@/components/motion";
+import { CaveatNote, Disclosure, Reveal } from "@/components/motion";
 import { SourceChip } from "@/components/source-chip";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { PlanStep } from "@/lib/plan-model";
@@ -56,9 +56,9 @@ export function StepsPicture({ steps, mainStage, year }: { steps: PlanStep[]; ma
 }
 
 /**
- * One step told in words, beside the picture: the step's name, its figure counting up with its
- * status, what the figure counts with Finland's value, the change since 2023, the one caveat
- * (short, with "Why?"), the source, and the trend behind a button.
+ * One step told in words, beside the picture (which already shows the figure and its status):
+ * the step's name, what the figure counts with Finland's value, the change since 2023, the one
+ * caveat (short, with "Why?"), the source, and the trend behind a button.
  */
 export function StepStoryText({
   step,
@@ -77,18 +77,6 @@ export function StepStoryText({
       </Reveal>
       <Reveal index={1}>
         <h3 className="font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.5rem]">{step.label}</h3>
-      </Reveal>
-      <Reveal index={2} className="flex flex-col items-start gap-2">
-        {step.value !== null ? (
-          <p className={cn("numeral text-[3.5rem] leading-none", step.status === "red" ? "text-status-red-ink" : "text-forest-ink")}>
-            <AnimatedNumber value={step.value} final={formatPct(step.value)} level="loud" />
-          </p>
-        ) : (
-          <p className="font-display text-[2rem] font-light text-forest-ink">No figure</p>
-        )}
-        <StatusBadge status={step.status} className="h-auto max-w-full shrink items-baseline whitespace-normal leading-snug">
-          {step.statusLabel}
-        </StatusBadge>
       </Reveal>
       <Reveal index={3} className="flex max-w-[52ch] flex-col gap-2 text-[1.0625rem] leading-relaxed text-pretty">
         {step.measure ? (
