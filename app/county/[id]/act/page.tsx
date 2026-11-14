@@ -19,7 +19,7 @@ import {
   FrameTitle,
 } from "@/components/ui/frame";
 import { BarKey, MeasureBar } from "@/components/ui/measure-bar";
-import { STATUS_INK, StatusBadge } from "@/components/ui/status-badge";
+import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import {
   SELECTION_RULE,
   STAGE_LABELS,
@@ -314,7 +314,7 @@ function StageStat({ gap }: { gap: Gap }) {
     <StatPanel>
       <StatHead title={STAGE_LABELS[gap.stage]} status={gap.status} />
       {gap.value !== null ? (
-        <p className={`mt-4 numeral text-[2.5rem] ${STATUS_INK[gap.status]}`}>{formatPct(gap.value)}</p>
+        <p className={`mt-4 numeral text-[2.5rem] ${STATUS_FIGURE[gap.status]}`}>{formatPct(gap.value)}</p>
       ) : (
         <NoFigure />
       )}

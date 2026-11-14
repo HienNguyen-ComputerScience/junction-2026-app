@@ -2,7 +2,7 @@ import { ChevronRight } from "lucide-react";
 
 import { SourceChip } from "@/components/source-chip";
 import { MeasureBar } from "@/components/ui/measure-bar";
-import { STATUS_FILL, STATUS_INK, StatusBadge } from "@/components/ui/status-badge";
+import { STATUS_FILL, STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import type { GapStatus } from "@/lib/data";
 import { formatPct, STATUS_LABEL } from "@/lib/ranking";
 
@@ -97,7 +97,7 @@ export function StageCard({ step, title, status, measure, emptyText }: StageCard
       <div className="flex flex-col gap-2 pt-4 text-sm text-pretty">
         {measure && measure.value !== null ? (
           <>
-            <p className={`numeral text-[3.5rem] lg:text-[3.75rem] ${STATUS_INK[status]}`}>
+            <p className={`numeral text-[3.5rem] lg:text-[3.75rem] ${STATUS_FIGURE[status]}`}>
               {formatPct(measure.value)}
             </p>
             <p className="max-w-[34ch]">{measure.caption}</p>

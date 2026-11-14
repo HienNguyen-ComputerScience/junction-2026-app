@@ -46,8 +46,8 @@ export function CountyNews({ countyId }: { countyId: string }) {
         <div className="col-span-2 flex flex-wrap items-center gap-2 pt-1">
           <Badge variant="secondary">Found live — unverified</Badge>
           <span className="type-note text-muted-foreground">via Exa</span>
-          {data && !unavailable && <Badge variant="outline">{STATUS_LABEL[data.freshness]}</Badge>}
-          {unavailable && <Badge variant="outline">{STATUS_LABEL.unavailable}</Badge>}
+          {data && !unavailable && <Badge variant="secondary">{STATUS_LABEL[data.freshness]}</Badge>}
+          {unavailable && <Badge variant="secondary">{STATUS_LABEL.unavailable}</Badge>}
         </div>
         <FrameDescription>
           Finnish news and county pages about access to a doctor. Not checked by the team.
