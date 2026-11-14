@@ -1,11 +1,12 @@
-import { FileSpreadsheet } from "lucide-react";
+import { ArrowDown, FileSpreadsheet } from "lucide-react";
 import type { Metadata } from "next";
 
 import { CompareTable } from "@/components/compare/compare-table";
 import { EarlyWarning } from "@/components/home/early-warning";
-import { Disclosure, PrintButton, Reveal } from "@/components/motion";
+import { CompareBars } from "@/components/compare/compare-story";
+import { StoryFact } from "@/components/compare/story-fact";
+import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, MoreCard, PrintButton, Reveal, ScrollStory } from "@/components/motion";
 import { SourceChip } from "@/components/source-chip";
-import { StatUnit } from "@/components/stat/stat-unit";
 import { buttonVariants } from "@/components/ui/button";
 import { FramePanel } from "@/components/ui/frame";
 import { BarKey } from "@/components/ui/measure-bar";
@@ -18,119 +19,123 @@ export const metadata: Metadata = { title: "Compare all 22 areas | FirstLine" };
 const pct = (value: number) => `${value.toFixed(1)}%`;
 
 /**
- * Every area side by side. Four lead figures first, each a small unit with its meaning, its
- * limitation and its source; then the full table, sortable and downloadable; then the areas
- * getting worse fastest.
+ * Every area side by side, told on scroll: how many areas are worse than Finland (the headline),
+ * then a ScrollStory over the 22 bars (the longest wait, the shortest, the largest rise), then the
+ * full table, sortable and downloadable, open at the end.
  */
 export default function ComparePage() {
   const rows = getCompareRows();
   const lead = getCompareLead(rows);
   const gpIndicator = getIndicator(GP_WAIT_ID);
-  const chip = { sourceId: lead.gpSourceId, year: LATEST_YEAR };
+  const chip = <SourceChip sourceId={lead.gpSourceId} year={LATEST_YEAR} />;
 
   return (
-    <main className="page-container print-wide flex max-w-[1200px] flex-col gap-16 pt-6 sm:gap-20 sm:pt-8 print:gap-8 print:pt-0">
-      <header className="flex flex-col items-start gap-4">
-        <p className="type-eyebrow">All {lead.total} areas</p>
-        <h1 className="type-display">Compare the areas</h1>
-        <p className="type-lede max-w-[62ch] text-muted-foreground">
-          How long non-urgent GP visits wait in each area, how fast referrals to specialist care are handled, and which way each
-          area is heading since {FIRST_YEAR}. Every figure is published by THL on Sotkanet.
-        </p>
-        <div data-print="hide" className="flex flex-wrap gap-2.5 pt-1">
-          <PrintButton />
-          <a href="/compare/export" download className={buttonVariants({ variant: "outline" })}>
+    <main className="page-container print-wide flex max-w-[1200px] flex-col pt-6 sm:pt-8 print:pt-0">
+      <Chunk
+        lead
+        as="h1"
+        eyebrow={`Compare all ${lead.total} areas, ${LATEST_YEAR}`}
+        statement="Most areas wait longer than Finland"
+        figure={
+          <ChunkFigure tone="alarm" unit={`of ${lead.total} areas are worse than Finland's level`}>
+            <AnimatedNumber value={lead.worse} decimals={0} final={String(lead.worse)} level="loud" />
+          </ChunkFigure>
+        }
+        meaning={
+          <>
+            Finland&apos;s level: <span className="figure font-semibold">{pct(lead.finlandGp)}</span> of non-urgent GP visits waited
+            more than 7 days. That level is itself a delay.
+          </>
+        }
+        source={chip}
+        caveat={{ short: "counts visits, not people, and every non-urgent GP visit, not only possible cancer", why: gpIndicator?.limitation }}
+      >
+        <div data-print="hide" className="flex flex-wrap gap-2.5 pt-2">
+          <a href="#table-heading" className={buttonVariants({ size: "lg" })}>
+            Go to the full table
+            <ArrowDown aria-hidden data-icon="inline-end" />
+          </a>
+          <a href="/compare/export" download className={buttonVariants({ variant: "outline", size: "lg" })}>
             <FileSpreadsheet aria-hidden strokeWidth={1.75} data-icon="inline-start" />
             Download the table for Excel
           </a>
+          <PrintButton size="lg" />
         </div>
-      </header>
+      </Chunk>
 
-      <section aria-labelledby="lead-heading" className="flex flex-col gap-5">
-        <h2 id="lead-heading" className="sr-only">
-          The picture in four figures
-        </h2>
-        <div className="grid gap-3 md:grid-cols-2 print:grid-cols-4">
-          <StatUnit
-            eyebrow="Finland's level"
-            value={lead.finlandGp}
-            final={pct(lead.finlandGp)}
-            suffix="%"
-            sources={[chip]}
-            limitation="Counts visits, not people, and every non-urgent GP visit, not only those where cancer is possible."
-            detail={gpIndicator?.limitation}
-            detailLabel="what this figure counts"
-          >
-            <p>
-              of non-urgent GP visits in Finland waited more than 7 days in {LATEST_YEAR}. Every area is compared with this line,
-              and the line itself is a delay.
-            </p>
-          </StatUnit>
-          <StatUnit
-            eyebrow="Worse than Finland"
-            value={lead.worse}
-            decimals={0}
-            final={String(lead.worse)}
-            unit={`of ${lead.total} areas`}
-            tone="alarm"
-            status={{ status: "red", label: "Worse than Finland's level" }}
-            sources={[chip]}
-            index={1}
-          >
-            <p>have a larger share of non-urgent GP visits waiting more than 7 days than Finland as a whole.</p>
-          </StatUnit>
-          <StatUnit
-            eyebrow="The gap between areas"
-            value={lead.spread}
-            final={lead.spread.toFixed(1)}
-            unit="points"
-            sources={[chip]}
-            index={2}
-          >
-            <p>
-              between the longest wait, {lead.longest.name} ({pct(lead.longest.gp)}), and the shortest, {lead.shortest.name} (
-              {pct(lead.shortest.gp)}). Where you live decides how long a visit waits.
-            </p>
-          </StatUnit>
-          <StatUnit
-            eyebrow={`Worse than in ${FIRST_YEAR}`}
-            value={lead.rising}
-            decimals={0}
-            final={String(lead.rising)}
-            unit={`of ${lead.withTrend} areas`}
-            sources={[{ sourceId: lead.gpSourceId }]}
-            limitation={
-              lead.risingWithRecordingChange > 0
-                ? `In ${lead.risingWithRecordingChange} of them the number of recorded visits changed by more than 20%, so part of the rise may be how visits are recorded.`
-                : undefined
-            }
-            index={3}
-          >
-            <p>
-              have a share of visits waiting at least 1 point higher than in {FIRST_YEAR}. Changes under 1 point count as
-              about the same.
-              {lead.fastest ? (
-                <>
-                  {" "}
-                  Largest rise: {lead.fastest.name}, {lead.fastest.gpChange?.toFixed(1)} points (from {pct(lead.fastest.gpFirst ?? 0)} to{" "}
-                  {pct(lead.fastest.gp)}).
-                </>
-              ) : null}
-            </p>
-          </StatUnit>
-        </div>
+      <section aria-labelledby="spread-heading" className="flex flex-col gap-8 py-16 sm:py-24 print:break-before-page print:py-0">
+        <Reveal className="motion-loud">
+          <h2 id="spread-heading" className="max-w-[24ch] font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.75rem]">
+            Where you live decides how long a visit waits
+          </h2>
+        </Reveal>
+        <ScrollStory
+          label="All areas by the share of GP visits waiting more than 7 days"
+          picture={
+            <CompareBars
+              rows={rows}
+              finland={lead.finlandGp}
+              focus={[lead.longest.id, lead.shortest.id, lead.fastest?.id ?? null]}
+              firstYear={FIRST_YEAR}
+            />
+          }
+          steps={[
+            <StoryFact
+              key="longest"
+              eyebrow="The longest wait"
+              statement={lead.longest.name}
+              value={lead.longest.gp}
+              final={pct(lead.longest.gp)}
+              tone="alarm"
+              meaning="of non-urgent GP visits waited more than 7 days."
+              source={chip}
+            />,
+            <StoryFact
+              key="shortest"
+              eyebrow="The shortest wait"
+              statement={lead.shortest.name}
+              value={lead.shortest.gp}
+              final={pct(lead.shortest.gp)}
+              meaning={`waited more than 7 days: ${lead.spread.toFixed(1)} points less than ${lead.longest.name}.`}
+              source={chip}
+            />,
+            lead.fastest ? (
+              <StoryFact
+                key="rising"
+                eyebrow={`Worse than in ${FIRST_YEAR}: ${lead.rising} of ${lead.withTrend} areas`}
+                statement={`${lead.fastest.name} rose the most`}
+                value={lead.fastest.gpChange ?? 0}
+                final={`+${(lead.fastest.gpChange ?? 0).toFixed(1)}`}
+                unit="points"
+                tone="alarm"
+                meaning={`From ${pct(lead.fastest.gpFirst ?? 0)} in ${FIRST_YEAR} to ${pct(lead.fastest.gp)} in ${LATEST_YEAR}. Rises under 1 point count as about the same.`}
+                source={<SourceChip sourceId={lead.gpSourceId} />}
+                caveat={
+                  lead.risingWithRecordingChange > 0
+                    ? `in ${lead.risingWithRecordingChange} of the ${lead.rising} areas, recorded visits changed by more than 20%`
+                    : undefined
+                }
+                why="The share is of the visits recorded with waiting-time data. Where that number moved a lot, part of a change in the share may be how visits are recorded, not how long they waited."
+              />
+            ) : (
+              <StoryFact
+                key="rising"
+                eyebrow={`Worse than in ${FIRST_YEAR}`}
+                statement={`${lead.rising} of ${lead.withTrend} areas`}
+                meaning="rose by at least 1 point."
+                source={chip}
+              />
+            ),
+          ]}
+        />
       </section>
 
-      <section aria-labelledby="table-heading" className="flex flex-col gap-5 print:break-before-page print:gap-2">
-        <Reveal className="flex flex-col gap-2">
+      <section aria-labelledby="table-heading" className="flex flex-col gap-5 pb-16 sm:pb-24 print:break-before-page print:gap-2 print:pb-0">
+        <Reveal className="motion-loud flex flex-col gap-2">
           <p className="type-eyebrow">The full table</p>
-          <h2 id="table-heading" className="type-title">
+          <h2 id="table-heading" className="scroll-mt-24 font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.75rem]">
             Every area, side by side
           </h2>
-          <p data-print="hide" className="max-w-[68ch] text-base text-muted-foreground">
-            Ranked by the share of non-urgent GP visits waiting more than 7 days. Choose another order from the list or press a
-            column heading. Press an area&apos;s name for its full pathway.
-          </p>
         </Reveal>
         <div className="flex flex-col gap-3 print:hidden">
           <BarKey items={["finland", "red", "amber"]} />
@@ -158,20 +163,21 @@ export default function ComparePage() {
         </p>
       </section>
 
-      {/* Not on paper: the printed table already carries every area's change since 2023. */}
-      <section aria-labelledby="worsening-heading" className="flex flex-col gap-5 print:hidden">
-        <Reveal className="flex flex-col gap-2">
-          <p className="type-eyebrow">Early warning</p>
-          <h2 id="worsening-heading" className="type-title scroll-mt-20">
-            Getting worse fastest
-          </h2>
-          <p className="max-w-[68ch] text-base text-muted-foreground">
-            The five areas where the share of visits waiting more than 7 days rose the most since {FIRST_YEAR}, whatever their level
-            today.
-          </p>
-        </Reveal>
-        <EarlyWarning areas={counties} sourceId={lead.gpSourceId} />
-      </section>
+      <MoreCard
+        title="More on all areas"
+        className="mb-8"
+        rows={[
+          {
+            key: "worsening",
+            label: `The five areas getting worse fastest since ${FIRST_YEAR}`,
+            children: (
+              <Disclosure show="Show the five areas" hide="Hide the five areas">
+                <EarlyWarning areas={counties} sourceId={lead.gpSourceId} />
+              </Disclosure>
+            ),
+          },
+        ]}
+      />
     </main>
   );
 }

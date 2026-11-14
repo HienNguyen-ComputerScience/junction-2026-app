@@ -9,16 +9,16 @@ import { LimitationsBox, type LimitationItem } from "@/components/pathway/limita
 import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
 import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { buildStepTabs } from "@/components/pathway/step-panels";
+import { AreaLead, spellHus } from "@/components/county/area-lead";
 import { StepsPicture, StepStoryText } from "@/components/county/step-story";
-import { AnimatedNumber, Chunk, ChunkFigure, Disclosure, MoreCard, PrintButton, Reveal, ScrollStory } from "@/components/motion";
-import { SourceChip } from "@/components/source-chip";
-import { HUS_FULL, shortReason } from "@/components/pathway/wording";
+import { Disclosure, MoreCard, PrintButton, Reveal, ScrollStory } from "@/components/motion";
+import { HUS_FULL } from "@/components/pathway/wording";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { buttonVariants } from "@/components/ui/button";
 import { getBottleneck, pickActions } from "@/lib/act";
 import { getAreaSteps } from "@/lib/plan-model";
 import { getMainReason } from "@/lib/main-reason";
-import { counties, gaps, getCounty, getValue, LATEST_YEAR, type County, type Stage } from "@/lib/data";
+import { counties, gaps, getCounty, getValue, LATEST_YEAR, type County } from "@/lib/data";
 import {
   formatPct,
   getIndicator,
@@ -48,18 +48,6 @@ export async function generateMetadata({ params }: PageProps<"/county/[id]">): P
   return { title: `${county.name}: ${title} | FirstLine` };
 }
 
-/** The headline figure's unit, in words, after the numeral. */
-const LEAD_UNIT: Partial<Record<Stage, string>> = {
-  gp_access: "of non-urgent GP visits waited more than 7 days",
-  referral: "of referrals were processed within 3 days",
-};
-
-/** The headline figure's one main caveat: a few words always visible, the indicator's own text behind "Why?". */
-const LEAD_CAVEAT: Partial<Record<Stage, string>> = {
-  gp_access: "counts visits, not people, and all non-urgent visits, not only possible cancer",
-  referral: "measures when assessment starts, not when a specialist is seen",
-};
-
 export default async function CountyPathwayPage({ params }: PageProps<"/county/[id]">) {
   const { id } = await params;
   const county = getCounty(id);
@@ -72,44 +60,16 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const reason = getMainReason(county.id);
   const reasonStage = bottleneck.anyRed ? (reason.gap?.stage ?? null) : null;
   const steps = getAreaSteps(county.id);
-  const lead = steps.find((step) => step.stage === reasonStage && step.value !== null) ?? steps.find((step) => step.value !== null) ?? null;
-  const leadIndicator = lead?.indicatorId ? getIndicator(lead.indicatorId) : undefined;
   // Each step's trend (2023-2025), from the same builder the old tabs used.
   const trends = new Map(buildStepTabs(county.id, buildPathwaySteps(county.id)).map((tab) => [tab.id, tab.aside]));
   const actions = pickActions(bottleneck);
   const planHref = `/county/${county.id}/plan?actions=${actions.map((action) => action.id).join(",")}`;
 
-  const leadMeaning = lead
-    ? `${lead.statusLabel}${lead.finland !== null ? ` (Finland ${formatPct(lead.finland)})` : ""}${
-        lead.changeText ? `, and ${lead.changeText}` : ""
-      }.`
-    : shortReason(reason);
-  const leadCaveat = lead?.caveat
-    ? { short: "part of the rise may be how visits are recorded", why: lead.caveat }
-    : lead && LEAD_CAVEAT[lead.stage]
-      ? { short: LEAD_CAVEAT[lead.stage], why: leadIndicator ? spellHus(leadIndicator.limitation) : undefined }
-      : undefined;
-
   return (
     <main className="page-container flex flex-col pt-4 sm:pt-6">
       <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
 
-      <Chunk
-        lead
-        as="h1"
-        eyebrow={`${county.name_fi} · ${lead ? lead.label : "The first three steps"}, ${LATEST_YEAR}`}
-        statement={county.name}
-        figure={
-          lead && lead.value !== null ? (
-            <ChunkFigure tone={lead.status === "red" ? "alarm" : "plain"} unit={LEAD_UNIT[lead.stage]}>
-              <AnimatedNumber value={lead.value} final={formatPct(lead.value)} level="loud" />
-            </ChunkFigure>
-          ) : undefined
-        }
-        meaning={leadMeaning}
-        source={lead?.sourceId ? <SourceChip sourceId={lead.sourceId} year={lead.year} /> : undefined}
-        caveat={leadCaveat}
-      >
+      <AreaLead countyId={county.id}>
         <div data-print="hide" className="flex flex-wrap gap-2.5 pt-2">
           <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
             {bottleneck.anyRed ? "See what to do" : "Actions to keep this level"}
@@ -120,7 +80,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
           </Link>
           <PrintButton size="lg" />
         </div>
-      </Chunk>
+      </AreaLead>
 
       <section aria-labelledby="steps-heading" className="flex flex-col gap-8 py-16 sm:py-24">
         <Reveal className="motion-loud">
@@ -201,12 +161,6 @@ const INDICATOR_SHORT: Record<string, string> = {
   [REFERRAL_ID]: "Measures when assessment starts, not when a specialist is seen.",
   [REFERRAL_LATE_ID]: "Whole percentages of 0-3% everywhere, so it barely separates counties.",
 };
-
-/** The first "HUS" of a text, spelled out. */
-const spellHus = (text: string) =>
-  text.includes("the HUS-wide value")
-    ? text.replace("the HUS-wide value", `one value for ${HUS_FULL}`)
-    : text.replace(/\bHUS\b(?! \()/, HUS_FULL);
 
 function buildLimitations(county: County): LimitationItem[] {
   const items: LimitationItem[] = [];
