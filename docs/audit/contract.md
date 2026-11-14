@@ -101,7 +101,7 @@ import { MOTION, MOTION_EASE, MOTION_LOUD_CLASS, easeOut, prefersReducedMotion, 
 The same values are CSS variables: `--motion-ease`, `--motion-rise`, `--motion-stagger`, `--motion-bar`, `--motion-distance`, `--motion-open`. CSS utilities: `animate-fade-up` (rise), `animate-bar-grow` (grow from the left), `animate-line-in` (a thin rule drawing itself from the left edge; give it `h-px bg-forest-ink`). All three take `style={{ "--i": n }}` for a stagger.
 
 ```ts
-import { AnimatedBar, AnimatedNumber, Disclosure, PrintButton, Reveal } from "@/components/motion";
+import { AnimatedBar, AnimatedNumber, Disclosure, Reveal } from "@/components/motion";
 ```
 
 All pieces render their final content on the server (nothing is blank before script runs), do nothing under `prefers-reduced-motion`, and print in their final state.
@@ -167,9 +167,9 @@ A "show more" button: a native `<details>` styled as a button whose label switch
 
 Never put a headline figure, its source chip or its main limitation inside one.
 
-### `PrintButton` and print
+### Print
 
-`<PrintButton label="Print or save as PDF" variant="outline" size="default" />` calls `window.print()`. `PrintExpand` (mounted once in the layout) opens every closed `<details>` for the print. The print stylesheet hides the header, the footer and anything marked `print:hidden` or `data-print="hide"`, shows every Reveal, and keeps colours. A new full-screen layout should mark its own chrome `print:hidden`. Panels may break across pages (a tall panel that may not break pushes a blank page ahead of itself); add `print-keep` to a small unit that must stay whole.
+Printing is one option of the shared "Save or share" control (`SaveShare` in `components/share/`, `{ kind: "print" }`); `PrintButton` was removed once `/insights` adopted that control. `PrintExpand` (mounted once in the layout) opens every closed `<details>` for the print. The print stylesheet hides the header, the footer and anything marked `print:hidden` or `data-print="hide"`, shows every Reveal, and keeps colours. A new full-screen layout should mark its own chrome `print:hidden`. Panels may break across pages (a tall panel that may not break pushes a blank page ahead of itself); add `print-keep` to a small unit that must stay whole.
 
 ### Scroll-driven pages (team lead, 14 Nov)
 

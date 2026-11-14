@@ -7,6 +7,5 @@ export { Chunk, ChunkFigure } from "@/components/motion/chunk";
 export { Disclosure } from "@/components/motion/disclosure";
 export { FocusGroup } from "@/components/motion/focus-group";
 export { MoreCard } from "@/components/motion/more-card";
-export { PrintButton } from "@/components/motion/print-button";
 export { Reveal } from "@/components/motion/reveal";
 export { ScrollStory, useStoryStep } from "@/components/motion/scroll-story";
