@@ -29,6 +29,11 @@ K6=val('kainuu','6411');K13=val('kainuu','13');F13=val('finland','13')
 r13=sorted([(x['value'],cn[x['county_id']]) for x in v if x['indicator_id']=='13' and x['year']==2025 and x['county_id'] not in('finland',)])
 lo13,hi13=r13[0],r13[-1]
 print(VK,PH,fin,K6,K13,F13,lo13,hi13)
+# Hand-typed text below must still match the data; stop the build if the snapshot moved.
+assert 30<=PH<=36, f'slide 1 says "a third" for Päijät-Häme but data says {PH}%'
+ev=json.load(open(D+'evidence.json'))
+evn=[sum(1 for e in ev if e['verified'] and e['stage']==s) for s in ('gp_access','gp_recognition','referral')]
+assert evn==[4,3,7], f'B4 tables and "14 checked actions" are typed by hand for 4/3/7 verified rows; data/evidence.json now has {evn}'
 S='screenshots/'
 def slide(n,body,foot=True,cls=''):
     return f'<section class="slide {cls}">{body}<div class="foot"><span>FirstLine</span><span>{n}</span></div></section>'
@@ -37,7 +42,7 @@ TODO=lambda t:f'<span class="todo">TODO</span> <span class="todotxt">{t}</span>'
 def src(t): return f'<div class="src">{t}</div>'
 sl=[]
 sl.append(slide('1',f'''<div class="brand">FirstLine</div>
-<h1>In Vantaa-Kerava, 85% of non-urgent GP visits come more than a week after people ask. In Päijät-Häme it's a third.</h1>
+<h1>In Vantaa-Kerava, {round(VK)}% of non-urgent GP visits come more than a week after people ask. In Päijät-Häme it's a third.</h1>
 <div class="two"><div class="big"><b class="red">{VK}%</b><span>Vantaa-Kerava</span></div><div class="big"><b class="acc">{PH}%</b><span>Päijät-Häme</span></div></div>
 <div class="grey">Finland {fin}%</div>
 {src('THL Sotkanet 6411, 2025 (share of non-urgent GP visits kept more than 7 days after the need was assessed)')}'''))
