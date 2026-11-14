@@ -133,8 +133,8 @@ export function PathwayStrip({ countyId }: { countyId: string }) {
                     <span className="type-note text-muted-foreground">{stageTag(countyId, step.stage)}</span>
                   )}
                   {step.stage === "gp_recognition" && (
-                    <TextLink kind="nav" href={`/county/${countyId}/act#red-flags`} className="type-note">
-                      Red-flag helper
+                    <TextLink kind="nav" href={`/county/${countyId}/act#referral-routes`} className="type-note">
+                      The four referral routes a county needs
                     </TextLink>
                   )}
                 </span>

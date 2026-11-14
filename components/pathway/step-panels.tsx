@@ -102,8 +102,8 @@ function StepPanel({ countyId, step }: { countyId: string; step: PathwayStep }) 
         <p className="text-sm text-pretty text-muted-foreground">{STEP2_NOTE}</p>
         <span className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1">
           <SourceChip sourceId={STEP2_SOURCE} />
-          <TextLink kind="nav" inline href={`/county/${countyId}/act#red-flags`} className="text-sm">
-            Red-flag helper
+          <TextLink kind="nav" inline href={`/county/${countyId}/act#referral-routes`} className="text-sm">
+            The four referral routes a county needs
           </TextLink>
         </span>
       </div>
