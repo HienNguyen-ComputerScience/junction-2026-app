@@ -5,14 +5,13 @@ import { figureQualifier, plainStat, statisticLine } from "@/components/act/acti
 import { Disclosure, Reveal } from "@/components/motion";
 import { SourceChip } from "@/components/source-chip";
 import { Badge } from "@/components/ui/badge";
-import { plainTitle } from "@/lib/action-title";
 import type { Evidence } from "@/lib/data";
 
 /** One part of the opened details: a small label and its text. */
 function Part({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <p className="text-sm font-semibold text-forest-ink">{label}</p>
+      <p className="text-base font-semibold text-forest-ink">{label}</p>
       {children}
     </div>
   );
@@ -71,40 +70,39 @@ export function ActionItem({ action, index, showStep }: { action: Evidence; inde
             <Part label="First step">
               <p className={`${TEXT} font-semibold`}>{action.first_step}</p>
             </Part>
-            <Part label="The action in full">
-              <p className={TEXT}>
-                {plainTitle(action.action)}. {action.detail}
-              </p>
-              <p className={TEXT}>
-                <span className="font-semibold">Who implements it: </span>
-                {action.who_implements}
-              </p>
-            </Part>
-            <Part label="Where it was done and what happened">
-              <p className={TEXT}>{action.precedent}</p>
+            <Part label="The result">
               {stat ? (
-                <div className="flex flex-col gap-1 pt-1">
+                <div className="flex flex-col gap-1">
                   <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p>
                   <p className="text-base text-pretty text-muted-foreground first-letter:uppercase">
                     {qualifier ?? "A study result, not a forecast for this county."}
                   </p>
                 </div>
-              ) : null}
-              <p className={`${TEXT} tabular-nums`}>{action.effect_text}</p>
-              {action.effect_size ? (
-                <p className={TEXT}>Figure as the study states it: {statisticLine(action.effect_size)}</p>
-              ) : null}
-              {isNice(action) ? null : (
-                <p className={`${TEXT} border-l-2 border-forest-ink/30 pl-3`}>{action.quote_or_page}</p>
+              ) : (
+                <p className={`${TEXT} tabular-nums`}>{action.effect_text}</p>
               )}
-              <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-1">
-                {action.verified ? <Badge variant="checked">Source checked</Badge> : null}
-                <SourceChip sourceId={action.source_id} />
-              </span>
             </Part>
-            <Part label="What it will not fix or prove">
+            <Part label="What it will not fix">
               <p className={TEXT}>{action.limitations}</p>
             </Part>
+            <Disclosure tone="quiet" show="Show how it works and the study" hide="Hide how it works and the study">
+              <div className="flex flex-col gap-4">
+                <p className={TEXT}>{action.detail}</p>
+                <p className={TEXT}>{action.precedent}</p>
+                {stat ? <p className={`${TEXT} tabular-nums`}>{action.effect_text}</p> : null}
+                {action.effect_size ? (
+                  <p className={TEXT}>Figure as the study states it: {statisticLine(action.effect_size)}</p>
+                ) : null}
+                {isNice(action) ? null : (
+                  <p className={`${TEXT} border-l-2 border-forest-ink/30 pl-3`}>{action.quote_or_page}</p>
+                )}
+                {action.verified ? (
+                  <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                    <Badge variant="checked">Source checked</Badge>
+                  </span>
+                ) : null}
+              </div>
+            </Disclosure>
           </div>
         </Disclosure>
       </Reveal>
