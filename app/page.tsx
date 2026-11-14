@@ -11,7 +11,6 @@ import {
   FrameDescription,
   FrameFooter,
   FrameHeader,
-  FrameMeta,
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
@@ -60,7 +59,6 @@ export default function CountyRankingPage() {
       valueLabel: null,
     })),
   ];
-  const redCount = rows.filter((row) => row.gpStatus === "red").length;
 
   return (
     <main className="page-container flex flex-col gap-6 pt-2 sm:gap-8 sm:pt-6">
@@ -92,9 +90,8 @@ export default function CountyRankingPage() {
             <strong className="font-semibold text-foreground">{gap.toFixed(1)} percentage point</strong>{" "}
             gap, {ratio.toFixed(1)} times the share, within one country.
           </p>
-          {/* The source line sits with the paragraph's figures from sm up. On a phone it moves
-              under the comparison card, whose own source chip is on the same screen as the lede. */}
-          <p className="mt-2 max-w-[35rem] type-caption text-pretty text-muted-foreground max-sm:hidden sm:mt-3 sm:border-t sm:border-border sm:pt-3">
+          {/* The source line sits directly under the paragraph whose figures it sources, at every width. */}
+          <p className="mt-2 max-w-[35rem] type-caption text-pretty text-muted-foreground sm:mt-3 sm:border-t sm:border-border sm:pt-3">
             Sotkanet indicator {GP_WAIT_ID}, {LATEST_YEAR}. Not specific to cancer: it covers
             all non-urgent GP visits.
           </p>
@@ -114,9 +111,7 @@ export default function CountyRankingPage() {
               <h2 className="font-sans type-caption font-medium tracking-normal text-foreground">
                 Non-urgent GP visits waiting over 7 days
               </h2>
-              <span className="flex max-sm:hidden">
-                <SourceChip sourceId={worst.gpWait.source_id} year={LATEST_YEAR} />
-              </span>
+              <SourceChip sourceId={worst.gpWait.source_id} year={LATEST_YEAR} />
             </div>
             <div className="grid sm:grid-cols-[auto_minmax(0,1fr)]">
               {/* The map: on a phone it is on top, with the worst and best areas named; from sm
@@ -137,7 +132,6 @@ export default function CountyRankingPage() {
                   finland={nationalGpWait.value}
                   index={0}
                   emphasis
-                  chip={<SourceChip sourceId={worst.gpWait.source_id} year={LATEST_YEAR} />}
                 />
                 <CompareRow
                   name="Finland overall"
@@ -170,10 +164,6 @@ export default function CountyRankingPage() {
             </div>
           </FramePanel>
         </Frame>
-        <p className="type-caption text-pretty text-muted-foreground sm:hidden">
-          Sotkanet indicator {GP_WAIT_ID}, {LATEST_YEAR}. Not specific to cancer: it covers all
-          non-urgent GP visits.
-        </p>
       </section>
 
       <Frame id="ranking" aria-labelledby="ranking-heading" className="scroll-mt-4">
@@ -181,11 +171,6 @@ export default function CountyRankingPage() {
           <FrameTitle id="ranking-heading" className="type-title">
             All {rows.length + unranked.length} areas, longest GP waits first
           </FrameTitle>
-          <FrameMeta className="hidden sm:flex">
-            <StatusBadge status="red" className="tabular-nums">
-              {redCount} of {rows.length + unranked.length} worse than Finland
-            </StatusBadge>
-          </FrameMeta>
           {/* Phones skip this line so the first rows start high; its content is in the note
               under the list, and every row carries a chevron. */}
           <FrameDescription className="max-w-none max-sm:hidden">
@@ -253,7 +238,6 @@ function CompareRow({
   index,
   emphasis = false,
   axisLabel,
-  chip,
 }: {
   name: string;
   value: number;
@@ -264,8 +248,6 @@ function CompareRow({
   emphasis?: boolean;
   /** Set on the last row: labels the Finland line on the axis under the bars. */
   axisLabel?: string;
-  /** Phones only: the card's source chip, on one wrapping row with the status badge. */
-  chip?: ReactNode;
 }) {
   // From sm: the name and the badge stack on the left, the figure stands at their right.
   // Phone: the name and the figure share a line, then the badge (and the chip) on one row.
@@ -285,7 +267,6 @@ function CompareRow({
             Reference line on each bar
           </span>
         )}
-        {chip && <span className="flex sm:hidden">{chip}</span>}
       </div>
       {/* Only "worse than Finland" colours the figure; the calm rows stay in the text colour. */}
       <span

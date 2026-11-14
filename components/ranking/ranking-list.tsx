@@ -72,6 +72,7 @@ export function RankingList({
 }: Props) {
   const finlandX: CSSProperties = { left: `${nationalGpWait}%` };
   const finlandLabel = `Finland ${formatPct(nationalGpWait)}`;
+  const total = rows.length + unranked.length;
 
   return (
     <div className="flex flex-col">
@@ -128,6 +129,7 @@ export function RankingList({
                 <GroupDivider
                   status={row.gpStatus}
                   count={groupSize}
+                  total={total}
                   first={i === 0}
                   finlandX={finlandX}
                   gpWaitSourceId={gpWaitSourceId}
@@ -150,6 +152,7 @@ export function RankingList({
             <GroupDivider
               status="no_data"
               count={unranked.length}
+              total={total}
               first={false}
               finlandX={finlandX}
             />
@@ -269,6 +272,7 @@ function countRun(rows: RankingRow[], start: number): number {
 function GroupDivider({
   status,
   count,
+  total,
   first,
   finlandX,
   gpWaitSourceId,
@@ -276,6 +280,8 @@ function GroupDivider({
 }: {
   status: GapStatus;
   count: number;
+  /** All areas in the list: the count reads "14 of 22 areas", beside the group's source chips. */
+  total: number;
   first: boolean;
   finlandX: CSSProperties;
   /** Given for the groups that show figures: one chip per column, per group heading. */
@@ -291,7 +297,7 @@ function GroupDivider({
           {STATUS_LABEL[status]}
         </StatusBadge>
         <span className="shrink-0 type-micro text-muted-foreground">
-          <span className="figure">{count}</span> {count === 1 ? "area" : "areas"}
+          <span className="figure">{count}</span> of <span className="figure">{total}</span> areas
         </span>
       </div>
       <div aria-hidden className="relative hidden lg:block">

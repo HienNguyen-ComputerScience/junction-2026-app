@@ -25,7 +25,6 @@ import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import {
   SELECTION_RULE,
   STAGE_LABELS,
-  bottleneckSentence,
   getBottleneck,
   otherActions,
   pickActions,
@@ -154,14 +153,8 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
             ),
           )}
         </FramePanel>
-        <FrameFooter className="flex flex-col gap-2 pt-4">
+        <FrameFooter className="pt-4">
           <BarKey />
-          {/* The full summary, data-derived, for reading without the chart. */}
-          <Disclosure summary="Read as text">
-            <p className="max-w-[60rem] pt-1 pb-1 text-sm leading-relaxed text-pretty text-muted-foreground">
-              {withFigures(bottleneckSentence(county.name, bottleneck))}
-            </p>
-          </Disclosure>
         </FrameFooter>
       </Frame>
 
@@ -342,15 +335,21 @@ function directionNote(gap: Gap): string | null {
   return null;
 }
 
+/** What each measured share counts, continuing from the figure above it. */
+const STAT_CAPTION: Record<Stage, string> = {
+  gp_access: "of non-urgent GP visits waited more than 7 days",
+  gp_recognition: "",
+  referral: "of referrals were processed within 3 days",
+};
+
 /**
  * One measured step: the figure and its gap to Finland, the caption, the bar against Finland,
  * the source. Without a county value: a statement, the note, and the hatched track.
  */
 function StageStat({ step, gap }: { step: number; gap: Gap }) {
   const direction = directionNote(gap);
-  // The note starts with the figure shown above it ("67.8% of ..."), so the caption picks up after it.
-  const prefix = gap.value !== null ? `${gap.value}% ` : null;
-  const caption = prefix && gap.note.startsWith(prefix) ? gap.note.slice(prefix.length) : gap.note;
+  // Composed here from the values, in the words every other screen uses ("non-urgent GP visits").
+  const caption = `${STAT_CAPTION[gap.stage]} in ${gap.year} (Finland ${formatPct(gap.national_value)}).`;
   return (
     <StatColumn>
       <StatTitle step={step} title={STAGE_LABELS[gap.stage]} status={gap.status} />
