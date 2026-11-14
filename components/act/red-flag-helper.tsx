@@ -42,42 +42,40 @@ const SECTION = {
   links: "Check the detail in the guideline",
 } as const;
 
-/** A placeholder line in the empty state: static, no shimmer. */
-function Line({ className }: { className?: string }) {
-  return <span className={cn("block h-2.5 rounded-[3px] bg-foreground/[0.07]", className)} />;
-}
+/** What each section of the result will hold, in plain words, for the empty state. */
+const SECTION_HINT = {
+  speed: "How soon the person should see a GP, from urgent to a planned recheck",
+  gp: "The next step at the practice: the tests to run or the referral to make",
+  links: "The guideline pages to check the exact criteria, ages and tests against",
+} as const;
 
-/** Before any input: the result card's own sections, greyed, so the answer has a visible place. */
+/**
+ * Before any input: the result card's own sections, each with a line on what will appear there.
+ * Static text, no placeholder bars, so it never reads as a stuck loading state.
+ */
 function EmptyResult() {
   return (
-    <div className="flex flex-col gap-4 rounded-lg border border-dashed border-input p-4 sm:p-5">
+    <div className="flex h-full flex-col gap-4 rounded-lg border border-dashed border-input p-4 sm:p-5">
       <div className="flex flex-col gap-1.5">
-        <p aria-hidden className="type-caption text-faint">
+        <p aria-hidden className="type-caption text-muted-foreground">
           {SECTION.category}
         </p>
-        <p className="type-heading text-pretty text-muted-foreground">
+        <p className="font-heading text-[1.125rem] leading-[1.35] font-semibold tracking-[-0.01em] text-pretty text-muted-foreground">
           Pick a concern or type a few words to see the warning-sign category and the referral route
         </p>
       </div>
-      <div aria-hidden className="flex flex-col gap-4 border-t border-border pt-4">
-        <div className="flex flex-col gap-2.5">
-          <p className="type-caption text-faint">{SECTION.speed}</p>
-          <Line className="w-11/12" />
-          <Line className="w-7/12" />
-        </div>
-        <div className="flex flex-col gap-2.5">
-          <p className="type-caption text-faint">{SECTION.gp}</p>
-          <Line className="w-full" />
-          <Line className="w-10/12" />
-          <Line className="w-5/12" />
-        </div>
-      </div>
-      <div aria-hidden className="flex flex-col gap-2.5 border-t border-border pt-4">
-        <p className="type-caption text-faint">{SECTION.links}</p>
-        <Line className="w-8/12" />
-        <Line className="w-9/12" />
-        <Line className="w-6/12" />
-      </div>
+      <dl className="flex flex-col gap-4 border-t border-border pt-4">
+        {(["speed", "gp"] as const).map((key) => (
+          <div key={key} className="flex flex-col gap-1">
+            <dt className="type-caption text-muted-foreground">{SECTION[key]}</dt>
+            <dd className="text-sm leading-relaxed text-pretty text-faint">{SECTION_HINT[key]}</dd>
+          </div>
+        ))}
+      </dl>
+      <dl className="flex flex-col gap-1 border-t border-border pt-4">
+        <dt className="type-caption text-muted-foreground">{SECTION.links}</dt>
+        <dd className="text-sm leading-relaxed text-pretty text-faint">{SECTION_HINT.links}</dd>
+      </dl>
     </div>
   );
 }
@@ -204,7 +202,7 @@ export function RedFlagHelper() {
       </div>
 
       <div className="lg:col-start-2 lg:row-start-2">
-        <div aria-live="polite">
+        <div aria-live="polite" className="h-full">
           {hasInput ? (
             <div className="flex flex-col gap-4 rounded-lg border border-input bg-muted p-4 sm:p-5">
               <div className="flex flex-col gap-1.5">
@@ -218,7 +216,9 @@ export function RedFlagHelper() {
                     If you are worried or it gets worse, contact a health professional now.
                   </p>
                 ) : null}
-                <p className="type-title text-pretty">{tier.title}</p>
+                <p className="font-heading text-[1.125rem] leading-[1.35] font-semibold tracking-[-0.01em] text-pretty">
+                  {tier.title}
+                </p>
               </div>
               <dl className="flex flex-col gap-4 border-t border-border pt-4">
                 <div className="flex flex-col gap-1">

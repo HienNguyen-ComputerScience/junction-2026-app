@@ -97,7 +97,9 @@ export function ActionCard({
       <div className="mt-4 grid gap-x-10 gap-y-6 @3xl:grid-cols-2">
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
-            <h3 className="type-title text-pretty">{action.action}</h3>
+            <h3 className="font-heading text-[1.125rem] leading-[1.35] font-semibold tracking-[-0.01em] text-pretty">
+              {action.action}
+            </h3>
             <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
           </div>
           <FirstStep>{action.first_step}</FirstStep>

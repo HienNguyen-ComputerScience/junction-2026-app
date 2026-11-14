@@ -1,6 +1,7 @@
 import { ArrowDown } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { cn } from "cn";
 import { notFound } from "next/navigation";
 
 import { ActionCard, ActionSummary } from "@/components/act/action-card";
@@ -19,6 +20,7 @@ import {
   FrameTitle,
 } from "@/components/ui/frame";
 import { BarKey, MeasureBar } from "@/components/ui/measure-bar";
+import { gapToFinland } from "@/components/ranking/ranking-list";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import {
   SELECTION_RULE,
@@ -29,7 +31,7 @@ import {
   pickActions,
   type Bottleneck,
 } from "@/lib/act";
-import { counties, getCounty, type Evidence, type Gap, type Stage } from "@/lib/data";
+import { counties, getCounty, getGaps, type Evidence, type Gap, type Stage } from "@/lib/data";
 import { formatPct, getIndicator, STATUS_LABEL } from "@/lib/ranking";
 
 // Counties are a fixed, known set, so a blocking route is fine here.
@@ -38,6 +40,9 @@ export const instant = false;
 export function generateStaticParams() {
   return counties.map((county) => ({ id: county.id }));
 }
+
+/** The pathway, in order: the numbered steps on the county page. */
+const PATHWAY: Stage[] = ["gp_access", "gp_recognition", "referral"];
 
 /** Stages as they read inside a sentence. */
 const STAGE_IN_SENTENCE: Record<Stage, string> = {
@@ -68,22 +73,28 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   const unmeasured = others.filter((group) => group.unmeasured && group.stage !== "gp_recognition");
   const remaining = others.filter((group) => !unmeasured.includes(group));
   const otherCount = others.reduce((total, group) => total + group.actions.length, 0);
-  // The steps named in the summary sentence: the focus steps (worst first), then steps with no county value.
-  const statGaps = [...bottleneck.focus, ...bottleneck.noData];
+  // Every measured step of this county, drawn in pathway order below (display only: the
+  // bottleneck and the picked actions above stay as computed).
+  const stageGaps = getGaps(county.id);
 
   return (
     <main className="page-container flex flex-col gap-6 pt-4 sm:gap-8 sm:pt-6">
-      <header className="flex flex-col items-start gap-4">
-        <BackLink href={`/county/${county.id}`}>Back to {county.name} pathway</BackLink>
-        <div className="flex flex-col gap-2">
-          <p className="type-caption text-muted-foreground">
-            Path to early cancer care · {county.name_fi}
+      {/* A 12-column grid: the title and the lede span nine, so the lede sets the measure. */}
+      <header className="grid grid-cols-12 gap-x-6 gap-y-3">
+        <BackLink href={`/county/${county.id}`} className="col-span-12">
+          Back to {county.name} pathway
+        </BackLink>
+        <div className="col-span-12 flex flex-col gap-2 lg:col-span-9">
+          <p className="type-caption text-balance text-muted-foreground">
+            Path to early cancer care
+            <span className="max-sm:hidden"> · </span>
+            <span className="max-sm:block">{county.name_fi}</span>
           </p>
           <h1 className="type-page">{county.name}: what to do next</h1>
         </div>
         {first ? (
-          <div className="flex max-w-[50rem] flex-col items-start gap-3">
-            <p className="type-lede text-pretty text-foreground">
+          <div className="col-span-12 flex flex-col items-start gap-3 pt-1 lg:col-span-9">
+            <p className="type-lede text-pretty text-foreground lg:text-[1.375rem] lg:leading-8">
               <span className="text-muted-foreground">Start here: </span>
               {first.first_step}
             </p>
@@ -106,50 +117,35 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
           <FrameTitle id="where-heading" className="type-title">
             Where the delay sits
           </FrameTitle>
-          <div className="col-span-2 flex flex-wrap items-center gap-x-3 gap-y-2 pt-1">
-            <p className="text-[0.9375rem] text-pretty text-foreground">{bottleneckLede(bottleneck)}</p>
-            {bottleneck.focus.map((gap) => (
-              <SourceChip key={gap.stage} sourceId={gap.source_id} year={gap.year} />
-            ))}
-          </div>
-        </FrameHeader>
-        <div
-          role="list"
-          className="flex flex-col gap-1.5 md:grid md:auto-cols-fr md:grid-flow-col md:grid-rows-[repeat(6,auto)] md:gap-y-0"
-        >
-          {statGaps.map((gap) => (
-            <StageStat key={gap.stage} gap={gap} />
-          ))}
-          <StatPanel>
-            <StatHead title={STAGE_LABELS.gp_recognition} status="no_data" />
-            <NoFigure />
-            <p className="mt-1.5 h-4 type-micro text-muted-foreground max-md:mt-3">
-              No public data anywhere in Finland
-            </p>
-            <p className="mt-3 type-caption text-pretty text-muted-foreground">
-              No statistic shows how often GPs spot possible cancer at the first visit, so nobody can see
-              how this step performs.
-            </p>
-            <div className="mt-5 flex flex-col gap-2">
-              <MeasureBar value={null} finland={null} status="no_data" />
-              <p className="h-4 type-micro text-faint">No indicator, so nothing to draw</p>
-            </div>
-            <div className="mt-4">
-              <a
-                href="#red-flags"
-                className="inline-flex h-9 items-center gap-1 rounded-sm type-caption font-medium text-brand-ink underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50 sm:h-6"
-              >
-                The red-flag helper below supports it
-                <ArrowDown aria-hidden strokeWidth={1.75} className="size-4" />
-              </a>
-            </div>
-          </StatPanel>
-        </div>
-        <FrameFooter className="flex flex-col gap-3 pt-4">
-          <BarKey />
-          <p className="max-w-[60rem] text-sm leading-relaxed text-pretty text-muted-foreground">
-            {bottleneckSentence(county.name, bottleneck)}
+          <p className="col-span-2 pt-1 text-[0.9375rem] text-pretty text-foreground">
+            {bottleneckLede(bottleneck)}
           </p>
+        </FrameHeader>
+        {/* One stat strip: the steps in pathway order, as on the county page. From md up the
+            columns share six grid rows, so every part sits on the same line in every column. */}
+        <FramePanel
+          padding="none"
+          role="list"
+          className="flex flex-col divide-y divide-border md:grid md:auto-cols-fr md:grid-flow-col md:grid-rows-[repeat(6,auto)] md:divide-x md:divide-y-0"
+        >
+          {PATHWAY.map((stage, i) =>
+            stage === "gp_recognition" ? (
+              <RecognitionStat key={stage} step={i + 1} />
+            ) : (
+              stageGaps
+                .filter((gap) => gap.stage === stage)
+                .map((gap) => <StageStat key={stage} step={i + 1} gap={gap} />)
+            ),
+          )}
+        </FramePanel>
+        <FrameFooter className="flex flex-col gap-2 pt-4">
+          <BarKey />
+          {/* The full summary, data-derived, for reading without the chart. */}
+          <Disclosure summary="Read as text">
+            <p className="max-w-[60rem] pt-1 pb-1 text-sm leading-relaxed text-pretty text-muted-foreground">
+              {bottleneckSentence(county.name, bottleneck)}
+            </p>
+          </Disclosure>
         </FrameFooter>
       </Frame>
 
@@ -260,38 +256,57 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
   );
 }
 
-/**
- * A stat card. From md up the cards share six grid rows (head, figure, direction, caption, bar,
- * source), so every part sits at the same height in every card, whatever the caption length.
- */
-function StatPanel({ children }: { children: ReactNode }) {
-  return (
-    <FramePanel role="listitem" className="flex flex-col md:row-span-6 md:grid md:grid-rows-subgrid">
-      {children}
-    </FramePanel>
-  );
-}
+/** The step number, drawn like the county page's pathway nodes. */
+const STEP_MARK: Record<Gap["status"], string> = {
+  // Dark ink on the saturated fills: 5.0:1 on red, 9.7:1 on amber.
+  red: "bg-status-red text-background",
+  amber: "bg-status-amber text-background",
+  no_data: "border border-dashed border-status-grey-ink/60 bg-card text-status-grey-ink",
+};
 
-function StatHead({ title, status }: { title: string; status: Gap["status"] }) {
+/**
+ * One column of the stat strip. From md up the columns share six grid rows (head, figure,
+ * comparison, caption, bar, source), so every part sits at the same height in every column.
+ */
+function StatColumn({ children }: { children: ReactNode }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 self-start">
-      <h3 className="font-sans text-sm font-semibold tracking-normal">{title}</h3>
-      <StatusBadge status={status} size="xs">
-        {STATUS_LABEL[status]}
-      </StatusBadge>
+    <div role="listitem" className="flex min-w-0 flex-col px-4 pt-4 pb-5 sm:px-6 sm:pt-5 sm:pb-6 md:row-span-6 md:grid md:grid-rows-subgrid">
+      {children}
     </div>
   );
 }
 
-/**
- * The figure slot when there is no value: a dash, as statistics tables print it. It only holds
- * the row beside cards that have a figure, so a phone (one card per row) skips it.
- */
-function NoFigure() {
+/** Step mark, step name, and the status under the name. */
+function StatHead({ step, title, status }: { step: number; title: string; status: Gap["status"] }) {
   return (
-    <p className="mt-4 numeral text-[2.5rem] text-faint max-md:hidden">
-      <span aria-hidden>–</span>
-      <span className="sr-only">No value</span>
+    <div className="flex items-start gap-3">
+      <span
+        aria-hidden
+        className={cn(
+          "flex size-7 shrink-0 items-center justify-center rounded-full text-[0.8125rem] font-semibold tabular-nums",
+          STEP_MARK[status],
+        )}
+      >
+        {step}
+      </span>
+      <div className="flex min-w-0 flex-col items-start gap-2">
+        <h3 className="font-heading text-base leading-7 font-semibold tracking-normal text-pretty">
+          <span className="sr-only">Step {step}: </span>
+          {title}
+        </h3>
+        <StatusBadge status={status} size="xs">
+          {STATUS_LABEL[status]}
+        </StatusBadge>
+      </div>
+    </div>
+  );
+}
+
+/** In the figure's place when there is no value: a plain statement, never a dash. */
+function NoFigure({ children }: { children: ReactNode }) {
+  return (
+    <p className="pt-5 text-[0.9375rem] leading-snug text-pretty text-muted-foreground md:self-end">
+      {children}
     </p>
   );
 }
@@ -299,40 +314,83 @@ function NoFigure() {
 /** Which way is better, from the indicator's direction. Referrals: a higher share is faster. */
 function directionNote(gap: Gap): string | null {
   const direction = getIndicator(gap.indicator_id)?.direction;
-  if (direction === "higher_is_worse") return "Lower is better";
-  if (direction === "lower_is_worse") return gap.stage === "referral" ? "Higher is faster" : "Higher is better";
+  if (direction === "higher_is_worse") return "lower is better";
+  if (direction === "lower_is_worse") return gap.stage === "referral" ? "higher is faster" : "higher is better";
   return null;
 }
 
-/** One measured step: status, the number and which way is better, the bar against Finland, the source. */
-function StageStat({ gap }: { gap: Gap }) {
+/**
+ * One measured step: the figure and its gap to Finland, the caption, the bar against Finland,
+ * the source. Without a county value: a statement, the note, and the hatched track.
+ */
+function StageStat({ step, gap }: { step: number; gap: Gap }) {
   const direction = directionNote(gap);
   // The note starts with the figure shown above it ("67.8% of ..."), so the caption picks up after it.
   const prefix = gap.value !== null ? `${gap.value}% ` : null;
   const caption = prefix && gap.note.startsWith(prefix) ? gap.note.slice(prefix.length) : gap.note;
   return (
-    <StatPanel>
-      <StatHead title={STAGE_LABELS[gap.stage]} status={gap.status} />
+    <StatColumn>
+      <StatHead step={step} title={STAGE_LABELS[gap.stage]} status={gap.status} />
       {gap.value !== null ? (
-        <p className={`mt-4 numeral text-[2.5rem] ${STATUS_FIGURE[gap.status]}`}>{formatPct(gap.value)}</p>
+        <>
+          <p className={cn("pt-5 numeral text-[2.75rem] sm:text-[3rem]", STATUS_FIGURE[gap.status])}>
+            {formatPct(gap.value)}
+          </p>
+          <p className="flex flex-wrap items-baseline gap-x-1.5 pt-2.5 type-note text-muted-foreground">
+            <span className={cn("figure font-medium", STATUS_FIGURE[gap.status])}>
+              {gapToFinland(gap.value, gap.national_value)}
+            </span>
+            <span>
+              vs Finland{direction ? `, ${direction}` : null}
+            </span>
+          </p>
+        </>
       ) : (
-        <NoFigure />
+        <>
+          <NoFigure>No published value for this area</NoFigure>
+          <span aria-hidden className="max-md:hidden" />
+        </>
       )}
-      <p className={`mt-1.5 h-4 type-micro text-muted-foreground ${gap.value === null ? "max-md:mt-3" : ""}`}>
-        {direction}
-      </p>
-      <p className="mt-3 type-caption text-pretty text-muted-foreground">{caption}</p>
+      <p className="pt-3 type-caption text-pretty text-muted-foreground">{caption}</p>
       <MeasureBar
-        className="mt-5"
+        className="pt-5 md:self-end"
         value={gap.value}
         finland={gap.national_value}
         finlandLabel={`Finland ${formatPct(gap.national_value)}`}
         status={gap.status}
       />
-      <div className="mt-4">
+      <div className="pt-4">
         <SourceChip sourceId={gap.source_id} year={gap.year} />
       </div>
-    </StatPanel>
+    </StatColumn>
+  );
+}
+
+/** The step no statistic measures anywhere: the same rows, with the red-flag helper in the source row. */
+function RecognitionStat({ step }: { step: number }) {
+  return (
+    <StatColumn>
+      <StatHead step={step} title={STAGE_LABELS.gp_recognition} status="no_data" />
+      <NoFigure>No public data anywhere in Finland</NoFigure>
+      <span aria-hidden className="max-md:hidden" />
+      <p className="pt-3 type-caption text-pretty text-muted-foreground">
+        No statistic shows how often GPs spot possible cancer at the first visit, so nobody can see how
+        this step performs.
+      </p>
+      <div className="flex flex-col gap-2 pt-5 md:self-end">
+        <MeasureBar value={null} finland={null} status="no_data" />
+        <p className="h-4 type-note text-muted-foreground">No indicator, so nothing to draw</p>
+      </div>
+      <div className="pt-4">
+        <a
+          href="#red-flags"
+          className="inline-flex h-9 items-center gap-1 rounded-sm type-caption font-medium text-brand-ink underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50 sm:h-6"
+        >
+          The red-flag helper below supports it
+          <ArrowDown aria-hidden strokeWidth={1.75} className="size-4" />
+        </a>
+      </div>
+    </StatColumn>
   );
 }
 
