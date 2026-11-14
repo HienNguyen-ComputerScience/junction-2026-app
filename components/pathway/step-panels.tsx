@@ -19,6 +19,7 @@ import {
   STATUS_LABEL,
   YEARS,
 } from "@/lib/ranking";
+import { getRecordingCaveat } from "@/lib/recording";
 
 /** The bar's axis label: what the share counts and which way is better. */
 const AXIS: Partial<Record<Stage, string>> = {
@@ -104,6 +105,7 @@ function trendFor(countyId: string, step: PathwayStep): TrendStage | null {
     direction: measure.direction,
     trend,
     nationalTrend: YEARS.map((year) => ({ year, value: getNationalValue(indicatorId, year)?.value ?? null })),
+    recordingCaveat: indicatorId === GP_WAIT_ID ? getRecordingCaveat(countyId) : null,
   };
 }
 

@@ -8,7 +8,8 @@
 
 import { getBottleneck } from "@/lib/act";
 import { counties, getSource, getValue, indicators, type Gap, type Stage } from "@/lib/data";
-import { FIRST_YEAR, formatPct, getStageGap } from "@/lib/ranking";
+import { FIRST_YEAR, formatPct, getStageGap, GP_WAIT_ID } from "@/lib/ranking";
+import { getRecordingCaveat, type RecordingCaveat } from "@/lib/recording";
 import { bestArea, diff1, type AreaValue, type Better } from "@/lib/what-if";
 
 /** A change since FIRST_YEAR smaller than this many points reads as "about the same". */
@@ -23,6 +24,11 @@ export type MainReason = {
   text: string;
   /** One chip per source a number in the text comes from. */
   chips: { sourceId: string; year: number }[];
+  /**
+   * Set when the line says the GP wait is worse than in 2023 and the recorded visits behind that
+   * share changed a lot (lib/recording). Shown beside the line, never inside `text`.
+   */
+  caveat: RecordingCaveat | null;
 };
 
 /** Which way the stage's share is better, read from the indicator's direction. */
@@ -70,7 +76,7 @@ export function getMainReason(countyId: string): MainReason {
   const { gap, red } = reasonGap(countyId);
   const what = gap && WHAT[gap.stage];
   if (!gap || gap.value === null || !what) {
-    return { kind: "no_data", gap: null, text: "No pathway data is published for this area.", chips: [] };
+    return { kind: "no_data", gap: null, text: "No pathway data is published for this area.", chips: [], caveat: null };
   }
   const isRed = gap.status === "red";
   const better = betterFor(gap.indicator_id);
@@ -85,11 +91,15 @@ export function getMainReason(countyId: string): MainReason {
   // Against the first year of the trend: worse, better or about the same, with that year's value.
   const first = getValue(countyId, gap.indicator_id, FIRST_YEAR);
   let trend = "";
+  let rising = false;
   if (first) {
     const worseBy = better === "lower" ? diff1(gap.value, first.value) : diff1(first.value, gap.value);
     const was = `in ${FIRST_YEAR} (${formatPct(first.value)})`;
     if (Math.abs(worseBy) < FLAT_BELOW_POINTS) trend = `, about the same as ${was}`;
-    else if (worseBy > 0) trend = isRed ? ` and worse than ${was}` : `, though worse than ${was}`;
+    else if (worseBy > 0) {
+      rising = true;
+      trend = isRed ? ` and worse than ${was}` : `, though worse than ${was}`;
+    }
     else trend = isRed ? `, though better than ${was}` : ` and better than ${was}`;
   }
 
@@ -101,6 +111,7 @@ export function getMainReason(countyId: string): MainReason {
     gap,
     text: `${lead}: ${what(formatPct(gap.value))}, ${position}${trend}.${tail}`,
     chips: [{ sourceId: gap.source_id, year: gap.year }],
+    caveat: rising && gap.indicator_id === GP_WAIT_ID ? getRecordingCaveat(countyId) : null,
   };
 }
 

@@ -7,6 +7,7 @@ import { CountyBrief } from "@/components/brief/county-brief";
 import { CountyNews } from "@/components/exa/county-news";
 import { LimitationsBox, type LimitationItem } from "@/components/pathway/limitations-box";
 import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
+import { RecordingNote } from "@/components/pathway/recording-note";
 import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { buildStepTabs } from "@/components/pathway/step-panels";
 import { StepAside, StepTabs, StepTabsProvider } from "@/components/pathway/step-tabs";
@@ -28,6 +29,7 @@ import {
   stageStatus,
   YEARS,
 } from "@/lib/ranking";
+import { describeVisitChange, getRecordedVisitChange, RECORDING_CHANGE_ABOVE } from "@/lib/recording";
 
 // Counties are a fixed, known set, so a blocking route is fine here.
 export const instant = false;
@@ -69,6 +71,7 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
             <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
             <h1 className="type-page lg:text-[2.5rem] lg:leading-[1.1]">{county.name}</h1>
             <p className="max-w-[44rem] text-base leading-relaxed text-pretty text-foreground">{shortReason(reason)}</p>
+            {reason.caveat && <RecordingNote caveat={reason.caveat} className="max-w-[44rem]" />}
             <section aria-labelledby="steps-heading" className="w-full">
               <h2 id="steps-heading" className="sr-only">
                 The first three steps, compared with Finland ({LATEST_YEAR})
@@ -135,6 +138,17 @@ function buildLimitations(county: County): LimitationItem[] {
         sourceId: indicator.source_id,
       });
     }
+  }
+
+  // The GP wait is a share of recorded visits; where that base moved a lot, say so (one line).
+  const visitChange = getRecordedVisitChange(county.id);
+  if (visitChange !== null && Math.abs(visitChange) > RECORDING_CHANGE_ABOVE) {
+    items.push({
+      title: "Recorded visits changed a lot",
+      short: `Recorded visits ${describeVisitChange(visitChange)} since 2023; a rise may be partly recording.`,
+      text: `The GP wait is a share of the visits recorded with waiting-time data. Recorded visits here ${describeVisitChange(visitChange)} between 2023 and 2025, more than ${Math.round(RECORDING_CHANGE_ABOVE * 100)}%, so part of a change in the share may be how visits are recorded, not how long visits waited. The share is shown as published.`,
+      sourceId: `sotkanet-${GP_WAIT_ID}`,
+    });
   }
 
   items.push({
