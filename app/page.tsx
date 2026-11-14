@@ -48,13 +48,13 @@ export default function CountyRankingPage() {
         <div className="grid gap-6 px-3.5 pt-5 pb-2 sm:px-6 sm:pt-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-center lg:gap-12 lg:px-8 lg:py-8">
           <div className="flex flex-col gap-5">
             <p className="flex items-center gap-2 type-caption font-medium text-brand-ink">
-              <span aria-hidden className="h-px w-6 bg-brand-ink/60" />
+              <span aria-hidden className="hidden h-px w-6 bg-brand-ink/60 sm:block" />
               The first step towards early cancer care: getting in to see a GP
             </p>
             <h1 id="home-title" className="type-display max-w-[14ch] text-foreground">
               In Finland, where you live decides how fast you get to see a GP.
             </h1>
-            <p className="type-lede max-w-[36rem] text-muted-foreground">
+            <p className="max-w-[36rem] text-[0.9375rem] leading-relaxed text-pretty text-muted-foreground sm:type-lede">
               <strong className="font-semibold text-foreground">{formatPct(worst.gpWait.value)}</strong> of
               non-urgent GP visits in {worst.county.name} come more than a week after the need for
               care was assessed. In {best.county.name} it is{" "}
@@ -110,9 +110,9 @@ export default function CountyRankingPage() {
             All {rows.length + unranked.length} areas, longest GP waits first
           </FrameTitle>
           <FrameMeta className="hidden sm:flex">
-            <span className="tabular-nums">
+            <StatusBadge status="red" className="tabular-nums">
               {redCount} of {rows.length + unranked.length} worse than Finland
-            </span>
+            </StatusBadge>
           </FrameMeta>
           <FrameDescription>
             21 wellbeing services counties and the City of Helsinki. Pick an area to see where its
@@ -145,9 +145,7 @@ export default function CountyRankingPage() {
             Ask the evidence, answered live from Exa search results
           </FrameTitle>
         </FrameHeader>
-        <FramePanel padding="lg">
-          <AskBox />
-        </FramePanel>
+        <AskBox />
       </Frame>
     </main>
   );
@@ -172,7 +170,7 @@ function CompareRow({
   return (
     <li className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-4 gap-y-2.5">
       <div className="flex min-w-0 flex-col gap-1.5">
-        <span className="truncate text-[0.9375rem] font-semibold">{name}</span>
+        <span className="text-[0.9375rem] leading-snug font-semibold">{name}</span>
         {status ? (
           <StatusBadge status={status} size="xs">
             {STATUS_LABEL[status]}
@@ -180,12 +178,12 @@ function CompareRow({
         ) : (
           <span className="flex h-5 items-center gap-1.5 text-[0.6875rem] font-medium text-muted-foreground">
             <span aria-hidden className="h-3 w-0.5 rounded-full bg-foreground" />
-            National level, the line on every bar
+            Reference line on each bar
           </span>
         )}
       </div>
       <span
-        className={`numeral text-right ${emphasis ? "text-[3.25rem] sm:text-[3.75rem]" : "text-[2.25rem] sm:text-[2.5rem]"} ${status === "red" ? "text-status-red-ink" : status === "amber" ? "text-status-amber-ink" : "text-foreground"}`}
+        className={`numeral text-right ${emphasis ? "text-[2.75rem] sm:text-[3.75rem]" : "text-[2rem] sm:text-[2.5rem]"} ${status === "red" ? "text-status-red-ink" : status === "amber" ? "text-status-amber-ink" : "text-foreground"}`}
       >
         {formatPct(value)}
       </span>

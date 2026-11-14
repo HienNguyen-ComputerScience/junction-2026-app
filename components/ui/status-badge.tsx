@@ -30,21 +30,32 @@ const CHIP: Record<GapStatus, string> = {
 export function StatusBadge({
   status,
   size = "sm",
+  variant = "chip",
   className,
   children,
   ...props
-}: React.ComponentProps<"span"> & { status: GapStatus; size?: "xs" | "sm" | "md" }) {
+}: React.ComponentProps<"span"> & {
+  status: GapStatus;
+  size?: "xs" | "sm" | "md";
+  /** chip: tinted pill. plain: dot + coloured text only, for dense lists. */
+  variant?: "chip" | "plain";
+}) {
   return (
     <span
       data-slot="status-badge"
       data-status={status}
       className={cn(
-        "inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full border font-medium whitespace-nowrap",
-        size === "xs" && "h-5 px-1.5 text-[0.6875rem]",
-        size === "sm" && "h-6 px-2 text-[0.75rem]",
-        size === "md" && "h-7 px-2.5 text-[0.8125rem]",
-        status === "no_data" && "border-dashed",
-        CHIP[status],
+        "inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full font-medium whitespace-nowrap",
+        size === "xs" && "h-5 text-[0.6875rem]",
+        size === "sm" && "h-6 text-[0.75rem]",
+        size === "md" && "h-7 text-[0.8125rem]",
+        variant === "chip" && [
+          "border",
+          size === "xs" ? "px-1.5" : size === "sm" ? "px-2" : "px-2.5",
+          status === "no_data" && "border-dashed",
+          CHIP[status],
+        ],
+        variant === "plain" && STATUS_INK[status],
         className,
       )}
       {...props}

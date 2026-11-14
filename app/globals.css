@@ -161,7 +161,7 @@
   --status-red: oklch(0.67 0.2 25);
   --status-red-soft: oklch(0.67 0.2 25 / 16%);
   --status-red-border: oklch(0.67 0.2 25 / 40%);
-  --status-red-ink: oklch(0.8 0.12 22);
+  --status-red-ink: oklch(0.76 0.155 23);
   --status-amber: oklch(0.82 0.15 78);
   --status-amber-soft: oklch(0.82 0.15 78 / 14%);
   --status-amber-border: oklch(0.82 0.15 78 / 38%);

@@ -49,7 +49,7 @@ export function RankingList({
     <div className="flex flex-col">
       {/* Column header, desktop: sticky so chips and the Finland label stay in view while scrolling. */}
       <div
-        className={`${ROW_GRID} sticky top-0 z-10 hidden rounded-t-panel border-b border-border/80 bg-card/95 px-5 pt-4 pb-0 type-micro font-medium text-muted-foreground backdrop-blur lg:grid`}
+        className={`${ROW_GRID} sticky top-0 z-10 hidden rounded-t-panel border-b border-border/80 bg-card px-5 pt-4 pb-0 type-micro font-medium text-muted-foreground lg:grid`}
       >
         <span className="pb-3">#</span>
         <span className="pb-3">
@@ -215,12 +215,12 @@ function RankingRowLink({
       href={`/county/${row.county.id}`}
       className={`${ROW_GRID} group relative rounded-xl px-2.5 transition-colors outline-none hover:bg-muted/70 focus-visible:z-[1] focus-visible:ring-2 focus-visible:ring-ring lg:rounded-none lg:px-5`}
     >
-      <span className="row-span-3 pt-3 type-heading text-[0.9375rem] text-muted-foreground tabular-nums lg:row-span-1 lg:flex lg:items-center lg:py-3.5">
+      <span className="row-span-3 pt-3 type-heading text-[0.9375rem] text-muted-foreground tabular-nums lg:row-span-1 lg:flex lg:items-center lg:py-2.5">
         <span className="sr-only">Rank </span>
         {row.rank}
       </span>
 
-      <span className="flex min-w-0 flex-col justify-center pt-3 lg:py-3.5">
+      <span className="flex min-w-0 flex-col justify-center pt-3 lg:py-2.5">
         <span className="truncate text-[0.9375rem] font-semibold tracking-[-0.005em] transition-colors group-hover:text-brand-ink">
           {row.county.name}
         </span>
@@ -249,14 +249,14 @@ function RankingRowLink({
         />
       </div>
 
-      <span className="col-start-3 row-start-1 flex flex-col items-end justify-center gap-1 pt-3 lg:col-start-4 lg:py-3.5">
+      <span className="col-start-3 row-start-1 flex flex-col items-end justify-center gap-0.5 pt-3 lg:col-start-4 lg:py-2.5">
         <span
-          className={`numeral text-[1.25rem] leading-none lg:text-[1.375rem] ${STATUS_INK[row.gpStatus]}`}
+          className={`numeral text-[1.25rem] leading-none lg:text-[1.375rem] ${row.gpStatus === "red" ? STATUS_INK.red : "text-foreground"}`}
         >
           <span className="sr-only">Non-urgent GP visits waiting over 7 days: </span>
           {formatPct(row.gpWait.value)}
         </span>
-        <StatusBadge status={row.gpStatus} size="xs">
+        <StatusBadge status={row.gpStatus} size="xs" variant="plain">
           {ROW_STATUS[row.gpStatus]}
           <span className="sr-only">
             {row.gpStatus === "amber" ? " than Finland's level" : ""} (Finland {formatPct(nationalGpWait)})
@@ -264,10 +264,10 @@ function RankingRowLink({
         </StatusBadge>
       </span>
 
-      <span className="col-span-2 col-start-2 row-start-3 flex flex-wrap items-center gap-x-2 gap-y-1 pt-1 pb-3 text-[0.8125rem] lg:col-span-1 lg:col-start-5 lg:row-start-1 lg:py-3.5 lg:text-sm">
+      <span className="col-span-2 col-start-2 row-start-3 flex flex-wrap items-center gap-x-2 gap-y-1 pt-1 pb-3 text-[0.8125rem] lg:col-span-1 lg:col-start-5 lg:row-start-1 lg:py-2.5 lg:text-sm">
         <span className="text-muted-foreground lg:sr-only">Referrals in 3 days</span>
         {row.referral === null ? (
-          <StatusBadge status="no_data" size="xs">
+          <StatusBadge status="no_data" size="xs" variant="plain">
             No public data
           </StatusBadge>
         ) : (
@@ -278,7 +278,7 @@ function RankingRowLink({
               {formatPct(row.referral.value)}
             </span>
             {referralWorse ? (
-              <StatusBadge status="red" size="xs">
+              <StatusBadge status="red" size="xs" variant="plain">
                 Slower than Finland
               </StatusBadge>
             ) : (

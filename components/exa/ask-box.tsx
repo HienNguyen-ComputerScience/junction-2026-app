@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { FramePanel } from "@/components/ui/frame";
 
 import { LoadingRows, ResultList, Unavailable } from "./result-list";
 import { isAskResponse, STATUS_LABEL, TOO_MANY, type AskResponse } from "./types";
@@ -62,10 +63,10 @@ export function AskBox() {
   const answered = data?.answer && data.answer.sentences.length > 0;
 
   return (
-    <div aria-labelledby="ask-box-title" role="group" className="flex flex-col gap-5">
+    <FramePanel padding="lg" aria-labelledby="ask-box-title" role="group" className="flex flex-col gap-5">
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <h3 id="ask-box-title" className="type-heading">
+          <h3 id="ask-box-title" className="text-sm font-semibold">
             Ask a question
           </h3>
           <Badge variant="secondary">Found live — unverified</Badge>
@@ -188,6 +189,6 @@ export function AskBox() {
             </div>
           )}
       </div>
-    </div>
+    </FramePanel>
   );
 }

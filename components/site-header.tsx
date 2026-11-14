@@ -3,20 +3,21 @@ import { Suspense } from "react";
 
 import { MainNav, NavLinks } from "@/components/site-nav";
 
-/** FirstLine mark: a starting point and the first line of the path. Decorative. */
+/** FirstLine mark: an F drawn as a path with a starting point. Decorative. */
 export function LogoMark({ className = "size-7" }: { className?: string }) {
   return (
     <svg viewBox="0 0 28 28" aria-hidden className={className}>
       <rect width="28" height="28" rx="8" className="fill-brand" />
+      {/* An F drawn as a path: a start point, a stem, and two lines leading out. */}
       <path
-        d="M7 18.5h14"
+        d="M10 19.5V9.5h9.5M10 14.5h6"
+        fill="none"
         stroke="white"
-        strokeOpacity="0.45"
-        strokeWidth="2.2"
+        strokeWidth="2.4"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <path d="M12.5 13.5h8.5" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
-      <circle cx="8.6" cy="13.5" r="2.4" fill="white" />
+      <circle cx="10" cy="19.75" r="2.1" fill="white" />
     </svg>
   );
 }
