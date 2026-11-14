@@ -151,7 +151,7 @@ export default async function CountyActPage({ params }: PageProps<"/county/[id]/
             <h2 id="actions-title" className="mb-8 font-display text-[2rem] leading-[1.15] font-light text-forest-ink sm:text-[2.75rem]">
               Recommended actions for {county.name}
             </h2>
-            <ol className="flex max-w-3xl flex-col gap-16 md:gap-[28vh]">
+            <ol className="flex max-w-3xl flex-col gap-16 md:gap-[12vh]">
               {recommended.map((action, index) => (
                 <li key={action.id} className="print-flow">
                   <ActionItem action={action} index={index + 1} showStep={showStep} />
