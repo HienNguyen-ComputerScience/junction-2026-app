@@ -45,7 +45,7 @@ function SourceMarks({ action }: { action: Evidence }) {
 }
 
 /** The step to take first: the one emphasised block on a card. */
-function FirstStep({ children, compact = false }: { children: ReactNode; compact?: boolean }) {
+export function FirstStep({ children, compact = false }: { children: ReactNode; compact?: boolean }) {
   return (
     <div className="rounded-lg border border-input bg-muted px-4 py-3">
       <p className="type-caption font-medium text-muted-foreground">First step</p>
