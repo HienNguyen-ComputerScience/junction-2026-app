@@ -187,10 +187,25 @@ async function callClaude(context: BriefContext, key: string): Promise<Outcome> 
   }
 }
 
-// Small in-memory cache per county. Only AI results are cached, so one timeout
-// doesn't pin the fallback for the rest of the demo.
+// Small in-memory cache per county. AI results are kept for CACHE_TTL_MS. A failed
+// attempt (fallback) is kept only briefly, so retries don't each pay for another
+// Claude call that ends the same way, but a timeout still doesn't pin the fallback
+// for the rest of the demo: 10 minutes when too few claims passed the snapshot
+// check (Claude answered, retrying rarely helps), 2 minutes for anything else.
+const FALLBACK_TTL_MS = 2 * 60 * 1000;
+const TOO_FEW_TTL_MS = 10 * 60 * 1000;
 const cache = new Map<string, { response: BriefResponse; expires: number }>();
 const inFlight = new Map<string, Promise<BriefResponse>>();
+
+/** True when `generateBrief(countyId, { forceFallback })` would not call Claude (so it costs nothing). */
+export function briefIsFree(countyId: string, forceFallback: boolean): boolean {
+  if (!buildBriefContext(countyId)) return true;
+  if (forceFallback) return true;
+  if (!process.env.ANTHROPIC_API_KEY) return true;
+  const hit = cache.get(countyId);
+  if (hit && hit.expires > Date.now()) return true;
+  return inFlight.has(countyId);
+}
 
 /** The brief for one county, or null for an unknown county id. */
 export async function generateBrief(
@@ -211,7 +226,12 @@ export async function generateBrief(
   if (pending) return pending;
 
   const run = callClaude(context, key).then((outcome) => {
-    if (!outcome.ok) return fallbackResponse(context, outcome.reason, outcome.dropped ?? 0);
+    if (!outcome.ok) {
+      const response = fallbackResponse(context, outcome.reason, outcome.dropped ?? 0);
+      const ttl = outcome.reason === REASON.tooFew ? TOO_FEW_TTL_MS : FALLBACK_TTL_MS;
+      cache.set(countyId, { response, expires: Date.now() + ttl });
+      return response;
+    }
     cache.set(countyId, { response: outcome.response, expires: Date.now() + CACHE_TTL_MS });
     return outcome.response;
   });

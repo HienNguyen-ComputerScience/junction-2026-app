@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ActionCard, ActionSummary } from "@/components/act/action-card";
@@ -50,6 +51,13 @@ function bottleneckLede(bottleneck: Bottleneck): string {
   if (!anyRed) return `No measured stage is worse than Finland. Closest to Finland's level: ${worst}.`;
   if (focus.length === 1) return `The delay sits at ${worst}, which is worse than Finland.`;
   return `${focus.length === 2 ? "Both" : "All"} measured stages are worse than Finland. Worst is ${worst}.`;
+}
+
+export async function generateMetadata({ params }: PageProps<"/county/[id]/act">): Promise<Metadata> {
+  const { id } = await params;
+  const county = getCounty(id);
+  if (!county) return {};
+  return { title: `${county.name}: what to do | FirstLine` };
 }
 
 export default async function CountyActPage({ params }: PageProps<"/county/[id]/act">) {

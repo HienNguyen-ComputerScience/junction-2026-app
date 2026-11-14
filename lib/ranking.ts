@@ -3,6 +3,7 @@
 
 import {
   counties,
+  gaps,
   getGaps,
   getValue,
   indicators,
@@ -87,6 +88,9 @@ export function getTrend(countyId: string, indicatorId: string) {
   }));
 }
 
+/** Areas whose referral value covers only their own specialist units; most of their referrals go to HUS. */
+export const CITY_UNITS_ONLY_REFERRAL = new Set(["helsinki"]);
+
 export function getStageGap(countyId: string, stage: Stage): Gap | undefined {
   return getGaps(countyId).find((gap) => gap.stage === stage);
 }
@@ -111,6 +115,13 @@ export function getVerdict(countyId: string): string {
   }
   if (gp === "red" && referral === "no_data") {
     return `The delay sits at getting to a GP, which is worse than Finland. ${noReferralText(countyId)}`;
+  }
+  if (gp === "red" && referral !== "red" && CITY_UNITS_ONLY_REFERRAL.has(countyId)) {
+    const hus = gaps.find((gap) => gap.shared)?.shared;
+    const national = getStageGap(countyId, "referral")?.national_value;
+    if (hus && national !== undefined && hus.value < national) {
+      return `The delay sits at getting to a GP, which is worse than Finland. Helsinki's referral figure covers only the city's own units; most referrals go to HUS, which processed ${formatPct(hus.value)} within 3 days, below Finland's ${formatPct(national)}.`;
+    }
   }
   if (gp === "red") {
     return "The delay sits at getting to a GP: it is worse than Finland, while referrals are processed at or above Finland's level.";

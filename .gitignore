@@ -18,3 +18,7 @@ coverage/
 *.pem
 *.tsbuildinfo
 next-env.d.ts
+
+# Agent worktrees and local video output (never commit)
+.claude/worktrees/
+brag-output/

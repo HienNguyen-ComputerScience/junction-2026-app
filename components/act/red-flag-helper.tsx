@@ -89,6 +89,9 @@ export function RedFlagHelper() {
         <ShieldAlert aria-hidden className="mt-0.5 size-4 shrink-0 text-foreground" strokeWidth={1.75} />
         <div className="flex flex-col gap-0.5">
           <p className="text-[0.9375rem] font-semibold">Decision support, not diagnosis. If in doubt, refer.</p>
+          <p className="text-sm text-foreground">
+            Severe or sudden symptoms, such as chest pain, trouble breathing or heavy bleeding: call 112 now.
+          </p>
           <p className="type-caption text-muted-foreground">
             No patient data is stored or sent. Matching runs only in this browser.
           </p>

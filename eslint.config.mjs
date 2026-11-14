@@ -14,6 +14,9 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Standalone Node scripts for the pitch video (CommonJS, not app code).
     "docs/pitch/video-build/**",
+    // Agent worktrees and local output, not app code.
+    ".claude/**",
+    "brag-output/**",
   ]),
 ]);
 

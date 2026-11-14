@@ -221,22 +221,16 @@ export function buildContextFromSnapshot(snapshot: Snapshot, countyId: string): 
     });
   }
 
-  const worst = pickWorstStages(countyGaps);
-  const actions: BriefAction[] = [];
-  const perStage = Math.max(1, Math.floor(MAX_ACTIONS / Math.max(1, worst.length)));
-  for (const stage of worst) {
-    for (const row of snapshot.evidence.filter((e) => e.stage === stage && e.verified).slice(0, perStage)) {
-      if (actions.length >= MAX_ACTIONS) break;
-      actions.push({
-        id: row.id,
-        stage: row.stage,
-        action: row.action,
-        who_implements: row.who_implements,
-        first_step: row.first_step,
-        source_id: row.source_id,
-      });
-    }
-  }
+  const { focus } = selectFocus(countyGaps, snapshot.indicators);
+  const worst = focus.map((g) => g.stage);
+  const actions: BriefAction[] = pickActionRows(focus, snapshot.evidence, MAX_ACTIONS).map((row) => ({
+    id: row.id,
+    stage: row.stage,
+    action: row.action,
+    who_implements: row.who_implements,
+    first_step: row.first_step,
+    source_id: row.source_id,
+  }));
 
   const used = new Set<string>([
     ...facts.map((f) => f.source_id),
@@ -258,13 +252,58 @@ export function buildContextFromSnapshot(snapshot: Snapshot, countyId: string): 
   };
 }
 
-/** Red stages; if none, the stage with data closest to (or worst against) Finland. */
-function pickWorstStages(countyGaps: Gap[]): Stage[] {
-  const withData = countyGaps.filter((g) => g.status !== "no_data" && g.value !== null);
-  const red = withData.filter((g) => g.status === "red");
-  if (red.length > 0) return red.map((g) => g.stage);
-  if (withData.length === 0) return ["gp_access"];
-  // Margin relative to Finland; smaller margin = less room = the weaker stage.
-  const margin = (g: Gap) => Math.abs((g.value ?? 0) - g.national_value) / g.national_value;
-  return [withData.reduce((a, b) => (margin(b) < margin(a) ? b : a)).stage];
+// The Act page's action rule (lib/act.ts uses these); the brief uses the same picks.
+
+/** How much worse than Finland a measured gap is, as a share of Finland's value. Positive = worse. */
+export function relativeGapOf(gap: Gap, indicators: Indicator[]): number | null {
+  if (gap.value === null) return null;
+  const indicator = indicators.find((i) => i.indicator_id === gap.indicator_id);
+  const diff =
+    indicator?.direction === "lower_is_worse"
+      ? gap.national_value - gap.value
+      : gap.value - gap.national_value;
+  return diff / gap.national_value;
+}
+
+/** Focus stages: every measured red stage, worst first; if none is red, the single weakest measured stage. */
+export function selectFocus(
+  countyGaps: Gap[],
+  indicators: Indicator[],
+): { focus: Gap[]; anyRed: boolean; noData: Gap[] } {
+  const measured = countyGaps
+    .filter((gap) => gap.status !== "no_data")
+    .map((gap) => ({ gap, rel: relativeGapOf(gap, indicators) ?? -Infinity }))
+    .sort((a, b) => b.rel - a.rel);
+  const red = measured.filter((m) => m.gap.status === "red").map((m) => m.gap);
+  const focus = red.length > 0 ? red : measured.slice(0, 1).map((m) => m.gap);
+  return {
+    focus,
+    anyRed: red.length > 0,
+    noData: countyGaps.filter((gap) => gap.status === "no_data"),
+  };
+}
+
+/** Actions for one stage, measured effect first, then evidence-table order. */
+export function rankActionsForStage(stage: Stage, evidence: Evidence[]): Evidence[] {
+  const rows = evidence.filter((row) => row.stage === stage);
+  return [
+    ...rows.filter((row) => row.effect_size !== null),
+    ...rows.filter((row) => row.effect_size === null),
+  ];
+}
+
+/** Up to `max` actions: the best one per focus stage first, then fill in focus order. */
+export function pickActionRows(focus: Gap[], evidence: Evidence[], max = 3): Evidence[] {
+  const queues = focus.map((gap) => rankActionsForStage(gap.stage, evidence));
+  const picked: Evidence[] = [];
+  for (const queue of queues) {
+    const next = queue.shift();
+    if (next && picked.length < max) picked.push(next);
+  }
+  for (const queue of queues) {
+    while (queue.length > 0 && picked.length < max) {
+      picked.push(queue.shift()!);
+    }
+  }
+  return picked;
 }

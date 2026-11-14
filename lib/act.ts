@@ -14,6 +14,12 @@
 //    actions are listed as "can't be measured here yet", not hidden.
 
 import {
+  pickActionRows,
+  rankActionsForStage,
+  relativeGapOf,
+  selectFocus,
+} from "@/lib/brief/facts";
+import {
   evidence,
   getGaps,
   indicators,
@@ -33,13 +39,7 @@ export const SELECTION_RULE =
 
 /** How much worse than Finland a measured gap is, as a share of Finland's value. Positive = worse. */
 export function relativeGap(gap: Gap): number | null {
-  if (gap.value === null) return null;
-  const indicator = indicators.find((i) => i.indicator_id === gap.indicator_id);
-  const diff =
-    indicator?.direction === "lower_is_worse"
-      ? gap.national_value - gap.value
-      : gap.value - gap.national_value;
-  return diff / gap.national_value;
+  return relativeGapOf(gap, indicators);
 }
 
 export type Bottleneck = {
@@ -52,18 +52,7 @@ export type Bottleneck = {
 };
 
 export function getBottleneck(countyId: string): Bottleneck {
-  const gaps = getGaps(countyId);
-  const measured = gaps
-    .filter((gap) => gap.status !== "no_data")
-    .map((gap) => ({ gap, rel: relativeGap(gap) ?? -Infinity }))
-    .sort((a, b) => b.rel - a.rel);
-  const red = measured.filter((m) => m.gap.status === "red").map((m) => m.gap);
-  const focus = red.length > 0 ? red : measured.slice(0, 1).map((m) => m.gap);
-  return {
-    focus,
-    anyRed: red.length > 0,
-    noData: gaps.filter((gap) => gap.status === "no_data"),
-  };
+  return selectFocus(getGaps(countyId), indicators);
 }
 
 const STAGE_PHRASES: Record<Stage, string> = {
@@ -112,30 +101,13 @@ export function bottleneckSentence(countyName: string, bottleneck: Bottleneck): 
 
 /** Actions for one stage, measured effect first, then evidence-table order. */
 export function rankedActions(stage: Stage): Evidence[] {
-  const rows = evidence.filter((row) => row.stage === stage);
-  return [
-    ...rows.filter((row) => row.effect_size !== null),
-    ...rows.filter((row) => row.effect_size === null),
-  ];
+  return rankActionsForStage(stage, evidence);
 }
 
 export const MAX_RECOMMENDED = 3;
 
 export function pickActions(bottleneck: Bottleneck): Evidence[] {
-  const queues = bottleneck.focus.map((gap) => rankedActions(gap.stage));
-  const picked: Evidence[] = [];
-  // Round 1: the best action for each focus stage.
-  for (const queue of queues) {
-    const next = queue.shift();
-    if (next && picked.length < MAX_RECOMMENDED) picked.push(next);
-  }
-  // Then fill from the focus stages, worst stage first.
-  for (const queue of queues) {
-    while (queue.length > 0 && picked.length < MAX_RECOMMENDED) {
-      picked.push(queue.shift()!);
-    }
-  }
-  return picked;
+  return pickActionRows(bottleneck.focus, evidence, MAX_RECOMMENDED);
 }
 
 export type OtherGroup = {

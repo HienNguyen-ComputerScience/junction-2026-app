@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { search, isoDaysAgo, simulateOutage } from "@/lib/exa/client";
+import { search, searchCached, type SearchRequest, isoDaysAgo, simulateOutage } from "@/lib/exa/client";
 import { COUNTIES, TTL } from "@/lib/exa/config";
 import { demoCacheGet } from "@/lib/exa/demo-cache";
 import { rateLimit } from "@/lib/exa/rate-limit";
@@ -11,9 +11,6 @@ import { rateLimit } from "@/lib/exa/rate-limit";
 // National cancer-pathway news is the same for every county, so it lives in /api/national-news.
 
 export async function GET(request: NextRequest) {
-  const limited = rateLimit(request, "news");
-  if (limited) return limited;
-
   const id = request.nextUrl.searchParams.get("county") ?? "";
   const county = COUNTIES.get(id);
   if (!county) {
@@ -21,18 +18,23 @@ export async function GET(request: NextRequest) {
   }
 
   const since = isoDaysAgo(365);
-  let result = await search(
-    {
-      query: county.query,
-      type: "fast",
-      numResults: 8,
-      userLocation: "FI",
-      startPublishedDate: since,
-      includeDomains: county.includeDomains,
-      contents: { highlights: { maxCharacters: 600, query: "lääkärille pääsy, jonotusaika, hoitotakuu" } },
-    },
-    { ttlMs: TTL.news, simulateOutage: simulateOutage(request), cacheKey: `news:${id}:${county.query}`, pin: true },
-  );
+  const body: SearchRequest = {
+    query: county.query,
+    type: "fast",
+    numResults: 8,
+    userLocation: "FI",
+    startPublishedDate: since,
+    includeDomains: county.includeDomains,
+    contents: { highlights: { maxCharacters: 600, query: "lääkärille pääsy, jonotusaika, hoitotakuu" } },
+  };
+  const opts = { ttlMs: TTL.news, simulateOutage: simulateOutage(request), cacheKey: `news:${id}:${county.query}`, pin: true };
+
+  // Count against the limit only when this would call Exa; a fresh cache hit is free.
+  if (!searchCached(body, opts)) {
+    const limited = rateLimit(request, "news");
+    if (limited) return limited;
+  }
+  let result = await search(body, opts);
 
   // Last resort when Exa is down and this instance has no copy: the committed demo cache.
   let message: string | undefined;

@@ -183,7 +183,7 @@ export function AskBox() {
 
               {!answered && data.nothingFound && (
                 <p className="rounded-lg border border-dashed border-input p-4 text-sm text-muted-foreground">
-                  {data.message?.startsWith("Nothing found")
+                  {data.message?.startsWith("Nothing found") || (typeof data.dropped === "number" && data.dropped > 0)
                     ? data.message
                     : `Nothing found. ${data.message || "The live results did not answer this question."}`}
                 </p>

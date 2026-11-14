@@ -63,6 +63,8 @@ type AskResponse = {
   retrievedAt?: string;
   /** Set only on the off-topic gate reply: no search ran, so the UI hides the freshness badge. */
   offTopic?: true;
+  /** Sentences the checker removed because their numbers weren't in the cited source. */
+  dropped?: number;
 };
 
 /**
@@ -231,8 +233,14 @@ export async function POST(request: NextRequest) {
     switch (written.status) {
       case "answered":
         return reply({ items, answer: written.answer, nothingFound: false });
-      case "nothing-found":
+      case "nothing-found": {
+        const n = written.dropped;
+        if (n > 0) {
+          const message = `The checker removed ${n} sentence${n === 1 ? "" : "s"} from the written answer: ${n === 1 ? "its numbers were" : "their numbers were"} not in the sources they cited. Read the sources below directly.`;
+          return reply({ items, answer: null, nothingFound: true, dropped: n, message });
+        }
         return reply({ items, answer: null, nothingFound: true, message: "Nothing found in the sources." });
+      }
       case "unavailable":
         console.warn(`[ask] answer unavailable: ${written.reason}`);
         return {
