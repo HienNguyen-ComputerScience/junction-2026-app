@@ -70,7 +70,7 @@ export function RankingList({
             >
               Finland {formatPct(nationalGpWait)}
             </span>
-            <span className="absolute bottom-0 h-1.5 w-0.5 -translate-x-1/2 bg-foreground" style={finlandX} />
+            <span className="absolute bottom-0 h-1.5 w-px bg-foreground" style={finlandX} />
           </div>
         </div>
         <HeadCell line1="GP wait" line2="vs Finland" className="items-end text-right" />
@@ -236,7 +236,7 @@ function GroupDivider({
             Finland {formatPct(nationalGpWait)}
           </span>
         )}
-        <span className="absolute inset-y-0 w-0.5 -translate-x-1/2 bg-foreground" style={finlandX} />
+        <span className="absolute inset-y-0 w-px bg-foreground" style={finlandX} />
       </div>
     </div>
   );
@@ -262,13 +262,13 @@ function RankingRowLink({
       href={`/county/${row.county.id}`}
       className={`${ROW_GRID} group relative rounded-lg px-2.5 transition-colors outline-none hover:bg-muted/70 focus-visible:z-[1] focus-visible:ring-2 focus-visible:ring-ring lg:rounded-none lg:px-5`}
     >
-      <span className="row-span-3 pt-3 text-[0.8125rem] leading-6 text-muted-foreground tabular-nums lg:row-span-1 lg:flex lg:items-center lg:py-2">
+      <span className="row-span-3 pt-3 text-[0.8125rem] leading-6 text-faint tabular-nums lg:row-span-1 lg:flex lg:items-center lg:py-2">
         <span className="sr-only">Rank </span>
         {row.rank}
       </span>
 
       <span className="flex min-w-0 flex-col justify-center gap-0.5 pt-3 lg:py-2">
-        <span className="truncate text-[0.9375rem] leading-6 font-semibold transition-colors group-hover:text-brand-ink">
+        <span className="truncate text-[0.9375rem] leading-6 font-semibold">
           {row.county.name}
         </span>
         <ChangeSince change={row.gpWaitChange} />
@@ -279,13 +279,13 @@ function RankingRowLink({
         aria-hidden
         className="relative col-span-2 col-start-2 row-start-2 flex items-center pt-3 pb-1.5 lg:col-span-1 lg:col-start-3 lg:row-start-1 lg:py-0"
       >
-        <div className="relative h-2.5 w-full rounded-[2px] bg-muted lg:h-3">
+        <div className="relative h-2.5 w-full rounded-[2px] bg-track lg:h-3">
           <BarFill value={row.gpWait.value} finland={nationalGpWait} status={row.gpStatus} index={index} />
           {/* Phone: Finland tick per bar. Desktop: one continuous line down the column. */}
           <FinlandTick finland={nationalGpWait} className="lg:hidden" />
         </div>
         <span
-          className="absolute inset-y-0 hidden w-0.5 -translate-x-1/2 bg-foreground lg:block"
+          className="absolute inset-y-0 hidden w-px bg-foreground lg:block"
           style={finlandX}
         />
       </div>

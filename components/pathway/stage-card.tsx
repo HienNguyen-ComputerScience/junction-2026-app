@@ -27,8 +27,9 @@ export type StageCardProps = {
 };
 
 const NODE: Record<GapStatus, string> = {
-  red: "bg-status-red text-white",
-  amber: "bg-status-amber text-foreground",
+  // Dark ink on the saturated fills: 5.0:1 on red, 9.7:1 on amber.
+  red: "bg-status-red text-background",
+  amber: "bg-status-amber text-background",
   no_data: "border border-dashed border-status-grey-ink/60 bg-card text-status-grey-ink",
 };
 
@@ -185,20 +186,20 @@ function TrendChart({
           ))}
           <span
             aria-hidden
-            className="absolute inset-x-0 h-0.5 translate-y-1/2 bg-foreground"
+            className="absolute inset-x-0 h-px bg-foreground"
             style={{ bottom: `${Math.min(100, Math.max(0, finland))}%` }}
           />
         </div>
         <div className="flex gap-2">
           {trend.map((point) => (
-            <span key={point.year} className="flex-1 text-center type-mark text-muted-foreground">
+            <span key={point.year} className="flex-1 text-center type-mark text-faint">
               {point.year}
             </span>
           ))}
         </div>
       </div>
       <p className="flex items-center gap-1.5 type-mark font-medium text-foreground">
-        <span aria-hidden className="h-0.5 w-3 bg-foreground" />
+        <span aria-hidden className="h-px w-3 bg-foreground" />
         Finland {formatPct(finland)} ({finlandYear})
       </p>
     </figure>

@@ -14,8 +14,8 @@ export function LoadingRows({ label, rows = 3 }: { label: string; rows?: number 
       <span className="sr-only">{label}</span>
       {Array.from({ length: rows }, (_, i) => (
         <div key={i} aria-hidden className="flex flex-col gap-2">
-          <div className="h-4 w-3/5 animate-pulse rounded-sm bg-muted" />
-          <div className="h-3 w-full max-w-xl animate-pulse rounded-sm bg-muted" />
+          <div className="h-4 w-3/5 animate-pulse rounded-sm bg-foreground/10" />
+          <div className="h-3 w-full max-w-xl animate-pulse rounded-sm bg-foreground/10" />
         </div>
       ))}
     </div>
@@ -54,7 +54,7 @@ export function ResultList({ items, numbered = false, idPrefix = "exa-src" }: { 
                 rel="noopener noreferrer"
                 className="w-fit rounded-sm text-sm leading-snug font-semibold text-foreground underline decoration-foreground/25 underline-offset-4 outline-none transition-colors hover:text-brand-ink hover:decoration-brand-ink focus-visible:ring-3 focus-visible:ring-ring/50"
               >
-                {numbered && <span className="mr-1.5 font-medium text-brand-ink tabular-nums">[{i + 1}]</span>}
+                {numbered && <span className="mr-1.5 font-medium text-muted-foreground tabular-nums">[{i + 1}]</span>}
                 {item.title}
               </a>
               {item.snippet && (

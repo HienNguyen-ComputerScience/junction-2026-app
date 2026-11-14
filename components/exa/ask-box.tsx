@@ -88,7 +88,7 @@ export function AskBox() {
       </div>
 
       <form
-        className="flex flex-col gap-2 rounded-xl border border-input bg-card p-1.5 shadow-[0_1px_2px_oklch(0.2_0.02_260/0.05)] transition-[border-color,box-shadow] focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/20 sm:flex-row sm:items-center"
+        className="flex flex-col gap-2 rounded-xl border border-input bg-muted p-1.5 transition-[border-color,box-shadow] focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/25 sm:flex-row sm:items-center"
         onSubmit={(e) => {
           e.preventDefault();
           ask(question);
@@ -108,13 +108,13 @@ export function AskBox() {
             disabled={loading}
             placeholder="e.g. Is GP access improving in Kainuu?"
             autoComplete="off"
-            className="h-11 w-full min-w-0 bg-transparent text-[0.9375rem] outline-none placeholder:text-muted-foreground/80 disabled:opacity-60"
+            className="h-11 w-full min-w-0 bg-transparent text-[0.9375rem] outline-none placeholder:text-faint disabled:opacity-60"
           />
         </div>
         <Button
           type="submit"
           size="lg"
-          className={`h-11 px-5 ${loading ? "" : "disabled:opacity-90"}`}
+          className="h-11 px-5"
           disabled={loading || question.trim().length < 3}
         >
           {loading ? "Searching…" : "Ask"}
@@ -134,7 +134,7 @@ export function AskBox() {
                 setQuestion(ex.label ?? ex.query);
                 ask(ex.query);
               }}
-              className="min-h-10 rounded-lg border border-input bg-card px-3 py-1.5 text-left type-caption text-foreground transition-colors outline-none hover:border-brand/40 hover:bg-brand-soft hover:text-brand-ink focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60 sm:min-h-9"
+              className="min-h-10 rounded-lg border border-input px-3 py-1.5 text-left type-caption text-foreground transition-colors outline-none hover:border-foreground/25 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60 sm:min-h-9"
             >
               {ex.label ?? ex.query}
             </button>

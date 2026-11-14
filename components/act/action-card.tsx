@@ -36,7 +36,7 @@ export function ActionCard({
     <FramePanel padding="none" className="@container">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border/80 px-4 py-2.5 sm:px-6">
         {index !== undefined && (
-          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-foreground text-[0.75rem] font-semibold text-background tabular-nums">
+          <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-input bg-muted text-[0.75rem] font-semibold text-foreground tabular-nums">
             <span className="sr-only">Action </span>
             {index}
           </span>
@@ -66,8 +66,8 @@ export function ActionCard({
             <h3 className="type-title text-pretty">{action.action}</h3>
             <p className="text-sm leading-relaxed text-pretty text-muted-foreground">{action.detail}</p>
           </div>
-          <div className="rounded-lg border border-brand/15 bg-brand-soft px-4 py-3">
-            <p className="type-micro font-semibold text-brand-ink">First step</p>
+          <div className="rounded-lg border border-input bg-muted px-4 py-3">
+            <p className="type-micro font-semibold text-muted-foreground">First step</p>
             <p className="mt-1 text-[0.9375rem] leading-normal font-medium text-pretty">{action.first_step}</p>
           </div>
         </div>

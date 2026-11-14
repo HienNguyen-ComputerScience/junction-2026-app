@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { ShieldAlert } from "lucide-react";
+import { Check, ShieldAlert } from "lucide-react";
 
 import {
   FINNISH_ROADMAP,
@@ -72,10 +72,8 @@ export function RedFlagHelper() {
                   <label
                     key={category.id}
                     title={category.examples}
-                    className={`flex min-h-10 cursor-pointer items-center rounded-lg border px-3 py-1.5 text-sm transition-colors has-focus-visible:ring-3 has-focus-visible:ring-ring/50 sm:min-h-9 ${
-                      on
-                        ? "border-foreground bg-foreground text-background"
-                        : "border-input bg-card hover:bg-muted"
+                    className={`flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors has-focus-visible:ring-3 has-focus-visible:ring-ring/50 sm:min-h-9 ${
+                      on ? "border-foreground/45 bg-muted" : "border-input hover:bg-muted"
                     }`}
                   >
                     <input
@@ -84,6 +82,15 @@ export function RedFlagHelper() {
                       checked={on}
                       onChange={() => toggle(category.id)}
                     />
+                    {/* The tick box carries the selected state, so it never rests on a surface step alone. */}
+                    <span
+                      aria-hidden
+                      className={`flex size-3.5 shrink-0 items-center justify-center rounded-[3px] border ${
+                        on ? "border-foreground bg-foreground text-background" : "border-foreground/45"
+                      }`}
+                    >
+                      {on && <Check className="size-3" strokeWidth={3} />}
+                    </span>
                     {category.label}
                   </label>
                 );
@@ -103,7 +110,7 @@ export function RedFlagHelper() {
               maxLength={300}
               placeholder="e.g. weight loss, tiredness"
               autoComplete="off"
-              className="h-11 rounded-lg border border-input bg-card px-3 text-[0.9375rem] transition-[border-color,box-shadow] outline-none placeholder:text-muted-foreground/80 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
+              className="h-11 rounded-lg border border-input bg-muted px-3 text-[0.9375rem] transition-[border-color,box-shadow] outline-none placeholder:text-faint focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25"
             />
           </div>
 
@@ -117,7 +124,7 @@ export function RedFlagHelper() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div role="note" className="flex gap-3 rounded-lg border border-input bg-muted/50 p-3 text-sm">
+          <div role="note" className="flex gap-3 rounded-lg border border-input p-3 text-sm">
             <ShieldAlert aria-hidden className="mt-0.5 size-[1.125rem] shrink-0 text-foreground" strokeWidth={1.75} />
             <div>
               <p className="font-semibold">Decision support, not diagnosis. If in doubt, refer.</p>
@@ -129,7 +136,7 @@ export function RedFlagHelper() {
 
           <div aria-live="polite">
             {hasInput ? (
-              <div className="flex flex-col gap-4 rounded-lg border border-input bg-card p-4 sm:p-5">
+              <div className="flex flex-col gap-4 rounded-lg border border-input bg-muted p-4 sm:p-5">
                 <div className="flex flex-col gap-1.5">
                   <p className="type-caption text-muted-foreground">
                     {matched.length > 0

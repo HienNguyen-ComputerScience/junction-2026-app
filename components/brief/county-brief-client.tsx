@@ -141,12 +141,12 @@ export function CountyBriefClient({
           </span>
         )}
         {status === "limited" && (
-          <span role="alert" className="type-caption text-destructive">
+          <span role="alert" className="type-caption font-medium text-foreground">
             {TOO_MANY} The precomputed brief is still shown.
           </span>
         )}
         {status === "error" && (
-          <span role="alert" className="type-caption text-destructive">
+          <span role="alert" className="type-caption font-medium text-foreground">
             Could not reach the brief service. The precomputed brief is still shown.
           </span>
         )}
