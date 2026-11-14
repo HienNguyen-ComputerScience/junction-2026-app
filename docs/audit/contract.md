@@ -290,12 +290,13 @@ The large link-button that moves forward (52px tall, 14px corners, 21px side pad
 
 `<table className="stack-table">`: below 640px each row reads as label/value lines. Give every `<td>` a `data-label="Column name"` and wrap its content in one element. The plan page's `Td` helper does both.
 
-## 3. Plan page: route and query format
+## 3. Plan: redirect and export route
 
-- Page: `/county/<id>/plan` (`<id>` is a `County.id`, e.g. `vantaa-kerava`).
-- Export: `/county/<id>/plan/export?format=docx` or `format=xlsx`, with the same parameters as the page.
+- `/county/<id>/plan` is no longer a page. It is a route handler (`app/county/[id]/plan/route.ts`) that answers `307` to `/county/<id>/act`, so old links, bookmarks and emailed plan addresses land on the act page. The plan's form is gone; the act page's "Save or share" control (`components/share/`) offers the Word and Excel files.
+- Export: `/county/<id>/plan/export?format=docx` or `format=xlsx`. This is what the act page's and the briefing's "Download for Word / Excel" options call.
+- Unknown area ids get a real 404 from `proxy.ts` before either runs.
 
-Every parameter is optional; anything missing or invalid takes its default, so a bare link always works.
+The export takes the parameters below. Every one is optional; anything missing or invalid takes its default, so a bare link always works.
 
 | Parameter | Values | Default | |
 |---|---|---|---|
@@ -307,7 +308,7 @@ Every parameter is optional; anything missing or invalid takes its default, so a
 | `cost1`…`cost3` | text | empty | The area's own cost estimate, per action. |
 | `approved`, `decided` | text | empty | Sign-off: approved by, date of decision. |
 
-Example: `/county/vantaa-kerava/plan?actions=ev-gp-continuity,ev-gp-capacity-roadmap&target=finland&year=2029`
+Example: `/county/vantaa-kerava/plan/export?format=docx&actions=ev-gp-continuity,ev-gp-capacity-roadmap&target=finland&year=2029`
 
 In code: `buildPlan(countyId, params: URLSearchParams, today?: Date): Plan | null` and `readPlanInput` in `lib/plan-model.ts`; `plan.query` is the query string that reproduces a plan. Target arithmetic: `targetPath({ value, target, better, fromYear, toYear })` in `lib/plan.ts` (an even pace in percentage points; labelled as arithmetic, not a forecast).
 
