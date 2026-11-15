@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { cn } from "cn";
 
 import { Reveal } from "@/components/motion";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { MOTION_LOUD_CLASS } from "@/lib/motion";
 
 import { AskPanel } from "./ask-panel";
@@ -21,14 +20,13 @@ export const metadata: Metadata = {
  */
 export default function AskPage() {
   return (
-    <main className={cn("page-container flex flex-col gap-10 pt-4 pb-12 sm:pt-6", MOTION_LOUD_CLASS)}>
+    <main className={cn("page-container flex flex-col gap-10 pt-6 pb-12 sm:pt-8", MOTION_LOUD_CLASS)}>
       {/* Asking needs script; without it, the box and the news are hidden and this says why. */}
       <noscript>
         <style>{"[data-needs-js]{display:none!important}"}</style>
       </noscript>
 
       <header className="flex flex-col items-start gap-6">
-        <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: "Ask the evidence" }]} />
         <Reveal className="flex max-w-[52rem] flex-col gap-3">
           <p className="type-eyebrow">Ask the evidence</p>
           <h1 className="type-page text-balance">Ask a question about health care in Finland.</h1>

@@ -13,7 +13,6 @@ import {
 import { SaveShare } from "@/components/share";
 import { SourceChip } from "@/components/source-chip";
 import { Badge } from "@/components/ui/badge";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { TextLink } from "@/components/ui/text-link";
 import { ForwardLink } from "@/components/walkthrough/parts";
 import { MOTION_LOUD_CLASS } from "@/lib/motion";
@@ -97,17 +96,11 @@ export default function HowToReadPage() {
   return (
     <main
       className={cn(
-        "htr-root page-container flex flex-col gap-12 pt-4 pb-12 sm:pt-6",
+        "htr-root page-container flex flex-col gap-12 pt-6 pb-12 sm:pt-8",
         MOTION_LOUD_CLASS,
       )}
     >
       <header className="flex flex-col items-start gap-6">
-        <Breadcrumb
-          items={[
-            { label: "Areas", href: "/" },
-            { label: "How to read these numbers" },
-          ]}
-        />
         <Reveal className="flex max-w-[52rem] flex-col gap-3">
           <p className="type-eyebrow">How to read these numbers</p>
           <h1 className="type-page text-balance">
