@@ -393,7 +393,7 @@ export default function SourcesPage() {
             label: "Every area side by side, against Finland overall",
             action: (
               <TextLink kind="nav" href="/compare">
-                Where access is hardest
+                Compare all 22 areas
               </TextLink>
             ),
           },
