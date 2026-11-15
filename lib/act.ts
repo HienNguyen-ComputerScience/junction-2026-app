@@ -1,9 +1,9 @@
 // Screen 3 ("Act"): find a county's bottleneck and pick the actions to show.
 //
 // Selection rule (deterministic, also stated in one line on the page):
-// 1. Focus stages: every measured stage that is red (worse than Finland),
+// 1. Focus stages: every measured stage that is red (slower than Finland overall),
 //    worst first by relative gap to Finland's value. If no stage is red, the
-//    single measured stage closest to (or furthest below) Finland's level.
+//    single measured stage closest to (or furthest below) Finland overall.
 // 2. Recommended actions (max 3): one action per focus stage first, then fill
 //    up to 3 from the focus stages in the same order.
 // 3. Within a stage, actions with a measured effect size come first, then the
@@ -29,6 +29,8 @@ import {
   type GapStatus,
   type Stage,
 } from "@/lib/data";
+import { formatPct } from "@/lib/ranking";
+import { statusLabel } from "@/lib/status-label";
 
 export const STAGE_LABELS: Record<Stage, string> = {
   gp_access: "Getting to a GP",
@@ -37,9 +39,9 @@ export const STAGE_LABELS: Record<Stage, string> = {
 };
 
 export const SELECTION_RULE =
-  "How we pick: stages worse than Finland first (worst first), one action per stage, then up to three; actions with a measured effect come before those without. Stages with no public data are listed, not hidden.";
+  "How we pick: stages slower than Finland overall first (worst first), one action per stage, then up to three; actions with a measured effect come before those without. Stages with no public data are listed, not hidden.";
 
-/** How much worse than Finland a measured gap is, as a share of Finland's value. Positive = worse. */
+/** How much slower than Finland overall a measured gap is, as a share of Finland's value. Positive = worse. */
 export function relativeGap(gap: Gap): number | null {
   return relativeGapOf(gap, indicators);
 }
@@ -64,8 +66,8 @@ const STAGE_PHRASES: Record<Stage, string> = {
 };
 
 /**
- * One status for an area: red when any measured step is worse than Finland, grey when no step
- * is measured, otherwise at or better than Finland (amber). Steps with no county figure (the
+ * One status for an area: red when any measured step is slower than Finland overall, grey when no step
+ * is measured, otherwise the same as or better than Finland overall (amber). Steps with no county figure (the
  * HUS-wide referral values) are not measured and never count. The home map's colour and the
  * area card's verdict both come from this, so they cannot disagree.
  */
@@ -83,9 +85,17 @@ export function bottleneckLede(bottleneck: Bottleneck): string {
   const { focus, anyRed } = bottleneck;
   if (focus.length === 0) return `No ${LATEST_YEAR} pathway data is published for this area.`;
   const worst = STAGE_PHRASES[focus[0].stage];
-  if (!anyRed) return `No measured step is worse than Finland. Closest to Finland's level: ${worst}.`;
-  if (focus.length === 1) return `The delay sits at ${worst}, which is worse than Finland.`;
-  return `${focus.length === 2 ? "Both" : "All"} measured steps are worse than Finland. Worst is ${worst}.`;
+  const against = (gap: Gap) => `against ${formatPct(gap.national_value)} across Finland as a whole`;
+  if (!anyRed) return `No measured step is slower than Finland overall. Closest: ${worst}, ${against(focus[0])}.`;
+  if (focus.length === 1) {
+    const [gap] = focus;
+    if (gap.value === null) return `The delay sits at ${worst}, ${against(gap)}.`;
+    // The direction comes from the per-step status label, so the vocabulary stays in one place.
+    const label = statusLabel("red", gap.stage);
+    const direction = `${label.startsWith("Longer") ? "a " : ""}${label.charAt(0).toLowerCase()}${label.slice(1)}`;
+    return `The delay sits at ${worst}: ${formatPct(gap.value)} here, ${direction} (${formatPct(gap.national_value)}).`;
+  }
+  return `${focus.length === 2 ? "Both" : "All"} measured steps are slower than Finland overall. Worst is ${worst}, ${against(focus[0])}.`;
 }
 
 /** One-paragraph summary of the bottleneck, built only from gaps.json notes. */
@@ -97,14 +107,14 @@ export function bottleneckSentence(countyName: string, bottleneck: Bottleneck): 
   } else if (!anyRed) {
     const [gap] = focus;
     parts.push(
-      `No measured stage in ${countyName} is worse than Finland. The one closest to Finland's level is ${STAGE_PHRASES[gap.stage]}: ${gap.note}`,
+      `No measured stage in ${countyName} is slower than Finland overall. The one closest is ${STAGE_PHRASES[gap.stage]}: ${gap.note}`,
     );
   } else if (focus.length === 1) {
     const [gap] = focus;
     parts.push(`In ${countyName} the bottleneck is ${STAGE_PHRASES[gap.stage]}: ${gap.note}`);
   } else {
     parts.push(
-      `In ${countyName} both measured stages are worse than Finland. ` +
+      `In ${countyName} both measured stages are slower than Finland overall. ` +
         focus
           .map(
             (gap, i) =>

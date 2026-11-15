@@ -16,7 +16,7 @@ import { bestArea, diff1, type AreaValue, type Better } from "@/lib/what-if";
 export const FLAT_BELOW_POINTS = 1;
 
 export type MainReason = {
-  /** red: a measured step is worse than Finland. none: no measured step is. no_data: nothing published. */
+  /** red: a measured step is slower than Finland overall. none: no measured step is. no_data: nothing published. */
   kind: "red" | "none" | "no_data";
   /** The step the sentence is about, with the area's own value. Null only for no_data. */
   gap: Gap | null;
@@ -103,7 +103,7 @@ export function getMainReason(countyId: string): MainReason {
     else trend = isRed ? `, though better than ${was}` : ` and better than ${was}`;
   }
 
-  const lead = isRed ? "Main reason" : "No measured step is worse than Finland";
+  const lead = isRed ? "Main reason" : "No measured step is slower than Finland overall";
   const also = red.find((other) => other.stage !== gap.stage);
   const tail = also && ALSO_WORSE[also.stage] ? ` ${ALSO_WORSE[also.stage]}` : "";
   return {

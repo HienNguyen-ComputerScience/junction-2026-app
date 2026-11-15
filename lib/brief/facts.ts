@@ -192,9 +192,9 @@ export function buildContextFromSnapshot(snapshot: Snapshot, countyId: string): 
     }
     const statusText =
       gap.status === "red"
-        ? "red: worse than Finland"
+        ? "red: longer wait (GP access) or slower (referral) than Finland overall"
         : gap.status === "amber"
-          ? "amber: at Finland's level or better, but still a delay, not a pass"
+          ? "amber: same as or better than Finland overall, but still a delay, not a pass"
           : "no public data for this county";
     if (gap.shared) {
       // A wider value (HUS) for an area with none of its own. Labelled in the
@@ -254,7 +254,7 @@ export function buildContextFromSnapshot(snapshot: Snapshot, countyId: string): 
 
 // The Act page's action rule (lib/act.ts uses these); the brief uses the same picks.
 
-/** How much worse than Finland a measured gap is, as a share of Finland's value. Positive = worse. */
+/** How much slower than Finland overall a measured gap is, as a share of Finland's value. Positive = worse. */
 export function relativeGapOf(gap: Gap, indicators: Indicator[]): number | null {
   if (gap.value === null) return null;
   const indicator = indicators.find((i) => i.indicator_id === gap.indicator_id);

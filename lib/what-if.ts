@@ -25,7 +25,7 @@ export type WhatIf =
   | { kind: "no_data" }
   | {
       kind: "gap";
-      /** Per 100: how many fewer (lower) or more (higher) at Finland's level. Null when already at or better. */
+      /** Per 100: how many fewer (lower) or more (higher) at Finland overall. Null when already at or better. */
       toFinland: number | null;
       /** The same at the best area's level. Null when this area is the best, or level with it. */
       toBest: (AreaValue & { amount: number }) | null;

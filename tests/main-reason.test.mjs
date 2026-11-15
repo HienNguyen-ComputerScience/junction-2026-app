@@ -35,7 +35,7 @@ describe("main reason sentence", () => {
     );
     assert.equal(
       text("paijat-hame"),
-      "No measured step is worse than Finland: 32.7% of non-urgent GP visits here come more than a week after people ask, 22.0 points below Finland and better than in 2023 (51.2%).",
+      "No measured step is slower than Finland overall: 32.7% of non-urgent GP visits here come more than a week after people ask, 22.0 points below Finland and better than in 2023 (51.2%).",
     );
     assert.equal(
       text("kainuu"),
@@ -53,7 +53,7 @@ describe("main reason sentence", () => {
     assert.match(text("central-ostrobothnia"), /5\.1 points below Finland, about the same as in 2023 \(71\.7%\)\.$/);
     assert.match(text("north-ostrobothnia"), /about the same as in 2023 \(63\.0%\)\.$/);
     // Not red, but the wait has grown.
-    assert.match(text("central-uusimaa"), /^No measured step is worse than Finland: 46\.7% .*8\.0 points below Finland, though worse than in 2023 \(23\.7%\)\.$/);
+    assert.match(text("central-uusimaa"), /^No measured step is slower than Finland overall: 46\.7% .*8\.0 points below Finland, though worse than in 2023 \(23\.7%\)\.$/);
   });
 
   test("every area: the sentence states the status the map colours it by", () => {
@@ -66,7 +66,7 @@ describe("main reason sentence", () => {
       assert.equal(reason.text.startsWith("Main reason: "), status === "red", id);
       if (status === "amber") {
         notRed.push(id);
-        assert.ok(reason.text.startsWith("No measured step is worse than Finland: "), id);
+        assert.ok(reason.text.startsWith("No measured step is slower than Finland overall: "), id);
       }
       // A red area's sentence is about a step that is red, with the area's own value.
       if (status === "red") assert.equal(reason.gap.status, "red", id);

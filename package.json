@@ -12,6 +12,7 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "data:build": "node scripts/data/build-snapshot.mjs",
+    "data:refresh": "npm run data:build && node scripts/insights/add-sources.mjs && node scripts/insights/build-insights.mjs && node scripts/insights/check-insights.mjs && node scripts/data/check-hardcoded.mjs",
     "brief:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/brief/check-validator.mjs",
     "exa:prewarm": "node scripts/exa/prewarm.mjs",
     "exa:live-check": "node scripts/exa/live-check.mjs",

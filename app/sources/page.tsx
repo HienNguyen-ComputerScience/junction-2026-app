@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import Link from "next/link";
+import { cn } from "cn";
 
-import { SourceChip } from "@/components/source-chip";
-import { BackLink } from "@/components/ui/back-link";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { Disclosure } from "@/components/ui/disclosure";
-import {
-  Frame,
-  FrameDescription,
-  FrameHeader,
-  FramePanel,
-  FramePanelLabel,
-  FrameTitle,
-} from "@/components/ui/frame";
+import { Disclosure, MoreCard, Reveal } from "@/components/motion";
+import { SaveShare } from "@/components/share";
+import { LimitationItem, SOURCE_FRAME, SourceCard, SourceList, type SourceListItem } from "@/components/sources/source-card";
 import { TextLink } from "@/components/ui/text-link";
 import { counties, indicators, sources, values } from "@/lib/data";
+import { MOTION_LOUD_CLASS } from "@/lib/motion";
 import { GP_WAIT_ID, REFERRAL_ID } from "@/lib/ranking";
 import {
   describeVisitChange,
@@ -34,6 +28,7 @@ const otherSources = sources.filter(
     source.source_id !== "sotkanet-regions" &&
     !indicators.some((indicator) => indicator.source_id === source.source_id),
 );
+const regionsSource = sources.find((source) => source.source_id === "sotkanet-regions");
 
 /**
  * The indicators lib/ranking.ts reads to build the county ranking: 6411 sets the order, and 13 sets the
@@ -55,101 +50,198 @@ const sourceRows = indicators.map((indicator) => ({
   years: [...new Set(values.filter((value) => value.indicator_id === indicator.indicator_id).map((value) => value.year))].sort(),
 }));
 
-/** The jump links under the title, in the order the sections appear on the page. */
-const sections = [
-  { href: "#cannot-tell", label: "What the data can't tell you" },
-  { href: "#indicators", label: "Indicators" },
-  { href: "#evidence", label: "Evidence for actions" },
-  { href: "#other-sources", label: "Other sources" },
-];
-
-/**
- * What each gap is about, in a few words, with its full sentence unchanged under it.
- */
 const flaggedAreas = counties.filter((county) => isRecordingSensitive(county.id)).length;
 const finlandVisitChange = getRecordedVisitChange("finland");
-const gaps: { title: string; text: string }[] = [
+
+/** Every limitation: a short line, always visible, and its full wording behind "Show detail". */
+const limitations: { title: string; detail: ReactNode }[] = [
+  {
+    title: "GP-wait numbers count all non-urgent GP visits, not people with suspected cancer",
+    detail: (
+      <>
+        <p>These public county indicators show access and referral processing, not a measured cancer journey.</p>
+        <p>
+          THL Sotkanet 6411 (latest snapshot year: 2025) covers <strong className="font-semibold">non-urgent GP appointments with waiting-time data</strong>, not people with suspected cancer. GP waiting time is a proxy for access, not a cancer diagnosis or referral delay. The referral indicators describe processing of specialist referrals generally, not the whole GP-to-specialist journey.
+        </p>
+      </>
+    ),
+  },
   {
     title: "No indicator follows a person's whole journey",
-    text: "No indicator here follows a person from first symptoms through GP assessment, cancer diagnosis and specialist treatment.",
+    detail: <p>No indicator here follows a person from first symptoms through GP assessment, cancer diagnosis and specialist treatment.</p>,
   },
   {
     title: "Referral speed is not time to specialist",
-    text: "Referral processing does not establish when a patient saw a specialist, whether cancer was suspected, or why a delay occurred.",
+    detail: <p>Referral processing does not establish when a patient saw a specialist, whether cancer was suspected, or why a delay occurred.</p>,
   },
   {
     title: "Warning signs and tests are not measured",
-    text: "GP recognition of warning signs and choice of tests are not quantified here. Missing evidence stays “no public data,” not a low-risk score.",
+    detail: <p>GP recognition of warning signs and choice of tests are not quantified here. Missing evidence stays “no public data,” not a low-risk score.</p>,
   },
   {
     title: "Recorded visits change from year to year",
-    text: `The GP wait (6411) is the share of recorded GP visits that waited over 7 days. We divide the published count by the share to get the number of recorded visits, and where that number changed by more than ${Math.round(RECORDING_CHANGE_ABOVE * 100)}% from 2023 to 2025 (${flaggedAreas} of ${counties.length} areas${finlandVisitChange === null ? "" : `; for Finland they ${describeVisitChange(finlandVisitChange)}`}), part of a rise in the share may be how visits are recorded, not how long visits waited. Those rises carry a caveat; the published shares and rankings are not changed.`,
+    detail: (
+      <p>
+        {`The GP wait (6411) is the share of recorded GP visits that waited over 7 days. We divide the published count by the share to get the number of recorded visits, and where that number changed by more than ${Math.round(RECORDING_CHANGE_ABOVE * 100)}% from 2023 to 2025 (${flaggedAreas} of ${counties.length} areas${finlandVisitChange === null ? "" : `; for Finland overall they ${describeVisitChange(finlandVisitChange)}`}), part of a rise in the share may be how visits are recorded, not how long visits waited. Those rises carry a caveat; the published shares and rankings are not changed.`}
+      </p>
+    ),
   },
   {
-    title: "Four Uusimaa areas share one HUS value",
-    text: "The snapshot has no county-level referral-processing value (indicator 13) for East, Central or West Uusimaa, or Vantaa and Kerava. HUS handles their hospital referrals, so the app shows the HUS-wide value instead, labelled as shared. It is not used for their status, ranking or recommended actions.",
+    title: "Four Uusimaa areas share one HUS referral value",
+    detail: (
+      <p>
+        The snapshot has no county-level referral-processing value (indicator 13) for East, Central or West Uusimaa, or Vantaa and Kerava. HUS handles their hospital referrals, so the app shows the HUS-wide value instead, labelled as shared. It is not used for their status, ranking or recommended actions.
+      </p>
+    ),
+  },
+  {
+    title: "“Finland overall” is a reference, not a target",
+    detail: (
+      <p>
+        Wherever FirstLine compares an area with Finland overall, it uses Sotkanet&apos;s whole-country value for the same indicator and year. It is not a target and not an average of the areas.
+      </p>
+    ),
   },
   {
     title: "Comparisons describe, they do not prove",
-    text: "County comparisons are descriptive, not causal. They cannot predict an individual prognosis or prove the effect of an intervention.",
+    detail: <p>County comparisons are descriptive, not causal. They cannot predict an individual prognosis or prove the effect of an intervention.</p>,
+  },
+  {
+    title: "Live search results are not checked",
+    detail: (
+      <>
+        <p>Every recommended action cites a checked precedent and linked source.</p>
+        <p>
+          Checked precedents in the snapshot are distinct from Exa results, which are found live and unverified; a search result is not proof an intervention works in a Finnish county. Results labelled “Found live — unverified” come from Exa live search. They are not checked by the team.
+        </p>
+      </>
+    ),
+  },
+  {
+    title: "Referral routes are decision support, not a diagnosis",
+    detail: <p>The referral-routes panel describes routes a county should offer. It is decision support, not a diagnosis or substitute for local clinical guidance.</p>,
   },
 ];
 
-/** The first sentence of an indicator's own limitation text: what the number covers, in its own words. */
+/** The first sentence of an indicator's own limitation text: its main caveat, in its own words. */
 function firstSentence(text: string): string {
   const match = /^.*?\.(?=\s|$)/.exec(text);
   return match ? match[0] : text;
 }
 
-/** A label column in muted text and the value in body ink, like the act page's Owner and Precedent rows. */
+/** A label column in muted text and the value in body ink. */
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="grid grid-cols-[5rem_minmax(0,1fr)] gap-x-4 sm:grid-cols-[6rem_minmax(0,1fr)]">
-      <dt className="type-caption text-muted-foreground">{label}</dt>
-      <dd className="text-sm text-pretty text-foreground">{children}</dd>
+    <div className="grid grid-cols-[6rem_minmax(0,1fr)] gap-x-4">
+      <dt className="text-base text-muted-foreground">{label}</dt>
+      <dd className="text-base text-pretty text-foreground">{children}</dd>
     </div>
   );
 }
 
-/** The indicator cards, in a two-column grid on desktop. */
-function IndicatorCards({ rows }: { rows: typeof sourceRows }) {
+/** A section heading: an 11px eyebrow, the serif title and at most one line under it. */
+function SectionHead({ id, eyebrow, title, line }: { id: string; eyebrow?: string; title: string; line?: ReactNode }) {
   return (
-    <div className="grid items-start gap-1.5 lg:grid-cols-2">
-      {rows.map(({ indicator, source, years }) => {
-        const lead = firstSentence(indicator.limitation);
-        // The card's summary line already shows the first sentence, so Scope continues from the second.
-        const scope = indicator.limitation.slice(lead.length).trim();
-        return (
-          <FramePanel key={indicator.indicator_id} padding="md" className="flex flex-col gap-2">
-            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-              <h4 className="type-heading">{indicator.short_name}</h4>
-              <SourceChip sourceId={indicator.source_id} />
-            </div>
-            <p className="max-w-[44rem] text-[0.9375rem] text-pretty text-foreground">{lead}</p>
-            <p className="type-caption text-muted-foreground">
-              Data years{" "}
-              <span className="tabular-nums text-foreground">{years.length ? years.join(", ") : "No county values in snapshot"}</span>
-            </p>
-            <Disclosure summary="Definition and scope" className="-ml-0.5">
-              <div className="flex flex-col gap-3 pt-1">
-                <dl className="flex flex-col gap-2">
-                  <Row label="Full name">{indicator.name}</Row>
-                  <Row label="Source">
-                    {indicator.source_id} · retrieved {source?.retrieved ?? "unknown"} · publisher updated {source?.data_updated ?? "unknown"}
-                  </Row>
-                  {scope && <Row label="Scope">{scope}</Row>}
-                </dl>
-                {source && (
-                  <TextLink kind="external" href={source.url} className="text-sm">
-                    Official definition on Sotkanet
-                  </TextLink>
-                )}
-              </div>
-            </Disclosure>
-          </FramePanel>
-        );
-      })}
-    </div>
+    <Reveal className="flex max-w-[44rem] flex-col gap-2">
+      {eyebrow && <p className="type-eyebrow">{eyebrow}</p>}
+      <h2 id={id} className="type-title text-forest-ink">
+        {title}
+      </h2>
+      {line && <p className="text-base text-pretty text-muted-foreground">{line}</p>}
+    </Reveal>
+  );
+}
+
+type SourceRow = (typeof sourceRows)[number];
+
+/** "2023–2025" for consecutive years, otherwise the list. */
+function yearsText(years: SourceRow["years"]): string {
+  if (!years.length) return "No county values in snapshot";
+  const nums = years.map(Number);
+  const consecutive = nums.every((year, i) => i === 0 || year === nums[i - 1] + 1);
+  return consecutive && nums.length > 1 ? `${years[0]}–${years[years.length - 1]}` : years.join(", ");
+}
+
+/** The publisher in a few words for a list row: its abbreviation if it has one (THL, Kela), without ", Sotkanet". */
+function shortPublisher(publisher: string): string {
+  const abbreviation = /\(([^)]+)\)/.exec(publisher);
+  return abbreviation ? abbreviation[1] : publisher.replace(/, Sotkanet$/, "");
+}
+
+/** An indicator's definition: full name, source and dates, and its scope (`withLead`: the whole limitation text). */
+function Definition({ row, withLead }: { row: SourceRow; withLead: boolean }) {
+  const { indicator, source } = row;
+  const lead = firstSentence(indicator.limitation);
+  const scope = withLead ? indicator.limitation : indicator.limitation.slice(lead.length).trim();
+  return (
+    <dl className="flex flex-col gap-2">
+      <Row label="Full name">{indicator.name}</Row>
+      <Row label="Publisher">{source?.publisher ?? "unknown"}</Row>
+      <Row label="Source">
+        {indicator.source_id} · retrieved {source?.retrieved ?? "unknown"} · publisher updated {source?.data_updated ?? "unknown"}
+      </Row>
+      {scope && <Row label="Scope">{scope}</Row>}
+    </dl>
+  );
+}
+
+/**
+ * The two indicators the ranking reads, side by side as two framed cards: name, main caveat,
+ * publisher, years, link. Static, like every other framed unit on the page. Each keeps its own
+ * height, so opening one card's definition does not stretch the other.
+ */
+function RankingCards({ rows }: { rows: SourceRow[] }) {
+  return (
+    <ul className="grid items-start gap-3 md:grid-cols-2">
+      {rows.map((row) => (
+        <li key={row.indicator.indicator_id} className="print-keep">
+          <SourceCard
+          title={row.indicator.short_name}
+          note={firstSentence(row.indicator.limitation)}
+          publisher={row.source?.publisher ?? row.indicator.source_id}
+          years={yearsText(row.years)}
+          href={row.source?.url ?? "https://sotkanet.fi"}
+          linkLabel="Official definition on Sotkanet"
+          detailLabel="definition and scope"
+          detail={<Definition row={row} withLead={false} />}
+          />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Context-only indicators: one framed list, one row each (name · publisher · years · Sotkanet link). */
+function ContextList({ rows }: { rows: SourceRow[] }) {
+  return (
+    <ul className={cn(SOURCE_FRAME, "flex flex-col py-2")}>
+      {rows.map((row) => (
+        <li
+          key={row.indicator.indicator_id}
+          className="print-keep flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-b border-frame-border py-3 last:border-b-0"
+        >
+          <p className="min-w-0 flex-1 basis-[30rem] text-base text-pretty">
+            <span className="font-semibold text-foreground">{row.indicator.short_name}</span>
+            <span className="text-muted-foreground">
+              {" · "}
+              {row.source ? shortPublisher(row.source.publisher) : row.indicator.source_id}
+              {" · "}
+              <span className="tabular-nums">{yearsText(row.years)}</span>
+              {" · "}
+            </span>
+            {row.source && (
+              <TextLink kind="external" inline href={row.source.url}>
+                Sotkanet
+              </TextLink>
+            )}
+          </p>
+          {/* Closed: the button sits at the row's end. Open: the definition takes the full row. */}
+          <Disclosure label="definition and scope" tone="quiet" className="open:basis-full" contentClassName="pt-2 pb-2">
+            <Definition row={row} withLead />
+          </Disclosure>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -157,152 +249,165 @@ export default function SourcesPage() {
   const ranking = sourceRows.filter(({ indicator }) => RANKING_IDS.includes(indicator.indicator_id));
   const context = sourceRows.filter(({ indicator }) => !RANKING_IDS.includes(indicator.indicator_id));
 
+  const evidenceItems: SourceListItem[] = evidenceSources.map((source) => ({
+    key: source.source_id,
+    name: source.name,
+    href: source.url,
+    publisher: evidenceRetrieved ? source.publisher : `${source.publisher} · retrieved ${source.retrieved}`,
+  }));
+  const otherItems: SourceListItem[] = [
+    ...otherSources.map((source) => ({
+      key: source.source_id,
+      name: source.name,
+      href: source.url,
+      publisher: otherRetrieved ? source.publisher : `${source.publisher} · retrieved ${source.retrieved}`,
+    })),
+    ...(regionsSource
+      ? [
+          {
+            key: regionsSource.source_id,
+            name: regionsSource.name,
+            href: regionsSource.url,
+            publisher: regionsSource.retrieved === otherRetrieved ? regionsSource.publisher : `${regionsSource.publisher} · retrieved ${regionsSource.retrieved}`,
+          },
+        ]
+      : []),
+    {
+      key: "map-boundaries",
+      name: "Map boundaries: wellbeing services counties 2025 (1:4 500 000), CC BY 4.0",
+      href: "https://stat.fi/en/services/statistical-data-services/geographic-data/statistical-areas/municipality-based-statistical-units",
+      publisher: "Statistics Finland open data",
+    },
+  ];
+
   return (
-    <main className="page-container flex flex-col gap-6 pt-4 sm:pt-6">
-      <header className="flex flex-col items-start gap-2">
-        <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: "Sources & limitations" }]} />
-        <div className="flex flex-col gap-2">
-          <p className="type-caption text-balance text-muted-foreground">How to read FirstLine</p>
-          <h1 className="type-page">Sources &amp; limitations</h1>
-          <p className="type-lede max-w-[44rem] text-pretty text-muted-foreground">
-            Where every number comes from, and what it cannot tell you
+    <main className={cn("page-container flex flex-col gap-12 pt-6 pb-12 sm:pt-8", MOTION_LOUD_CLASS)}>
+      {/* A top-level page: no breadcrumb (it is not under Areas), as on /compare and /insights. */}
+      <header className="flex flex-col items-start gap-5">
+        <Reveal className="flex max-w-[52rem] flex-col gap-3">
+          <p className="type-eyebrow">Sources &amp; limitations</p>
+          <h1 className="type-page text-balance">
+            Every number in FirstLine comes from a public source. Here they are, and what they cannot tell you.
+          </h1>
+        </Reveal>
+        <Reveal index={1} className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
+          <p className="text-lg text-pretty text-foreground">
+            <span className="figure font-semibold">{sources.length}</span> public sources ·{" "}
+            <span className="figure font-semibold">{indicators.length}</span> indicators
           </p>
-        </div>
-        <nav aria-label="On this page">
-          <ul className="flex flex-wrap items-center gap-x-5 gap-y-0">
-            {sections.map((section) => (
-              <li key={section.href}>
-                <TextLink kind="jump" href={section.href} className="text-sm">
-                  {section.label}
-                </TextLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
+          <p className="text-base text-pretty text-foreground">
+            New to these numbers?{" "}
+            <Link href="/how-to-read" className="font-semibold text-forest-ink underline decoration-forest-ink/40 underline-offset-4 hover:decoration-forest-ink">
+              Read how to read them
+            </Link>
+          </p>
+        </Reveal>
+        <Reveal index={2}>
+          <SaveShare
+            className="print:hidden"
+            options={[
+              { kind: "print" },
+              {
+                kind: "email",
+                subject: "FirstLine: sources and limitations",
+                intro: "Every public source behind FirstLine, and what the data cannot tell you:",
+              },
+            ]}
+          />
+        </Reveal>
       </header>
 
-      <Frame aria-labelledby="essential-caveat">
-        <FramePanel padding="none">
-          <FramePanelLabel>
-            <h2 id="essential-caveat" className="font-sans type-caption font-medium tracking-normal">
-              The essential distinction
-            </h2>
-          </FramePanelLabel>
-          <div className="flex max-w-[52rem] flex-col gap-2 px-4 pt-2 pb-4 sm:px-6 sm:pb-5">
-            <p className="text-base font-semibold text-pretty text-foreground">
-              GP-wait numbers count all non-urgent GP visits, not people with suspected cancer.
-            </p>
-            <p className="text-[0.9375rem] leading-relaxed text-pretty text-foreground">
-              These public county indicators show access and referral processing, not a measured cancer journey.
-            </p>
-            <p className="text-[0.9375rem] leading-relaxed text-pretty text-foreground">
-              THL Sotkanet 6411 (latest snapshot year: 2025) covers <strong className="font-semibold">non-urgent GP appointments with waiting-time data</strong>, not people with suspected cancer. GP waiting time is a proxy for access, not a cancer diagnosis or referral delay. The referral indicators describe processing of specialist referrals generally, not the whole GP-to-specialist journey.
-            </p>
-          </div>
-        </FramePanel>
-      </Frame>
-
-      <Frame id="cannot-tell" aria-labelledby="gaps" className="scroll-mt-20">
-        <FrameHeader>
-          <FrameTitle id="gaps">What the data can&apos;t tell you</FrameTitle>
-        </FrameHeader>
-        <FramePanel padding="md" className="flex flex-col gap-4">
-          <ul className="grid gap-x-8 gap-y-4 md:grid-cols-2">
-            {gaps.map((gap) => (
-              <li key={gap.title} className="flex flex-col gap-1">
-                <p className="text-sm font-semibold text-pretty text-foreground">{gap.title}</p>
-                <p className="text-sm leading-relaxed text-pretty text-foreground">{gap.text}</p>
-              </li>
-            ))}
-          </ul>
-          <div className="flex flex-wrap items-center gap-x-4 border-t border-border pt-2">
-            <p className="text-sm text-pretty text-foreground">Every recommended action cites a checked precedent. Live search results are not checked.</p>
-            <TextLink kind="jump" href="#evidence" className="text-sm">
-              See Evidence for actions
-            </TextLink>
-          </div>
-        </FramePanel>
-      </Frame>
-
-      <Frame id="indicators" aria-labelledby="indicator-sources" className="scroll-mt-20">
-        <FrameHeader>
-          <FrameTitle id="indicator-sources">The public indicators</FrameTitle>
-          <FrameDescription>Published on Sotkanet by the Finnish Institute for Health and Welfare (THL), by the Finnish Cancer Registry for screening and survival, and by Kela for private-visit reimbursements. Links open the official definitions.</FrameDescription>
-        </FrameHeader>
-        <div className="flex flex-col gap-6">
-          <section aria-labelledby="indicators-ranking" className="flex flex-col gap-2">
-            <div className="flex flex-col gap-0.5">
-              <h3 id="indicators-ranking" className="text-base font-semibold text-foreground">Used to rank counties</h3>
-              <p className="type-caption text-muted-foreground">Sotkanet 6411 sets the order; 13 sets the referral status shown beside it.</p>
-            </div>
-            <IndicatorCards rows={ranking} />
-          </section>
-          <section aria-labelledby="indicators-context" className="flex flex-col gap-2">
-            <div className="flex flex-col gap-0.5">
-              <h3 id="indicators-context" className="text-base font-semibold text-foreground">Shown for context only</h3>
-              <p className="type-caption text-muted-foreground">Not used for ranking or stage status.</p>
-            </div>
-            <IndicatorCards rows={context} />
-          </section>
-        </div>
-      </Frame>
-
-      <Frame id="evidence" aria-labelledby="evidence-sources" className="scroll-mt-20">
-        <FrameHeader>
-          <FrameTitle id="evidence-sources">Evidence for actions</FrameTitle>
-          <FrameDescription>
-            Each recommended action cites one of these checked sources.{" "}
-            {evidenceRetrieved
-              ? `All were retrieved on ${evidenceRetrieved}; the publisher is the host of the link.`
-              : "They are listed as retrieved on the date shown; the publisher is the host of the link."}
-          </FrameDescription>
-          <FrameDescription>Recommended actions need a checked precedent and linked source. Checked precedents in the snapshot are distinct from Exa results, which are found live and unverified; a search result is not proof an intervention works in a Finnish county. The referral-routes panel describes routes a county should offer. It is decision support, not a diagnosis or substitute for local clinical guidance.</FrameDescription>
-          <FrameDescription>Results labelled “Found live — unverified” come from Exa live search. They are not checked by the team.</FrameDescription>
-        </FrameHeader>
-        <ul className="grid gap-1.5 md:grid-cols-2">
-          {evidenceSources.map((source) => (
-            <li key={source.source_id}>
-              <FramePanel padding="sm" className="flex h-full flex-col gap-1">
-                {/* Inline, so the arrow follows the last word of a name of any length. */}
-                <TextLink kind="external" inline href={source.url} className="text-sm text-pretty max-sm:py-2">
-                  {source.name}
-                </TextLink>
-                <p className="type-caption text-muted-foreground">{evidenceRetrieved ? source.publisher : `${source.publisher} · retrieved ${source.retrieved}`}</p>
-              </FramePanel>
-            </li>
+      {/* The point of the page: always visible, never behind a button. */}
+      <section aria-labelledby="gaps" className="flex flex-col gap-6">
+        <SectionHead id="gaps" eyebrow="Limitations" title="What the data can't tell you" />
+        <ul className="grid gap-3 md:grid-cols-2">
+          {limitations.map((limitation) => (
+            <LimitationItem key={limitation.title} title={limitation.title}>
+              {limitation.detail}
+            </LimitationItem>
           ))}
         </ul>
-        <p className="px-3 pt-4 pb-2 type-caption text-pretty text-muted-foreground sm:px-4">
-          Map boundaries: Statistics Finland, wellbeing services counties 2025 (1:4 500 000), CC BY 4.0.{" "}
-          <TextLink kind="external" inline href="https://stat.fi/en/services/statistical-data-services/geographic-data/statistical-areas/municipality-based-statistical-units">Statistics Finland open data</TextLink>
-        </p>
-      </Frame>
+      </section>
 
-      <Frame id="other-sources" aria-labelledby="other-sources-title" className="scroll-mt-20">
-        <FrameHeader>
-          <FrameTitle id="other-sources-title">Other sources cited on county pages</FrameTitle>
-          <FrameDescription>
-            Background figures shown with a source chip. They are not county indicators and do not change any ranking, status or action.
-            {otherRetrieved ? ` All were retrieved on ${otherRetrieved}.` : ""}
-          </FrameDescription>
-        </FrameHeader>
-        <ul className="grid gap-1.5 md:grid-cols-2">
-          {otherSources.map((source) => (
-            <li key={source.source_id}>
-              <FramePanel padding="sm" className="flex h-full flex-col gap-1">
-                <TextLink kind="external" inline href={source.url} className="text-sm text-pretty max-sm:py-2">
-                  {source.name}
-                </TextLink>
-                <p className="type-caption text-muted-foreground">{otherRetrieved ? source.publisher : `${source.publisher} · retrieved ${source.retrieved}`}</p>
-              </FramePanel>
-            </li>
-          ))}
-        </ul>
-      </Frame>
+      <section aria-labelledby="indicator-sources" className="flex flex-col gap-8">
+        <SectionHead id="indicator-sources" title="Indicators" />
+        <section aria-labelledby="indicators-ranking" className="flex flex-col gap-4">
+          <Reveal className="flex flex-col gap-1">
+            <h3 id="indicators-ranking" className="type-heading text-forest-ink">Used to rank counties</h3>
+            {/* Plain names, not Sotkanet ids: the ids are in each card's "definition and scope". */}
+            <p className="text-base text-pretty text-muted-foreground">
+              {ranking.map((row, i) => (
+                <span key={row.indicator.indicator_id}>
+                  {i > 0 ? " " : ""}“{row.indicator.short_name}”{" "}
+                  {row.indicator.indicator_id === GP_WAIT_ID ? "sets the order." : "sets the referral status shown beside each county's rank."}
+                </span>
+              ))}
+            </p>
+          </Reveal>
+          <RankingCards rows={ranking} />
+        </section>
+        <section aria-labelledby="indicators-context" className="flex flex-col gap-4">
+          <Reveal className="flex flex-col gap-1">
+            <h3 id="indicators-context" className="type-heading text-forest-ink">Shown for context only</h3>
+            <p className="text-base text-muted-foreground">Not used for ranking or stage status.</p>
+          </Reveal>
+          <ContextList rows={context} />
+        </section>
+      </section>
 
-      <nav aria-label="Page">
-        <BackLink href="/">Back to areas</BackLink>
-      </nav>
+      <section aria-labelledby="evidence-sources" className="flex flex-col gap-6">
+        <SectionHead id="evidence-sources" title="Evidence for actions" />
+        <SourceList
+          line={`${evidenceItems.length} studies, guidelines and strategies behind the recommended actions.${evidenceRetrieved ? ` All retrieved ${evidenceRetrieved}.` : ""}`}
+          note="Each recommended action cites one of these checked sources; the publisher is the host of the link."
+          items={evidenceItems}
+        />
+      </section>
+
+      <section aria-labelledby="other-sources-title" className="flex flex-col gap-6">
+        <SectionHead id="other-sources-title" title="Other sources" />
+        <SourceList
+          line={`${otherItems.length} more: background figures cited on county pages, the list of areas and the map. None changes a ranking, status or action.`}
+          note={`The background figures are not county indicators and do not change any ranking, status or action.${otherRetrieved ? ` All retrieved ${otherRetrieved}.` : ""}`}
+          items={otherItems}
+        />
+      </section>
+
+      {/* Where to go next, as on /how-to-read. */}
+      <MoreCard
+        id="read-next"
+        title="Read next"
+        className="print:hidden"
+        rows={[
+          {
+            key: "how-to-read",
+            label: "Three things to know before you read any figure",
+            action: (
+              <TextLink kind="nav" href="/how-to-read">
+                How to read these numbers
+              </TextLink>
+            ),
+          },
+          {
+            key: "compare",
+            label: "Every area side by side, against Finland overall",
+            action: (
+              <TextLink kind="nav" href="/compare">
+                Compare all 22 areas
+              </TextLink>
+            ),
+          },
+          {
+            key: "areas",
+            label: "One area's figures and what it can do",
+            action: (
+              <TextLink kind="nav" href="/">
+                Areas
+              </TextLink>
+            ),
+          },
+        ]}
+      />
     </main>
   );
 }

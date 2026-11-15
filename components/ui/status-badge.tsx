@@ -18,7 +18,7 @@ export const STATUS_INK: Record<GapStatus, string> = {
 };
 
 /**
- * Colour for a big figure (`numeral`), by data status. Only "worse than Finland" colours the
+ * Colour for a big figure (`numeral`), by data status. Only "slower than Finland overall" colours the
  * figure itself; an amber figure stays in the text colour, with the marker and the label
  * carrying the amber, so a page keeps a calm end. Use this for numerals, STATUS_INK for labels.
  */
@@ -56,16 +56,16 @@ export function StatusBadge({
       data-slot="status-badge"
       data-status={status}
       className={cn(
-        "inline-flex w-fit shrink-0 items-center gap-1.5 rounded-sm font-medium whitespace-nowrap",
+        "inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full font-medium whitespace-nowrap",
         // Quiet is a line of secondary text (13px), not a tag: it has one size.
-        variant === "quiet" && "h-5 text-[0.8125rem] leading-5",
+        variant === "quiet" && "h-6 text-base leading-6",
         // xs is as tall as the source chip it sits beside.
-        variant !== "quiet" && size === "xs" && "h-6 text-[0.6875rem]",
-        variant !== "quiet" && size === "sm" && "h-6 text-[0.75rem]",
-        variant !== "quiet" && size === "md" && "h-7 text-[0.8125rem]",
+        variant !== "quiet" && size === "xs" && "h-6 text-base",
+        variant !== "quiet" && size === "sm" && "h-7 text-base",
+        variant !== "quiet" && size === "md" && "h-8 text-base",
         variant === "chip" && [
           "border",
-          size === "xs" ? "px-1.5" : size === "sm" ? "px-2" : "px-2.5",
+          size === "xs" ? "px-2" : size === "sm" ? "px-2.5" : "px-3",
           status === "no_data" && "border-dashed",
           CHIP[status],
         ],

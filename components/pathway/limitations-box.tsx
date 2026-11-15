@@ -79,7 +79,7 @@ export function LimitationsBox({
         className,
       )}
     >
-      <h2 id="limitations-heading" className="font-sans text-[0.8125rem] leading-snug font-medium tracking-normal">
+      <h2 id="limitations-heading" className="font-sans text-base leading-snug font-semibold tracking-normal">
         {TITLE}
       </h2>
       <ul className="flex flex-col gap-1">
@@ -114,7 +114,7 @@ export function LimitationsBox({
 function withFigures(text: string): ReactNode {
   return text.split(/(\d+(?:\.\d+)?(?:[-–]\d+(?:\.\d+)?)?%)/).map((part, i) =>
     i % 2 === 1 ? (
-      <span key={i} className="figure">
+      <span key={i} className="figure whitespace-nowrap">
         {part}
       </span>
     ) : (
@@ -123,21 +123,21 @@ function withFigures(text: string): ReactNode {
   );
 }
 
-const BODY = "text-[0.8125rem] leading-[1.55] text-pretty text-muted-foreground";
+const BODY = "text-base leading-[1.55] text-pretty text-muted-foreground";
 
 /**
- * One limitation: a chevron row with the bold title and one grey line, its source chip at the
- * right end of the title line (a sibling of the row, never inside it) and the full wording
- * under the chevron.
+ * One limitation: a chevron row with the bold title and one grey line, the full wording under
+ * the chevron, and its source chip on its own line below (a sibling of the row, never inside
+ * it, and never over the title at any width).
  */
 function Limitation({ item, anchor = false }: { item: LimitationItem; anchor?: boolean }) {
   return (
-    <li id={anchor && item.id ? `limit-${item.id}` : undefined} className="relative scroll-mt-24">
+    <li id={anchor && item.id ? `limit-${item.id}` : undefined} className="scroll-mt-24">
       <Disclosure
-        summaryClassName="min-h-0 w-full items-start gap-1.5 py-1 [&>svg]:mt-[3px]"
+        summaryClassName="min-h-0 w-full items-start gap-1.5 py-1 [&>svg]:mt-[5px]"
         summary={
           <span className="flex min-w-0 flex-col">
-            <span className={cn("text-[0.8125rem] leading-5 font-semibold text-pretty text-foreground", item.sourceId && "pr-[8.25rem]")}>
+            <span className="text-base leading-6 font-semibold text-pretty text-foreground">
               {item.title}
               <span className="sr-only">:</span>
             </span>
@@ -148,9 +148,9 @@ function Limitation({ item, anchor = false }: { item: LimitationItem; anchor?: b
         <p className={cn(BODY, "pr-1 pb-2 pl-[1.375rem]")}>{withFigures(item.text)}</p>
       </Disclosure>
       {item.sourceId && (
-        <span className="absolute top-0.5 right-0">
+        <div className="pb-2 pl-[1.375rem]">
           <SourceChip sourceId={item.sourceId} />
-        </span>
+        </div>
       )}
     </li>
   );

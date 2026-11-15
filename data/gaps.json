@@ -8,7 +8,7 @@
     "status": "red",
     "value": 73.5,
     "national_value": 54.7,
-    "note": "73.5% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "73.5% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "central-finland",
@@ -19,7 +19,7 @@
     "status": "amber",
     "value": 78.1,
     "national_value": 76.8,
-    "note": "78.1% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "78.1% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "central-ostrobothnia",
@@ -30,7 +30,7 @@
     "status": "amber",
     "value": 52.9,
     "national_value": 54.7,
-    "note": "52.9% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "52.9% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "central-ostrobothnia",
@@ -41,7 +41,7 @@
     "status": "red",
     "value": 71.7,
     "national_value": 76.8,
-    "note": "71.7% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "71.7% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "central-uusimaa",
@@ -52,7 +52,7 @@
     "status": "amber",
     "value": 46.7,
     "national_value": 54.7,
-    "note": "46.7% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "46.7% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "central-uusimaa",
@@ -63,7 +63,7 @@
     "status": "no_data",
     "value": null,
     "national_value": 76.8,
-    "note": "Sotkanet publishes no 2025 value for Central Uusimaa alone. At HUS, which handles its hospital referrals, 74.1% of referrals were processed within 3 days in 2025 (Finland 76.8%).",
+    "note": "Sotkanet publishes no 2025 value for Central Uusimaa alone. At HUS, which handles its hospital referrals, 74.1% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%).",
     "shared": {
       "name": "HUS",
       "value": 74.1,
@@ -93,7 +93,7 @@
     "status": "amber",
     "value": 51.8,
     "national_value": 54.7,
-    "note": "51.8% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "51.8% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "east-uusimaa",
@@ -104,7 +104,7 @@
     "status": "no_data",
     "value": null,
     "national_value": 76.8,
-    "note": "Sotkanet publishes no 2025 value for East Uusimaa alone. At HUS, which handles its hospital referrals, 74.1% of referrals were processed within 3 days in 2025 (Finland 76.8%).",
+    "note": "Sotkanet publishes no 2025 value for East Uusimaa alone. At HUS, which handles its hospital referrals, 74.1% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%).",
     "shared": {
       "name": "HUS",
       "value": 74.1,
@@ -134,7 +134,7 @@
     "status": "red",
     "value": 75.9,
     "national_value": 54.7,
-    "note": "75.9% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "75.9% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "helsinki",
@@ -145,7 +145,7 @@
     "status": "amber",
     "value": 76.8,
     "national_value": 76.8,
-    "note": "76.8% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "76.8% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "kainuu",
@@ -156,7 +156,7 @@
     "status": "amber",
     "value": 38.4,
     "national_value": 54.7,
-    "note": "38.4% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "38.4% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "kainuu",
@@ -167,7 +167,7 @@
     "status": "red",
     "value": 75.2,
     "national_value": 76.8,
-    "note": "75.2% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "75.2% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "kanta-hame",
@@ -178,7 +178,7 @@
     "status": "red",
     "value": 65.6,
     "national_value": 54.7,
-    "note": "65.6% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "65.6% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "kanta-hame",
@@ -189,7 +189,7 @@
     "status": "amber",
     "value": 88.7,
     "national_value": 76.8,
-    "note": "88.7% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "88.7% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "kymenlaakso",
@@ -200,7 +200,7 @@
     "status": "red",
     "value": 61.8,
     "national_value": 54.7,
-    "note": "61.8% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "61.8% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "kymenlaakso",
@@ -211,7 +211,7 @@
     "status": "amber",
     "value": 82,
     "national_value": 76.8,
-    "note": "82% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "82% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "lapland",
@@ -222,7 +222,7 @@
     "status": "amber",
     "value": 48.6,
     "national_value": 54.7,
-    "note": "48.6% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "48.6% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "lapland",
@@ -233,7 +233,7 @@
     "status": "amber",
     "value": 80.2,
     "national_value": 76.8,
-    "note": "80.2% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "80.2% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "north-karelia",
@@ -244,7 +244,7 @@
     "status": "red",
     "value": 59.3,
     "national_value": 54.7,
-    "note": "59.3% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "59.3% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "north-karelia",
@@ -255,7 +255,7 @@
     "status": "amber",
     "value": 76.9,
     "national_value": 76.8,
-    "note": "76.9% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "76.9% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "north-ostrobothnia",
@@ -266,7 +266,7 @@
     "status": "red",
     "value": 63.3,
     "national_value": 54.7,
-    "note": "63.3% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "63.3% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "north-ostrobothnia",
@@ -277,7 +277,7 @@
     "status": "amber",
     "value": 78,
     "national_value": 76.8,
-    "note": "78% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "78% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "north-savo",
@@ -288,7 +288,7 @@
     "status": "red",
     "value": 60.5,
     "national_value": 54.7,
-    "note": "60.5% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "60.5% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "north-savo",
@@ -299,7 +299,7 @@
     "status": "red",
     "value": 71.5,
     "national_value": 76.8,
-    "note": "71.5% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "71.5% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "ostrobothnia",
@@ -310,7 +310,7 @@
     "status": "red",
     "value": 56.7,
     "national_value": 54.7,
-    "note": "56.7% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "56.7% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "ostrobothnia",
@@ -321,7 +321,7 @@
     "status": "red",
     "value": 76.5,
     "national_value": 76.8,
-    "note": "76.5% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "76.5% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "paijat-hame",
@@ -332,7 +332,7 @@
     "status": "amber",
     "value": 32.7,
     "national_value": 54.7,
-    "note": "32.7% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "32.7% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "paijat-hame",
@@ -343,7 +343,7 @@
     "status": "amber",
     "value": 85.3,
     "national_value": 76.8,
-    "note": "85.3% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "85.3% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "pirkanmaa",
@@ -354,7 +354,7 @@
     "status": "amber",
     "value": 45.8,
     "national_value": 54.7,
-    "note": "45.8% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "45.8% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "pirkanmaa",
@@ -365,7 +365,7 @@
     "status": "red",
     "value": 72.4,
     "national_value": 76.8,
-    "note": "72.4% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "72.4% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "satakunta",
@@ -376,7 +376,7 @@
     "status": "red",
     "value": 56.6,
     "national_value": 54.7,
-    "note": "56.6% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "56.6% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "satakunta",
@@ -387,7 +387,7 @@
     "status": "amber",
     "value": 77.7,
     "national_value": 76.8,
-    "note": "77.7% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "77.7% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "south-karelia",
@@ -398,7 +398,7 @@
     "status": "red",
     "value": 60.3,
     "national_value": 54.7,
-    "note": "60.3% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "60.3% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "south-karelia",
@@ -409,7 +409,7 @@
     "status": "amber",
     "value": 88.1,
     "national_value": 76.8,
-    "note": "88.1% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "88.1% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "south-ostrobothnia",
@@ -420,7 +420,7 @@
     "status": "red",
     "value": 67.8,
     "national_value": 54.7,
-    "note": "67.8% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "67.8% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "south-ostrobothnia",
@@ -431,7 +431,7 @@
     "status": "red",
     "value": 68.9,
     "national_value": 76.8,
-    "note": "68.9% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "68.9% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "south-savo",
@@ -442,7 +442,7 @@
     "status": "red",
     "value": 69.7,
     "national_value": 54.7,
-    "note": "69.7% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "69.7% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "south-savo",
@@ -453,7 +453,7 @@
     "status": "amber",
     "value": 78.1,
     "national_value": 76.8,
-    "note": "78.1% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "78.1% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "southwest-finland",
@@ -464,7 +464,7 @@
     "status": "red",
     "value": 57.9,
     "national_value": 54.7,
-    "note": "57.9% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "57.9% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "southwest-finland",
@@ -475,7 +475,7 @@
     "status": "amber",
     "value": 78.2,
     "national_value": 76.8,
-    "note": "78.2% of referrals were processed within 3 days in 2025 (Finland 76.8%)."
+    "note": "78.2% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%)."
   },
   {
     "county_id": "vantaa-kerava",
@@ -486,7 +486,7 @@
     "status": "red",
     "value": 85.4,
     "national_value": 54.7,
-    "note": "85.4% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "85.4% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "vantaa-kerava",
@@ -497,7 +497,7 @@
     "status": "no_data",
     "value": null,
     "national_value": 76.8,
-    "note": "Sotkanet publishes no 2025 value for Vantaa and Kerava alone. At HUS, which handles its hospital referrals, 74.1% of referrals were processed within 3 days in 2025 (Finland 76.8%).",
+    "note": "Sotkanet publishes no 2025 value for Vantaa and Kerava alone. At HUS, which handles its hospital referrals, 74.1% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%).",
     "shared": {
       "name": "HUS",
       "value": 74.1,
@@ -527,7 +527,7 @@
     "status": "amber",
     "value": 40,
     "national_value": 54.7,
-    "note": "40% of non-urgent GP appointments waited more than 7 days in 2025 (Finland 54.7%)."
+    "note": "40% of non-urgent GP appointments waited more than 7 days in 2025 (Finland overall: 54.7%)."
   },
   {
     "county_id": "west-uusimaa",
@@ -538,7 +538,7 @@
     "status": "no_data",
     "value": null,
     "national_value": 76.8,
-    "note": "Sotkanet publishes no 2025 value for West Uusimaa alone. At HUS, which handles its hospital referrals, 74.1% of referrals were processed within 3 days in 2025 (Finland 76.8%).",
+    "note": "Sotkanet publishes no 2025 value for West Uusimaa alone. At HUS, which handles its hospital referrals, 74.1% of referrals were processed within 3 days in 2025 (Finland overall: 76.8%).",
     "shared": {
       "name": "HUS",
       "value": 74.1,

@@ -65,7 +65,7 @@ function layoutOf(text: string): Layout {
       }
     }
   }
-  // "Short label (status): body", e.g. "The trend: ..." or "Getting a GP appointment (worse than Finland): ...".
+  // "Short label (status): body", e.g. "The trend: ..." or "Getting a GP appointment (slower than Finland overall): ...".
   const match = /^([A-Z][^:().\d]{2,40}?)(?: \(([^)]+)\))?: ([\s\S]+)$/.exec(text);
   if (match && ROW_LABELS.has(match[1])) {
     const [, label, status, body] = match;
@@ -288,7 +288,7 @@ export function CountyBriefClient({
           <Button variant="outline" onClick={writeAiBrief} disabled={status === "loading"}>
             {status === "loading" ? "Writing…" : triedAi ? "Rewrite with AI again" : "Rewrite with AI"}
           </Button>
-          <p className="text-[0.75rem] leading-4 text-muted-foreground">Checked against the figures</p>
+          <p className="text-base leading-4 text-muted-foreground">Checked against the figures</p>
         </div>
         {(status === "limited" || status === "error") && (
           <p

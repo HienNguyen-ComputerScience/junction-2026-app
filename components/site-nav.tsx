@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useSyncExternalStore } from "react";
 
+
 type NavItem = {
   key: string;
   label: string;
@@ -13,27 +14,39 @@ type NavItem = {
 };
 
 const ITEMS: NavItem[] = [
+  { key: "briefing", label: "Guided briefing", short: "Briefing", match: (p) => p.startsWith("/briefing") },
   {
     key: "areas",
     label: "Areas",
     short: "Areas",
-    match: (p) => p === "/" || p.startsWith("/compare") || (p.startsWith("/county") && !p.endsWith("/act")),
+    match: (p) =>
+      p.startsWith("/compare") || (p.startsWith("/county") && !p.endsWith("/act") && !p.endsWith("/plan")),
   },
-  { key: "actions", label: "Actions", short: "Actions", match: (p) => p.startsWith("/county") && p.endsWith("/act") },
+  {
+    key: "actions",
+    label: "Actions",
+    short: "Actions",
+    match: (p) => p.startsWith("/county") && (p.endsWith("/act") || p.endsWith("/plan")),
+  },
+  { key: "insights", label: "Where access is hardest", short: "Hardest areas", match: (p) => p.startsWith("/insights") },
   { key: "ask", label: "Ask the evidence", short: "Ask", match: (p) => p.startsWith("/ask") },
+  // The walkthrough of where the numbers come from and what they cannot say (app/how-to-read).
+  { key: "how-to-read", label: "How to read these numbers", short: "How to read", match: (p) => p.startsWith("/how-to-read") },
   { key: "sources", label: "Sources & limitations", short: "Sources", match: (p) => p.startsWith("/sources") },
 ];
 
-/** The area id in /county/<id> or /county/<id>/act, else null. */
+/** The area id in /county/<id>…, or in a briefing's /briefing/<id>…, else null. */
 function countyOf(pathname: string | null): string | null {
-  return pathname?.match(/^\/county\/([^/]+)/)?.[1] ?? null;
+  return pathname?.match(/^\/(?:county|briefing)\/([^/]+)/)?.[1] ?? null;
 }
 
 /**
- * Presentational nav: plain text links, the current page marked with an accent underline.
+ * Presentational nav: a bar of plain text links under the header, the current page marked with a
+ * mint pill and bold text.
  * `pathname` null renders no active state (prerender fallback). "Actions" goes to the act page
  * of the area in view: the home page's ?area=, the county page's own area, else `defaultArea`
- * (the area that leads the ranking). Phones get short labels so the header stays one 56px row.
+ * (the area that leads the ranking). Phones get short labels and the bar may wrap to a second line:
+ * every destination stays a visible word, never a menu icon.
  */
 export function NavLinks({
   pathname,
@@ -52,16 +65,20 @@ export function NavLinks({
   const fromUrl = pathname === "/" && areaParam && areaIds.includes(areaParam) ? areaParam : null;
   // Home always shows an area (its ?area=, else the default), so the remembered one is not used there.
   const remembered = pathname === "/" ? null : lastArea;
-  const actionsArea = countyOf(pathname) ?? fromUrl ?? remembered ?? defaultArea;
+  const inPath = countyOf(pathname);
+  const actionsArea = (inPath && areaIds.includes(inPath) ? inPath : null) ?? fromUrl ?? remembered ?? defaultArea;
   const hrefs: Record<string, string> = {
+    briefing: "/briefing",
     areas: "/",
     actions: `/county/${actionsArea}/act`,
+    insights: "/insights",
+    "how-to-read": "/how-to-read",
     ask: "/ask",
     sources: "/sources",
   };
   return (
-    <nav aria-label="Main" className="shrink-0">
-      <ul className="-mr-2 flex items-center gap-0.5 sm:-mr-2.5 sm:gap-2">
+    <nav aria-label="Main" className="page-container">
+      <ul className="-mx-2 flex flex-wrap items-center gap-x-0.5 gap-y-1 py-1.5 sm:gap-x-1 xl:-mx-3">
         {ITEMS.map((item) => {
           const active = pathname !== null && item.match(pathname);
           return (
@@ -69,10 +86,10 @@ export function NavLinks({
               <Link
                 href={hrefs[item.key]}
                 aria-current={active ? "page" : undefined}
-                className={`relative flex h-14 items-center px-1.5 type-caption font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset sm:px-2.5 ${
+                className={`flex h-11 items-center rounded-sm px-2 text-base whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 xl:px-3 ${
                   active
-                    ? "text-foreground after:absolute after:inset-x-1.5 after:bottom-0 after:h-0.5 after:bg-brand after:content-[''] sm:after:inset-x-2.5"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-mint-veil font-semibold text-forest-ink"
+                    : "text-foreground hover:bg-keylime-wash hover:text-forest-ink"
                 }`}
               >
                 <span className="sm:hidden" aria-hidden>

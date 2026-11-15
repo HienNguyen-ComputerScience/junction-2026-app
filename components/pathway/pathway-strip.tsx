@@ -4,7 +4,7 @@ import { SourceChip } from "@/components/source-chip";
 import { Frame, FrameHeader, FramePanel, FrameTitle } from "@/components/ui/frame";
 import { TextLink } from "@/components/ui/text-link";
 import type { Stage } from "@/lib/data";
-import { getStageGap, STATUS_LABEL, stageStatus } from "@/lib/ranking";
+import { getStageGap, STATUS_LABEL, statusLabel, stageStatus } from "@/lib/ranking";
 import { cn } from "cn";
 
 type Group = "patient" | "county" | "hospital";
@@ -32,7 +32,7 @@ const GROUPS: { group: Group; label: string; from: number; span: number }[] = [
 function stageTag(countyId: string, stage: Stage): string {
   if (stage === "gp_recognition") return STATUS_LABEL.no_data;
   const status = stageStatus(countyId, stage);
-  if (status === "red" || status === "amber") return STATUS_LABEL[status];
+  if (status === "red" || status === "amber") return statusLabel(status, stage);
   const shared = getStageGap(countyId, stage)?.shared;
   return shared ? `${shared.name}-wide only` : STATUS_LABEL.no_data;
 }
@@ -102,7 +102,7 @@ export function PathwayStrip({ countyId }: { countyId: string }) {
                       step={card.step}
                       status={card.status}
                       className={cn(
-                        "size-7 text-[0.8125rem] ring-4 ring-card",
+                        "size-7 text-base ring-4 ring-card",
                         card.status === "no_data" && "bg-muted",
                       )}
                     />
@@ -124,7 +124,7 @@ export function PathwayStrip({ countyId }: { countyId: string }) {
                   <span
                     title={step.stage ? `Challenge talk wording: ${step.label}` : undefined}
                     className={cn(
-                      "text-[0.8125rem] leading-snug text-pretty",
+                      "text-base leading-snug text-pretty",
                       card ? "font-medium text-foreground" : "text-muted-foreground",
                     )}
                   >

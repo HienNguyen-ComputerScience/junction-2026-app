@@ -61,7 +61,7 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
             {finland !== null && (
               <>
                 {" "}
-                · White line: Finland <span className="figure text-foreground">{formatPct(finland)}</span>
+                · Dark line: Finland overall <span className="figure text-foreground">{formatPct(finland)}</span>
               </>
             )}
           </h3>
@@ -76,9 +76,9 @@ export function EarlyWarning({ areas, sourceId }: { areas: County[]; sourceId: s
                   href={`/county/${row.id}`}
                   className={`group relative grid min-h-16 grid-cols-1 items-center gap-x-5 gap-y-1.5 py-3 pr-10 pl-4 transition-colors outline-none hover:bg-accent focus-visible:z-[1] focus-visible:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset sm:pl-5 lg:grid-cols-[11rem_14rem_minmax(0,1fr)_13.75rem] ${index > 0 ? "before:absolute before:inset-x-4 before:top-0 before:h-px before:bg-foreground/[0.06] sm:before:inset-x-5" : ""}`}
                 >
-                  <span className="text-[0.9375rem] font-semibold text-foreground">{row.name}</span>
+                  <span className="text-base font-semibold text-foreground">{row.name}</span>
                   <span className="flex flex-col gap-0.5">
-                    <span className="text-[0.9375rem] leading-snug font-medium whitespace-nowrap text-foreground">
+                    <span className="text-base leading-snug font-medium whitespace-nowrap text-foreground">
                       <span className="figure">{formatAmount(row.change)}</span> points worse since {FIRST_YEAR}
                     </span>
                     {caveats.get(row.id) && (
@@ -196,7 +196,7 @@ function MiniTrend({
       </span>
       <span className="sr-only">
         {trend.map((point) => `${point.year}: ${point.value === null ? "no data" : formatPct(point.value)}`).join(", ")}
-        {finland !== null && `; Finland ${formatPct(finland)} in ${trend[last]?.year}`}; {STATUS_LABEL[status]}.
+        {finland !== null && `; Finland overall ${formatPct(finland)} in ${trend[last]?.year}`}; {STATUS_LABEL[status]}.
       </span>
     </span>
   );

@@ -47,8 +47,8 @@ const ROW_DIVIDER =
 
 // Referral column: one short tag per state, so every cell has the same shape.
 const REFERRAL_TAG: Record<GapStatus, string> = {
-  red: "Worse",
-  amber: "Better",
+  red: "Slower",
+  amber: "Same or better",
   no_data: "No public data",
 };
 
@@ -61,7 +61,7 @@ export function RankingList({
   referralSourceId,
 }: Props) {
   const finlandX: CSSProperties = { left: `${nationalGpWait}%` };
-  const finlandLabel = `Finland ${formatPct(nationalGpWait)}`;
+  const finlandLabel = `Finland overall: ${formatPct(nationalGpWait)}`;
   const total = rows.length + unranked.length;
 
   return (
@@ -83,7 +83,7 @@ export function RankingList({
           line1="Referrals processed within 3 days"
           line2={
             <>
-              Finland&nbsp;<span className="figure">{formatPct(nationalReferral)}</span>, higher
+              Finland overall:&nbsp;<span className="figure">{formatPct(nationalReferral)}</span>, higher
               is better
             </>
           }
@@ -92,10 +92,10 @@ export function RankingList({
           {/* The full phrase of each row's short label, said once for the whole column. */}
           <span className="mt-0.5 flex flex-col">
             <StatusBadge status="red" variant="quiet">
-              Worse than Finland&apos;s level
+              Longer wait or slower than Finland overall
             </StatusBadge>
             <StatusBadge status="amber" variant="quiet">
-              At or better than Finland&apos;s level
+              Same as or better than Finland overall
             </StatusBadge>
           </span>
         </HeadCell>
@@ -104,7 +104,7 @@ export function RankingList({
       {/* Below lg: one line that says what the bar and the line are, before the data. The key
           is under the list. */}
       <p className="border-b border-border px-4 py-3 type-caption text-pretty text-muted-foreground sm:px-5 lg:hidden">
-        Bars: non-urgent GP visits waiting over 7 days. White line, and the gap in each row:{" "}
+        Bars: non-urgent GP visits waiting over 7 days. Dark line, and the gap in each row:{" "}
         {withFigures(finlandLabel)}.
       </p>
 
@@ -156,7 +156,7 @@ export function RankingList({
                 <span aria-hidden>–</span>
                 <span className="sr-only">Not ranked</span>
               </span>
-              <span className="flex items-center py-4 text-[0.9375rem] font-semibold transition-colors group-hover:text-brand-ink group-focus-visible:text-brand-ink lg:col-start-2 lg:py-4">
+              <span className="flex items-center py-4 text-base font-semibold transition-colors group-hover:text-brand-ink group-focus-visible:text-brand-ink lg:col-start-2 lg:py-4">
                 <span className="sr-only">Not ranked: </span>
                 {county.name}
               </span>
@@ -348,14 +348,14 @@ function RankingRowLink({
       className={`${ROW_GRID} ${ROW_LINK} ${divider ? ROW_DIVIDER : ""}`}
     >
       {/* Desktop: its own column. */}
-      <span className="hidden figure text-[0.8125rem] leading-6 text-faint lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:flex lg:items-center">
+      <span className="hidden figure text-base leading-6 text-faint lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:flex lg:items-center">
         <span className="sr-only">Rank </span>
         {row.rank}
       </span>
 
-      <span className="col-start-1 row-start-1 flex min-w-0 items-baseline gap-2 pt-3 text-[0.9375rem] leading-6 font-semibold transition-colors group-hover:text-brand-ink group-focus-visible:text-brand-ink lg:col-start-2 lg:pt-1.5">
+      <span className="col-start-1 row-start-1 flex min-w-0 items-baseline gap-2 pt-3 text-base leading-6 font-semibold transition-colors group-hover:text-brand-ink group-focus-visible:text-brand-ink lg:col-start-2 lg:pt-1.5">
         {/* Phone: the rank is inline before the name, so the bar can use the full card width. */}
-        <span className="shrink-0 figure text-[0.8125rem] font-normal text-faint lg:hidden">
+        <span className="shrink-0 figure text-base font-normal text-faint lg:hidden">
           <span className="sr-only">Rank </span>
           {row.rank}
         </span>
@@ -412,7 +412,7 @@ function RankingRowLink({
             {/* No value: nothing here, the "No public data" tag says it. The cell keeps its
                 width so the bars line up down the column. */}
             <span
-              className={`w-11 shrink-0 figure text-[0.8125rem] font-medium empty:hidden sm:empty:block lg:w-12 lg:text-sm ${row.referral === null ? "text-muted-foreground" : "text-foreground"}`}
+              className={`w-11 shrink-0 figure text-base font-medium empty:hidden sm:empty:block lg:w-12 lg:text-sm ${row.referral === null ? "text-muted-foreground" : "text-foreground"}`}
             >
               {row.referral !== null
                 ? formatPct(row.referral.value)
@@ -442,7 +442,7 @@ function RankingRowLink({
               )}
               {referralStatus !== "no_data" && (
                 <span className="sr-only">
-                  {referralStatus === "red" && !row.sharedReferral ? " than Finland's level" : referralStatus === "amber" && !cityUnitsOnly && !row.sharedReferral ? " (at or better than Finland's level)" : ""} (Finland{" "}
+                  {(referralStatus === "red" && !row.sharedReferral) || (referralStatus === "amber" && !cityUnitsOnly && !row.sharedReferral) ? " than Finland overall" : ""} (Finland overall:{" "}
                   {formatPct(nationalReferral)})
                 </span>
               )}
@@ -467,7 +467,7 @@ function GapShort({ value, finland }: { value: number; finland: number }) {
   return (
     <>
       <span className="figure">{Math.abs(diff).toFixed(1)}</span>
-      <span className="sr-only"> percentage points</span> {diff > 0 ? "above" : "below"} Finland
+      <span className="sr-only"> percentage points</span> {diff > 0 ? "above" : "below"} Finland overall
     </>
   );
 }

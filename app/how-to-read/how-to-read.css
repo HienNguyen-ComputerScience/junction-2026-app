@@ -1,0 +1,23 @@
+/* "How to read these numbers": three framed cards built from the shared pieces (Reveal,
+   AnimatedNumber, Disclosure; contract in docs/audit/contract.md). This file adds only what is
+   the page's own: a plain static page under reduced motion and on paper. */
+
+@media (prefers-reduced-motion: reduce) {
+  .htr-root *,
+  .htr-root *::before,
+  .htr-root *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media print {
+  .htr-root * {
+    animation: none !important;
+    transition: none !important;
+  }
+  .htr-root p,
+  .htr-root li {
+    break-inside: avoid;
+  }
+}

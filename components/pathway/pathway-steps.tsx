@@ -7,7 +7,7 @@ import { MeasureBar } from "@/components/ui/measure-bar";
 import { STATUS_FIGURE, StatusBadge } from "@/components/ui/status-badge";
 import { STAGE_LABELS } from "@/lib/act";
 import type { GapStatus, Stage } from "@/lib/data";
-import { formatPct, getStageGap, STATUS_LABEL, stageStatus } from "@/lib/ranking";
+import { formatPct, getStageGap, statusLabel, stageStatus } from "@/lib/ranking";
 
 /**
  * The three steps of the pathway, the one component for them on every page.
@@ -92,7 +92,7 @@ export function buildPathwaySteps(countyId: string): PathwayStep[] {
 }
 
 const MARK: Record<GapStatus, string> = {
-  // Dark ink on the saturated fills: 5.0:1 on red, 9.7:1 on slate.
+  // Cream text on the solid fills: 5.5:1 on rust, 6.2:1 on slate.
   red: "bg-status-red text-background",
   amber: "bg-status-amber text-background",
   no_data: "border border-dashed border-status-grey-ink/60 text-status-grey-ink",
@@ -104,7 +104,7 @@ export function StepMark({ step, status, className }: { step: number; status: Ga
     <span
       aria-hidden
       className={cn(
-        "flex size-6 shrink-0 items-center justify-center rounded-full text-[0.75rem] font-semibold tabular-nums",
+        "flex size-6 shrink-0 items-center justify-center rounded-full text-base font-semibold tabular-nums",
         MARK[status],
         className,
       )}
@@ -118,11 +118,11 @@ function StepTitle({ step, compact = false }: { step: PathwayStep; compact?: boo
   return (
     // Top-aligned: the steps share subgrid rows, so a one-line and a two-line title take the same row height.
     <div className="flex min-w-0 items-start gap-2.5">
-      <StepMark step={step.step} status={step.status} className={compact ? undefined : "size-7 text-[0.8125rem]"} />
+      <StepMark step={step.step} status={step.status} className={compact ? undefined : "size-7 text-base"} />
       <h3
         className={cn(
-          "min-w-0 font-heading font-semibold tracking-normal text-pretty",
-          compact ? "text-[0.9375rem] leading-6" : "text-base leading-7",
+          "min-w-0 font-sans font-semibold tracking-normal text-pretty text-forest-ink",
+          compact ? "text-base leading-6" : "text-[1.0625rem] leading-7",
         )}
       >
         <span className="sr-only">Step {step.step}: </span>
@@ -137,7 +137,7 @@ function StepStatus({ step }: { step: PathwayStep }) {
   return (
     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-2">
       <StatusBadge status={step.status} size="xs">
-        {step.measure?.shared && step.measure.value === null ? "No county figure" : STATUS_LABEL[step.status]}
+        {step.measure?.shared && step.measure.value === null ? "No county figure" : statusLabel(step.status, step.stage)}
       </StatusBadge>
       {step.measure ? (
         <SourceChip sourceId={step.measure.sourceId} />
@@ -227,12 +227,12 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
           </span>
         ) : (
           // No figure of the area's own: never a big number, not even the hospital group's.
-          <span className="pb-px text-[0.9375rem] leading-none text-muted-foreground">No number</span>
+          <span className="pb-px text-base leading-none text-muted-foreground">No number</span>
         )}
         {value !== null && measure && (
           <span className="pb-px type-caption whitespace-nowrap text-muted-foreground">
             <span className={cn("font-medium", STATUS_FIGURE[status])}>
-              {pointsVsFinland(value, measure.finland, step.stage === "referral")}
+              {pointsVsFinland(value, measure.finland)}
             </span>
           </span>
         )}
@@ -256,7 +256,7 @@ function Step({ step, compact, extra }: { step: PathwayStep; compact: boolean; e
         size={compact ? "sm" : "md"}
         value={value}
         finland={measure ? measure.finland : null}
-        finlandLabel={measure ? `Finland ${formatPct(measure.finland)}` : undefined}
+        finlandLabel={measure ? `Finland overall: ${formatPct(measure.finland)}` : undefined}
         status={status}
       />
 

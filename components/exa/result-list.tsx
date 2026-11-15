@@ -36,10 +36,10 @@ export function LiveMark({
   return (
     <span className={`flex flex-wrap items-center gap-x-2 gap-y-1 ${className ?? ""}`}>
       <Badge variant="unverified">Found live — unverified</Badge>
-      <span aria-hidden className="type-caption text-muted-foreground">
+      <span aria-hidden className="text-base text-muted-foreground">
         ·
       </span>
-      <span className="type-caption font-normal text-muted-foreground">
+      <span className="text-base font-normal text-muted-foreground">
         {saved ? `Web results via Exa, saved ${formatDate(saved)}` : "Web results via Exa"}
       </span>
     </span>
@@ -48,7 +48,7 @@ export function LiveMark({
 
 export function Unavailable({ children }: { children?: React.ReactNode }) {
   return (
-    <p role="status" className="rounded-lg border border-input bg-muted px-4 py-3 text-sm text-foreground">
+    <p role="status" className="rounded-lg border border-input bg-muted px-4 py-3 text-base text-foreground">
       Live search is unavailable right now.{" "}
       <span className="text-muted-foreground">{children ?? "The rest of the page still works."}</span>
     </p>
@@ -59,7 +59,7 @@ export function Unavailable({ children }: { children?: React.ReactNode }) {
 export function LoadingRows({ label, rows = 3 }: { label: string; rows?: number }) {
   return (
     <div role="status" aria-live="polite" className="flex flex-col gap-4">
-      <p className="type-caption text-muted-foreground">{label}…</p>
+      <p className="text-base text-muted-foreground">{label}…</p>
       <div aria-hidden className="flex flex-col divide-y divide-border/80">
         {Array.from({ length: rows }, (_, i) => (
           <div key={i} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-2 py-3.5 first:pt-0 last:pb-0">
@@ -171,7 +171,7 @@ export function ResultList({ items, numbered = false, idPrefix = "exa-src" }: { 
               target="_blank"
               rel="noopener noreferrer"
               title={title === item.title ? undefined : item.title}
-              className="group/link col-start-1 row-start-1 line-clamp-2 min-w-0 rounded-sm text-sm leading-snug font-semibold text-pretty text-foreground outline-none transition-colors hover:text-brand-ink focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="group/link col-start-1 row-start-1 line-clamp-2 min-w-0 rounded-sm text-base leading-snug font-semibold text-pretty text-foreground outline-none transition-colors hover:text-brand-ink focus-visible:ring-3 focus-visible:ring-ring/50"
             >
               {numbered && <span className="mr-1.5 font-medium text-muted-foreground tabular-nums">[{i + 1}]</span>}
               {title}
@@ -182,7 +182,7 @@ export function ResultList({ items, numbered = false, idPrefix = "exa-src" }: { 
               strokeWidth={1.75}
               className="col-start-2 row-start-1 mt-0.5 size-3.5 shrink-0 whitespace-nowrap text-muted-foreground"
             />
-            <p className="col-start-1 flex min-w-0 flex-wrap items-baseline gap-x-1.5 type-caption text-muted-foreground">
+            <p className="col-start-1 flex min-w-0 flex-wrap items-baseline gap-x-1.5 text-base text-muted-foreground">
               <span className="min-w-0 break-words">{host}</span>
               <span aria-hidden>·</span>
               {item.publishedDate ? (

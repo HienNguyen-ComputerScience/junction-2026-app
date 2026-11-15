@@ -6,11 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import { FramePanel } from "@/components/ui/frame";
 import { STAGE_LABELS } from "@/lib/act";
+import { plainTitle } from "@/lib/action-title";
 import type { Evidence } from "@/lib/data";
 
 /** A plain text tag (step, checked): the chip shape in the UI sans, so it never reads as a source. */
 const TAG =
-  "inline-flex h-6 w-fit shrink-0 items-center rounded-sm border border-input px-2 text-[0.75rem] leading-none font-medium text-muted-foreground";
+  "inline-flex h-6 w-fit shrink-0 items-center rounded-sm border border-input px-2 text-base leading-none font-medium text-muted-foreground";
 
 /** "Source checked" (the quiet provenance mark, solid: the team checked it) plus the source chip. */
 function SourceMarks({ action }: { action: Evidence }) {
@@ -40,12 +41,8 @@ export function FirstStep({ children, compact = false }: { children: ReactNode; 
   );
 }
 
-/** An action title without its trailing full stop (stripped at render; the data keeps its text). */
-export const plainTitle = (title: string) =>
-  title
-    .replace(/\.+\s*$/, "")
-    // Omaolo is named with what it is at its first use, which is the title of its own action.
-    .replace("the national digital symptom assessment (Omaolo)", "Omaolo (the national online symptom checker)");
+// The title helper lives in lib/ so the plan's exports can use it without importing a component.
+export { plainTitle };
 
 type Effect = NonNullable<Evidence["effect_size"]>;
 
@@ -79,7 +76,7 @@ export function plainStat({ value, unit, metric }: Effect): string | null {
 }
 
 /** The statistic as the data states it, for the caption under the plain-words stat. */
-function statisticLine({ value, unit, metric }: Effect): string {
+export function statisticLine({ value, unit, metric }: Effect): string {
   const number = value < 0 ? `−${Math.abs(value)}` : String(value);
   const figure = unit === "%" ? `${number}%` : unit === "odds ratio" ? `odds ratio ${number}` : `${number} ${unit}`;
   return `${figure}, ${metric}`;
@@ -109,9 +106,9 @@ function EvidenceStat({ action, children }: { action: Evidence; children?: React
       {stat ? (
         <>
           {/* A figure with no stated comparison in the data is labelled as a study result. */}
-          {qualifier ? null : <p className="text-[0.8125rem] leading-4 text-muted-foreground">Study finding:</p>}
+          {qualifier ? null : <p className="text-base leading-4 text-muted-foreground">Study finding:</p>}
           <p className="numeral text-[1.5rem] leading-tight text-foreground">{stat}</p>
-          {qualifier ? <p className="text-[0.8125rem] leading-snug text-pretty text-muted-foreground first-letter:uppercase">{qualifier}</p> : null}
+          {qualifier ? <p className="text-base leading-snug text-pretty text-muted-foreground first-letter:uppercase">{qualifier}</p> : null}
         </>
       ) : (
         <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-foreground tabular-nums">
@@ -151,7 +148,7 @@ export function ActionCard({
     >
       <div className="grid gap-x-10 gap-y-2.5 @3xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-3">
-          <h3 className="font-heading text-[1.5rem] leading-[1.2] font-semibold tracking-[-0.01em] text-pretty">
+          <h3 className="font-display text-[1.75rem] leading-[1.2] font-light text-pretty text-forest-ink">
             {plainTitle(action.action)}
           </h3>
           <FirstStep compact>{action.first_step}</FirstStep>
@@ -221,16 +218,16 @@ export function ActionCard({
 }
 
 /**
- * The compact form of an action card, for the options not picked for this county: the checked
- * source, the action, its first step and its owner.
+ * The compact form of an action, for the options not picked for this county: one line with the
+ * plain title, its owner and the source chip. The first step and the evidence are on the
+ * recommended cards only.
  */
 export function ActionSummary({ action }: { action: Evidence }) {
   return (
-    <FramePanel padding="none" className="@container flex h-full flex-col gap-3 px-4 py-4 sm:px-5">
-      <SourceMarks action={action} />
-      <h4 className="type-heading text-pretty">{plainTitle(action.action)}</h4>
-      <FirstStep compact>{action.first_step}</FirstStep>
-      <OwnerRow owner={action.who_implements} />
+    <FramePanel padding="none" className="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-4 py-2.5 sm:px-5">
+      <h4 className="min-w-0 flex-[1_1_20rem] text-base leading-snug font-semibold text-pretty">{plainTitle(action.action)}</h4>
+      <OwnerRow owner={action.who_implements} className="min-w-0 flex-[1_1_16rem]" />
+      <SourceChip sourceId={action.source_id} />
     </FramePanel>
   );
 }

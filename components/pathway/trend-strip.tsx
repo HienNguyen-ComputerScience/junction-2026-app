@@ -97,7 +97,7 @@ export const TREND_FILL: Record<GapStatus, string> = {
 export const TREND_PAST_FILL = "bg-foreground/25";
 
 /**
- * The judged column when it is worse than Finland, drawn by the bar rule of measure-bar.tsx
+ * The judged column when it is slower than Finland overall, drawn by the bar rule of measure-bar.tsx
  * turned upright. A wait share runs past the tick (tinted up to it, solid red above); a referral
  * share stops short of it (the tinted column ends at the value; the shortfall up to the tick is
  * faded red hatching).
@@ -141,7 +141,7 @@ function TrendRow({ stage }: { stage: TrendStage }) {
   return (
     <li className="grid gap-y-3 py-5 first:pt-0 last:pb-0">
       <div className="flex flex-col gap-3">
-        <p className="flex items-center gap-2 text-[0.9375rem] leading-snug font-semibold">
+        <p className="flex items-center gap-2 text-base leading-snug font-semibold">
           <StepMark step={stage.step} status={stage.status} className="size-5 text-[0.6875rem]" />
           <span>
             <span className="sr-only">Step {stage.step}: </span>
@@ -216,10 +216,10 @@ function TrendChart({
   // The ticks are labelled on the chart, so the line under it only says when one is missing.
   const tickText =
     ticks.length === 0
-      ? "No Finland value is published for these years."
+      ? "No Finland-overall value is published for these years."
       : ticks.length === shown.length
         ? ""
-        : `Finland's value is published for ${ticks.map((point) => point.year).join(", ")} only.`;
+        : `The Finland-overall value is published for ${ticks.map((point) => point.year).join(", ")} only.`;
 
   return (
     <figure className="flex w-full min-w-0 flex-col gap-3">
@@ -256,7 +256,7 @@ function TrendChart({
                       </div>
                       <span
                         className={cn(
-                          "absolute z-10 bg-card px-1 figure text-[0.8125rem] leading-5",
+                          "absolute z-10 bg-card px-1 figure text-base leading-5",
                           i === latestIndex ? "font-semibold text-foreground" : "text-muted-foreground",
                         )}
                         style={{
@@ -277,7 +277,7 @@ function TrendChart({
             const finland = finlandOf(point.year);
             return (
               <span key={point.year} className="flex flex-1 flex-col items-center text-center">
-                <span className="figure text-[0.8125rem] text-muted-foreground">{point.year}</span>
+                <span className="figure text-base text-muted-foreground">{point.year}</span>
                 {finland !== null && point.value !== null && (
                   <span className="type-note text-muted-foreground">
                     Finland <span className="figure text-foreground">{formatPct(finland)}</span>

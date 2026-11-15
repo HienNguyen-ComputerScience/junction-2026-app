@@ -1,0 +1,3664 @@
+{
+  "summary": {
+    "13": {
+      "areas": 17,
+      "worse": 5,
+      "crossed": 2,
+      "warning": 5,
+      "check": 0
+    },
+    "3620": {
+      "areas": 22,
+      "worse": 5,
+      "crossed": 5,
+      "warning": 6,
+      "check": 0
+    },
+    "3621": {
+      "areas": 22,
+      "worse": 5,
+      "crossed": 0,
+      "warning": 5,
+      "check": 0
+    },
+    "6103": {
+      "areas": 22,
+      "worse": 22,
+      "crossed": 1,
+      "warning": 0,
+      "check": 22
+    },
+    "6411": {
+      "areas": 22,
+      "worse": 16,
+      "crossed": 4,
+      "warning": 1,
+      "check": 15
+    }
+  },
+  "rows": [
+    {
+      "county_id": "central-finland",
+      "name": "Central Finland",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 55.3,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 55.2,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 73.5,
+          "finland": 54.7
+        }
+      ],
+      "change": 18.2,
+      "worsening": 18.2,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2024: The number of visits behind this figure rose 71% from 2023, so part of the change may be in what was recorded.",
+        "2025: The number of visits behind this figure fell 36% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "central-ostrobothnia",
+      "name": "Central Ostrobothnia",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 49.5,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 65,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 52.9,
+          "finland": 54.7
+        }
+      ],
+      "change": 3.4,
+      "worsening": 3.4,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2024: The number of visits behind this figure fell 23% from 2023, so part of the change may be in what was recorded.",
+        "2025: The number of visits behind this figure more than doubled from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "central-uusimaa",
+      "name": "Central Uusimaa",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 23.7,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 32.8,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 46.7,
+          "finland": 54.7
+        }
+      ],
+      "change": 23,
+      "worsening": 23,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2024: The number of visits behind this figure more than doubled from 2023, so part of the change may be in what was recorded."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "east-uusimaa",
+      "name": "East Uusimaa",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 58.1,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 49.7,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 51.8,
+          "finland": 54.7
+        }
+      ],
+      "change": -6.3,
+      "worsening": -6.3,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2025: The number of visits behind this figure rose 38% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": null,
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "helsinki",
+      "name": "Helsinki",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 66.6,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 66.5,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 75.9,
+          "finland": 54.7
+        }
+      ],
+      "change": 9.3,
+      "worsening": 9.3,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2024: The number of visits behind this figure rose 79% from 2023, so part of the change may be in what was recorded.",
+        "2023: THL reports visits missing from Helsinki's records up to 2023; from 2024 they look complete again."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "kainuu",
+      "name": "Kainuu",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 26,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 27.1,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 38.4,
+          "finland": 54.7
+        }
+      ],
+      "change": 12.4,
+      "worsening": 12.4,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2024: The number of visits behind this figure rose 60% from 2023, so part of the change may be in what was recorded.",
+        "2025: The number of visits behind this figure more than doubled from 2024, so part of the change may be in what was recorded.",
+        "2023: The share rests on about 408 visits, so a few visits move it a lot.",
+        "2024: The share rests on about 653 visits, so a few visits move it a lot."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "kanta-hame",
+      "name": "Kanta-Häme",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 54,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 50.8,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 65.6,
+          "finland": 54.7
+        }
+      ],
+      "change": 11.6,
+      "worsening": 11.6,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2024: The number of visits behind this figure fell 22% from 2023, so part of the change may be in what was recorded.",
+        "2025: The number of visits behind this figure fell 35% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "kymenlaakso",
+      "name": "Kymenlaakso",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 56.6,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 47.8,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 61.8,
+          "finland": 54.7
+        }
+      ],
+      "change": 5.2,
+      "worsening": 5.2,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2025: The number of visits behind this figure fell 23% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "lapland",
+      "name": "Lapland",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 45.3,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 39.5,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 48.6,
+          "finland": 54.7
+        }
+      ],
+      "change": 3.3,
+      "worsening": 3.3,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2024: The number of visits behind this figure rose 50% from 2023, so part of the change may be in what was recorded."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "north-karelia",
+      "name": "North Karelia",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 22.1,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 21.1,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 59.3,
+          "finland": 54.7
+        }
+      ],
+      "change": 37.2,
+      "worsening": 37.2,
+      "kind": "worse",
+      "crossed": true,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2024: The number of visits behind this figure rose 33% from 2023, so part of the change may be in what was recorded.",
+        "2025: The number of visits behind this figure fell 43% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "north-ostrobothnia",
+      "name": "North Ostrobothnia",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 63,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 60.9,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 63.3,
+          "finland": 54.7
+        }
+      ],
+      "change": 0.3,
+      "worsening": 0.3,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2024: The number of visits behind this figure fell 26% from 2023, so part of the change may be in what was recorded.",
+        "2025: The number of visits behind this figure fell 21% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": null,
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "north-savo",
+      "name": "North Savo",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 64.6,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 57.9,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 60.5,
+          "finland": 54.7
+        }
+      ],
+      "change": -4.1,
+      "worsening": -4.1,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2024: The number of visits behind this figure more than doubled from 2023, so part of the change may be in what was recorded."
+      ],
+      "flag": null,
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "ostrobothnia",
+      "name": "Ostrobothnia",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 38,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 43.8,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 56.7,
+          "finland": 54.7
+        }
+      ],
+      "change": 18.7,
+      "worsening": 18.7,
+      "kind": "worse",
+      "crossed": true,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2025: The number of visits behind this figure fell 68% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "paijat-hame",
+      "name": "Päijät-Häme",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 51.2,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 34.3,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 32.7,
+          "finland": 54.7
+        }
+      ],
+      "change": -18.5,
+      "worsening": -18.5,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2024: The number of visits behind this figure rose 50% from 2023, so part of the change may be in what was recorded.",
+        "2025: The number of visits behind this figure rose 50% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": null,
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "pirkanmaa",
+      "name": "Pirkanmaa",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 46.6,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 38.4,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 45.8,
+          "finland": 54.7
+        }
+      ],
+      "change": -0.8,
+      "worsening": -0.8,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2024: The number of visits behind this figure rose 35% from 2023, so part of the change may be in what was recorded."
+      ],
+      "flag": null,
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "satakunta",
+      "name": "Satakunta",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 33.6,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 31.8,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 56.6,
+          "finland": 54.7
+        }
+      ],
+      "change": 23,
+      "worsening": 23,
+      "kind": "worse",
+      "crossed": true,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2025: The number of visits behind this figure fell 50% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "south-karelia",
+      "name": "South Karelia",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 53.3,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 47.7,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 60.3,
+          "finland": 54.7
+        }
+      ],
+      "change": 7,
+      "worsening": 7,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "south-ostrobothnia",
+      "name": "South Ostrobothnia",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 26.1,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 38.6,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 67.8,
+          "finland": 54.7
+        }
+      ],
+      "change": 41.7,
+      "worsening": 41.7,
+      "kind": "worse",
+      "crossed": true,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2025: The number of visits behind this figure fell 48% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "south-savo",
+      "name": "South Savo",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 57.4,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 50,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 69.7,
+          "finland": 54.7
+        }
+      ],
+      "change": 12.3,
+      "worsening": 12.3,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2025: The number of visits behind this figure fell 22% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "southwest-finland",
+      "name": "Southwest Finland",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 52.3,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 39.5,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 57.9,
+          "finland": 54.7
+        }
+      ],
+      "change": 5.6,
+      "worsening": 5.6,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2025: The number of visits behind this figure rose 55% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "vantaa-kerava",
+      "name": "Vantaa and Kerava",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 58,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 70.4,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 85.4,
+          "finland": 54.7
+        }
+      ],
+      "change": 27.4,
+      "worsening": 27.4,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2023: THL reports visits missing from Vantaa's and Kerava's records (about 20% and 30% of visits in 2024).",
+        "2024: THL reports visits missing from Vantaa's and Kerava's records (about 20% and 30% of visits in 2024).",
+        "2025: THL reports visits missing from Vantaa's and Kerava's records (about 20% and 30% of visits in 2024)."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check recording"
+      },
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "west-uusimaa",
+      "name": "West Uusimaa",
+      "indicator_id": "6411",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 48.8,
+          "finland": 48.5
+        },
+        {
+          "year": 2024,
+          "value": 36.3,
+          "finland": 43.4
+        },
+        {
+          "year": 2025,
+          "value": 40,
+          "finland": 54.7
+        }
+      ],
+      "change": -8.8,
+      "worsening": -8.8,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2024: The number of visits behind this figure more than doubled from 2023, so part of the change may be in what was recorded.",
+        "2025: The number of visits behind this figure rose 25% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": null,
+      "source_id": "sotkanet-6411"
+    },
+    {
+      "county_id": "central-finland",
+      "name": "Central Finland",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 79.9,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 80,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 78.1,
+          "finland": 76.8
+        }
+      ],
+      "change": -1.8,
+      "worsening": 1.8,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "central-ostrobothnia",
+      "name": "Central Ostrobothnia",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 71.7,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 72.1,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 71.7,
+          "finland": 76.8
+        }
+      ],
+      "change": 0,
+      "worsening": 0,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "kainuu",
+      "name": "Kainuu",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 77.5,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 74.2,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 75.2,
+          "finland": 76.8
+        }
+      ],
+      "change": -2.3,
+      "worsening": 2.3,
+      "kind": "worse",
+      "crossed": true,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "kanta-hame",
+      "name": "Kanta-Häme",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 85.4,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 88.6,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 88.7,
+          "finland": 76.8
+        }
+      ],
+      "change": 3.3,
+      "worsening": -3.3,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "kymenlaakso",
+      "name": "Kymenlaakso",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 77.3,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 79.4,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 82,
+          "finland": 76.8
+        }
+      ],
+      "change": 4.7,
+      "worsening": -4.7,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "lapland",
+      "name": "Lapland",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 83.4,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 82.7,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 80.2,
+          "finland": 76.8
+        }
+      ],
+      "change": -3.2,
+      "worsening": 3.2,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "north-karelia",
+      "name": "North Karelia",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 76.9,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 75.6,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 76.9,
+          "finland": 76.8
+        }
+      ],
+      "change": 0,
+      "worsening": 0,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "north-ostrobothnia",
+      "name": "North Ostrobothnia",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 76.9,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 77.9,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 78,
+          "finland": 76.8
+        }
+      ],
+      "change": 1.1,
+      "worsening": -1.1,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "north-savo",
+      "name": "North Savo",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 68.6,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 68.6,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 71.5,
+          "finland": 76.8
+        }
+      ],
+      "change": 2.9,
+      "worsening": -2.9,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "ostrobothnia",
+      "name": "Ostrobothnia",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 77.6,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 78.1,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 76.5,
+          "finland": 76.8
+        }
+      ],
+      "change": -1.1,
+      "worsening": 1.1,
+      "kind": "worse",
+      "crossed": true,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "paijat-hame",
+      "name": "Päijät-Häme",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 82.2,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 82.2,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 85.3,
+          "finland": 76.8
+        }
+      ],
+      "change": 3.1,
+      "worsening": -3.1,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "pirkanmaa",
+      "name": "Pirkanmaa",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 70.2,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 70.3,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 72.4,
+          "finland": 76.8
+        }
+      ],
+      "change": 2.2,
+      "worsening": -2.2,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "satakunta",
+      "name": "Satakunta",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 73.2,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 74.9,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 77.7,
+          "finland": 76.8
+        }
+      ],
+      "change": 4.5,
+      "worsening": -4.5,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "south-karelia",
+      "name": "South Karelia",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 82.2,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 85.5,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 88.1,
+          "finland": 76.8
+        }
+      ],
+      "change": 5.9,
+      "worsening": -5.9,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "2025: The number of referrals behind this figure rose 23% from 2024, so part of the change may be in what was recorded."
+      ],
+      "flag": null,
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "south-ostrobothnia",
+      "name": "South Ostrobothnia",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 74.2,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 69.3,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 68.9,
+          "finland": 76.8
+        }
+      ],
+      "change": -5.3,
+      "worsening": 5.3,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "south-savo",
+      "name": "South Savo",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 77.8,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 77.3,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 78.1,
+          "finland": 76.8
+        }
+      ],
+      "change": 0.3,
+      "worsening": -0.3,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "southwest-finland",
+      "name": "Southwest Finland",
+      "indicator_id": "13",
+      "first_year": 2023,
+      "last_year": 2025,
+      "series": [
+        {
+          "year": 2023,
+          "value": 77.6,
+          "finland": 74.8
+        },
+        {
+          "year": 2024,
+          "value": 77.6,
+          "finland": 75.9
+        },
+        {
+          "year": 2025,
+          "value": 78.2,
+          "finland": 76.8
+        }
+      ],
+      "change": 0.6,
+      "worsening": -0.6,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-13"
+    },
+    {
+      "county_id": "central-finland",
+      "name": "Central Finland",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 84.5,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 85.3,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 85.1,
+          "finland": 81.6
+        }
+      ],
+      "change": 0.6,
+      "worsening": -0.6,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "central-ostrobothnia",
+      "name": "Central Ostrobothnia",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 85.2,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 83.7,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 85.4,
+          "finland": 81.6
+        }
+      ],
+      "change": 0.2,
+      "worsening": -0.2,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "central-uusimaa",
+      "name": "Central Uusimaa",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 80.5,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 80.9,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 80.5,
+          "finland": 81.6
+        }
+      ],
+      "change": 0,
+      "worsening": 0,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "east-uusimaa",
+      "name": "East Uusimaa",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 81.4,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 81.7,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 79.8,
+          "finland": 81.6
+        }
+      ],
+      "change": -1.6,
+      "worsening": 1.6,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "helsinki",
+      "name": "Helsinki",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 73.4,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 72.4,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 74.3,
+          "finland": 81.6
+        }
+      ],
+      "change": 0.9,
+      "worsening": -0.9,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "kainuu",
+      "name": "Kainuu",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 85.9,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 84.3,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 84.1,
+          "finland": 81.6
+        }
+      ],
+      "change": -1.8,
+      "worsening": 1.8,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "kanta-hame",
+      "name": "Kanta-Häme",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 83.4,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 82.2,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 83.4,
+          "finland": 81.6
+        }
+      ],
+      "change": 0,
+      "worsening": 0,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "kymenlaakso",
+      "name": "Kymenlaakso",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 83.4,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 83.5,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 82,
+          "finland": 81.6
+        }
+      ],
+      "change": -1.4,
+      "worsening": 1.4,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "lapland",
+      "name": "Lapland",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 82.1,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 83,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 83.8,
+          "finland": 81.6
+        }
+      ],
+      "change": 1.7,
+      "worsening": -1.7,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "north-karelia",
+      "name": "North Karelia",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 84.3,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 83.7,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 84.2,
+          "finland": 81.6
+        }
+      ],
+      "change": -0.1,
+      "worsening": 0.1,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "north-ostrobothnia",
+      "name": "North Ostrobothnia",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 84.9,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 84.6,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 85.6,
+          "finland": 81.6
+        }
+      ],
+      "change": 0.7,
+      "worsening": -0.7,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "north-savo",
+      "name": "North Savo",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 84.8,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 85.7,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 85.1,
+          "finland": 81.6
+        }
+      ],
+      "change": 0.3,
+      "worsening": -0.3,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "ostrobothnia",
+      "name": "Ostrobothnia",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 84.6,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 83.8,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 84.9,
+          "finland": 81.6
+        }
+      ],
+      "change": 0.3,
+      "worsening": -0.3,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "paijat-hame",
+      "name": "Päijät-Häme",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 82.9,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 82.9,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 81.8,
+          "finland": 81.6
+        }
+      ],
+      "change": -1.1,
+      "worsening": 1.1,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "pirkanmaa",
+      "name": "Pirkanmaa",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 82.3,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 83.4,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 83.5,
+          "finland": 81.6
+        }
+      ],
+      "change": 1.2,
+      "worsening": -1.2,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "satakunta",
+      "name": "Satakunta",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 84.8,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 85.4,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 84.9,
+          "finland": 81.6
+        }
+      ],
+      "change": 0.1,
+      "worsening": -0.1,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "south-karelia",
+      "name": "South Karelia",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 82.5,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 83.2,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 83.2,
+          "finland": 81.6
+        }
+      ],
+      "change": 0.7,
+      "worsening": -0.7,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "south-ostrobothnia",
+      "name": "South Ostrobothnia",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 85.1,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 85,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 85,
+          "finland": 81.6
+        }
+      ],
+      "change": -0.1,
+      "worsening": 0.1,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "south-savo",
+      "name": "South Savo",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 84,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 83.9,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 82.2,
+          "finland": 81.6
+        }
+      ],
+      "change": -1.8,
+      "worsening": 1.8,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "southwest-finland",
+      "name": "Southwest Finland",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 83.4,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 82.4,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 82.7,
+          "finland": 81.6
+        }
+      ],
+      "change": -0.7,
+      "worsening": 0.7,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "vantaa-kerava",
+      "name": "Vantaa and Kerava",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 76.8,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 76.2,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 76.7,
+          "finland": 81.6
+        }
+      ],
+      "change": -0.1,
+      "worsening": 0.1,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "west-uusimaa",
+      "name": "West Uusimaa",
+      "indicator_id": "3621",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 76.5,
+          "finland": 81.5
+        },
+        {
+          "year": 2023,
+          "value": 76.2,
+          "finland": 81.4
+        },
+        {
+          "year": 2024,
+          "value": 76.1,
+          "finland": 81.6
+        }
+      ],
+      "change": -0.4,
+      "worsening": 0.4,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3621"
+    },
+    {
+      "county_id": "central-finland",
+      "name": "Central Finland",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 80,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 77.6,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 76.5,
+          "finland": 73.5
+        }
+      ],
+      "change": -3.5,
+      "worsening": 3.5,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "central-ostrobothnia",
+      "name": "Central Ostrobothnia",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 76.2,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 73.2,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 73.3,
+          "finland": 73.5
+        }
+      ],
+      "change": -2.9,
+      "worsening": 2.9,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "central-uusimaa",
+      "name": "Central Uusimaa",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 78.8,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 73.3,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 74,
+          "finland": 73.5
+        }
+      ],
+      "change": -4.8,
+      "worsening": 4.8,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "east-uusimaa",
+      "name": "East Uusimaa",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 75.7,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 72.2,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 72,
+          "finland": 73.5
+        }
+      ],
+      "change": -3.7,
+      "worsening": 3.7,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "helsinki",
+      "name": "Helsinki",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 73.2,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 69.7,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 69.6,
+          "finland": 73.5
+        }
+      ],
+      "change": -3.6,
+      "worsening": 3.6,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "kainuu",
+      "name": "Kainuu",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 79.4,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 77.3,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 76.5,
+          "finland": 73.5
+        }
+      ],
+      "change": -2.9,
+      "worsening": 2.9,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "kanta-hame",
+      "name": "Kanta-Häme",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 78.4,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 75.1,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 74.3,
+          "finland": 73.5
+        }
+      ],
+      "change": -4.1,
+      "worsening": 4.1,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "kymenlaakso",
+      "name": "Kymenlaakso",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 73.8,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 69.5,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 70,
+          "finland": 73.5
+        }
+      ],
+      "change": -3.8,
+      "worsening": 3.8,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "lapland",
+      "name": "Lapland",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 77.6,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 74.9,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 73.7,
+          "finland": 73.5
+        }
+      ],
+      "change": -3.9,
+      "worsening": 3.9,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "north-karelia",
+      "name": "North Karelia",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 78.3,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 76.3,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 73.2,
+          "finland": 73.5
+        }
+      ],
+      "change": -5.1,
+      "worsening": 5.1,
+      "kind": "worse",
+      "crossed": true,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "north-ostrobothnia",
+      "name": "North Ostrobothnia",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 78.9,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 76.1,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 75.6,
+          "finland": 73.5
+        }
+      ],
+      "change": -3.3,
+      "worsening": 3.3,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "north-savo",
+      "name": "North Savo",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 78.6,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 77.3,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 75.4,
+          "finland": 73.5
+        }
+      ],
+      "change": -3.2,
+      "worsening": 3.2,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "ostrobothnia",
+      "name": "Ostrobothnia",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 78.1,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 75.8,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 75.9,
+          "finland": 73.5
+        }
+      ],
+      "change": -2.2,
+      "worsening": 2.2,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "paijat-hame",
+      "name": "Päijät-Häme",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 79.4,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 76.2,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 75.2,
+          "finland": 73.5
+        }
+      ],
+      "change": -4.2,
+      "worsening": 4.2,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "pirkanmaa",
+      "name": "Pirkanmaa",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 77.8,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 75.6,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 74.3,
+          "finland": 73.5
+        }
+      ],
+      "change": -3.5,
+      "worsening": 3.5,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "satakunta",
+      "name": "Satakunta",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 75.8,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 74.7,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 72.6,
+          "finland": 73.5
+        }
+      ],
+      "change": -3.2,
+      "worsening": 3.2,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "south-karelia",
+      "name": "South Karelia",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 78.8,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 74.4,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 74,
+          "finland": 73.5
+        }
+      ],
+      "change": -4.8,
+      "worsening": 4.8,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "south-ostrobothnia",
+      "name": "South Ostrobothnia",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 77.4,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 74.9,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 74.6,
+          "finland": 73.5
+        }
+      ],
+      "change": -2.8,
+      "worsening": 2.8,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "south-savo",
+      "name": "South Savo",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 81.3,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 77.8,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 76.9,
+          "finland": 73.5
+        }
+      ],
+      "change": -4.4,
+      "worsening": 4.4,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "southwest-finland",
+      "name": "Southwest Finland",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 77.3,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 74.1,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 73.5,
+          "finland": 73.5
+        }
+      ],
+      "change": -3.8,
+      "worsening": 3.8,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "vantaa-kerava",
+      "name": "Vantaa and Kerava",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 75.2,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 71.6,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 71.3,
+          "finland": 73.5
+        }
+      ],
+      "change": -3.9,
+      "worsening": 3.9,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "west-uusimaa",
+      "name": "West Uusimaa",
+      "indicator_id": "6103",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 75.9,
+          "finland": 77.3
+        },
+        {
+          "year": 2023,
+          "value": 72.7,
+          "finland": 74.4
+        },
+        {
+          "year": 2024,
+          "value": 71.5,
+          "finland": 73.5
+        }
+      ],
+      "change": -4.4,
+      "worsening": 4.4,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "care",
+      "trend_reasons": [
+        "The bowel screening programme is still adding age groups, so years are not fully comparable."
+      ],
+      "flag": {
+        "kind": "check",
+        "label": "Possible, check comparability"
+      },
+      "source_id": "sotkanet-6103"
+    },
+    {
+      "county_id": "central-finland",
+      "name": "Central Finland",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 71.7,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 67.6,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 70.7,
+          "finland": 73.4
+        }
+      ],
+      "change": -1,
+      "worsening": 1,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "central-ostrobothnia",
+      "name": "Central Ostrobothnia",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 75.1,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 71.9,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 69.2,
+          "finland": 73.4
+        }
+      ],
+      "change": -5.9,
+      "worsening": 5.9,
+      "kind": "worse",
+      "crossed": true,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "central-uusimaa",
+      "name": "Central Uusimaa",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 73.5,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 74.5,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 75.9,
+          "finland": 73.4
+        }
+      ],
+      "change": 2.4,
+      "worsening": -2.4,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "east-uusimaa",
+      "name": "East Uusimaa",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 73.4,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 75.8,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 75.7,
+          "finland": 73.4
+        }
+      ],
+      "change": 2.3,
+      "worsening": -2.3,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "helsinki",
+      "name": "Helsinki",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 69.8,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 71.7,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 71.4,
+          "finland": 73.4
+        }
+      ],
+      "change": 1.6,
+      "worsening": -1.6,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "kainuu",
+      "name": "Kainuu",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 74.9,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 76.4,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 78.5,
+          "finland": 73.4
+        }
+      ],
+      "change": 3.6,
+      "worsening": -3.6,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "kanta-hame",
+      "name": "Kanta-Häme",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 72.4,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 69.1,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 70.4,
+          "finland": 73.4
+        }
+      ],
+      "change": -2,
+      "worsening": 2,
+      "kind": "worse",
+      "crossed": true,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "kymenlaakso",
+      "name": "Kymenlaakso",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 73.9,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 76.5,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 76.5,
+          "finland": 73.4
+        }
+      ],
+      "change": 2.6,
+      "worsening": -2.6,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "lapland",
+      "name": "Lapland",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 72.4,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 71.8,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 79.9,
+          "finland": 73.4
+        }
+      ],
+      "change": 7.5,
+      "worsening": -7.5,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "north-karelia",
+      "name": "North Karelia",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 66.5,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 64.8,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 68,
+          "finland": 73.4
+        }
+      ],
+      "change": 1.5,
+      "worsening": -1.5,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "north-ostrobothnia",
+      "name": "North Ostrobothnia",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 73.6,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 73.6,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 73.6,
+          "finland": 73.4
+        }
+      ],
+      "change": 0,
+      "worsening": 0,
+      "kind": "same",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "north-savo",
+      "name": "North Savo",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 66.1,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 67.4,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 70,
+          "finland": 73.4
+        }
+      ],
+      "change": 3.9,
+      "worsening": -3.9,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "ostrobothnia",
+      "name": "Ostrobothnia",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 73.8,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 76.5,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 72.4,
+          "finland": 73.4
+        }
+      ],
+      "change": -1.4,
+      "worsening": 1.4,
+      "kind": "worse",
+      "crossed": true,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "paijat-hame",
+      "name": "Päijät-Häme",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 71.4,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 70.4,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 68.9,
+          "finland": 73.4
+        }
+      ],
+      "change": -2.5,
+      "worsening": 2.5,
+      "kind": "worse",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "pirkanmaa",
+      "name": "Pirkanmaa",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 72,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 70.8,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 71.5,
+          "finland": 73.4
+        }
+      ],
+      "change": -0.5,
+      "worsening": 0.5,
+      "kind": "same",
+      "crossed": true,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Now falls short of Finland overall"
+      },
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "satakunta",
+      "name": "Satakunta",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 73,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 72.1,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 71.3,
+          "finland": 73.4
+        }
+      ],
+      "change": -1.7,
+      "worsening": 1.7,
+      "kind": "worse",
+      "crossed": true,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": {
+        "kind": "warning",
+        "label": "Getting worse"
+      },
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "south-karelia",
+      "name": "South Karelia",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 70.9,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 75.7,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 75.8,
+          "finland": 73.4
+        }
+      ],
+      "change": 4.9,
+      "worsening": -4.9,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "south-ostrobothnia",
+      "name": "South Ostrobothnia",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 76,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 78.7,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 82.3,
+          "finland": 73.4
+        }
+      ],
+      "change": 6.3,
+      "worsening": -6.3,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "south-savo",
+      "name": "South Savo",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 77.4,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 83.2,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 82.3,
+          "finland": 73.4
+        }
+      ],
+      "change": 4.9,
+      "worsening": -4.9,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "southwest-finland",
+      "name": "Southwest Finland",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 74,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 77.4,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 77.6,
+          "finland": 73.4
+        }
+      ],
+      "change": 3.6,
+      "worsening": -3.6,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "vantaa-kerava",
+      "name": "Vantaa and Kerava",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 68.6,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 71.1,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 70.7,
+          "finland": 73.4
+        }
+      ],
+      "change": 2.1,
+      "worsening": -2.1,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    },
+    {
+      "county_id": "west-uusimaa",
+      "name": "West Uusimaa",
+      "indicator_id": "3620",
+      "first_year": 2022,
+      "last_year": 2024,
+      "series": [
+        {
+          "year": 2022,
+          "value": 71.7,
+          "finland": 71.8
+        },
+        {
+          "year": 2023,
+          "value": 73.2,
+          "finland": 72.8
+        },
+        {
+          "year": 2024,
+          "value": 73.6,
+          "finland": 73.4
+        }
+      ],
+      "change": 1.9,
+      "worsening": -1.9,
+      "kind": "better",
+      "crossed": false,
+      "trend_level": "solid",
+      "trend_reasons": [],
+      "flag": null,
+      "source_id": "sotkanet-3620"
+    }
+  ]
+}

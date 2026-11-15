@@ -2,18 +2,39 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* The theme is dark by default and has no `.dark` class anywhere. This line keeps every
+/* One light theme ("cream paper"), no toggle and no `.dark` class anywhere. This line keeps every
    `dark:` class (shadcn leftovers, app/sources) inert; without it Tailwind would switch them
    on for viewers whose system is dark. Do not remove it and do not add a `dark` class. */
 @custom-variant dark (&:is(.dark *));
 
+/* The palette, by name. `static` so every variable exists on :root even when no utility uses it:
+   bg-keylime-wash, text-forest-ink and var(--color-forest-ink) all work. Forest Ink and Charcoal
+   are the only text colours; keylime, mint, sage and slate are surfaces and never text. */
+@theme static {
+  --color-forest-ink: #0f3e17;
+  --color-forest-shadow: #0c2f10;
+  --color-cream-paper: #fffefc;
+  --color-keylime-wash: #e1f4df;
+  --color-mint-veil: #cfe7d3;
+  --color-sage-mist: #b1dbb8;
+  --color-slate-hush: #b6ced5;
+  --color-charcoal: #222222;
+  --color-border-mist: #efeeeb;
+
+  /* Body copy is never below 16px: text-sm is the body size here, not a smaller one. */
+  --text-sm: 1rem;
+  --text-sm--line-height: 1.5rem;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-bricolage);
-  --font-display: var(--font-bricolage);
+  /* One sans (Inter) and one serif (Cormorant Garamond, weight 300 only). No mono face: figures
+     are Inter with tabular numerals. --font-sans and --font-display are set on <html> by next/font. */
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), Georgia, "Times New Roman", serif;
+  --font-heading: var(--font-display), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 
   /* FirstLine tokens: see components/ui/README.md */
   --color-frame: var(--frame);
@@ -68,14 +89,14 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --radius-sm: 0.4375rem; /* 7px: nav items, small controls */
+  --radius-md: 0.6875rem; /* 11px */
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-  --radius-frame: 1.25rem;
+  --radius-frame: 0.875rem;
   --radius-panel: 0.875rem;
 
   /* Raw amber classes (used by app/sources for a note) resolve to the neutral raised surface:
@@ -86,89 +107,86 @@
 }
 
 :root {
-  /* One dark theme, no toggle. Form controls and scrollbars follow it. */
-  color-scheme: dark;
+  /* One light theme, no toggle. Form controls and scrollbars follow it. */
+  color-scheme: light;
 
-  /* The numeral face: Geist (sans) with tabular figures. Geist Mono has only a slashed zero and
-     no feature to change it, so figures that must read plainly at display size are set in the
-     sans. Source chips and bare axis numerals keep the mono (type-mark). */
+  /* Figures are Inter with tabular numerals, at every size. Chips use the same face. */
   --font-numeral: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-chip: var(--font-geist-mono), ui-monospace, monospace;
+  --font-chip: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 
-  /* Surfaces, deepest to highest: near-black, neutral, only barely cool, so the page never
-     reads as blue. Three levels must read at a glance: page, frame, panel. Each is a clear
-     step above the last and edged with a hairline; depth never comes from shadows. */
-  --background: oklch(0.115 0.003 255); /* page    #050506 */
-  --frame: oklch(0.172 0.003 255); /*      frame   #0f1011 */
-  --card: oklch(0.215 0.004 255); /*       panel   #18191b */
-  --muted: oklch(0.25 0.004 255); /*       raised  #202123: inputs, chips, inner blocks */
-  --accent: oklch(0.29 0.004 255); /*      raised, hovered #292b2d: also the hover of a row on a panel */
-  --popover: var(--muted);
-  --secondary: var(--muted);
+  /* Surfaces, lightest to heaviest. Depth comes from stacking them, never from a shadow:
+     page (cream) → panel (keylime) → raised block, input, chip (mint) → hovered or pressed (sage).
+     Slate Hush (bg-slate-hush) is the cool counter-panel for data previews, with cream cards on it. */
+  --background: var(--color-cream-paper);
+  --frame: var(--color-keylime-wash);
+  --card: var(--color-keylime-wash);
+  --muted: var(--color-mint-veil);
+  --accent: var(--color-sage-mist);
+  --popover: var(--color-cream-paper);
+  --secondary: var(--color-mint-veil);
 
-  /* Three text roles, all AA on every surface above. */
-  --foreground: oklch(0.94 0.003 255); /*       primary   #eaebed, also the Finland line */
-  --muted-foreground: oklch(0.75 0.006 255); /* secondary #abaeb2 */
-  --faint: oklch(0.69 0.006 255); /*            muted     #999c9f: placeholders, axis ticks */
+  /* Text. Charcoal for body, Forest Ink for headings, links and buttons, and two quieter greys
+     that still pass AA (4.5:1) on every surface above, sage and slate included. */
+  --foreground: var(--color-charcoal);
+  --muted-foreground: #454c46; /* 8.8:1 on cream, 5.8:1 on sage, 5.4:1 on slate */
+  --faint: #4f564f; /*            7.5:1 on cream, 4.9:1 on sage, 4.6:1 on slate: placeholders, axis ticks */
   --card-foreground: var(--foreground);
   --popover-foreground: var(--foreground);
   --secondary-foreground: var(--foreground);
   --accent-foreground: var(--foreground);
 
-  /* Hairlines: the text colour at 10 to 14%, so every surface step also has an edge. */
-  --frame-border: oklch(0.94 0.003 255 / 10%);
-  --border: oklch(0.94 0.003 255 / 12%);
-  --input: oklch(0.94 0.003 255 / 14%);
-  /* Empty part of a bar, so the 100% end is visible on a panel (#2d2e2f on a panel). A tinted
-     red fill is 1.9:1 against it and the solid red 1.8:1 against the tint. */
-  --track: oklch(0.94 0.003 255 / 12%);
+  /* Hairlines. Border Mist edges things on cream; on the green surfaces it would vanish, so
+     panels and rows use Forest Ink at 14%. Fields need a 3:1 edge (WCAG 1.4.11). */
+  --frame-border: var(--color-border-mist);
+  --border: color-mix(in srgb, var(--color-forest-ink) 14%, transparent);
+  --input: #6c7f6f; /* 4.2:1 on cream, 3.7:1 on keylime, 3.3:1 on mint */
+  /* Empty part of a bar, so its 100% end is visible on a panel. */
+  --track: color-mix(in srgb, var(--color-forest-ink) 16%, transparent);
 
-  /* The one accent, a cold glacier cyan. It is the identity colour and it is used for exactly
-     five things: the logo mark, the active nav underline, the primary button fill, text links
-     and the focus ring. Nothing else. It sits far from the red and amber status hues and is
-     blue-leaning (B above G in sRGB), so it can never read as "green = good". */
-  --brand: oklch(0.8 0.1 212); /*      #67cfe3, 11:1 on the page */
-  --brand-ink: oklch(0.85 0.085 212); /* #89ddee, link text */
-  --brand-soft: oklch(0.8 0.1 212 / 12%);
-  --ring: var(--brand);
+  /* Forest Ink is the one ink: logo, active nav item, primary button fill, links, focus ring. */
+  --brand: var(--color-forest-ink);
+  --brand-ink: var(--color-forest-ink);
+  --brand-soft: color-mix(in srgb, var(--color-forest-ink) 10%, transparent);
+  --ring: var(--color-forest-ink);
 
-  /* Primary action: the accent as a fill, with the page colour as its text (AA). */
-  --primary: var(--brand);
-  --primary-foreground: oklch(0.115 0.003 255);
+  /* Primary action: Forest Ink fill, Cream Paper text (12.1:1). Hover is Forest Shadow. */
+  --primary: var(--color-forest-ink);
+  --primary-foreground: var(--color-cream-paper);
 
-  /* Data status, the only saturated colour on any screen, tuned to sit in the dark ramp.
-     red = worse than Finland, slate (token status-amber) = at or better than Finland's level, grey = no public data.
-     Fill for bars and marks, soft + border for chips, ink for text (AA on every surface). */
-  --status-red: oklch(0.63 0.185 25); /*      #e34f4c */
-  --status-red-soft: oklch(0.63 0.185 25 / 14%);
-  --status-red-border: oklch(0.63 0.185 25 / 36%);
-  --status-red-ink: oklch(0.75 0.135 23); /*  #f88985 */
-  /* The tinted part of a red bar (the share up to Finland's line), as an opaque colour so a
-     bar and the key's swatch are the same pixels. */
-  --status-red-tint: color-mix(in oklch, var(--status-red) 56%, var(--card));
-  /* "At or better than Finland's level" is a cool slate (hue 255), so red is the only alarm
-     colour on any screen. The token name status-amber is historical and the data value stays
-     "amber"; nothing here is amber any more. One hue for marker, bar, border and text. */
-  --status-amber: oklch(0.74 0.045 255); /*   marker */
-  --status-amber-soft: oklch(0.68 0.045 255 / 14%); /* dark slate tint behind chips */
-  --status-amber-border: oklch(0.68 0.045 255 / 42%);
-  --status-amber-ink: oklch(0.82 0.04 255); /* text */
-  /* Slate as a bar fill: a step quieter than the marker. */
-  --status-amber-bar: oklch(0.68 0.045 255);
-  --status-grey: oklch(0.56 0.005 255); /*    #727577 */
-  --status-grey-soft: oklch(0.94 0.003 255 / 5%);
-  --status-grey-border: oklch(0.94 0.003 255 / 18%);
+  /* Data status: the only hues outside the greens, and never colour alone (a text label goes
+     with every use). The alarm colour is a rust (terracotta), not a signal red: it reads as
+     urgent next to the greens without fighting them, and its tint is a warm clay, not a pink.
+     The token is still called status-red. red = slower than Finland overall, slate (token status-amber, a historical name:
+     the data value stays "amber") = the same as or better than Finland overall, grey = no public data.
+     Fill for bars and marks (3:1 or more on cream, keylime, mint and sage), soft + border for
+     chips, ink for text (AA on every surface). */
+  --status-red: #ad4a22; /*      mark: 5.5:1 on cream, 4.8:1 on keylime, 3.6:1 on sage */
+  --status-red-soft: color-mix(in srgb, #ad4a22 13%, transparent);
+  --status-red-border: color-mix(in srgb, #ad4a22 50%, transparent);
+  --status-red-ink: #7c3110; /*  text: 9:1 on cream, 7.9:1 on keylime, 5.9:1 on sage */
+  /* The tinted part of a red bar (the share up to Finland's line), opaque so a bar and the
+     key's swatch are the same pixels. */
+  --status-red-tint: color-mix(in srgb, var(--status-red) 42%, var(--card));
+  --status-amber: #3f6672; /*    marker: 6.2:1 on cream, 5.4:1 on keylime */
+  --status-amber-soft: color-mix(in srgb, #4f7682 16%, transparent);
+  --status-amber-border: color-mix(in srgb, #4f7682 50%, transparent);
+  --status-amber-ink: #27444e; /* text: 10.3:1 on cream, 9:1 on keylime */
+  --status-amber-bar: #4f7682; /* bar fill: 4.9:1 on cream, 4.3:1 on keylime */
+  --status-grey: #686e69; /*     5.2:1 on cream, 4.5:1 on keylime */
+  --status-grey-soft: color-mix(in srgb, var(--color-charcoal) 5%, transparent);
+  --status-grey-border: color-mix(in srgb, var(--color-charcoal) 38%, transparent);
   --status-grey-ink: var(--muted-foreground);
   --trend-down: var(--muted-foreground);
   /* Errors are stated in words and in the primary text colour; this is only a fallback. */
   --destructive: var(--status-red-ink);
 
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.7 0 0);
-  --chart-3: oklch(0.56 0 0);
-  --chart-4: oklch(0.44 0 0);
-  --chart-5: oklch(0.33 0 0);
-  --radius: 0.625rem;
+  /* Chart ramp, darkest first: greens for ordered steps, slate for a second series. */
+  --chart-1: #0f3e17;
+  --chart-2: #2f6b3a;
+  --chart-3: #5f9a68;
+  --chart-4: #4f7682;
+  --chart-5: #b6ced5;
+  --radius: 0.875rem; /* 14px: cards and buttons */
   --sidebar: var(--frame);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
@@ -185,18 +203,19 @@
   }
   html {
     @apply font-sans;
-    font-feature-settings: "ss01" off;
   }
   body {
     @apply bg-background text-foreground;
     text-rendering: optimizeLegibility;
   }
-  /* Headings use the display face by default (utilities still override). */
+  /* Headings use the display serif by default, light and in Forest Ink (utilities still
+     override). The serif is weight 300 only: never bold. */
   h1,
-  h2,
-  h3 {
-    font-family: var(--font-bricolage), var(--font-sans), sans-serif;
-    letter-spacing: -0.015em;
+  h2 {
+    font-family: var(--font-display), Georgia, serif;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--color-forest-ink);
   }
   /* Disclosures draw their own chevron (components/ui/disclosure.tsx). */
   summary {
@@ -206,8 +225,8 @@
     display: none;
   }
   ::selection {
-    background: oklch(0.94 0.003 255 / 22%);
-    color: var(--foreground);
+    background: var(--color-sage-mist);
+    color: var(--color-charcoal);
   }
 }
 
@@ -215,15 +234,26 @@
    so no page has a heavier h1 than the others. Unlayered on purpose: it has to beat the raw
    font-semibold / tracking-tight utilities. Headings that opt into the text face keep theirs. */
 h1:not([class*="type-"], .font-sans) {
-  font-weight: 500;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(2rem, 1.6rem + 1.6vw, 2.5rem);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
   text-wrap: balance;
 }
 h2:not([class*="type-"], .font-sans) {
-  font-weight: 560;
-  letter-spacing: -0.015em;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(1.5rem, 1.3rem + 0.8vw, 1.75rem);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
   text-wrap: balance;
+}
+
+/* No box-shadow anywhere: depth is layered surfaces. Focus rings stay (Tailwind draws them in a
+   separate variable), only the shadow utilities are switched off. */
+[class*="shadow"] {
+  --tw-shadow: 0 0 #0000 !important;
 }
 
 /* ---- Layout: one container for the header, the footer and every page. ---- */
@@ -231,79 +261,101 @@ h2:not([class*="type-"], .font-sans) {
   @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
 }
 
-/* ---- Type scale. Use these instead of ad-hoc sizes. Weights stay at 600 or below. ---- */
+/* ---- Type scale. Use these instead of ad-hoc sizes. ----
+   The serif (display, page, title, statement) is always weight 300 and Forest Ink. Everything
+   else is Inter at 300, 400 or 600. Uppercase is for type-eyebrow only. */
 @utility type-display {
-  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
-  font-size: clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem);
-  line-height: 1.04;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2.5rem, 1.7rem + 3.2vw, 3.5rem); /* 40px to 56px */
+  line-height: 1.15;
   letter-spacing: -0.03em;
-  font-weight: 500;
+  font-weight: 300;
+  color: var(--color-forest-ink);
   text-wrap: balance;
 }
 @utility type-page {
-  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
-  font-size: clamp(1.875rem, 1.5rem + 1.5vw, 2.5rem);
-  line-height: 1.1;
-  letter-spacing: -0.025em;
-  font-weight: 500;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2rem, 1.6rem + 1.6vw, 2.5rem); /* 32px to 40px */
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  font-weight: 300;
+  color: var(--color-forest-ink);
   text-wrap: balance;
 }
-/* Section titles (frame headers): 22px. Item titles inside a section use type-heading (17px),
-   so a section always outranks what it holds. */
+/* Section titles: 28px from a tablet up, 24px on a phone. Item titles inside a section use
+   type-heading (sans, 18px), so a section always outranks what it holds. */
 @utility type-title {
-  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
-  /* 22px from a tablet up; 19px on a phone, so a section title stays on one line. */
-  font-size: clamp(1.1875rem, 1rem + 0.75vw, 1.375rem);
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  font-weight: 600;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.5rem, 1.3rem + 0.8vw, 1.75rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  font-weight: 300;
+  color: var(--color-forest-ink);
   text-wrap: balance;
+}
+/* One sentence set large and light: a briefing statement, a pull line. 23px. */
+@utility type-statement {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.4375rem;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  font-weight: 300;
+  color: var(--color-forest-ink);
+  text-wrap: pretty;
 }
 @utility type-heading {
-  font-family: var(--font-bricolage), var(--font-sans), sans-serif;
-  font-size: 1.0625rem;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.125rem;
   line-height: 1.3;
-  letter-spacing: -0.01em;
-  font-weight: 560;
+  letter-spacing: 0;
+  font-weight: 600;
 }
 @utility type-lede {
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   line-height: 1.6;
   text-wrap: pretty;
 }
-@utility type-caption {
-  font-size: 0.8125rem;
-  line-height: 1.25rem;
-}
-/* Notes on a chart or a card ("via Exa", "No indicator, so nothing to draw", dates): the text
-   face, 12px. Pair with text-muted-foreground. Words are never mono; a number inside a note
-   takes `figure`. */
-@utility type-note {
-  font-size: 0.75rem;
-  line-height: 1rem;
-  font-variant-numeric: tabular-nums;
-}
-/* Mono, 11px: source chips and bare axis numerals (0%, 100%, years, tick values). */
-@utility type-mark {
-  font-family: var(--font-chip);
+/* The one uppercase style: a small label above a section or a card. */
+@utility type-eyebrow {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   font-size: 0.6875rem;
   line-height: 1rem;
-  letter-spacing: 0;
-  word-spacing: -0.25em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-forest-ink);
+}
+/* Secondary matter around the body copy (meta lines, table notes): 16px, the body floor. */
+@utility type-caption {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+/* Notes on a chart or a card ("via Exa", "No indicator, so nothing to draw", dates): 16px, the body floor.
+   Pair with text-muted-foreground. A number inside a note takes `figure`. */
+@utility type-note {
+  font-size: 1rem;
+  line-height: 1.375rem;
   font-variant-numeric: tabular-nums;
 }
-/* Numerals. One rule: a number inside a line of text is `figure` (sans, tabular); a standalone
-   key figure is `numeral` (a size on top). Both are Geist with tabular figures, so zeros are
-   plain and columns align. Source chips stay mono (type-mark).
-   `numeral`: key figures. Pair with a text-* size (20px to 80px). The tracking tightens with
-   the size, so "85.4%" at 60px is set tight and a 20px figure stays open. */
+/* 12px: source chips and bare axis numerals (0%, 100%, years, tick values). */
+@utility type-mark {
+  font-family: var(--font-chip);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+/* Numerals. One rule: a number inside a line of text is `figure` (tabular); a standalone
+   key figure is `numeral` (a size on top). Both are Inter with tabular lining figures, so
+   columns align.
+   `numeral`: key figures. Pair with a text-* size (20px to 80px). Light (300) sits right next
+   to the light serif at display sizes; add font-normal below 28px. */
 @utility numeral {
   font-family: var(--font-numeral);
   font-variant-numeric: tabular-nums lining-nums;
-  font-feature-settings: "zero" 0;
-  letter-spacing: calc(-0.05em + 0.8px);
-  font-weight: 500;
-  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-weight: 300;
+  line-height: 1;
 }
 /* `figure`: a data number at text size (table values, deltas, "54.7%" in a label, trend values).
    Sets the face only: size, weight and colour come from where it sits. Wrap the number and its
@@ -313,11 +365,11 @@ h2:not([class*="type-"], .font-sans) {
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* Legend labels (BarKey) and the short notes under a chart: 13px, one step up from muted. */
+/* Legend labels (BarKey) and the short notes under a chart: 16px. */
 @utility type-legend {
-  font-size: 0.8125rem;
-  line-height: 1.25rem;
-  color: color-mix(in oklch, var(--foreground), var(--muted-foreground) 45%);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--muted-foreground);
 }
 
 /* The shortfall of a referral bar that stops short of Finland's line: faded red hatching on the
@@ -325,10 +377,10 @@ h2:not([class*="type-"], .font-sans) {
 @utility bg-shortfall {
   background-image: repeating-linear-gradient(
     135deg,
-    color-mix(in oklch, var(--status-red) 70%, transparent) 0 1.5px,
+    color-mix(in srgb, var(--status-red) 80%, transparent) 0 1.5px,
     transparent 1.5px 5px
   );
-  background-color: color-mix(in oklch, var(--status-red) 14%, transparent);
+  background-color: color-mix(in srgb, var(--status-red) 14%, transparent);
 }
 
 /* Empty measure track: "no public data" drawn as absence, not as a zero. */
@@ -340,30 +392,432 @@ h2:not([class*="type-"], .font-sans) {
   );
 }
 
-/* ---- Motion: one curve, one load moment (bars grow in). Final state is the base style. ---- */
+/* ---- Motion: one curve, two volume levels. Mirrors lib/motion.ts; keep the two in step. ----
+   Quiet is the default (detail pages). `motion-loud` on an ancestor switches a subtree to the
+   louder set (the guided briefing). Only opacity and transform move. The final state is always
+   the base style, so the page is complete before any script runs. */
+:root {
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-rise: 320ms;
+  --motion-stagger: 60ms;
+  --motion-bar: 500ms;
+  --motion-distance: 8px;
+  --motion-open: 280ms;
+}
+.motion-loud {
+  --motion-rise: 500ms;
+  --motion-stagger: 120ms;
+  --motion-bar: 700ms;
+  --motion-distance: 14px;
+  --motion-open: 360ms;
+}
+
 @keyframes fl-bar-grow {
   from {
     transform: scaleX(0);
   }
 }
-@keyframes fl-fade-up {
+@keyframes fl-rise {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(var(--motion-distance));
+  }
+}
+@keyframes fl-fade {
+  from {
+    opacity: 0;
   }
 }
 @utility animate-bar-grow {
   transform-origin: left center;
-  animation: fl-bar-grow 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: fl-bar-grow var(--motion-bar) var(--motion-ease) both;
   animation-delay: calc(var(--i, 0) * 14ms);
 }
 @utility animate-fade-up {
-  animation: fl-fade-up 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--i, 0) * 50ms);
+  animation: fl-rise var(--motion-rise) var(--motion-ease) both;
+  animation-delay: calc(var(--i, 0) * var(--motion-stagger));
 }
+/* A thin Forest Ink rule that draws itself from the left edge: the one decoration. */
+@utility animate-line-in {
+  transform-origin: left center;
+  animation: fl-bar-grow var(--motion-bar) var(--motion-ease) both;
+  animation-delay: calc(var(--i, 0) * var(--motion-stagger));
+}
+
+/* Reveal (components/motion/reveal.tsx). "load": plays as the page paints. "wait": below the
+   fold, held back by script until it scrolls into view. "in": playing or played. "hold": a step
+   that a button has not shown yet (hidden from screen readers too). Unlayered on purpose: the
+   waiting states must beat the animate-* utilities on the bars inside. */
+[data-reveal] {
+  animation: fl-rise var(--motion-rise) var(--motion-ease) both;
+  animation-delay: calc(var(--i, 0) * var(--motion-stagger));
+}
+[data-reveal="wait"],
+[data-reveal="hold"] {
+  animation: none;
+  opacity: 0;
+}
+[data-reveal="hold"] {
+  visibility: hidden;
+}
+/* AnimatedBar, and any bar inside a Reveal: the fill grows when its container plays. */
+[data-bar-fill] {
+  transform-origin: left center;
+  animation: fl-bar-grow var(--motion-bar) var(--motion-ease) both;
+  animation-delay: calc(var(--i, 0) * var(--motion-stagger));
+}
+[data-bar="wait"] [data-bar-fill],
+[data-reveal="wait"] [data-bar-fill],
+[data-reveal="hold"] [data-bar-fill],
+[data-reveal="wait"] .animate-bar-grow,
+[data-reveal="hold"] .animate-bar-grow,
+[data-reveal="wait"] .animate-line-in,
+[data-reveal="hold"] .animate-line-in {
+  animation: none;
+  transform: scaleX(0);
+}
+/* AnimatedNumber: the final value fades in with the page, so the count that script starts a
+   moment later never follows a flash of the finished number. */
+[data-number-final] {
+  animation: fl-fade var(--motion-rise) var(--motion-ease) both;
+}
+
+/* ScrollStory (components/motion/scroll-story.tsx). While a story is told, picture parts marked
+   data-story-step are future, current or past. Future parts lose their colour (never their
+   contrast: nothing fades, so every word stays AA); the current part gets a Forest Ink ring and
+   the keylime wash; past parts are back to normal. With no state (server HTML, no script,
+   reduced motion, phones, print) every part is in its final, normal state. */
+[data-story-step] {
+  transition:
+    filter var(--motion-rise) var(--motion-ease),
+    background-color var(--motion-rise) var(--motion-ease),
+    box-shadow var(--motion-rise) var(--motion-ease);
+}
+[data-story-state="future"] {
+  filter: saturate(0);
+}
+:not(svg *)[data-story-state="current"] {
+  box-shadow: 0 0 0 2px var(--color-forest-ink);
+}
+/* The text block being read gets a Forest Ink rule at its side (from 1024px, while telling).
+   Inside a FocusGroup the mint card marks it instead. */
+@media (min-width: 1024px) {
+  .scroll-story-step:not([data-focus-group] *) > * {
+    border-left: 2px solid transparent;
+    padding-left: 1.5rem;
+    transition: border-color var(--motion-rise) var(--motion-ease);
+  }
+  [data-scroll-story="telling"] .scroll-story-step[data-active]:not([data-focus-group] *) > * {
+    border-left-color: var(--color-forest-ink);
+  }
+}
+
+/* FocusGroup (components/motion/focus-group.tsx): fade the card, never the text. Every item is a
+   card with constant padding (nothing moves when focus changes).
+   - Neutral (before script, reduced motion, print) and out of focus: Cream Paper with an inset
+     Border Mist hairline (no layout shift, no coloured border). Light pills inside (caveat note,
+     source chip) take a Border Mist fill so they stay visible on cream. Out of focus: scale 0.96.
+   - In focus (nearest the middle, or holding keyboard focus or an opened "Show …"): Mint Veil,
+     no hairline, scale 1.02.
+   - Items with a tint of their own take the same two surfaces.
+   Text stays at full opacity. Measured AA, on mint / on cream: charcoal 12.1 / 15.8, Forest Ink
+   9.3 / 12.1, red status ink 7.0 / 9.0, muted 6.8 / 8.8, faint 5.8 / 7.5; pill text on Border
+   Mist: charcoal 13.7, Forest Ink 10.5; cream on a Forest Ink pill 12.1. */
+[data-focus-group] [data-focus-item] {
+  padding: clamp(1.3125rem, 1rem + 1.5vw, 2.625rem);
+  border-radius: 14px;
+  background-color: var(--color-cream-paper);
+  box-shadow: inset 0 0 0 1px var(--color-border-mist);
+  transition:
+    background-color 350ms var(--motion-ease),
+    box-shadow 350ms var(--motion-ease),
+    transform 350ms var(--motion-ease);
+}
+[data-focus-group] [data-focus-item] :is([data-slot="caveat-note"], .source-chip) {
+  background-color: var(--color-border-mist);
+}
+[data-focus-group][data-focus-on] [data-focus-item] {
+  transform: scale(0.96);
+}
+[data-focus-group][data-focus-on] :is([data-focus-item][data-focus="in"], [data-focus-item]:focus-within, [data-focus-item]:has(details[open])) {
+  background-color: var(--color-mint-veil);
+  box-shadow: inset 0 0 0 1px transparent;
+  transform: scale(1.02);
+}
+[data-focus-group][data-focus-on] :is([data-focus-item][data-focus="in"], [data-focus-item]:focus-within, [data-focus-item]:has(details[open])) [data-slot="caveat-note"] {
+  background-color: var(--color-mint-veil);
+}
+[data-focus-group][data-focus-on] :is([data-focus-item][data-focus="in"], [data-focus-item]:focus-within, [data-focus-item]:has(details[open])) .source-chip {
+  background-color: var(--color-cream-paper);
+}
+
+/* Open/closed wording of a summary follows its own <details> only (nested disclosures included). */
+details:not([open]) > summary [data-when="open"],
+details[open] > summary [data-when="closed"] {
+  display: none;
+}
+
+/* Disclosure (components/motion/disclosure.tsx): a native <details> that eases open where the
+   browser can animate one, and simply opens elsewhere. */
+@supports (interpolate-size: allow-keywords) {
+  details.disclosure {
+    interpolate-size: allow-keywords;
+  }
+  details.disclosure::details-content {
+    height: 0;
+    overflow: clip;
+    opacity: 0;
+    transition:
+      height var(--motion-open) var(--motion-ease),
+      opacity var(--motion-open) var(--motion-ease),
+      content-visibility var(--motion-open) allow-discrete;
+  }
+  details.disclosure[open]::details-content {
+    height: auto;
+    opacity: 1;
+  }
+}
+
+/* Reduced motion: everything is simply there. A step a button has not shown yet stays hidden. */
 @media (prefers-reduced-motion: reduce) {
+  [data-focus-item] {
+    transform: none !important;
+    transition: none !important;
+  }
+  [data-story-step],
+  .scroll-story-step > * {
+    transition: none !important;
+  }
+  [data-reveal],
+  [data-bar-fill],
+  [data-number-final],
   .animate-bar-grow,
-  .animate-fade-up {
-    animation: none;
+  .animate-fade-up,
+  .animate-line-in {
+    animation: none !important;
+  }
+  [data-reveal="wait"] {
+    opacity: 1;
+  }
+  [data-reveal="hold"] {
+    opacity: 1;
+  }
+  [data-bar="wait"] [data-bar-fill],
+  [data-reveal="wait"] [data-bar-fill],
+  [data-reveal="wait"] .animate-bar-grow,
+  [data-reveal="wait"] .animate-line-in {
+    transform: none;
+  }
+  details.disclosure::details-content {
+    transition: none !important;
+  }
+}
+
+/* ---- Paper. A page prints as it reads: dark text on white, every section open, no chrome. ----
+   Hide anything that only makes sense on a screen with print:hidden or data-print="hide". */
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+  @page wide {
+    size: A4 landscape;
+    margin: 12mm;
+  }
+  /* Scroll stories print as a plain document: picture unstuck and in its final state, text after. */
+  .scroll-story-picture {
+    position: static !important;
+  }
+  .scroll-story-step {
+    min-height: 0 !important;
+  }
+  [data-story-state] {
+    filter: none !important;
+    box-shadow: none !important;
+  }
+  [data-slot="chunk"] {
+    min-height: 0 !important;
+    break-inside: avoid;
+  }
+  /* FocusGroup cards in their neutral state, with paper-sized padding. */
+  [data-focus-group] [data-focus-item] {
+    transition: none !important;
+    transform: none !important;
+    background-color: var(--color-cream-paper) !important;
+    box-shadow: inset 0 0 0 1px var(--color-border-mist) !important;
+    padding: 10pt 12pt !important;
+  }
+  html,
+  body {
+    background: #fff !important;
+    height: auto !important;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  [data-print="hide"],
+  nextjs-portal {
+    display: none !important;
+  }
+  /* Nothing waits for a scroll or a button on paper, and no bar prints half grown. */
+  [data-reveal] {
+    animation: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+  [data-bar-fill],
+  [data-number-final],
+  .animate-bar-grow,
+  .animate-fade-up,
+  .animate-line-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  /* A count caught mid-run must not print its moving digits over the final value. */
+  [data-slot="animated-number"] > [aria-hidden] {
+    display: none !important;
+  }
+  /* Closed sections print open (PrintExpand does the same from script). */
+  details::details-content {
+    content-visibility: visible !important;
+    height: auto !important;
+    opacity: 1 !important;
+  }
+  /* Small units stay whole; a panel taller than a page is allowed to break, or it would push a
+     blank page ahead of itself. Mark a small panel with print-keep to keep it whole. */
+  .print-keep,
+  [data-slot="disclosure"],
+  tr,
+  li,
+  dl > div {
+    break-inside: avoid;
+  }
+  /* A tall list item (a whole action card) may break; keeping it whole leaves a blank page. */
+  .print-flow,
+  .print-flow > [data-slot="disclosure"] {
+    break-inside: auto !important;
+  }
+  h1,
+  h2,
+  h3,
+  .type-eyebrow {
+    break-after: avoid;
+  }
+  a {
+    text-decoration: none;
+  }
+  /* Paper is white: tinted panels print as white boxes with a thin grey rule, so a panel that
+     breaks across pages reads as a document section, not a block of colour. Status colours stay. */
+  [data-slot="frame-panel"],
+  [data-slot="card"],
+  [data-slot="stat-unit"],
+  .bg-card,
+  .bg-frame,
+  .bg-muted,
+  .bg-keylime-wash,
+  .bg-mint-veil {
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+  [data-slot="frame-panel"],
+  [data-slot="card"],
+  [data-slot="stat-unit"] {
+    border: 0.75pt solid #d4d6d1 !important;
+  }
+  /* A panel that only frames a paper table prints with no box at all. */
+  .print-bare {
+    border: 0 !important;
+    padding: 0 !important;
+  }
+  /* A4 is narrower than a desktop screen: wide tables print smaller and tighter, and no column
+     keeps a screen minimum width. */
+  table.stack-table {
+    font-size: 10pt;
+  }
+  table.stack-table :is(th, td) {
+    min-width: 0 !important;
+    padding: 5pt 5pt !important;
+  }
+  table.stack-table :is(th, td) :is(.text-base, .text-xl, .text-sm, button) {
+    font-size: inherit !important;
+    min-height: 0 !important;
+  }
+  table.stack-table thead button {
+    text-decoration: none !important;
+  }
+  /* A section marked print-wide prints on its own landscape A4 page(s): for tables a director
+     would print from Excel. */
+  .print-wide {
+    page: wide;
+  }
+  /* Lead figures print compact, so four fit on one page. */
+  [data-slot="stat-unit"] {
+    padding: 14pt !important;
+    gap: 6pt !important;
+  }
+  [data-slot="stat-unit"] .numeral {
+    font-size: 28pt !important;
+  }
+  [data-slot="stat-unit"] :is(.text-base, .text-sm) {
+    font-size: 9.5pt !important;
+  }
+  /* Step cards print compact, so the three steps sit side by side under the page title. */
+  .step-unit :is(.text-base, .text-sm) {
+    font-size: 10pt !important;
+    line-height: 1.4 !important;
+  }
+  .step-unit .type-heading {
+    font-size: 13pt !important;
+  }
+  /* On paper a source chip is a citation: full text, never cut short. */
+  .source-chip {
+    height: auto !important;
+    font-size: 9pt !important;
+    white-space: normal !important;
+  }
+  .source-chip > span {
+    overflow: visible !important;
+    white-space: normal !important;
+  }
+  /* Paper is not a screen: the page title and lede print smaller. */
+  .type-display {
+    font-size: 26pt !important;
+  }
+  .type-lede {
+    font-size: 11pt !important;
+  }
+}
+
+/* ---- A table that reads as labelled rows on a phone. Give each <td> a data-label and wrap its
+   content in one element. Screen and print above phone width keep the real table. ---- */
+@media screen and (max-width: 639px) {
+  .stack-table,
+  .stack-table tbody,
+  .stack-table tr,
+  .stack-table td {
+    display: block;
+    width: 100%;
+  }
+  /* Each cell carries its column name (td::before, read by screen readers too). */
+  .stack-table thead {
+    display: none;
+  }
+  .stack-table tr {
+    padding-block: 0.875rem;
+  }
+  .stack-table td {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    gap: 0.75rem;
+    padding: 0.25rem 0;
+  }
+  .stack-table td::before {
+    content: attr(data-label);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--muted-foreground);
   }
 }

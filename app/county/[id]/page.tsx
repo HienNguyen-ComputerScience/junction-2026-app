@@ -3,20 +3,22 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { CountyBrief } from "@/components/brief/county-brief";
 import { CountyNews } from "@/components/exa/county-news";
 import { LimitationsBox, type LimitationItem } from "@/components/pathway/limitations-box";
 import { buildPathwaySteps } from "@/components/pathway/pathway-steps";
-import { RecordingNote } from "@/components/pathway/recording-note";
 import { PathwayStrip } from "@/components/pathway/pathway-strip";
 import { buildStepTabs } from "@/components/pathway/step-panels";
-import { StepAside, StepTabs, StepTabsProvider } from "@/components/pathway/step-tabs";
-import { HUS_FULL, shortReason } from "@/components/pathway/wording";
+import { AreaLead, spellHus } from "@/components/county/area-lead";
+import { StepsPicture, StepStoryText } from "@/components/county/step-story";
+import { Disclosure, FocusGroup, MoreCard, Reveal, ScrollStory } from "@/components/motion";
+import { SaveShare } from "@/components/share";
+import { HUS_FULL } from "@/components/pathway/wording";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { buttonVariants } from "@/components/ui/button";
 import { getBottleneck } from "@/lib/act";
+import { getAreaSteps } from "@/lib/plan-model";
 import { getMainReason } from "@/lib/main-reason";
-import { counties, gaps, getCounty, getValue, LATEST_YEAR, type County } from "@/lib/data";
+import { counties, gaps, getCounty, getValue, LATEST_YEAR, values, type County } from "@/lib/data";
 import {
   formatPct,
   getIndicator,
@@ -51,56 +53,91 @@ export default async function CountyPathwayPage({ params }: PageProps<"/county/[
   const county = getCounty(id);
   if (!county) notFound();
 
-  const steps = buildPathwaySteps(county.id);
   const limitations = buildLimitations(county);
-  const { anyRed } = getBottleneck(county.id);
-  // The verdict is the main reason sentence, the same one as on the home card. The tab selected
-  // first is the step that sentence is about (the worst one), so the two always agree.
+  const bottleneck = getBottleneck(county.id);
+  // The main reason is the same sentence as on the home card; the step it is about is flagged as
+  // the main delay and leads the page, so the two always agree.
   const reason = getMainReason(county.id);
-  const reasonStage = reason.gap?.stage ?? null;
-  const tabs = buildStepTabs(county.id, steps);
+  const reasonStage = bottleneck.anyRed ? (reason.gap?.stage ?? null) : null;
+  const steps = getAreaSteps(county.id);
+  // Each step's trend (2023-2025), from the same builder the old tabs used.
+  const trends = new Map(buildStepTabs(county.id, buildPathwaySteps(county.id)).map((tab) => [tab.id, tab.aside]));
 
   return (
-    <main className="page-container flex flex-col gap-10 pt-4 sm:gap-14 sm:pt-6">
-      {/* Desktop: name, verdict and the three steps (one at a time) on the left, the limitations
-          box beside them, so both are on the first screen. Below lg the limitations are a
-          one-line disclosure under the main action instead (never both at the same width). */}
-      <StepTabsProvider tabs={tabs} defaultId={reasonStage ?? "gp_access"}>
-        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-start lg:gap-10">
-          <header className="flex flex-col items-start gap-4">
-            <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
-            <h1 className="type-page lg:text-[2.5rem] lg:leading-[1.1]">{county.name}</h1>
-            <p className="max-w-[44rem] text-base leading-relaxed text-pretty text-foreground">{shortReason(reason)}</p>
-            {reason.caveat && <RecordingNote caveat={reason.caveat} className="max-w-[44rem]" />}
-            <section aria-labelledby="steps-heading" className="w-full">
-              <h2 id="steps-heading" className="sr-only">
-                The first three steps, compared with Finland ({LATEST_YEAR})
-              </h2>
-              <StepTabs
-                label={`The first three steps, ${LATEST_YEAR}`}
-                action={
-                  <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
-                    {anyRed ? "See all actions" : "Actions to keep this level"}
-                    <ArrowRight aria-hidden data-icon="inline-end" />
-                  </Link>
-                }
-              />
-            </section>
-            <LimitationsBox items={limitations} variant="disclosure" className="mt-2 w-full lg:hidden" />
-          </header>
+    <main className="page-container flex flex-col pt-4">
+      <FocusGroup>
+      <Breadcrumb items={[{ label: "Areas", href: "/" }, { label: county.name }]} />
 
-          {/* Right column: the limitations, then the selected step's trend under them. */}
-          <div className="flex flex-col gap-4 max-lg:mt-4">
-            <LimitationsBox items={limitations} className="max-lg:hidden" />
-            <StepAside />
-          </div>
+      <AreaLead countyId={county.id}>
+        <div data-print="hide" className="flex flex-wrap items-start gap-2.5">
+          <Link href={`/county/${county.id}/act`} className={buttonVariants({ size: "lg" })}>
+            {bottleneck.anyRed ? "See what to do" : "Actions to keep this level"}
+            <ArrowRight aria-hidden data-icon="inline-end" />
+          </Link>
+          <SaveShare
+            options={[
+              { kind: "print" },
+              { kind: "email", subject: `Early cancer care in ${county.name}`, intro: `Where early cancer care slows in ${county.name}, from published figures:` },
+            ]}
+          />
         </div>
-      </StepTabsProvider>
+      </AreaLead>
 
-      <PathwayStrip countyId={county.id} />
+      {/* A short top gap: the section heading shows on the first screen, so the page doesn't look finished under the hero. */}
+      <section aria-labelledby="steps-heading" className="flex flex-col gap-8 pt-8 pb-16 sm:pt-10 sm:pb-24">
+        <Reveal className="motion-loud">
+          <h2 id="steps-heading" className="type-title">
+            {bottleneck.anyRed ? "Where care is delayed" : "Where the pathway stands"}
+          </h2>
+        </Reveal>
+        <ScrollStory
+          label={`The first three steps in ${county.name}`}
+          picture={<StepsPicture steps={steps} mainStage={reasonStage} year={LATEST_YEAR} />}
+          steps={steps.map((step) => (
+            <StepStoryText
+              key={step.stage}
+              step={step}
+              trend={trends.get(step.stage)}
+            />
+          ))}
+        />
+      </section>
 
-      <CountyBrief countyId={county.id} />
-      <CountyNews key={county.id} countyId={county.id} />
+      <section aria-labelledby="limits-heading" className="flex flex-col gap-5 pb-16 sm:pb-24">
+        <Reveal className="motion-loud">
+          <h2 id="limits-heading" className="type-title">
+            What these figures cannot tell you
+          </h2>
+        </Reveal>
+        <LimitationsBox items={limitations} visibleCount={4} />
+      </section>
+
+      <MoreCard
+        title={`More for ${county.name}`}
+        className="mb-8"
+        rows={[
+          {
+            key: "path",
+            label: "The whole path to treatment",
+            children: (
+              <Disclosure show="Show the eight steps" hide="Hide the eight steps">
+                <PathwayStrip countyId={county.id} />
+              </Disclosure>
+            ),
+          },
+          {
+            key: "news",
+            print: false,
+            label: "Local news, last 12 months (found live, unverified)",
+            children: (
+              <Disclosure show="Show the news" hide="Hide the news">
+                <CountyNews key={county.id} countyId={county.id} />
+              </Disclosure>
+            ),
+          },
+        ]}
+      />
+      </FocusGroup>
     </main>
   );
 }
@@ -116,14 +153,19 @@ const INDICATOR_TITLE: Record<string, string> = {
 const INDICATOR_SHORT: Record<string, string> = {
   [GP_WAIT_ID]: "Counts all non-urgent GP appointments, not only possible cancer.",
   [REFERRAL_ID]: "Measures when assessment starts, not when a specialist is seen.",
-  [REFERRAL_LATE_ID]: "Whole percentages of 0-3% everywhere, so it barely separates counties.",
+  [REFERRAL_LATE_ID]: referralLateShort(),
 };
 
-/** The first "HUS" of a text, spelled out. */
-const spellHus = (text: string) =>
-  text.includes("the HUS-wide value")
-    ? text.replace("the HUS-wide value", `one value for ${HUS_FULL}`)
-    : text.replace(/\bHUS\b(?! \()/, HUS_FULL);
+/** 5033's spread in the latest year, from the data, so a refresh never leaves the line wrong. */
+function referralLateShort() {
+  const shares = values.filter((v) => v.indicator_id === REFERRAL_LATE_ID && v.year === LATEST_YEAR).map((v) => v.value);
+  const whole = shares.every(Number.isInteger);
+  const show = (n: number) => (whole ? String(n) : n.toFixed(1));
+  const [min, max] = [Math.min(...shares), Math.max(...shares)];
+  const range = min === max ? `${show(min)}%` : `${show(min)}-${show(max)}%`;
+  if (max - min > 5) return `From ${range} across areas in ${LATEST_YEAR}.`;
+  return `${whole ? "Whole percentages of " : ""}${range} everywhere, so it barely separates counties.`;
+}
 
 function buildLimitations(county: County): LimitationItem[] {
   const items: LimitationItem[] = [];
@@ -168,7 +210,7 @@ function buildLimitations(county: County): LimitationItem[] {
     items.push({
       title: "Many working-age visits skip the public queue",
       short: "Many working-age visits happen outside the public queue.",
-      text: `Working-age people (15-64) in ${county.name} made ${n(occupational.value)} occupational-health doctor visits per 1,000 residents in ${occupational.year}, against ${n(publicVisits.value)} public primary-care doctor visits (Finland ${n(occupationalFinland.value)} and ${n(publicFinland.value)}). These are visits, not people. People over 64, who are most cancer patients, are not in these numbers.`,
+      text: `Working-age people (15-64) in ${county.name} made ${n(occupational.value)} occupational-health doctor visits per 1,000 residents in ${occupational.year}, against ${n(publicVisits.value)} public primary-care doctor visits (Finland overall: ${n(occupationalFinland.value)} and ${n(publicFinland.value)}). These are visits, not people. People over 64, who are most cancer patients, are not in these numbers.`,
       sourceId: "sotkanet-2371",
     });
   }
@@ -183,7 +225,7 @@ function buildLimitations(county: County): LimitationItem[] {
     items.push({
       title: "Survival mixes early finding with treatment",
       short: "Cancer stage by county is not published; small counties vary.",
-      text: `5-year relative survival here was ${bowel.value}% for bowel cancer and ${breast.value}% for breast cancer (Finland ${bowelFinland.value}% and ${breastFinland.value}%), for patients diagnosed ${bowel.year - 9}-${bowel.year}. Cancer stage by county is not published. Small counties vary from year to year.`,
+      text: `5-year relative survival here was ${bowel.value}% for bowel cancer and ${breast.value}% for breast cancer (Finland overall: ${bowelFinland.value}% and ${breastFinland.value}%), for patients diagnosed ${bowel.year - 9}-${bowel.year}. Cancer stage by county is not published. Small counties vary from year to year.`,
       sourceId: "sotkanet-3627",
     });
   }
@@ -235,18 +277,18 @@ function buildLimitations(county: County): LimitationItem[] {
 
   const nationalGpWait = getNationalValue(GP_WAIT_ID);
   items.push({
-    title: "At or better than Finland's level does not mean good",
-    short: "Finland's level is itself a delay.",
-    text: `Finland's level is itself a delay${
+    title: "Same as or better than Finland overall does not mean good",
+    short: "Finland overall is itself a delay.",
+    text: `Finland overall is itself a delay${
       nationalGpWait
         ? `: ${formatPct(nationalGpWait.value)} of non-urgent GP visits nationally come more than a week after the need for care was assessed`
         : ""
     }.`,
   });
   items.push({
-    title: "Colours compare with Finland, not a target",
-    short: "Colours compare with Finland; they are not a clinical standard.",
-    text: `They compare this area's ${LATEST_YEAR} value with Finland's ${LATEST_YEAR} value on the same indicator. They are not a clinical standard.`,
+    title: "Colours compare with Finland overall, not a target",
+    short: "Colours compare with Finland overall; they are not a clinical standard.",
+    text: `They compare this area's ${LATEST_YEAR} value with Finland overall: Sotkanet's whole-country ${LATEST_YEAR} value for the same indicator. It is not a target and not an average of the areas. They are not a clinical standard.`,
   });
 
   return items;

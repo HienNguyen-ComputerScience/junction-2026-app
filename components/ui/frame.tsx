@@ -90,7 +90,7 @@ function FrameDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       data-slot="frame-description"
-      className={cn("col-span-2 max-w-[68ch] type-caption text-muted-foreground", className)}
+      className={cn("col-span-2 max-w-[68ch] text-base text-muted-foreground", className)}
       {...props}
     />
   );
