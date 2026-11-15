@@ -6,19 +6,26 @@ Junction 2026, AstraZeneca challenge "Equal Care Across Finland". FirstLine show
 Whether you get early cancer care in Finland depends on where you live, and no one shows a county director where their county's pathway breaks.
 
 ## Solution
-Five screens, all built from a committed data snapshot (`data/`, see `data/README.md`) in which every number has a source. FirstLine is for county administrators, not for patients or GPs.
+FirstLine is for county administrators, not for patients or GPs, and has no symptom input. Every page is built from a committed data snapshot (`data/`, see `data/README.md`) in which every number has a source.
 
-1. **Home** (`/`): pick an area from a list or the map. One answer card shows the area's figure against Finland's level and its top action.
-2. **Compare** (`/compare`): all areas ranked by the share of non-urgent GP visits that come more than 7 days after people ask (Sotkanet 6411), with referral speed (Sotkanet 13) alongside. Every number has a source chip.
-3. **County pathway** (`/county/[id]`): where the delay sits (getting to a GP, GP recognising warning signs, GP to specialist), shown as three steps compared with Finland; a limitations box that is always on screen; a plain-language brief for the county director (Claude writes it from the snapshot, a validator drops any claim whose number or source is not in the snapshot, and a precomputed brief is shown otherwise); and local news found live with Exa.
-4. **Act** (`/county/[id]/act`): recommended actions, each with an owner, a first step, a precedent and a checked source, plus a live Exa "find more evidence" panel per action (marked "Found live — unverified"); a what-if that shows how many fewer non-urgent GP visits would wait over 7 days if the area reached a better level (arithmetic on the published shares, not a forecast); and "The four referral routes a county needs", a static panel (decision support, not diagnosis) that links to NICE NG12 and Käypä hoito instead of reproducing them. It has no symptom input.
-5. **Ask** (`/ask`): a question box answered only from live Exa search results, with a numbered source for every sentence, plus national cancer-care news.
+**Start here:** on Home (`/`) pick an area from the list or the map, then "Start the briefing". That opens a guided briefing in 6 steps under `/briefing/<area>/...`: where you stand, where the delay is, what it means, what to do, what it could change, and save or share. Every step has its own address, so a briefing can be linked and reopened at the same place.
 
-Sources and limitations: `/sources` (data sources, the evidence behind each recommended action, and what is found live and unverified).
+**Pages** (all reachable from the main navigation):
+- `/county/<id>`: the area's pathway (getting to a GP, GP recognising warning signs, GP to specialist) against Finland, an always-visible limitations box, a plain-language brief (Claude writes it from the snapshot, a validator drops any claim whose number or source is not in the snapshot, a precomputed brief is the fallback), and local news found live with Exa.
+- `/county/<id>/act`: three actions. Each has a lead, a first step, the result where it was tried and what it won't fix, plus a live Exa "find more evidence" panel. Also a what-if (arithmetic on published shares, not a forecast) and "The four referral routes a county needs" (decision support, links to NICE NG12 and Käypä hoito).
+- `/compare`: all 22 areas ranked by the share of non-urgent GP visits that come more than 7 days after people ask (Sotkanet 6411), with referral speed (Sotkanet 13) alongside.
+- `/insights` ("Where access is hardest"): where a long GP wait meets few other routes to a doctor, which steps of the pathway nobody publishes by area, and the 18 quarterly counts a county can start recording, with an Excel recording template to download.
+- `/ask`: a question box answered only from live Exa search results, with a numbered source for every sentence, plus national cancer-care news. Everything found live is labelled unverified.
+- `/how-to-read`: where the numbers come from and what they cannot say.
+- `/sources`: data sources, the evidence behind each action, and what is found live and unverified.
+
+**Save or share:** a briefing, the action plan and the compare table can be printed, downloaded as Word (action plan) or Excel (action plan, compare table), or sent by email.
+
+**Daily data refresh:** a GitHub Action (`.github/workflows/data-refresh.yml`, `npm run data:refresh`) rebuilds the Sotkanet snapshot every day and opens a PR when a figure changes. It never pushes to `main`; auto-merge (`AUTO_MERGE`) is off.
 
 ## Live demo
 URL: https://firstline-finland.vercel.app
-Demo credentials: none needed (public, no login).
+Demo credentials: there is no login. The site is public and needs no account or password.
 
 Hosted on Vercel (project `firstline-finland`), deployed automatically from `main` through the GitHub integration.
 The AI-written brief and live Exa search need `ANTHROPIC_API_KEY` and `EXA_API_KEY` set in the Vercel project. Without `ANTHROPIC_API_KEY` the site shows the precomputed brief. Without `EXA_API_KEY` (or when Exa is down) an Exa panel shows saved results with their date when a committed cache entry exists for that request, and otherwise a clear "unavailable" state.
@@ -43,6 +50,7 @@ On Windows, `npm run dev` (Turbopack) can crash on some machines. `npm run build
 
 Other scripts:
 - `npm run data:build`: refetch Sotkanet and rewrite `data/*.json` (fails if any `source_id` does not resolve).
+- `npm run data:refresh`: `data:build` plus the insights build and checks; what the daily GitHub Action runs.
 - `npm run brief:check`: checks that the brief validator drops untraceable claims and that the precomputed brief passes it for every area.
 - `npm test`: unit tests (ranking, area status, the act page data and what-if, recording caveats, the question-box route and answer checker, Exa relevance, caching and rate limits).
 - `npm run exa:prewarm`: fills the Exa caches for the demo questions and county pages (needs `EXA_API_KEY`).
