@@ -319,7 +319,7 @@ export default function SourcesPage() {
 
       {/* The point of the page: always visible, never behind a button. */}
       <section aria-labelledby="gaps" className="flex flex-col gap-6">
-        <SectionHead id="gaps" eyebrow="Read with care" title="What the data can't tell you" />
+        <SectionHead id="gaps" eyebrow="Limitations" title="What the data can't tell you" />
         <ul className="grid gap-3 md:grid-cols-2">
           {limitations.map((limitation) => (
             <LimitationItem key={limitation.title} title={limitation.title}>
